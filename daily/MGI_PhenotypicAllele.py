@@ -103,9 +103,9 @@ cmds.append('select s._Marker_key, a.accID ' + \
 
 # Retrieve MP IDs for PhenoSlim annotations
 
-cmds.append('select distinct s._Marker_key, a.accID ' + \
+cmds.append('select distinct s._Allele_key, a.accID ' + \
 	'from #alleles s, GXD_AlleleGenotype ga, VOC_Annot na, ACC_Accession a ' + \
-	'where s._Marker_key = ga._Marker_key ' + \
+	'where s._Allele_key = ga._Allele_key ' + \
 	'and ga._Genotype_key = na._Object_key ' + \
 	'and na._AnnotType_key = 1001 ' + \
 	'and na._Term_key = a._Object_key ' + \
@@ -134,9 +134,9 @@ for r in results[-3]:
 	
 mpIDs = {}
 for r in results[-2]:
-	if not mpIDs.has_key(r['_Marker_key']):
-		mpIDs[r['_Marker_key']] = []
-	mpIDs[r['_Marker_key']].append(r['accID'])
+	if not mpIDs.has_key(r['_Allele_key']):
+		mpIDs[r['_Allele_key']] = []
+	mpIDs[r['_Allele_key']].append(r['accID'])
 	
 for r in results[-1]:
 	fp.write(amgiIDs[r['_Allele_key']] + reportlib.TAB + \
@@ -159,8 +159,8 @@ for r in results[-1]:
 		fp.write(refIDs[r['_Marker_key']])
 	fp.write(reportlib.TAB)
 
-	if mpIDs.has_key(r['_Marker_key']):
-		fp.write(string.join(mpIDs[r['_Marker_key']], ','))
+	if mpIDs.has_key(r['_Allele_key']):
+		fp.write(string.join(mpIDs[r['_Allele_key']], ','))
 
 	fp.write(reportlib.CRT)
 
