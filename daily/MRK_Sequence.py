@@ -20,6 +20,9 @@
 #
 # History:
 #
+# lec	01/27/2005
+#	- TR 6529
+#
 # lec	12/18/2003
 #	- TR 5440; added Marker Type
 #
@@ -50,7 +53,7 @@ import reportlib
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-# all official/interim mouse markers that have at least one GenBank ID
+# all official/interim mouse markers that have at least one Sequence ID
 
 cmds = []
 cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
@@ -64,7 +67,7 @@ cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
 	'and m._Marker_Status_key = s._Marker_Status_key ' + \
 	'and m._Marker_Type_key = t._Marker_Type_key ' + \
 	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 and a._LogicalDB_key = 9)')
+	'and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27))')
 cmds.append('create index idx1 on #markers(_Marker_key)')
 cmds.append('create index idx2 on #markers(symbol)')
 db.sql(cmds, None)
@@ -149,8 +152,11 @@ for r in results:
 	         r['markerType'] + reportlib.TAB + \
 	         r['name'] + reportlib.TAB + \
 	         offset + reportlib.TAB + \
-	         r['chromosome'] + reportlib.TAB + \
-		 string.join(gbID[key], ' ') + reportlib.TAB)
+	         r['chromosome'] + reportlib.TAB)
+
+	if gbID.has_key(key):
+		fp.write(string.join(gbID[key], ' '))
+	fp.write(reportlib.TAB)
 
 	if ugID.has_key(key):
 		fp.write(string.join(ugID[key], ' '))
