@@ -19,6 +19,9 @@
 #
 # History:
 #
+# lec	01/04/2004
+#	- TR 5939; LocusLink->EntrezGene
+#
 # lec   07/20/2004
 #       - created
 #
@@ -37,6 +40,7 @@ SPACE = reportlib.SPACE
 
 reportTitle = 'Human and Mouse Orthology with Human OMIM IDs'
 	
+db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], reportTitle, os.environ['REPORTOUTPUTDIR'])
 	
 fp.write(string.ljust('Mouse MGI Acc ID', 30))
@@ -95,17 +99,17 @@ for r in results:
     value = r['accID']
     mgiIDs[key] = value
 
-results = db.sql('select h.humanKey, e.dbXrefID ' + \
-	'from #homology h, ACC_Accession a, radar..DP_EntrezGene_DBXRef e ' + \
+results = db.sql('select h.humanKey, mim = r.dbXrefID ' + \
+	'from #homology h, ACC_Accession a, radar..DP_EntrezGene_DBXRef r ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 24 ' + \
-	'and a.accID = e.geneID ' + \
-	'and e.dbXrefID like "MIM:%"', 'auto')
+	'and a._LogicalDB_key = 55 ' + \
+	'and a.accID = r.geneID ' + \
+	'and r.dbXrefID like "MIM:%"', 'auto')
 mimIDs = {}
 for r in results:
     key = r['humanKey']
-    value = str(r['dbXrefID'])
+    value = str(r['mim'])
     mimIDs[key] = value
 
 results = db.sql('select h.* from #homology h order by h.mouseSymbol', 'auto')
@@ -127,4 +131,5 @@ for r in results:
 fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 reportlib.trailer(fp)
 reportlib.finish_nonps(fp)
+db.useOneConnection(0)
 

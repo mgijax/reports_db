@@ -8,10 +8,10 @@
 #	and list of non-preferred MGI accession IDs of each Marker
 #
 # Usage:
-#       MRK_LocusLink.py
+#       MGI_EntrezGene.py
 #
 # Used by:
-# 	TR 1283 - Donna Maglott at NCBI for LocusLink
+# 	TR 1283 - Donna Maglott at NCBI for EntrezGene
 #
 # Notes:
 #
@@ -21,7 +21,7 @@
 # History:
 #
 # lec	06/18/2002
-#	- rewrote to use dictionaries for locusID, other Acc IDs, other names
+#	- rewrote to use dictionaries for egID, other Acc IDs, other names
 #
 # lec	01/19/2000
 #	- created
@@ -38,6 +38,7 @@ import mgi_utils
 CRT = reportlib.CRT
 TAB = reportlib.TAB
 
+db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 #
@@ -45,9 +46,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # 2. all Withdrawn Marker records
 #
 
-cmds = []
-
-cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, ' + \
+db.sql('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, ' + \
   'offset = str(o.offset,10,2), m.chromosome, markerType = t.name, isPrimary = 1, ' + \
   'markerStatus = upper(substring(s.status, 1, 1)) ' + \
   'into #markers ' + \
@@ -69,10 +68,8 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'and o.source = 0 ' + \
   'and m._Marker_key = c._Marker_key ' + \
   'and m._Marker_Type_key = t._Marker_Type_key ' + \
-  'and m._Marker_Status_key = s._Marker_Status_key ')
-
-cmds.append('create nonclustered index idx_key on #markers(_Marker_key)')
-db.sql(cmds, None)
+  'and m._Marker_Status_key = s._Marker_Status_key ', None)
+db.sql('create nonclustered index idx_key on #markers(_Marker_key)', None)
 
 # MGI ids
 
@@ -89,18 +86,18 @@ for r in results:
     value = r['accID']
     mgiID[key] = value
 
-# Get Locus ID for Primary Markers
+# Get EntrezGene ID for Primary Markers
 results = db.sql('select m._Marker_key, a.accID ' + \
 	'from #markers m, ACC_Accession a ' + \
 	'where m.isPrimary = 1 ' + \
 	'and m._Marker_key = a._Object_key ' + \
         'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 24 ', 'auto')
-locusID = {}
+	'and a._LogicalDB_key = 55 ', 'auto')
+egID = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    locusID[key] = value
+    egID[key] = value
 
 # Get Secondary MGI Ids for Primary Marker
 results = db.sql('select m._Marker_key, a.accID ' + \
@@ -118,15 +115,20 @@ for r in results:
 	otherAccId[r['_Marker_key']].append(r['accID'])
 
 # Get Synonyms for Primary Marker
-results = db.sql('select m._Marker_key, o.name ' + \
-	'from #markers m, MRK_Other o ' + \
+results = db.sql('select m._Marker_key, s.synonym ' + \
+	'from #markers m, MGI_Synonym s, MGI_SynonymType st ' + \
 	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key = o._Marker_key ', 'auto')
-otherName = {}
+	'and m._Marker_key = s._Object_key ' + \
+	'and s._MGIType_key = 2 ' + \
+	'and s._SynonymType_key = st._SynonymType_key ' + \
+	'and st.synonymType = "exact"', 'auto')
+synonym = {}
 for r in results:
-	if not otherName.has_key(r['_Marker_key']):
-		otherName[r['_Marker_key']] = []
-	otherName[r['_Marker_key']].append(r['name'])
+	key = r['_Marker_key']
+	value = r['synonym']
+	if not synonym.has_key(key):
+		synonym[key] = []
+	synonym[key].append(value)
 
 results = db.sql('select * from #markers order by _Current_key, isPrimary desc', 'auto')
 for r in results:
@@ -143,12 +145,12 @@ for r in results:
 			fp.write(string.joinfields(otherAccId[r['_Marker_key']], '|'))
 		fp.write(TAB)
 
-		if locusID.has_key(r['_Marker_key']):	
-			fp.write(locusID[r['_Marker_key']])
+		if egID.has_key(r['_Marker_key']):	
+			fp.write(egID[r['_Marker_key']])
 		fp.write(TAB)
 
-		if otherName.has_key(r['_Marker_key']):	
-			fp.write(string.joinfields(otherName[r['_Marker_key']], '|'))
+		if synonym.has_key(r['_Marker_key']):	
+			fp.write(string.joinfields(synonym[r['_Marker_key']], '|'))
 		fp.write(CRT)
 	else:
 		fp.write(TAB)
@@ -156,3 +158,4 @@ for r in results:
 		fp.write(CRT)
 
 reportlib.finish_nonps(fp)
+db.useOneConnection(0)

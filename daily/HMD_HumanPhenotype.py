@@ -11,7 +11,7 @@
 #     Output fields: 
 #     
 #     Human Gene Symbol 
-#     Human LocusLink ID 
+#     Human EntrezGene ID 
 #     Mouse Gene Symbol 
 #     MGI Accession ID 
 #     PhenoSlim IDs associated with any allele of the mouse gene (space- or comma-separated) 
@@ -27,6 +27,9 @@
 # Notes:
 #
 # History:
+#
+# lec	01/04/2004
+#	- TR 5939; EntrezGene->EntrezGene
 #
 # lec	08/27/2003
 #	- TR 5082; make a public report
@@ -83,10 +86,7 @@ def createDict(results, keyField, valueField):
 #      #
 ########
 
-####################
-# Open report file #
-####################
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+db.useOneConnection(1)
 
 #################################################################
 # Get mouse to human orthologous marker pair's symbols and keys #
@@ -131,14 +131,14 @@ results = db.sql('select a._Object_key, a.accID ' + \
 mmgi = createDict(results, '_Object_key', 'accID')
 
 #####################################################################
-# Get the LocusLink for the Human markers in the temp table created # 
+# Get the EntrezGene for the Human markers in the temp table created # 
 # by the first query                                                #
 #####################################################################
 results = db.sql('select a._Object_key, a.accID ' + \
                 'from #homology h, ACC_Accession a ' + \
                 'where a._Object_key = h.humanKey ' + \
                 'and a._MGIType_key = 2 ' + \
-                'and a._LogicalDB_key = 24', 'auto')
+                'and a._LogicalDB_key = 55', 'auto')
 hlocus = createDict(results, '_Object_key', 'accID')
 
 #####################################################################
@@ -162,6 +162,11 @@ mpheno = createDict(results, 'mouseKey', 'accID')
 #################################################################
 results = db.sql('select * from #homology order by humanSym', 'auto')
 
+####################
+# Open report file #
+####################
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+
 ############################
 # Process db query results #
 ############################
@@ -172,7 +177,7 @@ for r in results:
     fp.write(r['humanSym'] + TAB)
 
     #####################################################
-    # If the human marker has a locus link ID output it #
+    # If the human marker has a entrezgene ID output it #
     #####################################################
     if hlocus.has_key(r['humanKey']):
         fp.write(hlocus[r['humanKey']] + TAB)
@@ -205,3 +210,4 @@ for r in results:
 #########################
 reportlib.finish_nonps(fp)
 
+db.useOneConnection(0)

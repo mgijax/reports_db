@@ -17,7 +17,7 @@
 #	2 = sort by Mouse Chromosome
 #	3 = sort by Rat Symbol
 #	4 = sort by Mouse Symbol
-#	none = generate ALL 4 reports
+#	none = generate AEG 4 reports
 #
 # Notes:
 #       - all reports use db default of public login
@@ -27,6 +27,9 @@
 #       - all private SQL reports require the header
 #
 # History:
+#
+# lec	01/04/2004
+#	- TR 5939; LocusLink->EntrezGene
 #
 # lec	07/23/2004
 #	- TR 5611; added curated/calculated
@@ -62,8 +65,8 @@ bothCurated = 'B'
 
 curated = []
 calculated = []
-ratLL = {}
-mouseLL = {}
+ratEG = {}
+mouseEG = {}
 mouseMGI = {}
 
 #
@@ -131,7 +134,7 @@ def getSortableOffset (cytogeneticOffset):
 
 def runQueries():
 
-	global curated, calculated, ratLL, mouseLL, mouseMGI
+	global curated, calculated, ratEG, mouseEG, mouseMGI
 
 	cmd = 'select distinct h1._Marker_key ' + \
 		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
@@ -223,25 +226,25 @@ def runQueries():
 
 	db.sql(cmds, None)
 
-	# rat locus link ids
+	# rat entrezgene ids
 
 	results = db.sql('select h.ratMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.ratMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ', 'auto')
+		'and a._LogicalDB_key = 55 ', 'auto')
 
 	for r in results:
-		ratLL[r['ratMarkerKey']] = r['accID']
+		ratEG[r['ratMarkerKey']] = r['accID']
 
-	# mouse locus link ids
+	# mouse entrezgene ids
 
 	results = db.sql('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.mouseMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ', 'auto')
+		'and a._LogicalDB_key = 55 ', 'auto')
 
 	for r in results:
-		mouseLL[r['mouseMarkerKey']] = r['accID']
+		mouseEG[r['mouseMarkerKey']] = r['accID']
 
 	# mouse MGI 
 
@@ -293,13 +296,13 @@ def processSort1(results):
 
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Rat Chromosome)'
 	reportName = REPORTNAME + '1'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write(string.ljust('Rat Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Rat LocusLink ID', 30))
+	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
@@ -309,7 +312,7 @@ def processSort1(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('  Mouse cM', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse LocusLink ID', 30))
+	fp.write(string.ljust('Mouse EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
@@ -376,8 +379,8 @@ def processSort1(results):
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
 
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -391,8 +394,8 @@ def processSort1(results):
 		fp.write(string.ljust(r['mouseCm'], 10))
 		fp.write(SPACE)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -412,8 +415,8 @@ def processSort2(results):
 
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Mouse Chromosome)'
 	reportName = REPORTNAME + '2'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
@@ -422,13 +425,13 @@ def processSort2(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse cM', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse LocusLink ID', 30))
+	fp.write(string.ljust('Mouse EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Rat LocusLink ID', 30))
+	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
@@ -470,8 +473,8 @@ def processSort2(results):
 		fp.write(string.ljust(r['mouseCm'], 10))
 		fp.write(SPACE)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -481,8 +484,8 @@ def processSort2(results):
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
 
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -503,11 +506,11 @@ def processSort3(results):
 
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Rat Symbol)'
 	reportName = REPORTNAME + '3'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
-	fp.write(string.ljust('Rat LocusLink ID', 30))
+	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
@@ -515,7 +518,7 @@ def processSort3(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse LocusLink ID', 30))
+	fp.write(string.ljust('Mouse EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
@@ -554,8 +557,8 @@ def processSort3(results):
 	count = 0
 
 	for r in results:
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -567,8 +570,8 @@ def processSort3(results):
 		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -593,13 +596,13 @@ def processSort4(results):
 
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Mouse Symbol)'
 	reportName = REPORTNAME + '4'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse LocusLink ID', 30))
+	fp.write(string.ljust('Mouse EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
@@ -609,7 +612,7 @@ def processSort4(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Band', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('Rat LocusLink ID', 30))
+	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
@@ -647,8 +650,8 @@ def processSort4(results):
 		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -662,8 +665,8 @@ def processSort4(results):
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseBand']), 10))
 		fp.write(SPACE)
 
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -686,17 +689,17 @@ def processSort5(results):
 
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Rat Chromosome), tab-delimited'
 	reportName = REPORTNAME + '5'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write('Rat Chr' + TAB)
-	fp.write('Rat LocusLink ID' + TAB)
+	fp.write('Rat EntrezGene ID' + TAB)
 	fp.write('Rat Symbol' + TAB)
 	fp.write('Mouse MGI Acc ID' + TAB)
 	fp.write('Mouse Chr' + TAB)
 	fp.write('Mouse cM' + TAB)
-	fp.write('Mouse LocusLink ID' + TAB)
+	fp.write('Mouse EntrezGene ID' + TAB)
 	fp.write('Mouse Symbol' + TAB)
 	fp.write('Mouse Name' + TAB)
 	fp.write('Data Attributes' + CRT * 2)
@@ -733,8 +736,8 @@ def processSort5(results):
 		r = rows[key]
 		fp.write(r['ratChr'] + TAB)
 
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]))
 		fp.write(TAB)
 
 		fp.write(r['ratSymbol'] + TAB)
@@ -742,8 +745,8 @@ def processSort5(results):
 		fp.write(r['mouseChr'] + TAB)
 		fp.write(r['mouseCm'] + TAB)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]))
 		fp.write(TAB)
 
 		fp.write(r['mouseSymbol'] + TAB)
@@ -783,3 +786,4 @@ else:
 	processSort4(r4)
 	processSort5(r1)
 
+db.useOneConnection(0)

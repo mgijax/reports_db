@@ -17,7 +17,7 @@
 #	2 = sort by Human Chromosome
 #	3 = sort by Rat Symbol
 #	4 = sort by Human Symbol
-#	none = generate ALL 4 reports
+#	none = generate AEG 4 reports
 #
 # Notes:
 #       - all reports use db default of public login
@@ -27,6 +27,9 @@
 #       - all private SQL reports require the header
 #
 # History:
+#
+# lec	01/04/2004
+#	- TR 5939; LocusLink->EntrezGene
 #
 # lec	07/23/2004
 #	- TR 5611; added curated/calculated
@@ -62,8 +65,8 @@ bothCurated = 'B'
 
 curated = []
 calculated = []
-ratLL = {}
-humanLL = {}
+ratEG = {}
+humanEG = {}
 
 #
 # NOTE: The following globals and getSortableOffset are variations on
@@ -130,7 +133,7 @@ def getSortableOffset (cytogeneticOffset):
 
 def runQueries():
 
-	global curated, calculated, ratLL, humanLL
+	global curated, calculated, ratEG, humanEG
 
 	cmd = 'select distinct h1._Marker_key ' + \
 		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
@@ -213,25 +216,25 @@ def runQueries():
 
 	db.sql(cmds, None)
 
-	# rat locus link ids
+	# rat entrezgene ids
 
 	results = db.sql('select h.ratMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.ratMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ', 'auto')
+		'and a._LogicalDB_key = 55 ', 'auto')
 
 	for r in results:
-		ratLL[r['ratMarkerKey']] = r['accID']
+		ratEG[r['ratMarkerKey']] = r['accID']
 
-	# human locus link ids
+	# human entrezgene ids
 
 	results = db.sql('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.humanMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ', 'auto')
+		'and a._LogicalDB_key = 55 ', 'auto')
 
 	for r in results:
-		humanLL[r['humanMarkerKey']] = r['accID']
+		humanEG[r['humanMarkerKey']] = r['accID']
 
 	# sorted by rat chromosome
 
@@ -271,18 +274,18 @@ def processSort1(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Rat Chromosome)'
 	reportName = REPORTNAME + '1'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write(string.ljust('Rat Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Rat LocusLink ID', 30))
+	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human LocusLink ID', 30))
+	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
@@ -341,8 +344,8 @@ def processSort1(results):
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
 
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -352,8 +355,8 @@ def processSort1(results):
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -372,18 +375,18 @@ def processSort2(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Human Chromosome)'
 	reportName = REPORTNAME + '2'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human LocusLink ID', 30))
+	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Rat LocusLink ID', 30))
+	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
@@ -442,8 +445,8 @@ def processSort2(results):
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -453,8 +456,8 @@ def processSort2(results):
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
 
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -473,16 +476,16 @@ def processSort3(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Rat Symbol)'
 	reportName = REPORTNAME + '3'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
-	fp.write(string.ljust('Rat LocusLink ID', 30))
+	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human LocusLink ID', 30))
+	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
@@ -511,8 +514,8 @@ def processSort3(results):
 	count = 0
 
 	for r in results:
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -522,8 +525,8 @@ def processSort3(results):
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
 
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -545,16 +548,16 @@ def processSort4(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Human Symbol)'
 	reportName = REPORTNAME + '4'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
-	fp.write(string.ljust('Human LocusLink ID', 30))
+	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Rat LocusLink ID', 30))
+	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
@@ -583,8 +586,8 @@ def processSort4(results):
 	count = 0
 
 	for r in results:
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -594,8 +597,8 @@ def processSort4(results):
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -617,14 +620,14 @@ def processSort5(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Rat Chromosome), tab-delimited'
 	reportName = REPORTNAME + '5'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write('Rat Chr' + TAB)
-	fp.write('Rat LocusLink ID' + TAB)
+	fp.write('Rat EntrezGene ID' + TAB)
 	fp.write('Rat Symbol' + TAB)
 	fp.write('Human Chr' + TAB)
-	fp.write('Human LocusLink ID' + TAB)
+	fp.write('Human EntrezGene ID' + TAB)
 	fp.write('Human Symbol' + TAB)
 	fp.write('Data Attributes' + CRT * 2)
 
@@ -660,15 +663,15 @@ def processSort5(results):
 		r = rows[key]
 		fp.write(r['ratChr'] + TAB)
 
-		if ratLL.has_key(r['ratMarkerKey']):
-			fp.write(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]))
+		if ratEG.has_key(r['ratMarkerKey']):
+			fp.write(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]))
 		fp.write(TAB)
 
 		fp.write(r['ratSymbol'] + TAB)
 		fp.write(r['humanChr'] + TAB)
 
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]))
 		fp.write(TAB)
 
 		fp.write(r['humanSymbol'] + TAB)
@@ -707,3 +710,4 @@ else:
 	processSort4(r4)
 	processSort5(r1)
 
+db.useOneConnection(0)

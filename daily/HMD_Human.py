@@ -17,7 +17,7 @@
 #	2 = sort by Mouse Chromosome
 #	3 = sort by Human Symbol
 #	4 = sort by Mouse Symbol
-#	none = generate ALL 4 reports
+#	none = generate AEG 4 reports
 #
 # Notes:
 #       - all reports use db default of public login
@@ -28,11 +28,14 @@
 #
 # History:
 #
+# lec	01/04/2004
+#	- TR 5939; LocusLink->EntrezGene
+#
 # lec	07/23/2004
 #	- TR 5611; added curated/calculated
 #
 # lec	07/01/2003
-#	- TR 4945; added LocusLink IDs for Mouse and Human
+#	- TR 4945; added EntrezGene IDs for Mouse and Human
 #
 # lec   07/18/2000
 #	- TR 1806; added MGI Accession ID for Mouse Symbols
@@ -61,8 +64,8 @@ bothCurated = 'B'
 
 curated = []
 calculated = []
-humanLL = {}
-mouseLL = {}
+humanEG = {}
+mouseEG = {}
 mouseMGI = {}
 
 #
@@ -130,7 +133,7 @@ def getSortableOffset (cytogeneticOffset):
 
 def runQueries():
 
-	global curated, calculated, humanLL, mouseLL, mouseMGI
+	global curated, calculated, humanEG, mouseEG, mouseMGI
 
 	cmd = 'select distinct h1._Marker_key ' + \
 		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
@@ -224,23 +227,23 @@ def runQueries():
 
 	##
 
-	# human locus link ids
+	# human entrezgene ids
 
 	results = db.sql('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.humanMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ', 'auto')
+		'and a._LogicalDB_key = 55 ', 'auto')
 	for r in results:
-		humanLL[r['humanMarkerKey']] = r['accID']
+		humanEG[r['humanMarkerKey']] = r['accID']
 
-	# mouse locus link ids
+	# mouse entrezgene ids
 
 	results = db.sql('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.mouseMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ', 'auto')
+		'and a._LogicalDB_key = 55 ', 'auto')
 	for r in results:
-		mouseLL[r['mouseMarkerKey']] = r['accID']
+		mouseEG[r['mouseMarkerKey']] = r['accID']
 
 	# mouse MGI 
 
@@ -293,13 +296,13 @@ def processSort1(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Chromosome)'
 	reportName = REPORTNAME + '1'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human LocusLink ID', 30))
+	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
@@ -309,7 +312,7 @@ def processSort1(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('  Mouse cM', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse LocusLink ID', 30))
+	fp.write(string.ljust('Mouse EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
@@ -321,7 +324,7 @@ def processSort1(results):
 
 	fp.write(string.ljust('---------', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('-------------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
@@ -331,7 +334,7 @@ def processSort1(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('  --------', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('-------------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
@@ -376,8 +379,8 @@ def processSort1(results):
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -391,8 +394,8 @@ def processSort1(results):
 		fp.write(string.ljust(r['mouseCm'], 10))
 		fp.write(SPACE)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -412,8 +415,8 @@ def processSort2(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Mouse Chromosome)'
 	reportName = REPORTNAME + '2'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
@@ -422,13 +425,13 @@ def processSort2(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse cM', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse LocusLink ID', 30))
+	fp.write(string.ljust('Mouse EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human LocusLink ID', 30))
+	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
@@ -444,13 +447,13 @@ def processSort2(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('-------------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('-------------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
@@ -470,8 +473,8 @@ def processSort2(results):
 		fp.write(string.ljust(r['mouseCm'], 10))
 		fp.write(SPACE)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -481,8 +484,8 @@ def processSort2(results):
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -503,11 +506,11 @@ def processSort3(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Symbol)'
 	reportName = REPORTNAME + '3'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
-	fp.write(string.ljust('Human LocusLink ID', 30))
+	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
@@ -515,7 +518,7 @@ def processSort3(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse LocusLink ID', 30))
+	fp.write(string.ljust('Mouse EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
@@ -529,7 +532,7 @@ def processSort3(results):
 	fp.write(SPACE)
 	fp.write(CRT)
 
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('-------------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
@@ -537,7 +540,7 @@ def processSort3(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('----------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('-------------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
@@ -554,8 +557,8 @@ def processSort3(results):
 	count = 0
 
 	for r in results:
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -567,8 +570,8 @@ def processSort3(results):
 		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -593,13 +596,13 @@ def processSort4(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Mouse Symbol)'
 	reportName = REPORTNAME + '4'
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse LocusLink ID', 30))
+	fp.write(string.ljust('Mouse EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
@@ -609,7 +612,7 @@ def processSort4(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Band', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human LocusLink ID', 30))
+	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
@@ -621,7 +624,7 @@ def processSort4(results):
 
 	fp.write(string.ljust('----------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('-------------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
@@ -631,7 +634,7 @@ def processSort4(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 10))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('-------------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
@@ -647,8 +650,8 @@ def processSort4(results):
 		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
 
-		if mouseLL.has_key(r['mouseMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -662,8 +665,8 @@ def processSort4(results):
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseBand']), 10))
 		fp.write(SPACE)
 
-		if humanLL.has_key(r['humanMarkerKey']):
-			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]), 30))
 		else:
 			fp.write(string.ljust('', 30))
 
@@ -706,3 +709,4 @@ else:
 	processSort3(r3)
 	processSort4(r4)
 
+db.useOneConnection(0)
