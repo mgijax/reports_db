@@ -48,11 +48,11 @@ import reportlib
 currentReport = 'Nomenclature-current.html'
 
 # remove current report link if it exists
-if os.path.isfile('%s/%s' % (os.environ['FTPREPORTDIR'], currentReport)):
-	os.remove('%s/%s' % (os.environ['FTPREPORTDIR'], currentReport))
+if os.path.isfile('%s/%s' % (os.environ['FTPREPORTDIR2'], currentReport)):
+	os.remove('%s/%s' % (os.environ['FTPREPORTDIR2'], currentReport))
 
 # move existing Nomen reports to the archive
-os.system('mv %s/Nomenclature-*.html %s/archive/nomen' % (os.environ['FTPREPORTDIR'], os.environ['FTPREPORTDIR']))
+os.system('mv %s/Nomenclature-*.html %s/archive/nomen' % (os.environ['FTPREPORTDIR2'], os.environ['FTPREPORTDIR2']))
 
 if len(sys.argv) > 1:
 	reportName = 'Nomenclature-' + sys.argv[1]
@@ -68,7 +68,7 @@ results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (current
 edate = results[0]['']
 
 title = 'Updates to Mouse Nomenclature from %s to %s' % (bdate, edate)
-fp = reportlib.init(reportName, title, os.environ['FTPREPORTDIR'], isHTML = 1)
+fp = reportlib.init(reportName, title, os.environ['FTPREPORTDIR2'], isHTML = 1)
 
 fp.write('J:23000 generally indicates gene family nomenclature revision event.\n\n')
 
@@ -187,6 +187,6 @@ reportlib.finish_nonps(fp, isHTML = 1)	# non-postscript file
 
 # re-create a symbolic link between the new file and the current file
 
-os.chdir(os.environ['FTPREPORTDIR'])
+os.chdir(os.environ['FTPREPORTDIR2'])
 os.symlink(reportName + '.html', currentReport)
 
