@@ -46,22 +46,29 @@ cmds.append('select a.accID, a._Object_key ' + \
 	'where a._MGIType_key = 1 ' + \
 	'and a._LogicalDB_key = 1 ' + \
 	'and a.prefixPart = "MGI:" ' + \
-	'and a._LogicalDB_key = 1')
+	'and a._LogicalDB_key = 1 ' + \
+	'and a.preferred = 1')
 
 cmds.append('create unique index index_object_key on #refs(_Object_key)')
 
-cmds.append('select r.accID, pubMedID = b.accID ' + \
-	'from #refs r, ACC_Accession b ' + \
+cmds.append('select r.accID, pubMedID = b.accID, jnum = a.accID ' + \
+	'from #refs r, ACC_Accession b, ACC_Accession a ' + \
 	'where r._Object_key = b._Object_key ' + \
 	'and b._MGIType_key = 1 ' + \
-	'and b._LogicalDB_key = 29 ')
+	'and b._LogicalDB_key = 29 ' + \
+	'and r._Object_key = a._Object_key ' + \
+	'and a._MGIType_key = 1 ' + \
+	'and a._LogicalDB_key = 1 ' + \
+	'and a.prefixPart = "J:" ' + \
+	'and a.preferred = 1')
 
 results = db.sql(cmds, 'auto')
 
 for r in results[-1]:
 
 	fp.write(r['accID'] + TAB)
-	fp.write(mgi_utils.prvalue(r['pubMedID']) + CRT)
+	fp.write(r['pubMedID'] + TAB)
+	fp.write(r['jnum'] + CRT)
 
 reportlib.finish_nonps(fp)
 
