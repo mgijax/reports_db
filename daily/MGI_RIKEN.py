@@ -50,9 +50,11 @@ cmds = []
 
 cmds.append('select a1._Object_key, cloneID = a1.accID, mgiID = a2.accID ' + \
 	'into #riken ' + \
-	'from PRB_Acc_View a1, PRB_Acc_View a2 ' + \
-	'where a1._LogicalDB_key = 26 ' + \
+	'from ACC_Accession a1, ACC_Accession a2 ' + \
+	'where a1._MGIType_key = 3 ' + \
+	'and a1._LogicalDB_key = 26 ' + \
 	'and a1._Object_key = a2._Object_key ' + \
+	'and a2._MGIType_key = 3 ' + \
 	'and a2._LogicalDB_key = 1 ' + \
 	'and a2.prefixPart = "MGI:" ' + \
 	'and a2.preferred = 1')
@@ -60,8 +62,9 @@ cmds.append('select a1._Object_key, cloneID = a1.accID, mgiID = a2.accID ' + \
 cmds.append('create nonclustered index idx_key on #riken(_Object_key)')
 
 cmds.append('select r._Object_key, a.accID ' + \
-    'from #riken r, PRB_Acc_View a ' + \
+    'from #riken r, ACC_Accession a ' + \
     'where r._Object_key = a._Object_key ' + \
+    'and a._MGIType_key = 3 ' + \
     'and a._LogicalDB_key = 9')
 
 # problem sequences

@@ -64,7 +64,7 @@ cmds.append('select m._Marker_key, mgiID = a.accID, m.symbol, m.name, m.chromoso
       'and not exists (select 1 from ACC_Accession a ' +
       'where m._Marker_key = a._Object_key ' +
       'and a._MGIType_key = 2) ' +
-      'order by m.symbol, m.mgiID')
+      'order by m.symbol, a.accID')
 
 # Retrieve any Nucleotide Seq IDs which exist for Markers
 
@@ -75,7 +75,7 @@ cmds.append('select m._Marker_key, a.accID ' +
         'and a._LogicalDB_key = 9 ' +
 	'order by m._Marker_key, a.accID')
 
-cmds.append('select m.* from #markers order by m.symbol, m.mgiID')
+cmds.append('select * from #markers order by symbol, mgiID')
 
 results = db.sql(cmds, 'auto')
 
@@ -85,7 +85,7 @@ for r in results[-2]:
 	seqIDs[r['_Marker_key']] = []
     seqIDs[r['_Marker_key']].append(r['accID'])
 
-for r in results[1]:
+for r in results[-1]:
 
 	fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
 	         mgi_utils.prvalue(r['name']) + reportlib.TAB + \
