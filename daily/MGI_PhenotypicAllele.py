@@ -44,6 +44,8 @@ import reportlib
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 fp.write('#\n#Allele symbols are usually of the form xxx<yy>, where the <> enclose the part of the symbol that is superscripted.\n#\n')
+fp.write('#Transgene insertions, with symbols of the form Tg(aaa)##bbb, are included in this listing, but notably have no corresponding gene marker.\n#\n')
+fp.write('#For details of nomenclature rules, see http://www.informatics.jax.org/mgihome/nomen/index.shtml\n#\n')
 
 cmds = []
 
