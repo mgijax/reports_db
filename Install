@@ -16,8 +16,8 @@ source Configuration
 sed "s/ftp.informatics.jax.org/$FTPURL/" index.html > index.html.new
 mv -f index.html.new index.html
 
-foreach i (`ls index.html`)
-	cp -r $i $FTPREPORTDIR
+foreach i (index.html)
+	rcp -r $i $FTPREPORTDIR
 end
 
 chmod 444 Configuration* HISTORY *.html
