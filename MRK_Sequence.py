@@ -104,7 +104,10 @@ for r in results:
         	sequence = sequence + r['accID']
 
 	if r['type'] == 'U':
-        	unigene = r['accID']
+		if len(unigene) > 0:
+			unigene = unigene + ' '
+
+        	unigene = unigene + r['accID']
 
 fp.write(sequence + reportlib.TAB)	# Don't forget to write out the last one
 fp.write(unigene + reportlib.CRT)	# Don't forget to write out the last one
