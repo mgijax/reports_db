@@ -31,7 +31,7 @@ import os
 import mgdlib
 import reportlib
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['FTPREPORTDIR'])
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 command = 'select symbol, mgiID ' + \
 	  'from MRK_Mouse_View ' + \

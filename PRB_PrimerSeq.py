@@ -37,7 +37,7 @@ TAB = reportlib.TAB
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['FTPREPORTDIR'])
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmd = 'select p.name, p.primer1sequence, p.primer2sequence, p.productSize, m.symbol, p.mgiID ' + \
 	'from PRB_Primer_View p, PRB_Marker_View m ' + \

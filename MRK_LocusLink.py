@@ -34,7 +34,7 @@ import string
 import mgdlib
 import reportlib
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['FTPREPORTDIR'])
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmd = 'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.offset,10,2), m.chromosome, a.accID, isPrimary = 1 ' + \
   'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Acc_View a ' + \

@@ -39,7 +39,7 @@ import reportlib
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
 
-fp = reportlib.init(sys.argv[0], "Alternate Transcripts Report", os.environ['FTPREPORTDIR'])
+fp = reportlib.init(sys.argv[0], "Alternate Transcripts Report", os.environ['REPORTOUTPUTDIR'])
 fp.write(
 '''
 For the past 10 years, MGI editorial staff have attached a standard
