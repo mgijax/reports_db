@@ -11,9 +11,6 @@
 # Usage:
 #       MRK_SwissProt.py
 #
-# Generated from:
-#       Editing Interface Nightly Reports
-#
 # Used by:
 #       Those establishing relationships between MGI Markers
 #	and Protein Sequences in SWISS-PROT.

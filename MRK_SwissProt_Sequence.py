@@ -12,9 +12,6 @@
 # Usage:
 #       MRK_SwissProt_Sequence.py
 #
-# Generated from:
-#       Editing Interface Nightly Reports
-#
 # Used by:
 #       Swiss-Prot - Amos Bairoch - TR 444
 #

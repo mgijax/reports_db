@@ -4,9 +4,6 @@
 #
 # TR 830 - Recent Nomenclature Events Report in HTML format
 #
-# Report:
-#       template for creating Python reports
-#
 # Usage:
 #       MRK_NomenUpdates.py
 #

@@ -11,9 +11,6 @@
 # Usage:
 #       MRK_Sequence.py
 #
-# Generated from:
-#       Editing Interface Nightly Reports
-#
 # Used by:
 #       Those establishing relationships between MGI Markers
 #	and Nucleotide Sequences.

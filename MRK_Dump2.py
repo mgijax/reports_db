@@ -11,9 +11,6 @@
 # Usage:
 #       MRK_Dump2.py
 #
-# Generated from:
-#       Editing Interface Nightly Reports
-#
 # Used by:
 # 	Stan Attenberger at sea@ornl.gov; 
 # 	using Java applet to display deletions 

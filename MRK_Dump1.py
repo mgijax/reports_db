@@ -11,9 +11,6 @@
 # Usage:
 #       MRK_Dump1.py
 #
-# Generated from:
-#       Editing Interface Nightly Reports
-#
 # Used by:
 #	Those who want to create WWW links to MGI Marker details.
 #

@@ -10,9 +10,6 @@
 # Usage:
 #       MRK_LocusLink.py
 #
-# Generated from:
-#       Editing Interface Nightly Reports
-#
 # Used by:
 # 	TR 1283 - Donna Maglott at NCBI for LocusLink
 #
