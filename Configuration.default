@@ -14,10 +14,10 @@ setenv REPORTINSTALLDIR		/usr/local/mgi/reports_db
 setenv REPORTOUTPUTDIR		$REPORTINSTALLDIR/output
 
 # FTP report directory
-setenv FTPREPORTDIR		/export/l1/ftp/pub/informatics/reports
+setenv FTPREPORTDIR		/export/gondor/ftp/pub/informatics/reports
 
 # MGI Feed FTP report directory
-setenv MGIFEEDFTPDIR		/export/l1/ftp/private/mgifeed
+setenv MGIFEEDFTPDIR		/export/gondor/ftp/private/mgifeed
 
 # SYBASE
 setenv SYBASE			/opt/sybase/12.5
@@ -32,7 +32,7 @@ setenv DBUTILITIESPATH		/usr/local/mgi/dbutils/mgidbutilities
 set path = ($DBUTILITIESPATH/bin $path $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)
 
 # Database Server
-setenv DBSERVER MGD
+setenv DBSERVER PROD_MGI
 setenv DSQUERY ${DBSERVER}
 
 # MGD Database
