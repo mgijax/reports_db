@@ -37,7 +37,6 @@ SPACE = reportlib.SPACE
 
 reportTitle = 'Human and Mouse Orthology with Human OMIM IDs'
 	
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], reportTitle, os.environ['REPORTOUTPUTDIR'])
 	
 fp.write(string.ljust('Mouse MGI Acc ID', 30))
@@ -128,5 +127,4 @@ for r in results:
 fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 reportlib.trailer(fp)
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)
 

@@ -48,7 +48,6 @@ import reportlib
 # Main
 #
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 # all official/interim mouse markers that have at least one GenBank ID
@@ -162,4 +161,3 @@ for r in results:
 	fp.write(reportlib.CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

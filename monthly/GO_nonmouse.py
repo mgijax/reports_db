@@ -46,8 +46,6 @@ CRT = reportlib.CRT
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-db.useOneConnection(1)
-
 cmds = []
 cmds.append('select a._Term_key, a.term, termID = a.accID, ' + \
 	'm.symbol, m._Marker_key, markerID = ma.accID, ' + \
@@ -128,5 +126,4 @@ for r in results:
 	fp.write(CRT)
 	
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)
 

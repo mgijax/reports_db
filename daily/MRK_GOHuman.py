@@ -59,8 +59,6 @@ PAGE = reportlib.PAGE
 # Main
 #
 
-db.useOneConnection(1)
-
 fp = reportlib.init("MRK_GOHuman.rpt", printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 # all mouse genes with a human ortholog
@@ -211,5 +209,3 @@ for r in results:
 	fp.write(CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
-
-db.useOneConnection(0)

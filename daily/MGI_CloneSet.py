@@ -45,8 +45,6 @@ CRT = reportlib.CRT
 # Main
 #
 
-db.useOneConnection(1)
-
 l1 = string.split(sys.argv[1], ',')
 lKeys = []
 for l in l1:
@@ -60,14 +58,12 @@ fp = reportlib.init('MGI_CloneSet_' + reportName[0], outputdir = os.environ['REP
 # get all clones
 
 print 'query 1 begin...%s' % (mgi_utils.date())
-cmds = []
-cmds.append('select pa._Object_key, pa._LogicalDB_key ' + \
+db.sql('select pa._Object_key, pa._LogicalDB_key ' + \
 	'into #clone1 ' + \
 	'from ACC_Accession pa ' + \
 	'where pa._MGIType_key = 3 ' + \
-	'and pa._LogicalDB_key = %s' % (lKeys[0]))
-cmds.append('create index idx1 on #clone1(_Object_key)')
-db.sql(cmds, None)
+	'and pa._LogicalDB_key = %s' % (lKeys[0]), None)
+db.sql('create index idx1 on #clone1(_Object_key)', None)
 
 for l in lKeys[1:]:
 
@@ -87,25 +83,21 @@ print 'query 1 end...%s' % (mgi_utils.date())
 # grab logical DB name
 
 print 'query 2 begin...%s' % (mgi_utils.date())
-cmds = []
-cmds.append('select n._Object_key, db = ldb.name ' + \
+db.sql('select n._Object_key, db = ldb.name ' + \
 	'into #clone2 ' + \
 	'from #clone1 n, ACC_LogicalDB ldb ' + \
-	'where n._LogicalDB_key = ldb._LogicalDB_key')
-cmds.append('create index idx1 on #clone2(_Object_key)')
-db.sql(cmds, None)
+	'where n._LogicalDB_key = ldb._LogicalDB_key', None)
+db.sql('create index idx1 on #clone2(_Object_key)', None)
 print 'query 2 end...%s' % (mgi_utils.date())
 
 # grab all associated markers
 
 print 'query 3 begin...%s' % (mgi_utils.date())
-cmds = []
-cmds.append('select n._Object_key, pm._Marker_key ' + \
+db.sql('select n._Object_key, pm._Marker_key ' + \
 	'into #clone3 ' + \
 	'from #clone2 n, PRB_Marker pm ' + \
-	'where n._Object_key = pm._Probe_key')
-cmds.append('create index idx1 on #clone3(_Marker_key)')
-db.sql(cmds, None)
+	'where n._Object_key = pm._Probe_key', None)
+db.sql('create index idx1 on #clone3(_Marker_key)', None)
 print 'query 3 end...%s' % (mgi_utils.date())
 
 # grab marker symbol, accID
@@ -163,5 +155,4 @@ for r in results:
 		 r['db'] + CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)
 

@@ -102,7 +102,7 @@ for r in results:
 		 r['name'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
-fp.close
+fp.close()
 
 #
 # species
@@ -120,7 +120,7 @@ for r in results:
 		 r['latinName'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
-fp.close
+fp.close()
 
 #
 # allele_type
@@ -137,7 +137,7 @@ for r in results:
 		 r['alleleType'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
-fp.close
+fp.close()
 
 #
 # allele_cellline
@@ -155,7 +155,7 @@ for r in results:
 		 `r['_Strain_key']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
-fp.close
+fp.close()
 
 #
 # allele_inheritance_mode
@@ -172,7 +172,7 @@ for r in results:
 		 r['mode'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
-fp.close
+fp.close()
 
 #
 # marker
@@ -308,9 +308,9 @@ for r in results[5]:
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp1.close
-fp2.close
-fp3.close
+fp1.close()
+fp2.close()
+fp3.close()
 
 #
 # allele
@@ -415,9 +415,9 @@ for r in results[3]:
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp1.close
-fp2.close
-fp3.close
+fp1.close()
+fp2.close()
+fp3.close()
 
 #
 # strain.bcp
@@ -559,13 +559,13 @@ for r in results[8]:
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp1.close
-fp2.close
-fp3.close
-fp4.close
-fp5.close
-fp6.close
-fp7.close
+fp1.close()
+fp2.close()
+fp3.close()
+fp4.close()
+fp5.close()
+fp6.close()
+fp7.close()
 
 db.useOneConnection(0)
 

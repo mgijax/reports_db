@@ -114,11 +114,9 @@ def processOrganism(organismKey):
 #
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
-db.useOneConnection(1)
 
 for organismKey in ['1', '2', '40']:
     processOrganism(organismKey)
 
-db.useOneConnection(0)
 reportlib.finish_nonps(fp)
 

@@ -83,6 +83,11 @@ def createDict(results, keyField, valueField):
 #      #
 ########
 
+####################
+# Open report file #
+####################
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+
 #################################################################
 # Get mouse to human orthologous marker pair's symbols and keys #
 # and the Phenoslim IDs associated to the mouse markers and     #
@@ -156,11 +161,6 @@ mpheno = createDict(results, 'mouseKey', 'accID')
 # data for creating the desired report                          #
 #################################################################
 results = db.sql('select * from #homology order by humanSym', 'auto')
-
-####################
-# Open report file #
-####################
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 ############################
 # Process db query results #

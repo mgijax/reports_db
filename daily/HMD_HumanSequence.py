@@ -54,7 +54,6 @@ PAGE = reportlib.PAGE
 # Main
 #
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 
@@ -217,4 +216,3 @@ for r in results:
 	fp.write(CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
-db.useOneConnection(0)
