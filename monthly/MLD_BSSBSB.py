@@ -76,7 +76,7 @@ cmds.append('select e.*, m.symbol ' + \
 'where e._Expt_key = em._Expt_key ' + \
 'and em._Marker_key = m._Marker_key')
 
-cmds.append('select e.*, b.jnumID, citation = b.authors + " " + b.title + b.citation ' + \
+cmds.append('select e.*, b.jnumID, b.authors, b.title, b.citation ' + \
 'from #expts3 e, BIB_All_View b ' + \
 'where e._Refs_key = b._Refs_key ' + \
 'order by b.jnumID, e._Expt_key, e.sequenceNum')
@@ -104,7 +104,9 @@ for r in results[4]:
 		prevExpt = r['_Expt_key']
 
 		fp.write(r['jnumID'] + TAB)
-		fp.write(r['citation'] + TAB)
+		fp.write(r['authors'] + SPACE +
+			 r['title'] + SPACE +
+			 r['citation'] + TAB)
 
 	if not r['symbol'] in markers:
 		markers.append(r['symbol'])
