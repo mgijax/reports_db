@@ -1,3 +1,11 @@
+TAG: reports_db-20-0-6
+DATE: 05/19/2004
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) convert ???_Acc_View to ACC_Accession
+b) PRB_CloneSet*
+
 TAG: reports_db-20-0-5
 DATE: 05/14/2004
 STAFF: lec
