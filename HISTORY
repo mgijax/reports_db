@@ -2,7 +2,9 @@ TAG: reports_db-3-0-3
 DATE: 06/29/2000
 STAFF: lec
 RELEASE: A
-CHANGES: TR 1734; added PRB_ESTMapped.rpt
+CHANGES: 
+1) TR 1734; added PRB_ESTMapped.rpt
+2) added system_docs & README
 
 TAG: reports_db-3-0-2
 DATE: 06/27/2000
