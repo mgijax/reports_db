@@ -42,10 +42,10 @@ import reportlib
 # Main
 #
 
+db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmds = []
-
 cmds.append('select distinct gdbSymbol = m1.symbol, gdbKey = m1._Marker_key, ' + \
             'mgiSymbol = m2.symbol, mgiName = m2.name, mgiKey = m2._Marker_key ' + \
             'into #homology ' + \
@@ -60,41 +60,40 @@ cmds.append('select distinct gdbSymbol = m1.symbol, gdbKey = m1._Marker_key, ' +
             'and hm2._Marker_key = m2._Marker_key ' + \
             'and m2._Organism_key = 1')
 
-cmds.append('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
+cmds.append('create index idx1 on #homology(gdbKey)')
+cmds.append('create index idx2 on #homology(mgiKey)')
+db.sql(cmds, None)
+
+results = db.sql('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
 	    'where h.gdbKey = a._Object_key ' + \
 	    'and a._MGIType_key = 2 ' + \
 	    'and a.prefixPart = "GDB:" ' + \
 	    'and a._LogicalDB_key = 2 ' + \
-	    'and a.preferred = 1')
-
-cmds.append('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
-	    'where h.mgiKey = a._Object_key ' + \
-	    'and a._MGIType_key = 2 ' + \
-	    'and a.prefixPart = "MGI:" and a._LogicalDB_key = 1 and a.preferred = 1')
-
-cmds.append('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
-	    'where h.gdbKey = a._Object_key ' + \
-	    'and a._MGIType_key = 2 ' + \
-	    'and a._LogicalDB_key = 24')
-
-cmds.append('select * from #homology order by mgiSymbol')
-
-results = db.sql(cmds, 'auto')
-
+	    'and a.preferred = 1', 'auto')
 gdb = {}
-for r in results[1]:
+for r in results:
 	gdb[r['_Object_key']] = r['accID']
 
+
+results = db.sql('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
+	    'where h.mgiKey = a._Object_key ' + \
+	    'and a._MGIType_key = 2 ' + \
+	    'and a.prefixPart = "MGI:" and a._LogicalDB_key = 1 and a.preferred = 1', 'auto')
 mgi = {}
-for r in results[2]:
+for r in results:
 	mgi[r['_Object_key']] = r['accID']
 
+
+results = db.sql('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
+	    'where h.gdbKey = a._Object_key ' + \
+	    'and a._MGIType_key = 2 ' + \
+	    'and a._LogicalDB_key = 24', 'auto')
 ll = {}
-for r in results[3]:
+for r in results:
 	ll[r['_Object_key']] = r['accID']
 
-
-for r in results[4]:
+results = db.sql('select * from #homology order by mgiSymbol', 'auto')
+for r in results:
 
 	if mgi.has_key(r['mgiKey']):
 
@@ -114,4 +113,4 @@ for r in results[4]:
 		fp.write (reportlib.CRT)
 
 reportlib.finish_nonps(fp)
-
+db.useOneConnection(0)
