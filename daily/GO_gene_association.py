@@ -149,7 +149,9 @@ for r in results[3]:
 		# substitute | for ", " in inferredFrom
 
 		if r['inferredFrom'] != None:
-			inferredFrom = regsub.gsub(', ', '|', r['inferredFrom'])
+			inferredFrom = regsub.gsub(',', '|', r['inferredFrom'])
+			inferredFrom = regsub.gsub(';', '|', r['inferredFrom'])
+			inferredFrom = regsub.gsub(' ', '', r['inferredFrom'])
 		else:
 			inferredFrom = r['inferredFrom']
 
