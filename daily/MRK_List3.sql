@@ -1,7 +1,7 @@
 set nocount on
 go
 
-select c.sequenceNum, a.accID, m.chromosome, o.offset, m.symbol, m.name, markerType = t.name
+select c.sequenceNum, a.accID, m.chromosome, o.offset, m.symbol, name = substring(m.name,1,150), markerType = t.name
 into #output
 from MRK_Marker m, MRK_Chromosome c, MRK_Acc_View a, MRK_Offset o, MRK_Types t
 where m._Species_key = 1
@@ -14,7 +14,7 @@ and m._Marker_key = o._Marker_key
 and o.source = 0
 and m._Marker_Type_key = t._Marker_Type_key
 union
-select c.sequenceNum, null, m.chromosome, o.offset, m.symbol, m.name, markerType = t.name
+select c.sequenceNum, null, m.chromosome, o.offset, m.symbol, name = substring(m.name,1,150), markerType = t.name
 from MRK_Marker m, MRK_Chromosome c, MRK_Offset o, MRK_Types t
 where m._Species_key = 1
 and m._Marker_Status_key = 2

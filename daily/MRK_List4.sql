@@ -9,7 +9,7 @@ select a.accID "MGI Accession ID", m.chromosome "Chr",
         when o.offset = -999.0 then "       N/A"
         when o.offset = -1.0 then "  syntenic"
         end
-, m.symbol "Symbol", m.name "Name", t.name "Type"
+, m.symbol "Symbol", substring(m.name,1,150) "Name", t.name "Type"
 from MRK_Marker m, MRK_Chromosome c, MRK_Acc_View a, MRK_Offset o, MRK_Types t
 where m._Species_key = 1
 and m._Marker_Status_key = 1
