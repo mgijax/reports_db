@@ -836,6 +836,28 @@ def references():
     fp.close()
 
     #
+    # accession_reference.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'accession_reference.bcp', 'w')
+    results = db.sql('select a.accID, LogicalDB = l.name, a._Object_key, a.preferred, ' + \
+	    'cdate = convert(char(20), a.creation_date, 100), ' + \
+	    'mdate = convert(char(20), a.modification_date, 100) ' + \
+	    'from #references r, ACC_Accession a, ACC_LogicalDB l ' + \
+	    'where r._Refs_key = a._Object_key ' + \
+	    'and a._MGIType_key = 1 ' + \
+	    'and a._LogicalDB_key = l._LogicalDB_key', 'auto')
+
+    for r in results:
+	    fp.write(r['accID'] + TAB + \
+		     r['LogicalDB'] + TAB + \
+		     `r['_Object_key']` + TAB + \
+		     `r['preferred']` + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
     # genotype_mpt_reference.bcp
     #
 
