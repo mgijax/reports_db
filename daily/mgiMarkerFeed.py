@@ -160,6 +160,12 @@ fp3 = open(OUTPUTDIR + 'accession_marker.bcp', 'w')
 
 cmds = []
 
+#
+# select all mouse markers which have a preferred MGI Accession ID.
+# this will include any splits (since the MGI Acc ID stays with 
+# the split symbol).
+#
+
 cmds.append('select m._Marker_key into #markers ' + \
 	'from MRK_Marker m ' + \
 	'where m._Species_key = 1 ' + \
@@ -169,6 +175,10 @@ cmds.append('select m._Marker_key into #markers ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a.preferred = 1) ')
 
+#
+# select data fields for marker.bcp
+#
+
 cmds.append('select m._Marker_key, m._Species_key, m._Marker_Type_key, s.status, ' + \
 	'm.symbol, m.name, m.chromosome, m.cytogeneticOffset, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
@@ -177,12 +187,21 @@ cmds.append('select m._Marker_key, m._Species_key, m._Marker_Type_key, s.status,
 	'where k._Marker_key = m._Marker_key ' + \
 	'and m._Marker_Status_key = s._Marker_Status_key ')
 
+#
+# select data fields for marker_label.bcp
+#
+
 cmds.append('select m._Marker_key, m.label, m.labelType, s.status, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
 	'from #markers k, MRK_Label m, MRK_Status s ' + \
 	'where k._Marker_key = m._Marker_key ' + \
 	'and m._Marker_Status_key = s._Marker_Status_key')
+
+#
+# select data fields for accession_marker.bcp
+# select MGI Accession IDs only
+#
 
 cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
@@ -237,9 +256,18 @@ fp3 = open(OUTPUTDIR + 'accession_allele.bcp', 'w')
 
 cmds = []
 
+#
+# select all alleles with a status of "approved"
+# all other statuses are private/confidential alleles
+#
+
 cmds.append('select m._Allele_key into #alleles ' + \
 	'from ALL_Allele m ' + \
 	'where m._Allele_Status_key = 4 ')
+
+#
+# select data fields for allele.bcp
+#
 
 cmds.append('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._CellLine_key, ' + \
 	'm.status, m.strain, m.symbol, m.name, ' + \
@@ -247,6 +275,10 @@ cmds.append('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_ke
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
 	'from #alleles a, ALL_Allele_View m ' + \
 	'where a._Allele_key = m._Allele_key ')
+
+#
+# select data fields for allele_label.bcp
+#
 
 cmds.append('select m._Allele_key, m.name, labelType = "N", m.status, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
@@ -259,6 +291,10 @@ cmds.append('select m._Allele_key, m.name, labelType = "N", m.status, ' + \
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
 	'from #alleles a, ALL_Allele_View m ' + \
 	'where a._Allele_key = m._Allele_key ')
+
+#
+# select data fields for accession_allele.bcp
+#
 
 cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
@@ -302,6 +338,3 @@ fp1.close
 fp2.close
 fp3.close
 
-#
-# nightly_reports.sh will compress and tar up the files
-#
