@@ -16,6 +16,7 @@
 #		MGI ID of Gene
 #		Gene Symbol
 #		RefSeq ID of Gene
+#		MP IDs of PhenoSlim annotations
 #
 # Usage:
 #       MGI_PhenotypicAllele.py
@@ -99,25 +100,42 @@ cmds.append('select s._Marker_key, a.accID ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 27 ')
 
+# Retrieve MP IDs for PhenoSlim annotations
+
+cmds.append('select distinct s._Marker_key, a.accID ' + \
+	'from #alleles s, GXD_AlleleGenotype ga, VOC_Annot na, ACC_Accession a ' + \
+	'where s._Marker_key = ga._Marker_key ' + \
+	'and ga._Genotype_key = na._Object_key ' + \
+	'and na._AnnotType_key = 1001 ' + \
+	'and na._Term_key = a._Object_key ' + \
+	'and a._MGIType_key = 13 ' + \
+	'and a.preferred = 1')
+
 cmds.append('select * from #alleles order by marker, symbol')
 
 results = db.sql(cmds, 'auto')
 
 amgiIDs = {}
-for r in results[-5]:
+for r in results[-6]:
 	amgiIDs[r['_Allele_key']] = r['accID']
 	
 mmgiIDs = {}
-for r in results[-4]:
+for r in results[-5]:
 	mmgiIDs[r['_Marker_key']] = r['accID']
 
 pubIDs = {}
-for r in results[-3]:
+for r in results[-4]:
 	pubIDs[r['_Allele_key']] = r['accID']
 	
 refIDs = {}
-for r in results[-2]:
+for r in results[-3]:
 	refIDs[r['_Marker_key']] = r['accID']
+	
+mpIDs = {}
+for r in results[-2]:
+	if not mpIDs.has_key(r['_Marker_key']):
+		mpIDs[r['_Marker_key']] = []
+	mpIDs[r['_Marker_key']].append(r['accID'])
 	
 for r in results[-1]:
 	fp.write(amgiIDs[r['_Allele_key']] + reportlib.TAB + \
@@ -138,6 +156,9 @@ for r in results[-1]:
 	if refIDs.has_key(r['_Marker_key']):
 		fp.write(refIDs[r['_Marker_key']])
 	fp.write(reportlib.TAB)
+
+	if mpIDs.has_key(r['_Marker_key']):
+		fp.write(string.join(mpIDs[r['_Marker_key']], ','))
 
 	fp.write(reportlib.CRT)
 
