@@ -50,6 +50,9 @@ $i >> ${LOG}
 end
 cd ..
 
+# remove old InParanoid reports
+rm -rf ${FTPREPORTDIR}/Mus-musculus_MGI*
+
 foreach i (${REPORTOUTPUTDIR}/*)
 rcp $i ${FTPREPORTDIR}
 end

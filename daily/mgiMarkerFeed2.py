@@ -66,6 +66,9 @@ import mgi_utils
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
+COLDELIM = "&=&"
+LINEDELIM = "\n#=#"
+
 OUTPUTDIR = os.environ['REPORTOUTPUTDIR'] + '/mgimarkerfeed2/'
 
 def strip_newline(s):
@@ -234,7 +237,8 @@ def vocabs():
     for r in results:
 	    key = r['_Term_key']
 
-	    fp.write(r['accID'] + TAB + \
+	    fp.write(`key` + TAB + \
+		     r['accID'] + TAB + \
 	             r['term'] + TAB)
 
             if notes.has_key(key):
@@ -512,12 +516,12 @@ def alleles():
 	    'and n._NoteType_key = nt._NoteType_key', 'auto')
 
     for r in results:
-	    fp.write(`r['_Allele_key']` + TAB + \
-		     r['noteType'] + TAB + \
-		     `r['sequenceNum']` + TAB + \
-		     r['note'] + TAB + \
-		     r['cdate'] + TAB + \
-		     r['mdate'] + CRT)
+	    fp.write(`r['_Allele_key']` + COLDELIM + \
+		     r['noteType'] + COLDELIM + \
+		     `r['sequenceNum']` + COLDELIM + \
+		     r['note'] + COLDELIM + \
+		     r['cdate'] + COLDELIM + \
+		     r['mdate'] + LINEDELIM)
     fp.close()
 
     #
@@ -869,12 +873,12 @@ def references():
 	'where g._AnnotEvidence_key = n._Object_key) ' + \
 	'order by g._Genotype_key ', 'auto')
     for r in results:
-	    fp.write(`r['_Annot_key']` + TAB + \
-		     `r['_Refs_key']` + TAB + \
-		     TAB + \
-		     TAB + \
-		     r['cdate'] + TAB + \
-		     r['mdate'] + CRT)
+	    fp.write(`r['_Annot_key']` + COLDELIM + \
+		     `r['_Refs_key']` + COLDELIM + \
+		     COLDELIM + \
+		     COLDELIM + \
+		     r['cdate'] + COLDELIM + \
+		     r['mdate'] + LINEDELIM)
 
     results = db.sql('select g._Refs_key, g._Genotype_key, g._Annot_key, g._AnnotEvidence_key, g.cdate, g.mdate, ' + \
 	'n.sequenceNum, n.note ' + \
@@ -882,12 +886,12 @@ def references():
 	'where g._AnnotEvidence_key = n._Object_key ' + \
 	'order by g._Genotype_key, g._AnnotEvidence_key, n.sequenceNum', 'auto')
     for r in results:
-	    fp.write(`r['_Annot_key']` + TAB + \
-		     `r['_Refs_key']` + TAB + \
-		     `r['sequenceNum']` + TAB + \
-		     r['note'] + TAB + \
-		     r['cdate'] + TAB + \
-		     r['mdate'] + CRT)
+	    fp.write(`r['_Annot_key']` + COLDELIM + \
+		     `r['_Refs_key']` + COLDELIM + \
+		     `r['sequenceNum']` + COLDELIM + \
+		     r['note'] + COLDELIM + \
+		     r['cdate'] + COLDELIM + \
+		     r['mdate'] + LINEDELIM)
     fp.close()
 
     #
