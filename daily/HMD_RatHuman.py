@@ -271,7 +271,7 @@ def processSort1(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Rat Chromosome)'
 	reportName = REPORTNAME + '1'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write(string.ljust('Rat Chr', 15))
@@ -372,7 +372,7 @@ def processSort2(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Human Chromosome)'
 	reportName = REPORTNAME + '2'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Human Chr', 15))
@@ -473,7 +473,7 @@ def processSort3(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Rat Symbol)'
 	reportName = REPORTNAME + '3'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Rat LocusLink ID', 30))
@@ -545,7 +545,7 @@ def processSort4(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Human Symbol)'
 	reportName = REPORTNAME + '4'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Human LocusLink ID', 30))
@@ -617,7 +617,7 @@ def processSort5(results):
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Rat Chromosome), tab-delimited'
 	reportName = REPORTNAME + '5'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write('Rat Chr' + TAB)
@@ -682,6 +682,7 @@ def processSort5(results):
 # Main
 #
 
+db.useOneConnection(1)
 sortOption = None
 
 if len(sys.argv) > 1:

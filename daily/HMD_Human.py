@@ -289,10 +289,11 @@ def printDataAttributes(fp, key):
 	else:
   		fp.write(bothCurated)
 
-def processSort1(results, fp):
+def processSort1(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Chromosome)'
 	reportName = REPORTNAME + '1'
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
 	fp.write(reportLegend + CRT + CRT)
 
@@ -405,11 +406,13 @@ def processSort1(results, fp):
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 	reportlib.trailer(fp)
+	reportlib.finish_nonps(fp)
 
-def processSort2(results, fp):
+def processSort2(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Mouse Chromosome)'
 	reportName = REPORTNAME + '2'
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
 	fp.write(reportLegend + CRT + CRT)
 	
@@ -494,11 +497,13 @@ def processSort2(results, fp):
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 	reportlib.trailer(fp)
+	reportlib.finish_nonps(fp)
 
-def processSort3(results, fp):
+def processSort3(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Symbol)'
 	reportName = REPORTNAME + '3'
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
 	fp.write(reportLegend + CRT + CRT)
 	
@@ -582,11 +587,13 @@ def processSort3(results, fp):
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 	reportlib.trailer(fp)
+	reportlib.finish_nonps(fp)
 
-def processSort4(results, fp):
+def processSort4(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Mouse Symbol)'
 	reportName = REPORTNAME + '4'
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], sqlOneConnection = 0)
 	
 	fp.write(reportLegend + CRT + CRT)
 	
@@ -671,16 +678,13 @@ def processSort4(results, fp):
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 	reportlib.trailer(fp)
+	reportlib.finish_nonps(fp)
 
 #
 # Main
 #
 
-fp1 = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
-fp2 = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
-fp3 = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
-fp4 = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
-
+db.useOneConnection(1)
 sortOption = None
 
 if len(sys.argv) > 1:
@@ -689,21 +693,16 @@ if len(sys.argv) > 1:
 r1, r2, r3, r4 = runQueries()
 
 if sortOption == '1':
-	processSort1(r1, fp1)
+	processSort1(r1)
 elif sortOption == '2':
-	processSort2(r2, fp2)
+	processSort2(r2)
 elif sortOption == '3':
-	processSort3(r3, fp3)
+	processSort3(r3)
 elif sortOption == '4':
-	processSort4(r4, fp4)
+	processSort4(r4)
 else:
-	processSort1(r1, fp1)
-	processSort2(r2, fp2)
-	processSort3(r3, fp3)
-	processSort4(r4, fp4)
-
-reportlib.finish_nonps(fp1)
-reportlib.finish_nonps(fp2)
-reportlib.finish_nonps(fp3)
-reportlib.finish_nonps(fp4)
+	processSort1(r1)
+	processSort2(r2)
+	processSort3(r3)
+	processSort4(r4)
 
