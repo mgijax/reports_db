@@ -150,8 +150,8 @@ for r in results[3]:
 
 		if r['inferredFrom'] != None:
 			inferredFrom = regsub.gsub(',', '|', r['inferredFrom'])
-			inferredFrom = regsub.gsub(';', '|', r['inferredFrom'])
-			inferredFrom = regsub.gsub(' ', '', r['inferredFrom'])
+			inferredFrom = regsub.gsub(';', '|', inferredFrom)
+			inferredFrom = regsub.gsub(' ', '', inferredFrom)
 		else:
 			inferredFrom = r['inferredFrom']
 
