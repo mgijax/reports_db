@@ -29,12 +29,14 @@
 #	17. strain.bcp
 #	18. strain_type.bcp
 #	19. strain_strain_type.bcp
-#	20. accession_strain.bcp
-#	21. strain_species.bcp
-#	22. reference.bcp
-#	23. genotype_mpt_reference.bcp
-#	24. allele_reference.cp
-#	25. marker_reference.cp
+#	20. strain_genotype.bcp
+#	21. accession_strain.bcp
+#	22. strain_species.bcp
+#	23. reference.bcp
+#	24. genotype_mpt_reference.bcp
+#	25. allele_reference.bcp
+#	26. marker_reference.bcp
+#	27. strain_reference.bcp
 #
 # Usage:
 #       mgiMarkerFeed2.py
@@ -584,6 +586,7 @@ def strains():
     # strain_strain_type.bcp
     # accession_strain.bcp
     # strain_species.bcp
+    # strain_genotype.bcp
     #
 
     #
@@ -725,6 +728,27 @@ def strains():
 		     r['mdate'] + CRT)
     fp.close()
 
+    #
+    # strain_genotype.bcp
+    #
+    
+    fp = open(OUTPUTDIR + 'strain_genotype.bcp', 'w')
+
+    results = db.sql('select p._Strain_key, p._Genotype_key, t.term, ' + \
+          'cdate = convert(char(20), p.creation_date, 100), ' + \
+          'mdate = convert(char(20), p.modification_date, 100) ' + \
+          'from #strains s, PRB_Strain_Genotype p, VOC_Term t ' + \
+          'where s._Strain_key = p._Strain_key ' + \
+          'and p._Qualifier_key = t._Term_key', 'auto')
+    
+    for r in results:
+            fp.write(`r['_Strain_key']` + TAB + \
+                     `r['_Genotype_key']` + TAB + \
+                     r['term'] + TAB + \
+                     r['cdate'] + TAB + \
+                     r['mdate'] + CRT)
+    fp.close()
+
 def genotypes():
 
 
@@ -817,6 +841,19 @@ def references():
 	    'and r._RefAssocType_key = rt._RefAssocType_key', None)
 
     #
+    # references annotated to Strains
+    #
+
+    db.sql('select r._Refs_key, r._Object_key, rt.assocType, ' + \
+            'cdate = convert(char(20), r.creation_date, 100), ' + \
+            'mdate = convert(char(20), r.modification_date, 100) ' + \
+            'into #strainreferences ' + \
+            'from #strains s, MGI_Reference_Assoc r, MGI_RefAssocType rt ' + \
+            'where s._Strain_key = r._Object_key ' + \
+            'and r._MGIType_key = 10 ' + \
+            'and r._RefAssocType_key = rt._RefAssocType_key', None)
+
+    #
     # references annotated to a Marker via the Genotype
     #
 
@@ -830,10 +867,12 @@ def references():
 
     db.sql('create index idx1 on #genoreferences(_Refs_key)', None)
     db.sql('create index idx1 on #allreferences(_Refs_key)', None)
+    db.sql('create index idx1 on #strainreferences(_Refs_key)', None)
     db.sql('create index idx1 on #mrkreferences(_Refs_key)', None)
 
     db.sql('select _Refs_key into #references from #genoreferences ' + \
 	    'union select distinct _Refs_key from #allreferences ' + \
+	    'union select distinct _Refs_key from #strainreferences ' + \
 	    'union select distinct _Refs_key from #mrkreferences', None)
     db.sql('create index idx1 on #references(_Refs_key)', None)
 
@@ -935,6 +974,21 @@ def references():
 		     r['assocType'] + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # strain_reference.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'strain_reference.bcp', 'w')
+
+    results = db.sql('select * from #strainreferences', 'auto')
+    for r in results:
+            fp.write(`r['_Object_key']` + TAB + \
+                     `r['_Refs_key']` + TAB + \
+                     r['assocType'] + TAB + \
+                     r['cdate'] + TAB + \
+                     r['mdate'] + CRT)
     fp.close()
 
     #
