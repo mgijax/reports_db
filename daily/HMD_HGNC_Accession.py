@@ -2,27 +2,24 @@
 
 '''
 #
-# GDB_Accession.py 11/16/98
+# HMD_HGNC_Accession.py
 #
 # Report:
-#       Tab-delimited file of MGI and GDB Markers and Accession numbers
-#	for existing Mouse/Human homologies.
+#       Tab-delimited file of MGI and HGNC Markers and Accession numbers
+#	for existing Mouse/Human orthologies.
 #
 # Usage:
-#       GDB_Accession.py
+#       HMD_HGNC_Accession.py
 #
 # Used by:
-#	The folks at GDB to provide HTML links from GDB Web detail pages
-#	to MGI Web detail pages by MGI or GDB Accession numbers.
-#	Report any changes in format/content to John Campbell (johnc@gdb.org).
 #
 # Notes:
 #
-# 1.  Read marker information into temp table
-# 2.  Load MGI and GDB Acc# into dictionaries
-# 3.  Sort temp file and process
-#
 # History:
+#
+# lec	01/04/2005
+#	- TR 6456; HGNC
+#	- TR 5939; LocusLink->EntrezGene
 #
 # lec	07/02/2002
 #	- TR 3855; add human LocusLink ID column
@@ -46,7 +43,7 @@ db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmds = []
-cmds.append('select distinct gdbSymbol = m1.symbol, gdbKey = m1._Marker_key, ' + \
+cmds.append('select distinct hgncSymbol = m1.symbol, hgncKey = m1._Marker_key, ' + \
             'mgiSymbol = m2.symbol, mgiName = m2.name, mgiKey = m2._Marker_key ' + \
             'into #homology ' + \
             'from HMD_Homology h1, HMD_Homology h2, ' + \
@@ -60,19 +57,18 @@ cmds.append('select distinct gdbSymbol = m1.symbol, gdbKey = m1._Marker_key, ' +
             'and hm2._Marker_key = m2._Marker_key ' + \
             'and m2._Organism_key = 1')
 
-cmds.append('create index idx1 on #homology(gdbKey)')
+cmds.append('create index idx1 on #homology(hgncKey)')
 cmds.append('create index idx2 on #homology(mgiKey)')
 db.sql(cmds, None)
 
 results = db.sql('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
-	    'where h.gdbKey = a._Object_key ' + \
+	    'where h.hgncKey = a._Object_key ' + \
 	    'and a._MGIType_key = 2 ' + \
-	    'and a.prefixPart = "GDB:" ' + \
-	    'and a._LogicalDB_key = 2 ' + \
+	    'and a._LogicalDB_key = 64 ' + \
 	    'and a.preferred = 1', 'auto')
-gdb = {}
+hgnc = {}
 for r in results:
-	gdb[r['_Object_key']] = r['accID']
+	hgnc[r['_Object_key']] = r['accID']
 
 
 results = db.sql('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
@@ -85,12 +81,12 @@ for r in results:
 
 
 results = db.sql('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
-	    'where h.gdbKey = a._Object_key ' + \
+	    'where h.hgncKey = a._Object_key ' + \
 	    'and a._MGIType_key = 2 ' + \
-	    'and a._LogicalDB_key = 24', 'auto')
-ll = {}
+	    'and a._LogicalDB_key = 55', 'auto')
+eg = {}
 for r in results:
-	ll[r['_Object_key']] = r['accID']
+	eg[r['_Object_key']] = r['accID']
 
 results = db.sql('select * from #homology order by mgiSymbol', 'auto')
 for r in results:
@@ -101,14 +97,14 @@ for r in results:
 	         	r['mgiSymbol'] + reportlib.TAB + \
 	         	r['mgiName'][0:50] + reportlib.TAB)
 
-		if gdb.has_key(r['gdbKey']):
-			fp.write(gdb[r['gdbKey']])
+		if hgnc.has_key(r['hgncKey']):
+			fp.write(hgnc[r['hgncKey']])
 
 		fp.write(reportlib.TAB + \
-	         	r['gdbSymbol'] + reportlib.TAB)
+	         	r['hgncSymbol'] + reportlib.TAB)
 
-		if ll.has_key(r['gdbKey']):
-			fp.write(ll[r['gdbKey']])
+		if eg.has_key(r['hgncKey']):
+			fp.write(eg[r['hgncKey']])
 
 		fp.write (reportlib.CRT)
 
