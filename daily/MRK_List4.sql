@@ -2,7 +2,7 @@ set nocount on
 go
 
 select m._Marker_key, m._Marker_Status_key, m._Marker_Type_key, 
-m.symbol, m.name = substring(name,1,150), m.chromosome, c.sequenceNum
+m.symbol, name = substring(name,1,150), m.chromosome, c.sequenceNum
 into #markers
 from MRK_Marker m, MRK_Chromosome c
 where m._Organism_key = 1

@@ -2,7 +2,7 @@ set nocount on
 go
 
 select m._Marker_key, m._Marker_Status_key, m._Marker_Type_key, 
-m.symbol, m.name = substring(name,1,150), m.chromosome, c.sequenceNum
+	m.symbol, name = substring(name,1,150), m.chromosome, c.sequenceNum
 into #markers
 from MRK_Marker m, MRK_Chromosome c
 where m._Organism_key = 1
@@ -35,12 +35,8 @@ create index idx2 on #markersAll(symbol)
 create index idx3 on #markersAll(sequenceNum)
 go
 
-print ""
-print "Genetic Marker List (sorted by chromosome/includes withdrawns)"
-print ""
-
-select a.accID "MGI Accession ID", m.chromosome "Chr", m.cmPosition "cM Position", 
-	m.symbol "Symbol", m.markerStatus "Status", m.name "Name", m.markerType "Type"
+select a.accID, m.chromosome, m.cmPosition, m.symbol, m.markerStatus, m.name, m.markerType, m.sequenceNum
+into #markersPrint
 from #markersAll m, ACC_Accession a
 where m._Marker_Status_key in (1, 3)
 and m._Marker_key = a._Object_key
@@ -49,9 +45,18 @@ and a.prefixPart = "MGI:"
 and a._LogicalDB_key = 1
 and a.preferred = 1
 union
-select null, m.chromosome, m.cmPosition, m.symbol, m.markerStatus, m.name, m.markerType
+select null, m.chromosome, m.cmPosition, m.symbol, m.markerStatus, m.name, m.markerType, m.sequenceNum
 from #markersAll m
 where m._Marker_Status_key = 2
 order by m.sequenceNum, m.symbol
+go
+
+print ""
+print "Genetic Marker List (sorted by chromosome/includes withdrawns)"
+print ""
+
+select accID "MGI Accession ID", chromosome "Chr", cmPosition "cM Position", 
+	symbol "Symbol", markerStatus "Status", name "Name", markerType "Type"
+from #markersPrint
 go
 

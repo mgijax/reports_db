@@ -30,15 +30,7 @@ import os
 import db
 import reportlib
 
-command = 'select symbol, name, offset_str, chromosome, mgiID, markerType ' + \
-	  'from MRK_Mouse_View ' + \
-	  'where _Marker_Status_key in (1,3) ' + \
-	  'order by symbol'
-
-reportlib.finish_nonps(fp)
-
 db.useOneConnection(1)
-
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmds = []
@@ -48,7 +40,7 @@ cmds.append('select m._Marker_key, m.symbol, m.chromosome, markerType = t.term, 
 	'where m._Organism_key = 1 ' + \
 	'and m._Marker_Status_key in (1,3) ' + \
 	'and m._Marker_Type_key = t._Term_key ' + \
-	'and m._Marker_key = o._Marker_key ' '+ \
+	'and m._Marker_key = o._Marker_key ' + \
 	'and o.source = 0')
 cmds.append('create index idx1 on #markers(_Marker_key)')
 cmds.append('create index idx2 on #markers(symbol)')
@@ -72,6 +64,5 @@ for r in results:
 		 r['markerType'] + reportlib.CRT)
 
 reportlib.finish_nonps(fp)
-
 db.useOneConnection(0)
 
