@@ -13,8 +13,11 @@ setenv REPORTINSTALLDIR		/usr/local/mgi/reports_db
 # report output directory
 setenv REPORTOUTPUTDIR		$REPORTINSTALLDIR/output
 
+# FTP 
+setenv FTPURL                   ftp.informatics.jax.org
+
 # FTP report directory
-setenv FTPREPORTDIR		/export/gondor/ftp/pub/informatics/reports
+setenv FTPREPORTDIR		/export/gondor/ftp/pub/reports
 
 # MGI Feed FTP report directory
 setenv MGIFEEDFTPDIR		/export/gondor/ftp/private/mgifeed

@@ -1,7 +1,5 @@
 #!/bin/csh
 
-#!/bin/csh
-
 #
 # To install this product in the appropriate directory
 #
@@ -15,11 +13,14 @@
 
 source Configuration
 
+sed "s/ftp.informatics.jax.org/$FTPURL/" index.html > index.html.new
+mv -f index.html.new index.html
+
 foreach i (`ls index.html`)
 	cp -r $i $FTPREPORTDIR
 end
 
-chmod 444 Configuration* HISTORY DEPENDENCIES *.html
+chmod 444 Configuration* HISTORY *.html
 chmod 550 *.sh */*.py */*.sql Install
 chmod 755 daily monthly weekly
 chmod 775 output
