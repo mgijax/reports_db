@@ -12,9 +12,13 @@ cd `dirname $0` && source ./Configuration
 
 umask 002
 
+setenv LOG	${REPORTLOGSDIR}/$0.log
+rm -rf ${LOG}
+touch ${LOG}
+
 cd monthly
 foreach i (`ls *.py`)
-$i
+$i >>& ${LOG}
 end
 
 rcp ${REPORTOUTPUTDIR}/GO_nonmouse.rpt ${FTPCUSTOM}

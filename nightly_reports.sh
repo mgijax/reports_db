@@ -10,17 +10,17 @@
 
 cd `dirname $0` && source ./Configuration
 
+umask 002
+
 setenv LOG	${REPORTLOGSDIR}/$0.log
 rm -rf ${LOG}
 touch ${LOG}
 
-umask 002
-
-#foreach i (daily/*.sql)
-#echo $i, `date`
-#reportisql.csh $i ${REPORTOUTPUTDIR}/`basename $i`.rpt ${DSQUERY} ${MGD} >> ${LOG}
-#echo $i, `date`
-#end
+foreach i (daily/*.sql)
+echo $i, `date`
+reportisql.csh $i ${REPORTOUTPUTDIR}/`basename $i`.rpt ${DSQUERY} ${MGD} >> ${LOG}
+echo $i, `date`
+end
 
 cd daily
 
@@ -33,7 +33,6 @@ $i >>& ${LOG}
 echo $i, `date`
 endif
 end
-exit 0
 
 # clone reports
 
