@@ -5,6 +5,7 @@
 # Report:
 #       Create several tab-delimited (bcp) files for Michael Rosenstein.
 #	TR 2794
+#	TR 3137 - add MRK_Offset
 #
 # bcp files
 #	1. marker_type.bcp
@@ -18,6 +19,7 @@
 #	9. allele.bcp
 #	10. allele_label.bcp
 #	11. accession_allele.bcp
+#	12. marker_offset.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
@@ -151,6 +153,7 @@ fp.close
 fp1 = open(OUTPUTDIR + 'marker.bcp', 'w')
 fp2 = open(OUTPUTDIR + 'marker_label.bcp', 'w')
 fp3 = open(OUTPUTDIR + 'accession_marker.bcp', 'w')
+fp4 = open(OUTPUTDIR + 'marker_offset.bcp', 'w')
 
 cmds = []
 
@@ -222,6 +225,17 @@ cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'where k._Marker_key = m._Object_key ' + \
 	'and m.prefixPart = "MGI:"')
 
+#
+# select data fields for marker_offset.bcp
+#
+
+cmds.append('select distinct o._Marker_key, o.offset, ' + \
+	'cdate = convert(char(10), o.creation_date, 101), ' + \
+	'mdate = convert(char(10), o.modification_date, 101) ' + \
+	'from #markers k, MRK_Offset o ' + \
+	'where k._Marker_key = o._Marker_key ' + \
+	'and o.source = 0')
+
 results = db.sql(cmds, 'auto')
 
 for r in results[1]:
@@ -268,9 +282,16 @@ for r in results[5]:
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
+for r in results[6]:
+	fp4.write(`r['_Marker_key']` + TAB + \
+		 `r['offset']` + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
 fp1.close
 fp2.close
 fp3.close
+fp4.close
 
 #
 # allele
