@@ -19,3 +19,8 @@ end
 foreach i (`ls *.py`)
 $i
 end
+
+foreach i (`ls $REPORTOUTPUTDIR`)
+cp $REPORTOUTPUTDIR/$i $FTPREPORTDIR
+end
+
