@@ -1,3 +1,10 @@
+TAG: reports_db-11-0-8
+DATE: 05/30/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 3736; MRK_Dump2.py; MRK_List*
+
 TAG: reports_db-11-0-7
 DATE: 04/30/2002
 STAFF: lec
