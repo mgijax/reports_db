@@ -2,7 +2,7 @@
 
 '''
 #
-# MGI_StrainAll.py 04/01/2004
+# MGI_StrainAllInbred.py 04/01/2004
 #
 # Report:
 #       Tab-delimited file
