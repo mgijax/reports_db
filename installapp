@@ -26,6 +26,10 @@ foreach i (`ls Configuration *.sh *.sql *.py`)
 	cp -r $i $REPORTINSTALLDIR
 end
 
+foreach i (`ls index.html tab-delimited.html')
+	cp -r $i $FTPREPORTDIR
+end
+
 #
 # Make report output directory, if it does not exist
 #
