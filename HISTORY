@@ -1,3 +1,10 @@
+TAG: reports_db-4-0-0
+DATE: 09/18/2000
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) renamed installapp to Install
+
 TAG: reports_db-3-4-0
 DATE: 09/11/2000
 STAFF: lec
