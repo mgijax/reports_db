@@ -7,6 +7,7 @@
 #	TR 2794
 #	TR 3137 - add MRK_Offset
 #	TR 3345 - add Strain info; incorporate marker offset into marker.bcp
+#	TR 5565 - JaxStrain additions
 #
 # bcp files
 #	1. marker_type.bcp
@@ -35,11 +36,14 @@
 #	25. marker_reference.cp
 #
 # Usage:
-#       mgiMarkerFeed.py
+#       mgiMarkerFeed2.py
 #
 # Notes:
 #
 # History:
+#
+# lec	01/14/2004
+#	- TR 5565; JaxStrain additions
 #
 # lec	02/20/2003
 #	- TR 1892; MRK_Label
