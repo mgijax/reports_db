@@ -13,19 +13,19 @@
 
 source ./Configuration
 
-#sed "s/ftp.informatics.jax.org/$FTPURL/" index.html > index.html.new
-#mv -f index.html.new index.html
+sed "s/ftp.informatics.jax.org/$FTPURL/" index.html > index.html.new
+mv -f index.html.new index.html
 
-#foreach i (index.html)
-#	rcp -r $i ${FTPREPORTDIR}
-#end
+foreach i (index.html)
+	rcp -r $i ${FTPREPORTDIR}
+end
 
-#cd daily
-#set toEdit=`grep -l radar *`
-#foreach i ($toEdit)
-#sed "s/radar/$RADARDB/g" $i > $i.new
-#mv -f $i.new $i
-#end
+cd daily
+set toEdit=`grep -l radar *`
+foreach i ($toEdit)
+sed "s/radar/$RADARDB/g" $i > $i.new
+mv -f $i.new $i
+end
 
 # provide a link to the Mammalian Phenotype vocabulary
 cd ${REPORTOUTPUTDIR}
@@ -35,9 +35,9 @@ ln -s ${MPVOCSOURCE}/$f .
 end
 
 cd ${REPORTINSTALLDIR}
-#chmod 644 Configuration* HISTORY *.html
-#chmod 750 *.sh */*.py */*.sql Install
-#chmod 755 daily monthly weekly
+chmod 644 Configuration* HISTORY *.html
+chmod 750 *.sh */*.py */*.sql Install
+chmod 755 daily monthly weekly
 
 mkdir ${REPORTDIR}
 mkdir ${REPORTOUTPUTDIR}
