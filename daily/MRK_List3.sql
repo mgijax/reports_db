@@ -6,6 +6,7 @@ status = upper(substring(s.status, 1, 1)), name = substring(m.name,1,150), marke
 into #output
 from MRK_Marker m, MRK_Chromosome c, ACC_Accession a, MRK_Offset o, MRK_Types t, MRK_Status s
 where m._Organism_key = 1
+and m._Marker_Status_key in (1,3)
 and m._Organism_key = c._Organism_key
 and m.chromosome = c.chromosome
 and m._Marker_key = a._Object_key
