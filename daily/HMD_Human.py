@@ -54,7 +54,7 @@ CRT = reportlib.CRT
 SPACE = reportlib.SPACE
 REPORTNAME = 'HMD_Human'
 
-reportLegend = 'Data Attributes:  M - MGI curated, C - HomoloGene calculated, B - Both MGI and HomoloGene calculated'
+reportLegend = 'Data Attributes:  M - MGI curated, C - HomoloGene calculated, B - MGI curated and HomoloGene calculated'
 mgiCurated = 'M'
 hgCurated = 'C'
 bothCurated = 'B'
