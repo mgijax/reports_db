@@ -37,18 +37,22 @@ CRT = reportlib.CRT
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-cmd = 'select distinct a.accID, m.symbol ' + \
-	'from MRK_Marker m, GXD_Index g, ACC_Accession a ' + \
-	'where m._Marker_key = g._Marker_key ' + \
+cmds = []
+
+cmds.append('select distinct _Marker_key into #gxd from GXD_Index')
+cmds.append('create index idx1 on #gxd(_Marker_key)')
+cmds.append('select a.accID, m.symbol ' + \
+	'from #gxd g, MRK_Marker m, ACC_Accession a ' + \
+	'where g._Marker_key = m._Marker_key ' + \
 	'and m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a._LogicalDB_key = 1 ' + \
-	'and a.preferred = 1'
+	'and a.preferred = 1')
 
-results = db.sql(cmd, 'auto')
+results = db.sql(cmds, 'auto')
 
-for r in results:
+for r in results[-1]:
 	fp.write(r['accID'] + TAB + r['symbol'] + CRT)
 
 reportlib.finish_nonps(fp)

@@ -69,7 +69,8 @@ cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, o.offset ' + 
 	'and m._Marker_Status_key in (1, 3) ' + \
 	'and m.chromosome != "UN" ' + \
 	'and m._Marker_key = o._Marker_key ' + \
-	'and o.source = 0')
+	'and o.source = 0 ' + \
+	'order by m.symbol')
 cmds.append('create index idx1 on #mappedmarkers(_Marker_key)')
 db.sql(cmds, None)
 print 'query 3 end...%s' % (mgi_utils.date())
