@@ -441,30 +441,27 @@ fp7 = open(OUTPUTDIR + 'strain_species.bcp', 'w')
 #
 
 cmds = []
-cmds.append('select distinct s._Strain_key, m._Species_key, s.strain, s.private, ' + \
+cmds.append('select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
       'cdate = convert(char(20), s.creation_date, 100), ' + \
       'mdate = convert(char(20), s.modification_date, 100) ' + \
       'into #strains ' + \
-      'from PRB_Strain s, MLP_Strain m, ACC_Accession a ' + \
-      'where s._Strain_key = m._Strain_key ' + \
-      'and s._Strain_key = a._Object_key ' + \
+      'from PRB_Strain s, ACC_Accession a ' + \
+      'where s._Strain_key = a._Object_key ' + \
       'and a._MGIType_key = 10 ' + \
       'and a._LogicalDB_key in (22, 38) ')
 
 #      'union ' + \
-#      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+#      'select s._Strain_key, s._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
 #      'cdate = convert(char(20), s.creation_date, 100), ' + \
 #      'mdate = convert(char(20), s.modification_date, 100) ' + \
-#      'from PRB_Strain s, MLP_Strain m, All_Allele a ' + \
-#      'where s._Strain_key = m._Strain_key ' + \
-#      'and s._Strain_key = a._Strain_key ' + \
+#      'from PRB_Strain s, All_Allele a ' + \
+#      'where s._Strain_key = a._Strain_key ' + \
 #      'union ' + \
-#      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+#      'select s._Strain_key, s._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
 #      'cdate = convert(char(20), s.creation_date, 100), ' + \
 #      'mdate = convert(char(20), s.modification_date, 100) ' + \
-#      'from PRB_Strain s, MLP_Strain m, All_CellLine a ' + \
-#      'where s._Strain_key = m._Strain_key ' + \
-#      'and s._Strain_key = a._Strain_key')
+#      'from PRB_Strain s, All_CellLine a ' + \
+#      'where s._Strain_key = a._Strain_key')
 
 cmds.append('create unique index index_strain on #strains(_Strain_key)')
 
@@ -476,21 +473,21 @@ cmds.append('select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.priv
       'from #strains s, PRB_Strain_Marker m ' + \
       'where s._Strain_key = m._Strain_key')
 
-cmds.append('select m._Synonym_key, m._Strain_key, m.synonym, s.private, ' + \
+cmds.append('select m._Synonym_key, m._Object_key, m.synonym, s.private, ' + \
       'cdate = convert(char(20), m.creation_date, 100), ' + \
       'mdate = convert(char(20), m.modification_date, 100) ' + \
-      'from #strains s, PRB_Strain_Synonym m ' + \
-      'where s._Strain_key = m._Strain_key')
+      'from #strains s, MGI_Synonym_Strain_View m ' + \
+      'where s._Strain_key = m._Object_key')
 
-cmds.append('select _StrainType_key, strainType, ' + \
+cmds.append('select _Term_key, term, ' + \
       'cdate = convert(char(20), creation_date, 100), ' + \
       'mdate = convert(char(20), modification_date, 100) ' + \
-      'from MLP_StrainType')
+      'from VOC_Term_StrainType_View')
 
 cmds.append('select m._Strain_key, m._StrainType_key, s.private, ' + \
       'cdate = convert(char(20), m.creation_date, 100), ' + \
       'mdate = convert(char(20), m.modification_date, 100) ' + \
-      'from #strains s, MLP_StrainTypes m ' + \
+      'from #strains s, PRB_Strain_Type m ' + \
       'where s._Strain_key = m._Strain_key')
 
 cmds.append('select distinct a.accID, LogicalDB = l.name, a._Object_key, a.preferred, s.private, ' + \
@@ -501,10 +498,10 @@ cmds.append('select distinct a.accID, LogicalDB = l.name, a._Object_key, a.prefe
       'and a._MGIType_key = 10 ' + \
       'and a._LogicalDB_key = l._LogicalDB_key')
 
-cmds.append('select _Species_key, species, ' + \
+cmds.append('select _Term_key, term, ' + \
       'cdate = convert(char(20), creation_date, 100), ' + \
       'mdate = convert(char(20), modification_date, 100) ' + \
-      'from MLP_Species')
+      'from VOC_Term_StrainSpecies_View')
 
 results = db.sql(cmds, 'auto', execute = 1)
 
@@ -526,15 +523,15 @@ for r in results[3]:
 
 for r in results[4]:
 	fp3.write(`r['_Synonym_key']` + TAB + \
-	         `r['_Strain_key']` + TAB + \
+	         `r['_Object_key']` + TAB + \
 	         `r['private']` + TAB + \
 	         strip_newline(r['synonym']) + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
 for r in results[5]:
-	fp4.write(`r['_StrainType_key']` + TAB + \
-	         r['strainType'] + TAB + \
+	fp4.write(`r['_Term_key']` + TAB + \
+	         r['term'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
@@ -555,8 +552,8 @@ for r in results[7]:
 		 r['mdate'] + CRT)
 
 for r in results[8]:
-	fp7.write(`r['_Species_key']` + TAB + \
-	         r['species'] + TAB + \
+	fp7.write(`r['_Term_key']` + TAB + \
+	         r['term'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
