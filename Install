@@ -27,6 +27,11 @@ sed "s/radar/$RADARDB/g" $i > $i.new
 mv -f $i.new $i
 end
 
+mkdir ${REPORTDIR}
+mkdir ${REPORTOUTPUTDIR}
+mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed
+mkdir ${REPORTLOGSDIR}
+
 # provide a link to the Mammalian Phenotype vocabulary
 cd ${REPORTOUTPUTDIR}
 foreach f (${MPFILES})
@@ -38,9 +43,4 @@ cd ${REPORTINSTALLDIR}
 chmod 644 Configuration* HISTORY *.html
 chmod 750 *.sh */*.py */*.sql Install
 chmod 755 daily monthly weekly
-
-mkdir ${REPORTDIR}
-mkdir ${REPORTOUTPUTDIR}
-mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed
-mkdir ${REPORTLOGSDIR}
 
