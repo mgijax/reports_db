@@ -93,6 +93,26 @@ def getCoords(logicalDBkey):
 db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
+fp.write('MGI accession id' + TAB)
+fp.write('marker type' + TAB)
+fp.write('marker symbol' + TAB)
+fp.write('marker name' + TAB)
+fp.write('representative genome chromosome' + TAB)
+fp.write('representative genome start' + TAB)
+fp.write('representative genome end' + TAB)
+fp.write('representative genome strand' + TAB)
+fp.write('represenative genome build' + TAB)
+fp.write('entrez gene id' + TAB)
+fp.write('NCBI gene chromosome' + TAB)
+fp.write('NCBI gene start' + TAB)
+fp.write('NCBI gene end' + TAB)
+fp.write('NCBI gene strand' + TAB)
+fp.write('ensembl gene id' + TAB)
+fp.write('ensembl gene chromosome' + TAB)
+fp.write('ensembl gene start' + TAB)
+fp.write('ensembl gene end' + TAB)
+fp.write('ensembl gene strand' + CRT)
+
 # markers that have coordinates
 # (representative genomic)
 
@@ -104,18 +124,19 @@ db.sql('select m._Marker_key, m._Sequence_key, c.version into #repmarkers ' + \
 db.sql('create index idx1 on #repmarkers(_Marker_key)', None)
 db.sql('create index idx2 on #repmarkers(_Sequence_key)', None)
 
-# rest of marker information
+# all active markers
 
-db.sql('select m._Marker_key, a.accID, a.numericPart, mm.symbol, mm.name, markerType = t.name ' + 
+db.sql('select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, markerType = t.name ' + 
 	'into #markers ' + \
-	'from #repmarkers m, ACC_Accession a, MRK_Marker mm, MRK_Types t ' + \
-	'where m._Marker_key = a._Object_key ' + \
+	'from MRK_Marker m, MRK_Types t, ACC_Accession a ' + \
+	'where m._Organism_key = 1 ' + \
+	'and m._Marker_Status_key in (1,3) ' + \
+	'and m._Marker_key = a._Object_key ' + \
   	'and a._MGIType_key = 2 ' + \
   	'and a.prefixPart = "MGI:" ' + \
   	'and a._LogicalDB_key = 1 ' + \
   	'and a.preferred = 1 ' + \
-	'and m._Marker_key = mm._Marker_key ' + \
-	'and mm._Marker_Type_key = t._Marker_Type_key', None)
+	'and m._Marker_Type_key = t._Marker_Type_key', None)
 
 db.sql('create index idx1 on #markers(_Marker_key)', None)
 
@@ -144,16 +165,19 @@ for r in results:
     fp.write(r['symbol'] + TAB)
     fp.write(r['name'] + TAB)
 
-    rep = repCoords[key]
-    fp.write(rep['chromosome'] + TAB)
-    fp.write(str(rep['startC']) + TAB)
-    fp.write(str(rep['endC']) + TAB)
-    fp.write(rep['strand'] + TAB)
-    fp.write(genomeBuild + TAB)
+    # representative coordinate
 
-#    fp.write(coordDisplay % (rep['chromosome'], rep['startC'], rep['endC'], rep['strand']) + TAB)
+    if repCoords.has_key(key):
+        c = repCoords[key]
+        fp.write(c['chromosome'] + TAB)
+        fp.write(str(c['startC']) + TAB)
+        fp.write(str(c['endC']) + TAB)
+        fp.write(c['strand'] + TAB)
+        fp.write(genomeBuild + TAB)
+    else:
+	fp.write(5*noneDisplay)
 
-    # NCBI coordinates
+    # NCBI coordinate
 
     if ncbiCoords.has_key(key):
 	c = ncbiCoords[key]
@@ -162,11 +186,10 @@ for r in results:
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
         fp.write(c['strand'] + TAB)
-#        fp.write(coordDisplay % (c['chromosome'], c['startC'], c['endC'], c['strand']) + TAB)
     else:
 	fp.write(5*noneDisplay)
 
-    # Ensembl coordinates
+    # Ensembl coordinate
 
     if ensemblCoords.has_key(key):
 	c = ensemblCoords[key]
