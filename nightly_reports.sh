@@ -25,3 +25,4 @@ foreach i (`ls $REPORTOUTPUTDIR`)
 cp $REPORTOUTPUTDIR/$i $FTPREPORTDIR
 end
 
+./mgimarkerfeed.sh
