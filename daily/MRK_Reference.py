@@ -7,13 +7,12 @@
 # Report:
 #       TR 4454
 #	Tab-delimited file of:
-#		Mouse Genes MGI ID
+#		Mouse Marker MGI ID
 #		Symbol
 #		Name
 #		Synonyms
-#		MGI ID of Reference
 #		PubMed IDs for References 
-#	Sorted by MGI ID
+#	Sorted by Symbol
 #
 # Usage:
 #       MRK_Reference.py
