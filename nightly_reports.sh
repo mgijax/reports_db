@@ -18,7 +18,9 @@ end
 
 cd daily
 foreach i (*.py)
+if ( $i != "mgiMarkerFeed.py" ) then
 $i
+endif
 end
 cd ..
 

@@ -7,7 +7,7 @@ from PRB_Probe p, PRB_Source s, VOC_Term t
 where p._SegmentType_key = t._Term_key
 and t.term = 'cDNA'
 and p._Source_key = s._Source_key
-and s._ProbeOrganism_key = 1
+and s._Organism_key = 1
 go
 
 set nocount off
