@@ -98,7 +98,7 @@ cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'VOC_Evidence e, VOC_Term t, BIB_Acc_View b, MGI_User u ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Object_key = m._Marker_key ' + \
-        'and m._MarkerType_key = 1 ' + \
+        'and m._Marker_Type_key = 1 ' + \
 	'and m._Marker_key = ma._Object_key ' + \
 	'and ma.prefixPart = "MGI:" ' + \
 	'and ma._LogicalDB_key = 1 ' + \
