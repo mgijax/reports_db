@@ -372,14 +372,15 @@ cmds.append('select m._Allele_key, m.name, labelType = "AN", status = 1, ' + \
 # select data fields for accession_allele.bcp
 #
 
-cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
+cmds.append('select m.accID, LogicalDB = l.name, m._Object_key, m.preferred, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
-	'from #alleles k, ACC_Accession m ' + \
+	'from #alleles k, ACC_Accession m, ACC_LogicalDB l ' + \
 	'where k._Allele_key = m._Object_key ' + \
 	'and m._MGIType_key = 11 ' + \
 	'and m.prefixPart = "MGI:" ' + \
-	'and m._LogicalDB_key = 1')
+	'and m._LogicalDB_key = 1 ' + \
+	'and m._LogicalDB_key = l._LogicalDB_key')
 
 results = db.sql(cmds, 'auto', execute = 1)
 
@@ -492,12 +493,13 @@ cmds.append('select m._Strain_key, m._StrainType_key, s.private, ' + \
       'from #strains s, MLP_StrainTypes m ' + \
       'where s._Strain_key = m._Strain_key')
 
-cmds.append('select distinct a.accID, a.LogicalDB, a._Object_key, a.preferred, s.private, ' + \
+cmds.append('select distinct a.accID, LogicalDB = l.name, a._Object_key, a.preferred, s.private, ' + \
       'cdate = convert(varchar(20), a.creation_date, 100), ' + \
       'mdate = convert(varchar(20), a.modification_date, 100) ' + \
-      'from #strains s, ACC_Accession a ' + \
+      'from #strains s, ACC_Accession a, ACC_LogicalDB l ' + \
       'where s._Strain_key = a._Object_key ' + \
-      'and a._MGIType_key = 10')
+      'and a._MGIType_key = 10 ' + \
+      'and a._LogicalDB_key = l._LogicalDB_key')
 
 cmds.append('select _Species_key, species, ' + \
       'cdate = convert(char(20), creation_date, 100), ' + \
