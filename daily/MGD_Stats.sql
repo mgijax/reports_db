@@ -17,12 +17,32 @@ where _Organism_key = 1
 and _Marker_Status_key in (1,3)
 go
 
+/* mutants are genes that have an allele with the same nomenclature */
+/* ("foo" and "foo") AND do not have a GenBank, RefSeq, SwissProt or TrEMBL association */
+
+select distinct m._Marker_key 
+into #mutants 
+from MRK_Marker m, ALL_ALlele a 
+where m._Organism_key = 1 
+and m._Marker_Type_key = 1 
+and m._Marker_key = a._Marker_key 
+and m.symbol = a.symbol 
+and not exists (select 1 from ACC_Accession a 
+where m._Marker_key = a._Object_key 
+and a._MGIType_key = 2 
+and a._LogicalDB_Key in (9, 13, 27, 41)) 
+go
+
+create index idx1 on #mutants(_Marker_key)
+go
+
 print ""
 print "Number of Genes"
-select count(*) from MRK_Marker
-where _Organism_key = 1 
-and _Marker_Type_key = 1
-and _Marker_Status_key in (1,3)
+select count(*) from MRK_Marker m1
+where m1._Organism_key = 1 
+and m1._Marker_Type_key = 1
+and m1._Marker_Status_key in (1,3)
+and not exists (select 1 from #mutants m2 where m1._Marker_key = m2._Marker_key)
 go
 
 select _Marker_key into #markers from MRK_Marker
