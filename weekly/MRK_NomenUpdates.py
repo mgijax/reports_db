@@ -37,6 +37,7 @@ import sys
 import os
 import string
 import db
+import mgi_html
 import mgi_utils
 import reportlib
 
@@ -121,7 +122,7 @@ cmd.append('select distinct m._Marker_key, n.humanSymbol ' + \
 'and n.humanSymbol is not null')
 
 # retrieve markers, sort (6)
-cmd.append('select * from #markers order by sequenceNum, symbol')
+cmd.append('select distinct * from #markers order by sequenceNum, symbol')
 
 results = db.sql(cmd, 'auto')
 
@@ -152,10 +153,11 @@ rows = 0
 for r in results[6]:
 
 	key = r['_Marker_key']
+	symbol = mgi_html.escape(r['symbol'])
 
 	fp.write('%-2s ' % (r['chromosome']))
 
-	fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), r['symbol'], reportlib.close_accession_anchor()))
+	fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), symbol, reportlib.close_accession_anchor()))
 	fp.write('%-35s ' % (r['name']))
 	fp.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnumID'], reportlib.close_accession_anchor()))
 	fp.write('%-20s ' % (r['author']))
