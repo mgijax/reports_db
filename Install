@@ -39,6 +39,13 @@ rm -rf $f
 ln -s ${MPVOCSOURCE}/$f .
 end
 
+# provide a link to the Adult Mouse Anatomy vocabulary
+cd ${REPORTOUTPUTDIR}
+foreach f (${MAFILES})
+rm -rf $f
+ln -s ${MAVOCSOURCE}/$f .
+end
+
 cd ${REPORTINSTALLDIR}
 chmod 644 Configuration* HISTORY *.html
 chmod 750 *.sh */*.py */*.sql Install

@@ -43,6 +43,10 @@ setenv DBUTILITIESPATH		/usr/local/mgi/live/dbutils/mgidbutilities
 setenv MPVOCSOURCE		/usr/local/mgi/live/dataload/vocload/runTimeMP
 setenv MPFILES                  "MPheno.ontology MP.defs MPheno_OBO.ontology"
 
+# Adult Mouse Anatomy Source
+setenv MAVOCSOURCE              /usr/local/mgi/live/dataload/vocload/runTimeMA
+setenv MAFILES                  "adult_mouse_anatomy.gxd anatomy_defs.gxd"
+
 # InParanoid directory
 setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
 
