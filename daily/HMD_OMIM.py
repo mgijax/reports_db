@@ -19,6 +19,9 @@
 #
 # History:
 #
+# lec	01/04/2004
+#	- TR 5939; LocusLink->EntrezGene
+#
 # lec   07/20/2004
 #       - created
 #
@@ -96,13 +99,13 @@ for r in results:
     value = r['accID']
     mgiIDs[key] = value
 
-results = db.sql('select h.humanKey, l.mim ' + \
-	'from #homology h, ACC_Accession a, radar..DP_LL l ' + \
+results = db.sql('select h.humanKey, mim = r.dbXrefID ' + \
+	'from #homology h, ACC_Accession a, radar..DP_EntrezGene_DBXRef r ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 24 ' + \
-	'and a.accID = l.locusID ' + \
-	'and l.mim is not null ', 'auto')
+	'and a._LogicalDB_key = 55 ' + \
+	'and a.accID = r.geneID ' + \
+	'and r.dbXrefID like "MIM:%"', 'auto')
 mimIDs = {}
 for r in results:
     key = r['humanKey']
