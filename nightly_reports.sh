@@ -17,7 +17,9 @@ sql.sh $MGD $i
 end
 
 foreach i (`ls *.py`)
-$i
+  if ( "$i" != "MRK_NomenUpdates.py" ) then
+	$i
+  endif
 end
 
 foreach i (`ls $REPORTOUTPUTDIR`)
