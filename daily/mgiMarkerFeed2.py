@@ -415,19 +415,21 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele.bcp', 'w')
 
-    results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._CellLine_key, ' + \
-	    'm.status, m._Strain_key, m.symbol, m.name, ' + \
-	    'cdate = convert(char(20), m.creation_date, 100), ' + \
-	    'mdate = convert(char(20), m.modification_date, 100) ' + \
-	    'from #alleles a, ALL_Allele_View m ' + \
-	    'where a._Allele_key = m._Allele_key ', 'auto')
+    results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._ESCellLine_key, m._MutantESCellLine_key, ' + \
+	'm._Strain_key, m.symbol, m.name, status = t.term, ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
+	'from #alleles a, ALL_Allele m, VOC_Term t ' + \
+	'where a._Allele_key = m._Allele_key ' + \
+	'and m._Allele_Status_key = t._Term_key')
 
     for r in results:
 	    fp.write(`r['_Allele_key']` + TAB + \
 	             `r['_Marker_key']` + TAB + \
 	             `r['_Mode_key']` + TAB + \
 	             `r['_Allele_Type_key']` + TAB + \
-	             `r['_CellLine_key']` + TAB + \
+	             `r['_ESCellLine_key']` + TAB + \
+	             `r['_MutantESCellLine_key']` + TAB + \
 		     mgi_status(r['status']) + TAB + \
 		     `r['_Strain_key']` + TAB + \
 		     strip_newline(r['symbol']) + TAB + \
