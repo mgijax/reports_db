@@ -12,27 +12,26 @@
 
 <TR><TD><A HREF="#ftp">ftp Server</A></TR></TD>
 <TR><TD><A HREF="#marker">Lists of all mouse genetic markers</A></TR></TD>
-<TR><TD><A HREF="#go">Gene Ontology Data</A></TR></TD>
-<TR><TD><A HREF="#ref">References</A></TR></TD>
 <TR><TD><A HREF="#seq">Sequence Data</A></TR></TD>
-<TR><TD><A HREF="#pheno">Phenotypic Data</A></TR></TD>
 <TR><TD><A HREF="#homology">Mammalian Homology</A></TR></TD>
+<TR><TD><A HREF="#go">Gene Ontology Data</A></TR></TD>
 <TR><TD><A HREF="#strain">Strains and Polymorphisms</A></TR></TD>
 <TR><TD><A HREF="#expression">Gene Expression</A></TR></TD>
+<TR><TD><A HREF="#pheno">Phenotypic Data</A></TR></TD>
 <TR><TD><A HREF="#statistics">General Statistics</A></TR></TD>
 <TR><TD><A HREF="#nomen">Nomenclature</A></TR></TD>
+<TR><TD><A HREF="#ref">References</A></TR></TD>
 </TABLE><BR>
 
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD>
 <A NAME="ftp"><B>ftp Server</B></A><BR><BR>
-<P>All reports described on this page are in the directory <B>/pub</B>, within the subdirectory <B>/reports</B>, from MGI's <A HREF="ftp://devftp.informatics.jax.org">ftp Server</A>.<BR><BR>
+<P>All reports described on this page are in the directory <B>/pub</B>, within the subdirectory <B>/reports</B>, from MGI's <A HREF="ftp://ftp.informatics.jax.org">ftp Server</A>.<BR><BR>
 </TD></TR></TABLE>
 
 <!-- -->
 
 <A NAME="marker"></A><BR>
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Lists of all mouse genetic markers</TH></TR>
-
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Sorted alphabetically by symbol</B></TD></TR>
@@ -74,67 +73,6 @@
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Accession ID</TD><TD>Symbol</TD><TD>Name</TD><TD>cM Position</TD><TD>Chromosome</TD><TD>Marker Type</TD></TABLE>
         </TD></TR>   
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Dump2.rpt">MRK_Dump2.rpt</A> (excluding withdrawn symbols)</TD></TR>
-    </TABLE></TD></TR>
-    
-</TABLE><BR>
-
-<!-- -->
-
-<A NAME="go"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Gene Ontology Data</TH></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>1. Gene Ontology (GO) Annotations of Mouse Markers (tab-delimited) 
-        <BR>(<I>see also</I> <A HREF="http://www.geneontology.org/doc/GO.annotation.html#file">GO Annotation File format</A> at the Gene Ontology Consortium, and 
-        <A HREF="go_terms.mgi">go_terms.mgi</A> to translate GO IDs to GO terms)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI</TD><TD>MGI<BR>Marker ID</TD><TD>Gene Symbol</TD><TD>GO<BR>Term ID</TD><TD>MGI<BR>Reference ID</TD><TD>GO<BR>Evidence Code</TD>
-        <TD>Ontology<BR><FONT SIZE=-1>P=Biological Process<BR>F=Molecular Function<BR>C=Cellular Component</FONT></TD>
-        <TD>Name</TD><TD>Synonyms<BR>(if any)</TD><TD>Object type<BR><FONT SIZE=-1>gene<BR>transcript<BR>protein</FONT></TD><TD>Taxon</TD><TD>Date</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="gene_association.mgi">gene_association.mgi</A></TD></TR>
-    </TABLE></TD></TR>
-        
-    <TR><TD><TABLE>
-        <TR><TD><B>2. References used in GO annotations to mouse markers (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Reference ID</TD><TD>PubMed ID</TD></TR></TABLE>
-        </TD></TR> 
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_refs.mgi">go_refs.mgi</A></TD></TR>
-    </TABLE></TD></TR>
-        
-    <TR><TD><TABLE>
-        <TR><TD><B>3. GO terms and GO IDs for all three ontologies (Biological Process, Cellular Component, Molecular Function)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Ontology</TD><TD>GO ID</TD><TD>GO Term</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_terms.mgi">go_terms.mgi</A> (only those terms annotated to MGI genes are shown)</TD></TR>
-    </TABLE></TD></TR>           
-
-    <TR><TD><TABLE>
-        <TR><TD><B>4. GO annotations to mouse markers that have human orthologs</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>GO ID</TD><TD>GO Term</TD>
-        <TD>GO Evidence Code</TD><TD>PubMed ID</TD><TD>SWISS-PROT/<BR>TREMBL ID</TD><TD>GenBank ID<BR>EMBL ID<BR>DDBJ ID</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_GOHuman.rpt">MRK_GOHuman.rpt</A></TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
-                
-</TABLE><BR>
-
-<!-- -->
-
-<A NAME="ref"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>References</TH></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>Association of MGI Reference IDs and PubMed IDs (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Reference ID</TD><TD>PubMed ID</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="BIB_PubMed.rpt">BIB_PubMed.rpt</A></TD></TR>
-        </TD></TR>
     </TABLE></TD></TR>
     
 </TABLE><BR>
@@ -189,25 +127,15 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="PRB_ESTMapped.rpt">PRB_ESTMapped.rpt</A>
         </TD></TR>
     </TABLE></TD></TR>
-
-</TABLE><BR>
-
-<!-- -->
-
-<A NAME="pheno"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Phenotypic Data</TH></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>PhenoSlim vocabulary</B></TD></TR>
+    
+    <TR><TD><TABLE><B>MouseBLAST Sequence Databases</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Accession ID</TD><TD>PhenoSlim Term</TD><TD>Definition</TD><TD>Example</TD></TR></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>(unknown)</TD></TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_PhenoSlim.rpt">VOC_PhenoSlim.rpt</A> (tab-delimited, without column headings)</TD></TR>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_PhenoSlim.sql.rpt">VOC_PhenoSlim.sql.rpt</A> (with column headings)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="ftp://ftp.informatics.jax.org/pub/sequencedbs/index.html">sequencedbs/index.html</A></TD></TR></TABLE>
         </TD></TR>
     </TABLE></TD></TR>
-
+    
 </TABLE><BR>
 
 <!-- -->
@@ -299,6 +227,50 @@
 
 <!-- -->
 
+<A NAME="go"></A>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Gene Ontology Data</TH></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>1. Gene Ontology (GO) Annotations of Mouse Markers (tab-delimited) 
+        <BR>(<I>see also</I> <A HREF="http://www.geneontology.org/doc/GO.annotation.html#file">GO Annotation File format</A> at the Gene Ontology Consortium, and 
+        <A HREF="go_terms.mgi">go_terms.mgi</A> to translate GO IDs to GO terms)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI</TD><TD>MGI<BR>Marker ID</TD><TD>Gene Symbol</TD><TD>GO<BR>Term ID</TD><TD>MGI<BR>Reference ID</TD><TD>GO<BR>Evidence Code</TD>
+        <TD>Ontology<BR><FONT SIZE=-1>P=Biological Process<BR>F=Molecular Function<BR>C=Cellular Component</FONT></TD>
+        <TD>Name</TD><TD>Synonyms<BR>(if any)</TD><TD>Object type<BR><FONT SIZE=-1>gene<BR>transcript<BR>protein</FONT></TD><TD>Taxon</TD><TD>Date</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="gene_association.mgi">gene_association.mgi</A></TD></TR>
+    </TABLE></TD></TR>
+        
+    <TR><TD><TABLE>
+        <TR><TD><B>2. References used in GO annotations to mouse markers (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Reference ID</TD><TD>PubMed ID</TD></TR></TABLE>
+        </TD></TR> 
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_refs.mgi">go_refs.mgi</A></TD></TR>
+    </TABLE></TD></TR>
+        
+    <TR><TD><TABLE>
+        <TR><TD><B>3. GO terms and GO IDs for all three ontologies (Biological Process, Cellular Component, Molecular Function)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Ontology</TD><TD>GO ID</TD><TD>GO Term</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_terms.mgi">go_terms.mgi</A> (only those terms annotated to MGI genes are shown)</TD></TR>
+    </TABLE></TD></TR>           
+
+    <TR><TD><TABLE>
+        <TR><TD><B>4. GO annotations to mouse markers that have human orthologs</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>GO ID</TD><TD>GO Term</TD>
+        <TD>GO Evidence Code</TD><TD>PubMed ID</TD><TD>SWISS-PROT/<BR>TREMBL ID</TD><TD>GenBank ID<BR>EMBL ID<BR>DDBJ ID</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_GOHuman.rpt">MRK_GOHuman.rpt</A></TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+                
+</TABLE><BR>
+
+<!-- -->
 <A NAME="strain"></A>
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Strains and Polymorphisms</TH></TR>
 
@@ -364,6 +336,24 @@
 
 <!-- -->
 
+<A NAME="pheno"></A>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Phenotypic Data</TH></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>PhenoSlim vocabulary</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Accession ID</TD><TD>PhenoSlim Term</TD><TD>Definition</TD><TD>Example</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_PhenoSlim.rpt">VOC_PhenoSlim.rpt</A> (tab-delimited, without column headings)</TD></TR>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_PhenoSlim.sql.rpt">VOC_PhenoSlim.sql.rpt</A> (with column headings)</TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+
+</TABLE><BR>
+
+<!-- -->
+
 <A NAME="statistics"></A>
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>General Statistics</TH></TR>
 
@@ -412,6 +402,23 @@
 </TABLE><BR>
 
 <!-- -->
+
+<A NAME="ref"></A>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>References</TH></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>Association of MGI Reference IDs and PubMed IDs (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Reference ID</TD><TD>PubMed ID</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="BIB_PubMed.rpt">BIB_PubMed.rpt</A></TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+    
+</TABLE><BR>
+
+<!-- -->
+
 
 <PRE>
 
