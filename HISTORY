@@ -1,3 +1,10 @@
+TAG: reports_db-3-3-0
+DATE: 07/18/2000
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) TR 1806; added MGI Acc IDs to HMD_Human report (HMD_Human.py)
+
 TAG: reports_db-3-2-0
 DATE: 07/13/2000
 STAFF: lec
