@@ -41,7 +41,7 @@ and s.name = 'NIA'
 and sm._Object_key = ps._Source_key
 and ps._Source_key = p._Source_key
 and p._Probe_key *= n._Probe_key
-and p._Probe_key *= pm._Marker_key
+and p._Probe_key *= pm._Probe_key
 go
 
 set nocount off
