@@ -62,17 +62,20 @@ cmds.append('select p._Probe_key, p.name ' + \
 # Select probes w/ Seq IDs and without Seq IDs
 cmds.append('select distinct p._Probe_key, p.name, a.accID ' + \
 'into #probeseqs ' + \
-'from #probes p, PRB_Acc_View a ' + \
+'from #probes p, ACC_Accession a ' + \
 'where p._Probe_key = a._Object_key  ' + \
+'and a._MGIType_key = 3 ' + \
 'and a._LogicalDB_key = 9 ' + \
 'union ' + \
 'select distinct p._Probe_key, p.name, null ' + \
-'from #probes p, PRB_Acc_View pa ' + \
+'from #probes p, ACC_Accession pa ' + \
 'where p._Probe_key = pa._Object_key ' + \
+'and pa._MGIType_key = 3 ' + \
 'and pa.prefixPart = "MGI:" ' + \
 'and pa._LogicalDB_key = 1 ' + \
-'and not exists (select 1 from PRB_Acc_View a ' + \
+'and not exists (select 1 from ACC_Accession a ' + \
 'where p._Probe_key = a._Object_key  ' + \
+'and a._MGIType_key = 3 ' + \
 'and a._LogicalDB_key = 9) ' + \
 'order by p._Probe_key')
 
@@ -81,10 +84,11 @@ cmds.append('select * into #forncbi from #probeseqs group by _Probe_key having c
 
 # Select probe's markers which hybridizie
 cmds.append('select n.*, markerID = ma.accID ' + \
-'from #forncbi n, PRB_Marker_View m, MRK_Acc_View ma ' + \
+'from #forncbi n, PRB_Marker m, ACC_Accession ma ' + \
 'where n._Probe_key = m._Probe_key ' + \
 'and m.relationship = "H" ' + \
 'and m._Marker_key = ma._Object_key ' + \
+'and ma._MGIType_key = 2 ' + \
 'and ma.prefixPart = "MGI:" ' + \
 'and ma._LogicalDB_key = 1 ' + \
 'and ma.preferred = 1 ' + \
