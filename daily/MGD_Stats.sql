@@ -94,49 +94,23 @@ and p._Probe_key = pb._Probe_key
 and pb.DNAtype != "primer"
 go
 
-select distinct m._Marker_key
-into #poly
-from MRK_Marker m, PRB_RFLV p
-where m._Species_key = 1
-and m._Marker_key = p._Marker_key
-go
-
-insert into #poly
-select distinct m._Marker_key
-from MRK_Marker m
-where m._Species_key = 1
-and m._Marker_Status_key = 1
-go
-
 print ""
 print "Number of Genetic Markers with Molecular Polymorphisms" 
 select count(distinct _Marker_key)
-from #poly
-go
-
-drop table #poly
-go
-
-select distinct m._Marker_key
-into #poly
 from MRK_Marker m, PRB_RFLV p
 where m._Species_key = 1
-and m._Marker_Type_key = 1
-and m._Marker_key = p._Marker_key
-go
-
-insert into #poly
-select distinct m._Marker_key
-from MRK_Marker m
-where m._Species_key = 1
-and m._Marker_Type_key = 1
 and m._Marker_Status_key = 1
+and m._Marker_key = p._Marker_key
 go
 
 print ""
 print "Number of Genes with Molecular Polymorphisms" 
 select count(distinct _Marker_key)
-from #poly
+from MRK_Marker m, PRB_RFLV p
+where m._Species_key = 1
+and m._Marker_Type_key = 1
+and m._Marker_Status_key = 1
+and m._Marker_key = p._Marker_key
 go
 
 drop table #poly
