@@ -64,7 +64,7 @@ cmds.append('select distinct e._Refs_key, e._Expt_key ' + \
 'and (n.note like "%jax%bss%" or n.note like "%jax%bsb%" ' + \
 'or n.note like "%jackson laboratory%bss%" or n.note like "%jackson laboratory%bsb%")')
 
-cmds.append('select e.*, n.note ' + \
+cmds.append('select e.*, n.note, n.sequenceNum ' + \
 'into #expts2 ' + \
 'from #expts e, MLD_Expt_Notes n ' + \
 'where e._Expt_key *= n._Expt_key ' + \
@@ -79,7 +79,7 @@ cmds.append('select e.*, m.symbol ' + \
 cmds.append('select e.*, b.jnumID, citation = b.authors + " " + b.title + b.citation ' + \
 'from #expts3 e, BIB_All_View b ' + \
 'where e._Refs_key = b._Refs_key ' + \
-'order by b.jnumID')
+'order by b.jnumID, e._Expt_key, e.sequenceNum')
 
 results = db.sql(cmds, 'auto')
 
@@ -95,7 +95,7 @@ for r in results[4]:
 			fp.write(string.join(markers, ',') + TAB)
 
 			if len(notes) > 0:
-				fp.write(string.join(notes, ' '))
+				fp.write(string.join(notes, ''))
 
 			fp.write(CRT)
 			markers = []
