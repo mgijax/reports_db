@@ -67,7 +67,7 @@ cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
 	'and m._Marker_Status_key = s._Marker_Status_key ' + \
 	'and m._Marker_Type_key = t._Marker_Type_key ' + \
 	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27))')
+	'and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27) and a.prefixPart not in ("XP_", "NP_"))')
 cmds.append('create index idx1 on #markers(_Marker_key)')
 cmds.append('create index idx2 on #markers(symbol)')
 db.sql(cmds, None)
