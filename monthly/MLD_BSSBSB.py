@@ -112,13 +112,8 @@ for r in results[4]:
 	if r['note'] != None and not r['note'] in notes:
 		notes.append(r['note'])
 
-if not r['symbol'] in markers:
-	markers.append(r['symbol'])
-
-if r['note'] != None and not r['note'] in notes:
-	notes.append(r['note'])
-
-fp.write(string.join(markers, ',') + TAB)
+if len(markers) > 0:
+	fp.write(string.join(markers, ',') + TAB)
 
 if len(notes) > 0:
 	fp.write(string.join(notes, ' '))

@@ -89,9 +89,6 @@ for r in results[2]:
 	if r['note'] != None and not r['note'] in notes:
 		notes.append(r['note'])
 
-if r['note'] != None and not r['note'] in notes:
-	notes.append(r['note'])
-
 if len(notes) > 0:
 	fp.write(string.join(notes, ' '))
 
