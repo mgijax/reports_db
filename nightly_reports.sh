@@ -12,14 +12,13 @@ cd `dirname $0` && source Configuration
 
 umask 002
 
-foreach i (`ls *.sql`)
+foreach i (`ls daily/*.sql`)
 sql.sh $MGD $i
 end
 
+cd daily
 foreach i (`ls *.py`)
-  if ( "$i" != "MRK_NomenUpdates.py" ) then
-	$i
-  endif
+$i
 end
 
 foreach i (`ls $REPORTOUTPUTDIR`)

@@ -22,9 +22,13 @@ endif
 # Copy installation files to installation directory
 #
 
-foreach i (`ls Configuration *.sh *.sql *.py`)
+foreach i (`ls Configuration *.sh`)
 	cp -r $i $REPORTINSTALLDIR
 end
+
+cp -r daily $REPORTINSTALLDIR
+cp -r weekly $REPORTINSTALLDIR
+cp -r monthly $REPORTINSTALLDIR
 
 foreach i (`ls index.html tab-delimited.html`)
 	cp -r $i $FTPREPORTDIR
