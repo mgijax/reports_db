@@ -25,6 +25,7 @@ import string
 import os
 import db
 import reportlib
+import mgi_utils
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -60,7 +61,7 @@ cmds.append('select e.*, n.note, n.sequenceNum ' + \
 'where e._Expt_key *= n._Expt_key ' + \
 'order by n._Expt_key, n.sequenceNum ')
 
-cmds.append('select e.*, b.jnumID, citation = b.authors + " " + b.title + b.citation ' + \
+cmds.append('select e.*, b.jnumID, b.authors, b.title, b.citation ' + \
 'from #expts2 e, BIB_All_View b ' + \
 'where e._Refs_key = b._Refs_key ' + \
 'order by b.jnumID, e._Expt_key, e.sequenceNum')
@@ -84,7 +85,9 @@ for r in results[2]:
 		prevExpt = r['_Expt_key']
 
 		fp.write(r['jnumID'] + TAB)
-		fp.write(r['citation'] + TAB)
+		fp.write(mgi_utils.prvalue(r['authors']))
+		fp.write(' ' + mgi_utils.prvalue(r['title']))
+		fp.write(mgi_utils.prvalue(r['citation'] + TAB))
 
 	if r['note'] != None and not r['note'] in notes:
 		notes.append(r['note'])
