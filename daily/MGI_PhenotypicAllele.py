@@ -54,11 +54,12 @@ cmds = []
 # exclude wild types
 # exclude QTLs
 
-cmds.append('select a._Allele_key, a._Marker_key, a.symbol, a.name, marker = m.symbol ' + \
+cmds.append('select a._Allele_key, a._Marker_key, a.symbol, a.name, t.alleleType, marker = m.symbol ' + \
 	'into #alleles ' + \
-	'from ALL_Allele a, MRK_Marker m ' + \
+	'from ALL_Allele a, ALL_Type t, MRK_Marker m ' + \
 	'where a._Allele_Status_key = 4 ' + \
 	'and a.symbol not like "%<+>" ' + \
+	'and a._Allele_Type_key = t._Allele_Type_key ' + \
 	'and a._Marker_key = m._Marker_key ' + \
 	'and m._Marker_Type_key != 6')
 
@@ -140,7 +141,8 @@ for r in results[-2]:
 for r in results[-1]:
 	fp.write(amgiIDs[r['_Allele_key']] + reportlib.TAB + \
 		 r['symbol'] + reportlib.TAB + \
-		 r['name'] + reportlib.TAB)
+		 r['name'] + reportlib.TAB + \
+		 r['alleleType'] + reportlib.TAB)
 
 	if pubIDs.has_key(r['_Allele_key']):
 		fp.write(pubIDs[r['_Allele_key']])
