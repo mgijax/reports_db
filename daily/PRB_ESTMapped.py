@@ -42,7 +42,7 @@ cmds = []
 cmds.append('select p._Probe_key, m._Marker_key, m.symbol, m.name, m.chromosome, o.offset ' + \
 	'into #marker ' + \
 	'from PRB_Probe p, PRB_Marker pm, MRK_Marker m, MRK_Offset o ' + \
-	'where p.name = "I.M.A.G.E. clone"' + \
+	'where p.name like "IMAGE clone%"' + \
 	'and p._Probe_key = pm._Probe_key ' + \
 	'and pm._Marker_key = m._Marker_key ' + \
 	'and m.chromosome != "UN" ' + \
