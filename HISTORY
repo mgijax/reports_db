@@ -1,3 +1,10 @@
+TAG: reports_db-17-0-0
+DATE: 02/20/2003
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 1892; mgiMarkerFeed.py (for LAF2)
+
 TAG: reports_db-16-0-0
 DATE: 02/12/2003
 STAFF: dbm
