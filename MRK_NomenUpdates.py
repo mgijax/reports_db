@@ -66,7 +66,7 @@ cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
 'and "%s" ' % (currentDate) + \
 'and m._Marker_key = h._Marker_key ' + \
 'and m._Marker_key = h._History_key ' + \
-'and h.note = "Assigned" ' + \
+'and h._Marker_Event_key = 1 ' + \
 'and m.chromosome = c.chromosome ' + \
 'and m._Species_key = c._Species_key ' + \
 'union ' + \
@@ -75,7 +75,7 @@ cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
 'where h.event_date between dateadd(day, -7, "%s") ' % (currentDate) + \
 'and "%s" ' % (currentDate) + \
 'and h._Marker_key = m._Marker_key ' + \
-'and h.note like "withdrawn%" '
+'and h._Marker_Event_key in (2,3,4,5)'
 )
 
 cmd.append('select ' + \
