@@ -71,11 +71,14 @@ def strip_newline(s):
 
 def mgi_status(status):
 
-	if status == "approved":
-		return "A"
-
 	if status == "Approved":
 		return "A"
+
+	if status == "official":
+		return "O"
+
+	if status == "interim":
+		return "I"
 
 	if status == "withdrawn":
 		return "W"
