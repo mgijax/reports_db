@@ -1,3 +1,9 @@
+TAG: reports_db-1-0-9
+DATE: 04/20/2000
+STAFF: lec
+RELEASE: A
+CHANGES: added Marker Type to MRK_LocusLink.py
+
 TAG: reports_db-1-0-8
 DATE: 04/12/2000
 STAFF: lec
