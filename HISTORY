@@ -1,3 +1,10 @@
+TAG: reports_db-18-0-7
+DATE: 07/03/2003
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 4945; add LL IDs to HMD reports
+
 TAG: reports_db-18-0-6
 DATE: 06/06/2003
 STAFF: lec
