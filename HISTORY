@@ -1,3 +1,10 @@
+TAG: reports_db-4-4-0
+DATE: 10/30/2000
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) report MRK_Nomenclature.py not displaying entries w/out Seq IDs
+
 TAG: reports_db-4-3-0
 DATE: 10/20/2000
 STAFF: lec
