@@ -100,7 +100,7 @@ for r in results:
     mgiIDs[key] = value
 
 results = db.sql('select h.humanKey, mim = r.dbXrefID ' + \
-	'from #homology h, ACC_Accession a, radar..DP_EntrezGene_DBXRef r ' + \
+	'from #homology h, ACC_Accession a, radar_2..DP_EntrezGene_DBXRef r ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 55 ' + \
