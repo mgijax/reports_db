@@ -1,3 +1,10 @@
+TAG: reports_db-11-0-17
+DATE: 07/26/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) added _LogicalDB_key
+
 TAG: reports_db-11-0-16
 DATE: 07/02/2002
 STAFF: lec
