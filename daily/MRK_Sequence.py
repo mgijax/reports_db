@@ -151,7 +151,7 @@ for r in results:
 	         r['name'] + reportlib.TAB + \
 	         offset + reportlib.TAB + \
 	         r['chromosome'] + reportlib.TAB + \
-		 string.join(gbID[key], ' '))
+		 string.join(gbID[key], ' ') + TAB)
 
 	if ugID.has_key(key):
 		fp.write(string.join(ugID[key], ' '))
