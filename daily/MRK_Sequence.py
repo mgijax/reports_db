@@ -51,6 +51,8 @@ import reportlib
 db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
+# all official/interim mouse markers that have at least one GenBank ID
+
 cmds = []
 cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
 	'o.offset, markerStatus = upper(substring(s.status, 1, 1)), markerType = t.name ' + \
@@ -61,10 +63,14 @@ cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
 	'and m._Marker_key = o._Marker_key ' + \
 	'and o.source = 0 ' + \
 	'and m._Marker_Status_key = s._Marker_Status_key ' + \
-	'and m._Marker_Type_key = t._Marker_Type_key ')
+	'and m._Marker_Type_key = t._Marker_Type_key ' + \
+	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
+	'and a._MGIType_key = 2 and a._LogicalDB_key = 9)')
 cmds.append('create index idx1 on #markers(_Marker_key)')
 cmds.append('create index idx2 on #markers(symbol)')
 db.sql(cmds, None)
+
+# MGI ids
 
 results = db.sql('select distinct m._Marker_key, a.accID ' + \
       'from #markers m, ACC_Accession a ' + \
@@ -79,6 +85,8 @@ for r in results:
     value = r['accID']
     mgiID[key] = value
 
+# GenBank ids
+
 results = db.sql('select distinct m._Marker_key, a.accID ' + \
       'from #markers m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
@@ -91,6 +99,8 @@ for r in results:
     if not gbID.has_key(key):
 	gbID[key] = []
     gbID[key].append(value)
+
+# UniGene ids
 
 results = db.sql('select distinct m._Marker_key, a.accID ' + \
       'from #markers m, ACC_Accession a ' + \
@@ -105,6 +115,8 @@ for r in results:
 	ugID[key] = []
     ugID[key].append(value)
 
+# RefSeq ids
+
 results = db.sql('select distinct m._Marker_key, a.accID ' + \
       'from #markers m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
@@ -118,15 +130,12 @@ for r in results:
 	rsID[key] = []
     rsID[key].append(value)
 
+# process
+
 results = db.sql('select * from #markers order by symbol', 'auto')
 
 for r in results:
 	key = r['_Marker_key']
-
-	# must have a GenBank ID
-
-	if not gbID.has_key(key):
-	    continue
 
 	if r['offset'] == -1.0:
 		offset = 'syntenic'
