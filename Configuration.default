@@ -1,0 +1,53 @@
+#!/bin/csh
+
+#
+# Configuration.default
+#
+# Source this file from any csh script to set the
+# env variables
+#
+
+# install directory
+setenv REPORTINSTALLDIR		/usr/local/mgi/reports_db
+
+# report output directory
+setenv REPORTOUTPUTDIR		/usr/local/mgi/reports_db/output
+
+# FTP report directory
+setenv FTPREPORTDIR		/net/l1/ftp/pub/informatics/reports
+
+# SYBASE
+setenv SYBASE			/opt/sybase
+
+# PYTHON
+
+setenv PYTHONPATH       	/usr/local/lib/python1.4:/usr/local/etc/httpd/python
+
+# PATH
+
+set path = ($path $SYBASE/bin)
+
+# Database Server
+
+setenv DSQUERY MGD
+
+# MGD Database
+
+setenv MGD mgd
+
+# Nomen Database
+
+setenv NOMEN nomen
+
+# Strains Database
+
+setenv STRAINS strains
+
+# Public login
+
+setenv USER mgd_public
+
+# Password
+
+setenv PASSWORD mgdpub
+

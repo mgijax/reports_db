@@ -1,0 +1,36 @@
+#!/bin/csh
+
+#
+# installapp
+#
+# Installs product "qcreports_db" in the appropriate directory
+#
+
+if ( ! -e Configuration ) then
+	cp -r Configuration.default Configuration
+endif
+
+source Configuration
+
+if ( ! ${?REPORTINSTALLDIR} ) then
+	echo "Environment variable REPORTINSTALLDIR has not been defined."
+	echo "It should be set to the parent directory of the report DB applications." 
+	exit 1
+endif
+
+#
+# Copy installation files to installation directory
+#
+
+foreach i (`ls Configuration *.sh *.sql *.py`)
+	cp -r $i $REPORTINSTALLDIR
+end
+
+#
+# Make report output directory, if it does not exist
+#
+
+if ( ! -e $REPORTOUTPUTDIR ) then
+	mkdir $REPORTOUTPUTDIR
+endif
+
