@@ -1,3 +1,10 @@
+TAG: reports_db-19-0-4
+DATE: 01/27/2004
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 5517; fixed weekly/MRK_NomenUpdates.py;Configuration.default
+
 TAG: reports_db-19-0-3
 TAG: reports_db-19-0-2
 DATE: 01/20/2004
