@@ -8,7 +8,7 @@
 #
 
 # install directory
-setenv REPORTINSTALLDIR		/usr/local/mgi/reports_db
+setenv REPORTINSTALLDIR		/usr/local/mgi/live/reports_db
 
 # report output directory
 setenv REPORTOUTPUTDIR		$REPORTINSTALLDIR/output
@@ -27,13 +27,13 @@ setenv MGIFEEDFTPDIR		gondor:/export/gondor/ftp/private/mgifeed
 setenv SYBASE			/opt/sybase/12.5
 
 # PYTHON
-setenv PYTHONPATH       	/usr/local/mgi/lib/python
+setenv PYTHONPATH       	/usr/local/mgi/live/lib/python
 
 # DB UTILITIES
-setenv DBUTILITIESPATH		/usr/local/mgi/dbutils/mgidbutilities
+setenv DBUTILITIESPATH		/usr/local/mgi/live/dbutils/mgidbutilities
 
 # Mammalian Vocabulary Source
-setenv MPVOCSOURCE		/usr/local/mgi/dataload/vocload/runTimeMP
+setenv MPVOCSOURCE		/usr/local/mgi/live/dataload/vocload/runTimeMP
 setenv MPFILES                  "MPheno.ontology MP.defs"
 
 # PATH
@@ -46,6 +46,7 @@ setenv DSQUERY ${DBSERVER}
 # MGD Database
 setenv DBNAME mgd
 setenv MGD ${DBNAME}
+setenv RADARDB radar
 
 # Databse User
 setenv DBUSER			mgd_public
