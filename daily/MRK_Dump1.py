@@ -32,7 +32,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 command = 'select symbol, mgiID ' + \
 	  'from MRK_Mouse_View ' + \
-	  'where _Marker_Status_key = 1 ' + \
+	  'where _Marker_Status_key in (1,3) ' + \
 	  'order by symbol'
 results = db.sql(command, 'auto')
 

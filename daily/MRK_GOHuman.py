@@ -73,7 +73,7 @@ cmds.append('select m._Marker_key, m.symbol, m.name, ma.accID, a.term, goID = a.
 'from MRK_Marker m, MRK_Acc_View ma, VOC_Annot_View a, VOC_Evidence_View e ' + \
 'where m._Species_key = 1 ' + \
 'and m._Marker_Type_key = 1 ' + \
-'and m._Marker_Status_key = 1 ' + \
+'and m._Marker_Status_key in (1,3) ' + \
 'and m._Marker_key = ma._Object_key ' + \
 'and ma.prefixPart = "MGI:" ' + \
 'and ma._LogicalDB_key = 1 ' + \

@@ -14,7 +14,7 @@ print ""
 print "Number of Genetic Markers"
 select count(*) from MRK_Marker
 where _Species_key = 1 
-and _Marker_Status_key = 1
+and _Marker_Status_key in (1,3)
 go
 
 print ""
@@ -22,7 +22,7 @@ print "Number of Genes"
 select count(*) from MRK_Marker
 where _Species_key = 1 
 and _Marker_Type_key = 1
-and _Marker_Status_key = 1
+and _Marker_Status_key in (1,3)
 go
 
 print ""
@@ -31,7 +31,7 @@ select count(distinct m._Marker_key)
 from MRK_Marker m, MRK_Acc_View a
 where m._Species_key = 1 
 and m._Marker_Type_key = 1
-and m._Marker_Status_key = 1
+and m._Marker_Status_key in (1,3)
 and m._Marker_key = a._Object_key
 and a._LogicalDB_Key = 9
 go
@@ -42,7 +42,7 @@ select count(distinct m._Marker_key)
 from MRK_Marker m, MRK_Acc_View a
 where m._Species_key = 1 
 and m._Marker_Type_key = 1
-and m._Marker_Status_key = 1
+and m._Marker_Status_key in (1,3)
 and m._Marker_key = a._Object_key
 and a._LogicalDB_Key = 13
 go
@@ -51,7 +51,7 @@ print ""
 print "Number of Genetic Markers Mapped"
 select count(*) from MRK_Marker
 where _Species_key = 1 
-and _Marker_Status_key = 1
+and _Marker_Status_key in (1,3)
 and chromosome != 'UN'
 go
 
@@ -60,7 +60,7 @@ print "Number of Genes Mapped"
 select count(*) from MRK_Marker
 where _Species_key = 1 
 and _Marker_Type_key = 1
-and _Marker_Status_key = 1
+and _Marker_Status_key in (1,3)
 and chromosome != 'UN'
 go
 
@@ -99,7 +99,7 @@ print "Number of Genetic Markers with Molecular Polymorphisms"
 select count(distinct m._Marker_key)
 from MRK_Marker m, PRB_RFLV p
 where m._Species_key = 1
-and m._Marker_Status_key = 1
+and m._Marker_Status_key in (1,3)
 and m._Marker_key = p._Marker_key
 go
 
@@ -109,7 +109,7 @@ select count(distinct m._Marker_key)
 from MRK_Marker m, PRB_RFLV p
 where m._Species_key = 1
 and m._Marker_Type_key = 1
-and m._Marker_Status_key = 1
+and m._Marker_Status_key in (1,3)
 and m._Marker_key = p._Marker_key
 go
 

@@ -53,7 +53,7 @@ cmds.append('select a.accID, m._Marker_key, m.symbol, m.name ' + \
 	'into #markers ' + \
 	'from MRK_Marker m, MRK_Acc_View a ' + \
 	'where m._Species_key = 1 ' + \
-	'and m._Marker_Status_key = 1 ' + \
+	'and m._Marker_Status_key in (1,3) ' + \
 	'and m._Marker_key = a._Object_key ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a.preferred = 1')
