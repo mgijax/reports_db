@@ -43,6 +43,13 @@ setenv DBUTILITIESPATH		/usr/local/mgi/live/dbutils/mgidbutilities
 setenv MPVOCSOURCE		/usr/local/mgi/live/dataload/vocload/runTimeMP
 setenv MPFILES                  "MPheno.ontology MP.defs MPheno_OBO.ontology"
 
+# InParanoid directory
+setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
+
+# InParanoid FASTA file
+setenv INPARANOIDFASTA          ${INPARANOIDDIR}/inparanoid.fasta
+setenv INPARANOIDDAT            /usr/local/mgi/live/dataload/swissload/data/sptr_mouse_filtered.dat
+
 # PATH
 set path = ($path $DBUTILITIESPATH/bin $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)
 

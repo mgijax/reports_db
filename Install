@@ -47,5 +47,7 @@ chmod 755 daily monthly weekly
 mkdir ${REPORTDIR}
 mkdir ${REPORTOUTPUTDIR}
 mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed
+mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed2
 mkdir ${REPORTLOGSDIR}
+mkdir ${INPARANOIDDIR}
 
