@@ -69,7 +69,7 @@ fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ
 #
 
 fp.write('!software version: $Revision$\n')
-fp.write('!date: %s $\n' % (mgi_utils.date("%Y%m%d")))
+fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
@@ -83,7 +83,7 @@ cmds.append('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) ' + \
 cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'm.symbol, m.name, m._Marker_key, markerID = ma.accID, m._Marker_Type_key, ' + \
 	'e.inferredFrom, eCode = rtrim(t.abbreviation), ' + \
-	'mDate = convert(varchar(10), e.modification_date, 101), refID = b.accID ' + \
+	'mDate = convert(varchar(10), e.modification_date, 112), refID = b.accID ' + \
 	'into #gomarker ' + \
 	'from VOC_Annot_View a, MRK_Marker m, MRK_Acc_View ma, ' + \
 	'VOC_Evidence e, VOC_Term t, BIB_Acc_View b ' + \
