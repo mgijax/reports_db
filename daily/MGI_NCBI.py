@@ -8,10 +8,10 @@
 #	and list of non-preferred MGI accession IDs of each Marker
 #
 # Usage:
-#       MRK_LocusLink.py
+#       MGI_NCBI.py
 #
 # Used by:
-# 	TR 1283 - Donna Maglott at NCBI for LocusLink
+# 	TR 1283 - Donna Maglott at NCBI for EntrezGene
 #
 # Notes:
 #
@@ -21,7 +21,7 @@
 # History:
 #
 # lec	06/18/2002
-#	- rewrote to use dictionaries for locusID, other Acc IDs, other names
+#	- rewrote to use dictionaries for egID, other Acc IDs, other names
 #
 # lec	01/19/2000
 #	- created
@@ -86,18 +86,18 @@ for r in results:
     value = r['accID']
     mgiID[key] = value
 
-# Get Locus ID for Primary Markers
+# Get EntrezGene ID for Primary Markers
 results = db.sql('select m._Marker_key, a.accID ' + \
 	'from #markers m, ACC_Accession a ' + \
 	'where m.isPrimary = 1 ' + \
 	'and m._Marker_key = a._Object_key ' + \
         'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 24 ', 'auto')
-locusID = {}
+	'and a._LogicalDB_key = 55 ', 'auto')
+egID = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    locusID[key] = value
+    egID[key] = value
 
 # Get Secondary MGI Ids for Primary Marker
 results = db.sql('select m._Marker_key, a.accID ' + \
@@ -145,8 +145,8 @@ for r in results:
 			fp.write(string.joinfields(otherAccId[r['_Marker_key']], '|'))
 		fp.write(TAB)
 
-		if locusID.has_key(r['_Marker_key']):	
-			fp.write(locusID[r['_Marker_key']])
+		if egID.has_key(r['_Marker_key']):	
+			fp.write(egID[r['_Marker_key']])
 		fp.write(TAB)
 
 		if synonym.has_key(r['_Marker_key']):	
