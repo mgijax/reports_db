@@ -25,26 +25,29 @@ and _Marker_Type_key = 1
 and _Marker_Status_key in (1,3)
 go
 
+select _Marker_key into #markers from MRK_Marker
+where _Organism_key = 1 
+and _Marker_Type_key = 1
+and _Marker_Status_key in (1,3)
+go
+
+create index idx1 on #markers(_Marker_key)
+go
+
 print ""
 print "Number of Genes w/ DNA Sequence information"
-select count(distinct m._Marker_key)
-from MRK_Marker m, ACC_Accession a
-where m._Organism_key = 1 
-and m._Marker_Type_key = 1
-and m._Marker_Status_key in (1,3)
-and m._Marker_key = a._Object_key
+select count(distinct a._Object_key)
+from #markers m, ACC_Accession a
+where m._Marker_key = a._Object_key
 and a._MGIType_key = 2
 and a._LogicalDB_Key = 9
 go
 
 print ""
 print "Number of Genes w/ Protein Sequence information"
-select count(distinct m._Marker_key)
-from MRK_Marker m, ACC_Accession a
-where m._Organism_key = 1 
-and m._Marker_Type_key = 1
-and m._Marker_Status_key in (1,3)
-and m._Marker_key = a._Object_key
+select count(distinct a._Object_key)
+from #markers m, ACC_Accession a
+where m._Marker_key = a._Object_key
 and a._MGIType_key = 2
 and a._LogicalDB_Key = 13
 go
@@ -88,22 +91,17 @@ go
 print ""
 print "Genes with Molecular Probes and Segments Data"
 select count(distinct m._Marker_key)
-from MRK_Marker m, PRB_Marker p, PRB_Probe pb, VOC_Term t
-where m._Organism_key = 1
-and m._Marker_Type_key = 1
-and m._Marker_key = p._Marker_key
+from #markers m, PRB_Marker p, PRB_Probe pb
+where m._Marker_key = p._Marker_key
 and p._Probe_key = pb._Probe_key
-and pb._SegmentType_key = t._Term_key
-and t.term != "primer"
+and pb._SegmentType_key != 63473
 go
 
 print ""
 print "Number of Genetic Markers with Molecular Polymorphisms" 
 select count(distinct m._Marker_key)
-from MRK_Marker m, PRB_RFLV p
-where m._Organism_key = 1
-and m._Marker_Status_key in (1,3)
-and m._Marker_key = p._Marker_key
+from #markers m, PRB_RFLV p
+where m._Marker_key = p._Marker_key
 go
 
 print ""

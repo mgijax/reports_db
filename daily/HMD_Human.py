@@ -166,8 +166,9 @@ def runQueries():
 	for r in results:
     		curated.append(r['_Marker_key'])
 
-	cmds = []
+	##
 
+	cmds = []
 	cmds.append('select distinct humanMarkerKey = h1._Marker_key, mouseMarkerKey = h2._Marker_key ' + \
 	'into #allhomologies ' + \
       	'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
@@ -184,6 +185,11 @@ def runQueries():
 	cmds.append('create nonclustered index idx_hkey on #allhomologies(humanMarkerKey)')
 	cmds.append('create nonclustered index idx_mkey on #allhomologies(mouseMarkerKey)')
 
+	db.sql(cmds, None)
+
+	##
+
+	cmds = []
 	cmds.append('select h.humanMarkerKey, h.mouseMarkerKey, ' + \
 		'humanOrganism = m1._Organism_key, ' + \
 		'humanSymbol = m1.symbol, ' + \
@@ -214,64 +220,65 @@ def runQueries():
 	cmds.append('create nonclustered index idx_hkey2 on #homologies(humanSymbol)')
 	cmds.append('create nonclustered index idx_mkey2 on #homologies(mouseSymbol)')
 
+	db.sql(cmds, None)
+
+	##
+
 	# human locus link ids
 
-	cmds.append('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+	results = db.sql('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.humanMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ')
+		'and a._LogicalDB_key = 24 ', 'auto')
+	for r in results:
+		humanLL[r['humanMarkerKey']] = r['accID']
 
 	# mouse locus link ids
 
-	cmds.append('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+	results = db.sql('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.mouseMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ')
+		'and a._LogicalDB_key = 24 ', 'auto')
+	for r in results:
+		mouseLL[r['mouseMarkerKey']] = r['accID']
 
 	# mouse MGI 
 
-	cmds.append('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+	results = db.sql('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.mouseMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
 		'and a.prefixPart = "MGI:" ' + \
 		'and a._LogicalDB_key = 1 ' + \
-		'and a.preferred = 1 ')
+		'and a.preferred = 1 ', 'auto')
+	for r in results:
+		mouseMGI[r['mouseMarkerKey']] = r['accID']
+
+	##
 
 	# sorted by human chromosome
 
-	cmds.append('select h.*, c.sequenceNum ' + \
+	results1 = db.sql('select h.*, c.sequenceNum ' + \
 		'from #homologies h, MRK_Chromosome c ' + \
 		'where h.humanOrganism = c._Organism_key ' + \
-		'and h.chromosome = c.chromosome ')
+		'and h.chromosome = c.chromosome ', 'auto')
 
 	# sorted by mouse chromosome
 
-	cmds.append('select h.*, c.sequenceNum ' + \
+	results2 = db.sql('select h.*, c.sequenceNum ' + \
 		'from #homologies h, MRK_Chromosome c ' + \
 		'where h.mouseOrganism = c._Organism_key ' + \
 		'and h.mouseChr = c.chromosome ' + \
-		'order by c.sequenceNum, h.mouseOffset')
+		'order by c.sequenceNum, h.mouseOffset', 'auto')
 
 	# sorted by human symbol
 
-	cmds.append('select * from #homologies order by humanSymbol')
+	results3 = db.sql('select * from #homologies order by humanSymbol', 'auto')
 
 	# sorted by mouse symbol
 
-	cmds.append('select * from #homologies order by mouseSymbol')
+	results4 = db.sql('select * from #homologies order by mouseSymbol', 'auto')
 	
-	results = db.sql(cmds, 'auto')
-
-	for r in results[8]:
-		humanLL[r['humanMarkerKey']] = r['accID']
-
-	for r in results[9]:
-		mouseLL[r['mouseMarkerKey']] = r['accID']
-
-	for r in results[10]:
-		mouseMGI[r['mouseMarkerKey']] = r['accID']
-
-	return results
+	return results1, results2, results3, results4
 
 def printDataAttributes(fp, key):
 
@@ -677,23 +684,26 @@ def processSort4(results):
 # Main
 #
 
+db.useOneConnection(1)
 sortOption = None
 
 if len(sys.argv) > 1:
 	sortOption = sys.argv[1]
 
-results = runQueries()
+r1, r2, r3, r4 = runQueries()
 
 if sortOption == '1':
-	processSort1(results[11])
+	processSort1(r1)
 elif sortOption == '2':
-	processSort2(results[12])
+	processSort2(r2)
 elif sortOption == '3':
-	processSort3(results[13])
+	processSort3(r3)
 elif sortOption == '4':
-	processSort4(results[14])
+	processSort4(r4)
 else:
-	processSort1(results[11])
-	processSort2(results[12])
-	processSort3(results[13])
-	processSort4(results[14])
+	processSort1(r1)
+	processSort2(r2)
+	processSort3(r3)
+	processSort4(r4)
+
+db.useOneConnection(0)

@@ -183,6 +183,12 @@ def runQueries():
 	cmds.append('create nonclustered index idx_hkey on #allhomologies(ratMarkerKey)')
 	cmds.append('create nonclustered index idx_mkey on #allhomologies(humanMarkerKey)')
 
+	db.sql(cmds, None)
+
+	##
+
+	cmds = []
+
 	cmds.append('select h.ratMarkerKey, h.humanMarkerKey, ' + \
 		'ratOrganism = m1._Organism_key, ' + \
 		'ratSymbol = m1.symbol, ' + \
@@ -204,51 +210,51 @@ def runQueries():
 	cmds.append('create nonclustered index idx_hkey2 on #homologies(ratSymbol)')
 	cmds.append('create nonclustered index idx_mkey2 on #homologies(humanSymbol)')
 
+	db.sql(cmds, None)
+
 	# rat locus link ids
 
-	cmds.append('select h.ratMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+	results = db.sql('select h.ratMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.ratMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ')
+		'and a._LogicalDB_key = 24 ', 'auto')
+
+	for r in results:
+		ratLL[r['ratMarkerKey']] = r['accID']
 
 	# human locus link ids
 
-	cmds.append('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+	results = db.sql('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
 		'where h.humanMarkerKey = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 24 ')
+		'and a._LogicalDB_key = 24 ', 'auto')
+
+	for r in results:
+		humanLL[r['humanMarkerKey']] = r['accID']
 
 	# sorted by rat chromosome
 
-	cmds.append('select h.*, c.sequenceNum ' + \
+	results1 = db.sql('select h.*, c.sequenceNum ' + \
 		'from #homologies h, MRK_Chromosome c ' + \
 		'where h.ratOrganism = c._Organism_key ' + \
-		'and h.ratChrOnly = c.chromosome ')
+		'and h.ratChrOnly = c.chromosome ', 'auto')
 
 	# sorted by human chromosome
 
-	cmds.append('select h.*, c.sequenceNum ' + \
+	results2 = db.sql('select h.*, c.sequenceNum ' + \
 		'from #homologies h, MRK_Chromosome c ' + \
 		'where h.humanOrganism = c._Organism_key ' + \
-		'and h.humanChrOnly = c.chromosome ')
+		'and h.humanChrOnly = c.chromosome ', 'auto')
 
 	# sorted by rat symbol
 
-	cmds.append('select * from #homologies order by ratSymbol')
+	results3 = db.sql('select * from #homologies order by ratSymbol', 'auto')
 
 	# sorted by human symbol
 
-	cmds.append('select * from #homologies order by humanSymbol')
+	results4 = db.sql('select * from #homologies order by humanSymbol', 'auto')
 	
-	results = db.sql(cmds, 'auto')
-
-	for r in results[8]:
-		ratLL[r['ratMarkerKey']] = r['accID']
-
-	for r in results[9]:
-		humanLL[r['humanMarkerKey']] = r['accID']
-
-	return results
+	return results1, results2, results3, results4
 
 def printDataAttributes(fp, key):
 
@@ -609,23 +615,26 @@ def processSort4(results):
 # Main
 #
 
+db.useOneConnection(1)
 sortOption = None
 
 if len(sys.argv) > 1:
 	sortOption = sys.argv[1]
 
-results = runQueries()
+r1, r2, r3, r4 = runQueries()
 
 if sortOption == '1':
-	processSort1(results[10])
+	processSort1(r1)
 elif sortOption == '2':
-	processSort2(results[11])
+	processSort2(r2)
 elif sortOption == '3':
-	processSort3(results[12])
+	processSort3(r3)
 elif sortOption == '4':
-	processSort4(results[13])
+	processSort4(r4)
 else:
-	processSort1(results[10])
-	processSort2(results[11])
-	processSort3(results[12])
-	processSort4(results[13])
+	processSort1(r1)
+	processSort2(r2)
+	processSort3(r3)
+	processSort4(r4)
+
+db.useOneConnection(0)

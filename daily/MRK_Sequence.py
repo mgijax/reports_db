@@ -48,96 +48,118 @@ import reportlib
 # Main
 #
 
+db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-# Retrieve MGI Accession number, Marker symbol, name, offset and 
-# all associated Nucleotide Seq IDs for Markers
+# all official/interim mouse markers that have at least one GenBank ID
 
-cmd = 'select distinct m.mgiID, m.symbol, m.status, m.markerType, m.name, m.chromosome, m.offset, a.accID, type = "N" ' + \
-      'from MRK_Mouse_View m, ACC_Accession a ' + \
+cmds = []
+cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
+	'o.offset, markerStatus = upper(substring(s.status, 1, 1)), markerType = t.name ' + \
+	'into #markers ' + \
+	'from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t ' + \
+	'where m._Organism_key = 1 ' + \
+	'and m._Marker_Status_key in (1,3) ' + \
+	'and m._Marker_key = o._Marker_key ' + \
+	'and o.source = 0 ' + \
+	'and m._Marker_Status_key = s._Marker_Status_key ' + \
+	'and m._Marker_Type_key = t._Marker_Type_key ' + \
+	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
+	'and a._MGIType_key = 2 and a._LogicalDB_key = 9)')
+cmds.append('create index idx1 on #markers(_Marker_key)')
+cmds.append('create index idx2 on #markers(symbol)')
+db.sql(cmds, None)
+
+# MGI ids
+
+results = db.sql('select distinct m._Marker_key, a.accID ' + \
+      'from #markers m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 9 ' + \
-      'union ' + \
-      'select distinct m.mgiID, m.symbol, m.status, m.markerType, m.name, m.chromosome, m.offset, a.accID, type = "U" ' + \
-      'from MRK_Mouse_View m, ACC_Accession a ' + \
+      'and a._LogicalDB_key = 1 ' + \
+      'and a.prefixPart = "MGI:" ' + \
+      'and a.preferred = 1', 'auto')
+mgiID = {}
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    mgiID[key] = value
+
+# GenBank ids
+
+results = db.sql('select distinct m._Marker_key, a.accID ' + \
+      'from #markers m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 23 ' + \
-      'union ' + \
-      'select distinct m.mgiID, m.symbol, m.status, m.markerType, m.name, m.chromosome, m.offset, a.accID, type = "R" ' + \
-      'from MRK_Mouse_View m, ACC_Accession a ' + \
+      'and a._LogicalDB_key = 9', 'auto')
+gbID = {}
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    if not gbID.has_key(key):
+	gbID[key] = []
+    gbID[key].append(value)
+
+# UniGene ids
+
+results = db.sql('select distinct m._Marker_key, a.accID ' + \
+      'from #markers m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 27 ' + \
-      'order by m.symbol, m.mgiID, type, a.accID'
+      'and a._LogicalDB_key = 23', 'auto')
+ugID = {}
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    if not ugID.has_key(key):
+	ugID[key] = []
+    ugID[key].append(value)
 
-results = db.sql(cmd, 'auto')
+# RefSeq ids
 
-prevMarker = ''
-sequence = ''
-unigene = ''
-refseq = ''
+results = db.sql('select distinct m._Marker_key, a.accID ' + \
+      'from #markers m, ACC_Accession a ' + \
+      'where m._Marker_key = a._Object_key ' + \
+      'and a._MGIType_key = 2 ' + \
+      'and a._LogicalDB_key = 27', 'auto')
+rsID = {}
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    if not rsID.has_key(key):
+	rsID[key] = []
+    rsID[key].append(value)
+
+# process
+
+results = db.sql('select * from #markers order by symbol', 'auto')
 
 for r in results:
+	key = r['_Marker_key']
 
-	if prevMarker != r['mgiID']:
-		if len(sequence) > 0:
-			fp.write(mgi_utils.prvalue(sequence) + reportlib.TAB)
-		elif prevMarker != '':
-			fp.write(reportlib.TAB)
-		sequence = ''
+	if r['offset'] == -1.0:
+		offset = 'syntenic'
+	elif r['offset'] == -999.0:
+		offset = 'N/A'
+	else:
+		offset = str(r['offset'])
 
-		if len(unigene) > 0:
-			fp.write(mgi_utils.prvalue(unigene) + reportlib.TAB)
-		elif prevMarker != '':
-			fp.write(reportlib.TAB)
-		unigene = ''
+	fp.write(mgiID[key] + reportlib.TAB + \
+	       	 r['symbol'] + reportlib.TAB + \
+	       	 r['markerStatus'] + reportlib.TAB + \
+	         r['markerType'] + reportlib.TAB + \
+	         r['name'] + reportlib.TAB + \
+	         offset + reportlib.TAB + \
+	         r['chromosome'] + reportlib.TAB + \
+		 string.join(gbID[key], ' '))
 
-		if len(refseq) > 0:
-			fp.write(mgi_utils.prvalue(refseq))
-		refseq = ''
+	if ugID.has_key(key):
+		fp.write(string.join(ugID[key], ' '))
+	fp.write(reportlib.TAB)
 
-		if prevMarker != '':
-			fp.write(reportlib.CRT)
+	if rsID.has_key(key):
+		fp.write(string.join(rsID[key], ' '))
+	fp.write(reportlib.CRT)
 
-		if r['offset'] == -1.0:
-			offset = 'syntenic'
-		elif r['offset'] == -999.0:
-			offset = 'N/A'
-		else:
-			offset = str(r['offset'])
-
-		fp.write(mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
-	        	 mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
-	        	 mgi_utils.prvalue(string.upper(r['status'][0])) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['markerType']) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
-	                 mgi_utils.prvalue(offset) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
-
-		prevMarker = r['mgiID']
-
-	if r['type'] == 'N':
-		if len(sequence) > 0:
-			sequence = sequence + ' '
-
-        	sequence = sequence + r['accID']
-
-	if r['type'] == 'U':
-		if len(unigene) > 0:
-			unigene = unigene + ' '
-
-        	unigene = unigene + r['accID']
-
-	if r['type'] == 'R':
-		if len(refseq) > 0:
-			refseq = refseq + ' '
-
-        	refseq = refseq + r['accID']
-
-fp.write(sequence + reportlib.TAB)	# Don't forget to write out the last one
-fp.write(unigene + reportlib.TAB)	# Don't forget to write out the last one
-fp.write(refseq + reportlib.CRT)	# Don't forget to write out the last one
 reportlib.finish_nonps(fp)
-
+db.useOneConnection(0)

@@ -85,6 +85,8 @@ def mgi_status(status):
 
 	return ''
 
+db.useOneConnection(1)
+
 #
 # marker_type
 #
@@ -564,4 +566,6 @@ fp4.close
 fp5.close
 fp6.close
 fp7.close
+
+db.useOneConnection(0)
 
