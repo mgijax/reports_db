@@ -40,8 +40,12 @@ setenv PYTHONPATH       	/usr/local/mgi/live/lib/python
 setenv DBUTILITIESPATH		/usr/local/mgi/live/dbutils/mgidbutilities
 
 # Mammalian Vocabulary Source
-setenv MPVOCSOURCE		/usr/local/mgi/live/dataload/vocload/runTimeMP
+setenv MPVOCSOURCE		/data/loads/mgi/vocload/runTimeMP
 setenv MPFILES                  "MPheno.ontology MP.defs MPheno_OBO.ontology"
+
+# Adult Mouse Anatomy Source
+setenv MAVOCSOURCE              /data/loads/mgi/vocload/runTimeMA
+setenv MAFILES                  "adult_mouse_anatomy.gxd anatomy_defs.gxd"
 
 # InParanoid directory
 setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
