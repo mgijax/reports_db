@@ -37,6 +37,3 @@ setenv MGD mgd
 # Nomen Database
 setenv NOMEN nomen
 
-# Strains Database
-setenv STRAINS strains
-
