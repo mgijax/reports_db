@@ -26,6 +26,9 @@
 # dbm	02/11/2003
 #	- added marker AccID, chromosome and offset for TR 4506
 #
+# dbm	02/12/2003
+#	- added marker name
+#
 '''
  
 import sys 
@@ -44,12 +47,14 @@ TAB = reportlib.TAB
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-cmd = 'select m.symbol, m.name, a.accID, p.mgiID, ' + \
+cmd = 'select m.symbol, m.name "mname", p.name "pname", ' + \
+             'a.accID, p.mgiID, ' + \
              'p.primer1sequence, p.primer2sequence, ' + \
              'p.productSize, m.chromosome, o.offset ' + \
-      'from PRB_Primer_View p, PRB_Marker_View m, ' + \
+      'from PRB_Primer_View p, PRB_Marker pm, MRK_Marker m, ' + \
            'MRK_ACC_View a, MRK_Offset o ' + \
-      'where p._Probe_key = m._Probe_key and ' + \
+      'where p._Probe_key = pm._Probe_key and ' + \
+            'pm._Marker_key = m._Marker_key and ' + \
             'm._Marker_key = a._Object_key and ' + \
             'a.prefixPart = "MGI:" and ' + \
             'a.preferred = 1 and ' + \
@@ -61,13 +66,20 @@ cmd = 'select m.symbol, m.name, a.accID, p.mgiID, ' + \
 results = db.sql(cmd, 'auto')
 
 for r in results:
-    name = r['name']
+    mname = r['mname']
+    pname = r['pname']
     p1seq = r['primer1sequence']
     p2seq = r['primer2sequence']
     prodSize = r['productSize']
 
-    if (name == None):
-        name = ""
+    if (mname == None):
+        mname = ""
+    else:
+        mname = string.strip(regsub.gsub('\n', '', mname))
+    if (pname == None):
+        pname = ""
+    else:
+        pname = string.strip(regsub.gsub('\n', '', pname))
     if (p1seq == None):
         p1seq = ""
     else:
@@ -79,7 +91,7 @@ for r in results:
     if (prodSize == None):
         prodSize = ""
 
-    fp.write(r['symbol'] + TAB + name + TAB +
+    fp.write(r['symbol'] + TAB + mname + TAB + pname + TAB +
              r['accID'] + TAB + r['mgiID'] + TAB +
              p1seq + TAB + p2seq + TAB + prodSize + TAB +
              r['chromosome'] + TAB + str(r['offset']) + CRT)
