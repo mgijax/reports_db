@@ -1,3 +1,10 @@
+TAG: reports_db-15-0-0
+DATE: 02/11/2003
+STAFF: dbm
+RELEASE: A
+CHANGES:
+a) TR 4506; modified PRB_PrimerSeq.py
+
 TAG: reports_db-14-0-0
 DATE: 02/03/2003
 STAFF: lec
