@@ -45,11 +45,13 @@ CRT = reportlib.CRT
 # Main
 #
 
+db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-cmds = []
-
-cmds.append('select a.accID, m._Marker_key, m.symbol, m.name ' + \
+#
+# mouse markers
+#
+db.sql('select a.accID, m._Marker_key, m.symbol, m.name ' + \
 	'into #markers ' + \
 	'from MRK_Marker m, ACC_Accession a ' + \
 	'where m._Organism_key = 1 ' + \
@@ -57,48 +59,54 @@ cmds.append('select a.accID, m._Marker_key, m.symbol, m.name ' + \
 	'and m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
-	'and a.preferred = 1')
+	'and a.preferred = 1', None)
+db.sql('create nonclustered index idx_marker on #markers(_Marker_key)', None)
 
-cmds.append('create nonclustered index idx_marker on #markers(_Marker_key)')
-
-cmds.append('select distinct m._Marker_key, r._Refs_key ' + \
+#
+# references
+#
+db.sql('select distinct m._Marker_key, r._Refs_key ' + \
 	'into #references ' + \
 	'from #markers m, MRK_Reference r ' + \
-	'where m._Marker_key = r._Marker_key')
+	'where m._Marker_key = r._Marker_key', None)
+db.sql('create nonclustered index idx_refs on #references(_Refs_key)', None)
 
-cmds.append('create nonclustered index idx_refs on #references(_Refs_key)')
-
-cmds.append('select r._Marker_key, a.accID ' + \
+#
+# pub med ids
+#
+results = db.sql('select r._Marker_key, a.accID ' + \
 	'from #references r, ACC_Accession a ' + \
 	'where a._MGIType_key = 1 ' + \
 	'and r._Refs_key = a._Object_key ' + \
-	'and a._LogicalDB_key = 29')
-
-cmds.append('select m._Marker_key, o.name ' + \
-	'from #markers m, MRK_Other o ' + \
-	'where m._Marker_key = o._Marker_key')
-
-cmds.append('select * from #markers order by symbol')
-
-results = db.sql(cmds, 'auto')
-
+	'and a._LogicalDB_key = 29', 'auto')
 pubmed = {}
-for r in results[-3]:
+for r in results:
 	key = r['_Marker_key']
 	if not pubmed.has_key(key):
 		pubmed[key] = []
-
 	pubmed[key].append(r['accID'])
 
+#
+# synonyms
+#
+results = db.sql('select m._Marker_key, s.synonym ' + \
+	'from #markers m, MGI_Synonym s, MGI_SynonymType st ' + \
+	'where m._Marker_key = s._Object_key ' + \
+	'and s._MGIType_key = 2 ' + \
+	'and s._SynonymType_key = st._SynonymType_key ' + \
+	'and st.synonymType = "exact"', 'auto')
 syn = {}
-for r in results[-2]:
+for r in results:
 	key = r['_Marker_key']
 	if not syn.has_key(key):
 		syn[key] = []
+	syn[key].append(r['synonym'])
 
-	syn[key].append(r['name'])
-
-for r in results[-1]:
+#
+# final results
+#
+results = db.sql('select * from #markers order by symbol', 'auto')
+for r in results:
 
 	# The list should include only publications with PubMed identifiers. (per TR)
 
@@ -115,4 +123,5 @@ for r in results[-1]:
 		fp.write(string.joinfields(pubmed[r['_Marker_key']], '|') + CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
+db.useOneConnection(0)
 

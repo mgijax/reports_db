@@ -68,6 +68,8 @@ markerTypes = {1: 'gene'}
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
+db.useOneConnection(1)
+
 fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 #
@@ -83,61 +85,79 @@ fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
 
-cmds = []
-
+#
 # retrieve all dag abbrevations for each term
-cmds.append('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) ' + \
-	'from DAG_Node_View where _Vocab_key = 4')
+#
+results = db.sql('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) from DAG_Node_View where _Vocab_key = 4', 'auto')
+dag = {}
+for r in results:
+	dag[r['_Object_key']] = r['dagAbbrev']
 
-cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
-	'm.symbol, m.name, m._Marker_key, markerID = ma.accID, m._Marker_Type_key, ' + \
-	'e.inferredFrom, modifiedBy = u.login, eCode = rtrim(t.abbreviation), ' + \
-	'mDate = convert(varchar(10), e.modification_date, 112), refID = b.accID ' + \
+#
+# retrieve data set to process
+#
+db.sql('select a._Term_key, a.term, termID = a.accID, a.isNot, a._Object_key, ' + \
+	'e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, ' + \
+	'm._Marker_Type_key, m.symbol, m.name ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot_View a, MRK_Marker m, ACC_Accession ma, ' + \
-	'VOC_Evidence e, VOC_Term t, ACC_Accession b, MGI_User u ' + \
+	'from VOC_Annot_View a, VOC_Evidence e, MRK_Marker m ' + \
 	'where a._AnnotType_key = 1000 ' + \
+	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Object_key = m._Marker_key ' + \
-        'and m._Marker_Type_key = 1 ' + \
-	'and m._Marker_key = ma._Object_key ' + \
+	'and m._Marker_Type_key = 1 ', None)
+db.sql('create index idx1 on #gomarker(_Object_key)', None)
+db.sql('create index idx2 on #gomarker(_EvidenceTerm_key)', None)
+db.sql('create index idx3 on #gomarker(_Refs_key)', None)
+db.sql('create index idx4 on #gomarker(_ModifiedBy_key)', None)
+
+#
+# retrieve synonyms for markers in data set
+#
+results = db.sql('select distinct g._Object_key, s.synonym ' + \
+	'from #gomarker g, MGI_Synonym s, MGI_SynonymType st ' + \
+	'where g._Object_key = s._Object_key ' + \
+	'and s._MGIType_key = 2 ' + \
+	'and s._SynonymType_key = st._SynonymType_key ' + \
+	'and st.synonymType = "exact" ' + \
+	'order by g._Object_key', 'auto')
+syns = {}
+for r in results:
+	key = r['_Object_key']
+	value = r['synonym']
+	if not syns.has_key(key):
+		syns[key] = []
+	syns[key].append(value)
+
+#
+# resolve foreign keys
+#
+db.sql('select g._Term_key, g.termID, g.isNot, g.inferredFrom, ' + \
+	'g._Object_key, g._Marker_Type_key, g.symbol, g.name, ' + \
+	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
+	'markerID = ma.accID, ' + \
+	'refID = b.accID, ' + \
+	'eCode = rtrim(t.abbreviation), ' + \
+	'modifiedBy = u.login ' + \
+	'into #results ' + \
+	'from #gomarker g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u ' + \
+	'where g._Object_key = ma._Object_key ' + \
 	'and ma._MGIType_key = 2 ' + \
 	'and ma.prefixPart = "MGI:" ' + \
 	'and ma._LogicalDB_key = 1 ' + \
 	'and ma.preferred = 1 ' + \
-	'and a._Annot_key = e._Annot_key ' + \
-	'and e._EvidenceTerm_key = t._Term_key ' + \
-	'and e._Refs_key = b._Object_key ' + \
+	'and g._Refs_key = b._Object_key ' + \
 	'and b._MGIType_key = 1 ' + \
 	'and b.prefixPart = "MGI:" ' + \
 	'and b._LogicalDB_key = 1 ' + \
-	'and e._ModifiedBy_key = u._User_key')
+	'and g._EvidenceTerm_key = t._Term_key ' + \
+	'and g._ModifiedBy_key = u._User_key', None)
+db.sql('create index idx1 on #results(symbol)', None)
 
-cmds.append('select distinct m._Marker_key, o.name ' + \
-	'from #gomarker m, MRK_Other o ' + \
-	'where m._Marker_key = o._Marker_key ' + \
-	'order by m._Marker_key')
-
-cmds.append('select * from #gomarker order by symbol')
-
-results = db.sql(cmds, 'auto')
-
-# Get DAG abbreviations
-
-dag = {}
-for r in results[0]:
-	dag[r['_Object_key']] = r['dagAbbrev']
-
-# Get Marker Synonyms
-syns = {}
-for r in results[2]:
-	if syns.has_key(r['_Marker_key']):
-		syns[r['_Marker_key']].append(r['name'])
-	else:
-		syns[r['_Marker_key']] = []
-		syns[r['_Marker_key']].append(r['name'])
-
-for r in results[3]:
-
+#
+# process results
+#
+results = db.sql('select * from #results order by symbol', 'auto')
+for r in results:
 	# if we can't find the DAG for the Term, skip it
 
 	if dag.has_key(r['_Term_key']):
@@ -167,8 +187,8 @@ for r in results[3]:
 		fp.write(dag[r['_Term_key']] + TAB)
 		fp.write(r['name'] + TAB)
 
-		if syns.has_key(r['_Marker_key']):
-			fp.write(string.join(syns[r['_Marker_key']], '|'))
+		if syns.has_key(r['_Object_key']):
+			fp.write(string.join(syns[r['_Object_key']], '|'))
 
 		fp.write(TAB)
 
@@ -187,4 +207,4 @@ for r in results[3]:
 		fp.write(CRT)
 	
 reportlib.finish_nonps(fp)
-
+db.useOneConnection(0)
