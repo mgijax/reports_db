@@ -22,6 +22,9 @@ $i
 end
 cd ..
 
+mv $REPORTOUTPUTDIR/gene_association.rpt $REPORTOUTPUTDIR/gene_association.mgi
+mv $REPORTOUTPUTDIR/go_terms.rpt $REPORTOUTPUTDIR/go_terms.mgi
+
 foreach i (`ls $REPORTOUTPUTDIR`)
 cp $REPORTOUTPUTDIR/$i $FTPREPORTDIR
 end
