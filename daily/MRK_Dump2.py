@@ -36,10 +36,10 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 cmds = []
 cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, markerType = t.term, offset_str = str(o.offset,10,2) ' + \
 	'into #markers ' + \
-	'from MRK_Marker m, VOC_Term t, MRK_Offset o ' + \
+	'from MRK_Marker m, MRK_Types t, MRK_Offset o ' + \
 	'where m._Organism_key = 1 ' + \
 	'and m._Marker_Status_key in (1,3) ' + \
-	'and m._Marker_Type_key = t._Term_key ' + \
+	'and m._Marker_Type_key = t._Marker_Type_key ' + \
 	'and m._Marker_key = o._Marker_key ' + \
 	'and o.source = 0')
 cmds.append('create index idx1 on #markers(_Marker_key)')
