@@ -146,18 +146,6 @@ cmds.append(string.join(['select distinct(a._Object_key),     ',
                          '  and a._LogicalDB_key = 24         ',]))
 
 #####################################################################
-# Get the LocusLink for the Mouse markers in the temp table created # 
-# by the first query                                                #
-#####################################################################
-cmds.append(string.join(['select distinct(a._Object_key),     ',
-                         '       a.accID                      ',
-                         'from #homology h,                   ',
-                         '     ACC_Accession a                ',
-                         'where a._Object_key    = h.mouseKey ',
-                         '  and a._MGIType_key   = 2          ',
-                         '  and a._LogicalDB_key = 24         ',]))
-
-#####################################################################
 # Get the Phenoslim for the Mouse markers in the temp table created # 
 # by the first query                                                #
 #####################################################################
@@ -182,8 +170,7 @@ results = db.sql(cmds, 'auto')
 ########################################################
 mmgi   = createDict(results[5], '_Object_key', 'accID')
 hlocus = createDict(results[6], '_Object_key', 'accID')
-mlocus = createDict(results[7], '_Object_key', 'accID')
-mpheno = createDict(results[8], 'mouseKey', 'accID')
+mpheno = createDict(results[7], 'mouseKey', 'accID')
 
 ####################
 # Open report file #
@@ -217,22 +204,12 @@ for r in results[4]:
     #########################################################
     if mmgi.has_key(r['mouseKey']):
         fp.write(mmgi[r['mouseKey']] + TAB)
-#    else:
-#        fp.write(TAB)
 
     ##################################################
     # The mouse marker has Phenoslim IDs output them #
     ##################################################
     if mpheno.has_key(r['mouseKey']):
         fp.write(mpheno[r['mouseKey']] + TAB)
-    else:
-        fp.write(TAB)
-
-    #####################################################
-    # If the mouse marker has a locus link ID output it #
-    #####################################################
-    if mlocus.has_key(r['mouseKey']):
-        fp.write(mlocus[r['mouseKey']] + TAB)
     else:
         fp.write(TAB)
 
