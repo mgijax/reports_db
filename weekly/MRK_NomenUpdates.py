@@ -16,6 +16,9 @@
 #
 # History:
 #
+# lec	06/14/2000
+#	- TR 2613; display current MGI IDs and Other MGI IDs
+#
 # lec	10/20/2000
 #	- TR 2023; display J: as "J:#####"
 #
@@ -67,9 +70,9 @@ fp.write('J:23000 generally indicates gene family nomenclature revision event.\n
 
 cmd = []
 
-cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
+cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key, otherID = ma.accID ' + \
 'into #m1 ' + \
-'from MRK_Mouse_View m, MRK_History h, MRK_Chromosome c ' + \
+'from MRK_Mouse_View m, MRK_History h, MRK_Chromosome c, MRK_Acc_View ma ' + \
 'where m.creation_date between dateadd(day, -7, "%s") ' % (currentDate) + \
 'and dateadd(day, 1, "%s") ' % (currentDate) + \
 'and m._Marker_key = h._Marker_key ' + \
@@ -77,21 +80,25 @@ cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
 'and h._Marker_Event_key = 1 ' + \
 'and m.chromosome = c.chromosome ' + \
 'and m._Species_key = c._Species_key ' + \
+'and m._Marker_key = ma._Object_key ' + \
+'and ma.prefixPart = "MGI:" ' + \
 'union ' + \
-'select h._History_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
-'from MRK_History h, MRK_Mouse_View m, MRK_Chromosome c ' + \
+'select h._History_key, m.mgiID, c.sequenceNum, h._Refs_key, otherID = ma.accID ' + \
+'from MRK_History h, MRK_Mouse_View m, MRK_Chromosome c, MRK_Acc_View ma ' + \
 'where h.event_date between dateadd(day, -7, "%s") ' % (currentDate) + \
 'and dateadd(day, 1, "%s") ' % (currentDate) + \
 'and h._Marker_key = m._Marker_key ' + \
 'and h._Marker_Event_key in (2,3,4,5) ' + \
 'and m.chromosome = c.chromosome ' + \
-'and m._Species_key = c._Species_key '
+'and m._Species_key = c._Species_key ' + \
+'and m._Marker_key = ma._Object_key ' + \
+'and ma.prefixPart = "MGI:" '
 )
 
 cmd.append('select m.sequenceNum, m._Marker_key, ' + \
 'chr = substring(r.chromosome,1,2), ' + \
-'m.mgiID, r.symbol,  ' + \
-'name = substring(r.name,1,25),  ' + \
+'m.mgiID, m.otherID, r.symbol,  ' + \
+'name = substring(r.name,1,35),  ' + \
 'jnumID, ' + \
 'author = substring(b._primary, 1, 16) ' + \
 'into #m2 ' + \
@@ -117,20 +124,27 @@ cmd.append('select m.*, a.accID ' + \
 
 results = db.sql(cmd, 'auto')
 
-fp.write('%-2s %-25s %-25s %-10s %-20s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'Sequence ID'))
-fp.write('%-2s %-25s %-25s %-10s %-20s %-25s\n' % ('--', '------', '---------', '--', '----------------', '-----------'))
+fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Other MGI IDs'))
+fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '-------------'))
 
 rows = 0
 prevMarker = ''
 sequence = []
+otherID = []
 
 for r in results[2]:
 
 	if prevMarker != r['_Marker_key']:
 
 		if len(sequence) > 0:
-			fp.write(string.join(sequence, ','))
+			fp.write('%-75s ' % (string.join(sequence, ',')))
+		elif prevMarker != '':
+			fp.write('%-75s ' % (''))
 		sequence = []
+
+		if len(otherID) > 0:
+			fp.write(string.join(otherID, ','))
+		otherID = []
 
 		if prevMarker != '':
 			fp.write(reportlib.CRT)
@@ -142,9 +156,10 @@ for r in results[2]:
 		else:
 			fp.write('%-25s ' % (r['symbol']))
 		
-		fp.write('%-25s ' % (r['name']))
+		fp.write('%-35s ' % (r['name']))
 		fp.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnumID'], reportlib.close_accession_anchor()))
 		fp.write('%-20s ' % (r['author']))
+		fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(r['mgiID']), r['mgiID'], reportlib.close_accession_anchor()))
 
 		prevMarker = r['_Marker_key']
 		rows = rows + 1
@@ -152,7 +167,12 @@ for r in results[2]:
 	if r['accID'] != None:
 		sequence.append(r['accID'])
 
-fp.write(string.join(sequence, ',') + reportlib.CRT)
+	if r['otherID'] != None and r['otherID'] != r['mgiID'] \
+		and r['otherID'] not in otherID:
+		otherID.append(r['otherID'])
+
+fp.write('%-75s ' % (string.join(sequence, ',')))
+fp.write(string.join(otherID, ',') + reportlib.CRT)
 fp.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
 
 reportlib.trailer(fp)
