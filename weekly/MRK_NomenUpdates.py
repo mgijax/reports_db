@@ -125,8 +125,8 @@ cmd.append('select * from #markers order by sequenceNum, symbol')
 
 results = db.sql(cmd, 'auto')
 
-fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Human Symbol', 'Other MGI IDs'))
-fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '-------------', '-------------'))
+fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Human Ortholog', 'Other MGI IDs'))
+fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '--------------', '-------------'))
 
 primaryID = {}
 for r in results[2]:
