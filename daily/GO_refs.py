@@ -61,7 +61,6 @@ cmds.append('select g.*, pubMedID = b.accID ' + \
 results = db.sql(cmds, 'auto')
 
 for r in results[-1]:
-
 	fp.write(r['accID'] + TAB)
 	fp.write(mgi_utils.prvalue(r['pubMedID']) + CRT)
 

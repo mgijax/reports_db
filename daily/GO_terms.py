@@ -49,7 +49,6 @@ cmd = 'select t.term, t.accID, d.dag ' + \
 results = db.sql(cmd, 'auto')
 
 for r in results:
-
 	fp.write(r['dag'] + TAB)
 	fp.write(r['accID'] + TAB)
 	fp.write(r['term'] + CRT)

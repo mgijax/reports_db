@@ -76,7 +76,7 @@ fp.write('!\n')
 
 cmds = []
 
-# retreive all dag abbrevations for each term
+# retrieve all dag abbrevations for each term
 cmds.append('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) ' + \
 	'from DAG_Node_View where _Vocab_key = 4')
 
@@ -110,13 +110,11 @@ results = db.sql(cmds, 'auto')
 
 dag = {}
 for r in results[0]:
-
 	dag[r['_Object_key']] = r['dagAbbrev']
 
 # Get Marker Synonyms
 syns = {}
 for r in results[2]:
-	
 	if syns.has_key(r['_Marker_key']):
 		syns[r['_Marker_key']].append(r['name'])
 	else:
