@@ -740,27 +740,6 @@ def strains():
 		     r['mdate'] + CRT)
     fp.close()
 
-    #
-    # strain_genotype.bcp
-    #
-    
-    fp = open(OUTPUTDIR + 'strain_genotype.bcp', 'w')
-
-    results = db.sql('select p._Strain_key, p._Genotype_key, t.term, ' + \
-          'cdate = convert(char(20), p.creation_date, 100), ' + \
-          'mdate = convert(char(20), p.modification_date, 100) ' + \
-          'from #strains s, PRB_Strain_Genotype p, VOC_Term t ' + \
-          'where s._Strain_key = p._Strain_key ' + \
-          'and p._Qualifier_key = t._Term_key', 'auto')
-    
-    for r in results:
-            fp.write(`r['_Strain_key']` + TAB + \
-                     `r['_Genotype_key']` + TAB + \
-                     r['term'] + TAB + \
-                     r['cdate'] + TAB + \
-                     r['mdate'] + CRT)
-    fp.close()
-
 def genotypes():
 
     db.sql('select distinct g._Genotype_key ' + \
@@ -768,7 +747,11 @@ def genotypes():
 	    'from #strains s, GXD_Genotype g, VOC_Annot a ' + \
 	    'where s._Strain_key = g._Strain_key ' + \
 	    'and g._Genotype_key = a._Object_key ' + \
-	    'and a._AnnotType_key = 1002 ', 'auto')
+	    'and a._AnnotType_key = 1002 ' + \
+	    'union ' + \
+	    'select distinct g._Genotype_key ' + \
+	    'from #strains s, PRB_Strain_Genotype g ' + \
+	    'where s._Strain_key = g._Strain_key', 'auto')
 
     db.sql('create index idex1 on #genotypes(_Genotype_key)', None)
 
@@ -814,6 +797,28 @@ def genotypes():
 		r['cdate'] + TAB + \
 		r['mdate'] + CRT)
 
+    fp.close()
+
+    #
+    # strain_genotype.bcp
+    #
+    
+    fp = open(OUTPUTDIR + 'strain_genotype.bcp', 'w')
+
+    results = db.sql('select p._Strain_key, p._Genotype_key, t.term, ' + \
+          'cdate = convert(char(20), p.creation_date, 100), ' + \
+          'mdate = convert(char(20), p.modification_date, 100) ' + \
+          'from #strains s, #genotypes g, PRB_Strain_Genotype p, VOC_Term t ' + \
+          'where s._Strain_key = p._Strain_key ' + \
+	  'and g._Genotype_key = p._Genotype_key ' + \
+          'and p._Qualifier_key = t._Term_key', 'auto')
+    
+    for r in results:
+            fp.write(`r['_Strain_key']` + TAB + \
+                     `r['_Genotype_key']` + TAB + \
+                     r['term'] + TAB + \
+                     r['cdate'] + TAB + \
+                     r['mdate'] + CRT)
     fp.close()
 
 def references():
@@ -955,17 +960,21 @@ def references():
 		     `r['_Refs_key']` + COLDELIM + \
 		     COLDELIM + \
 		     COLDELIM + \
+		     COLDELIM + \
+		     COLDELIM + \
 		     r['cdate'] + COLDELIM + \
 		     r['mdate'] + LINEDELIM)
 
     results = db.sql('select g._Refs_key, g._Genotype_key, g._Annot_key, g._AnnotEvidence_key, g.cdate, g.mdate, ' + \
-	'n.sequenceNum, n.note ' + \
+	'n._Note_key, n.noteType, n.sequenceNum, n.note ' + \
 	'from #genoreferences g, MGI_Note_VocEvidence_View n ' + \
 	'where g._AnnotEvidence_key = n._Object_key ' + \
 	'order by g._Genotype_key, g._AnnotEvidence_key, n.sequenceNum', 'auto')
     for r in results:
 	    fp.write(`r['_Annot_key']` + COLDELIM + \
 		     `r['_Refs_key']` + COLDELIM + \
+		     `r['_Note_key']` + COLDELIM + \
+		     r['noteType'] + COLDELIM + \
 		     `r['sequenceNum']` + COLDELIM + \
 		     r['note'] + COLDELIM + \
 		     r['cdate'] + COLDELIM + \

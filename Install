@@ -48,7 +48,7 @@ end
 
 cd ${REPORTINSTALLDIR}
 chmod 644 Configuration* HISTORY *.html
-chmod 750 *.sh */*.py */*.sql Install
+chmod 755 *.sh */*.py */*.sql Install
 chmod 755 daily monthly weekly
 
 mkdir ${REPORTDIR}

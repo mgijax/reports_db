@@ -22,5 +22,5 @@ $i >>& ${LOG}
 end
 
 cd ..
-./inparanoid.sh
+inparanoid.sh
 
