@@ -37,23 +37,20 @@ CRT = reportlib.CRT
 
 fp = reportlib.init('go_terms.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-#cmd = 'select t.term, t.accID, d.dagAbbrev ' + \
-#	'from VOC_Term_View t, DAG_Node_View d ' + \
-#	'and t._Vocab_key = d._Vocab_key ' + \
-#	'and t._Term_key = d._Object_key ' + \
-
-cmd = 'select t.term, t.accID, dagAbbrev = "filler" ' + \
-	'from VOC_Term_View t ' + \
+cmd = 'select t.term, t.accID, d.dag ' + \
+	'from VOC_Term_View t, DAG_Node_View d ' + \
 	'where t._Vocab_key = 4 ' + \
+	'and t._Vocab_key = d._Vocab_key ' + \
+	'and t._Term_key = d._Object_key ' + \
 	'and exists (select 1 from VOC_Annot a ' + \
 	'where t._Term_key = a._Term_key) ' + \
-	'order by dagAbbrev, t.accID'
+	'order by dag, t.accID'
 
 results = db.sql(cmd, 'auto')
 
 for r in results:
 
-	fp.write(r['dagAbbrev'] + TAB)
+	fp.write(r['dag'] + TAB)
 	fp.write(r['accID'] + TAB)
 	fp.write(r['term'] + CRT)
 
