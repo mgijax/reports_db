@@ -11,7 +11,7 @@
 #       MRK_NomenUpdates.py
 #
 # Notes:
-#	- all reports use mgdlib default of public login
+#	- all reports use db default of public login
 #	- all reports use server/database default of environment
 #	- use lowercase for all SQL commands (i.e. select not SELECT)
 #	- all public SQL reports require the header and footer
@@ -26,7 +26,8 @@
  
 import sys 
 import os
-import mgdlib
+import db
+import mgi_utils
 import reportlib
 
 #
@@ -42,14 +43,14 @@ if os.path.isfile('%s/%s' % (os.environ['FTPREPORTDIR'], currentReport)):
 # move existing Nomen reports to the archive
 os.system('mv %s/Nomenclature-*.html %s/archive/nomen' % (os.environ['FTPREPORTDIR'], os.environ['FTPREPORTDIR']))
 
-reportName = 'Nomenclature-' + mgdlib.date('%Y-%m-%d')
+reportName = 'Nomenclature-' + mgi_utils.date('%Y-%m-%d')
 
-currentDate = mgdlib.date('%m/%d/%Y')
+currentDate = mgi_utils.date('%m/%d/%Y')
 
-results = mgdlib.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
+results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
 bdate = results[0]['']
 
-results = mgdlib.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
+results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
 edate = results[0]['']
 
 title = 'Updates to Mouse Nomenclature from %s to %s' % (bdate, edate)
@@ -90,7 +91,7 @@ cmd.append('select ' + \
 'order by m.sequenceNum, r.symbol'
 )
 
-results = mgdlib.sql(cmd, 'auto')
+results = db.sql(cmd, 'auto')
 
 fp.write('%-2s %-25s %-25s %-6s %-16s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author'))
 fp.write('%-2s %-25s %-25s %-6s %-16s\n' % ('--', '------', '---------', '--', '------------'))

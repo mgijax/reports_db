@@ -31,7 +31,7 @@
 import sys
 import os
 import string
-import mgdlib
+import db
 import reportlib
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
@@ -63,7 +63,7 @@ cmd = 'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.of
   'and a.prefixPart = "MGI:" ' + \
   'and a.preferred = 1 ' + \
   'order by _Current_key, isPrimary desc'
-results = mgdlib.sql(cmd, 'auto')
+results = db.sql(cmd, 'auto')
 
 otherAccIds = []
 num = 0

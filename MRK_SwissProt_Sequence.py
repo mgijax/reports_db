@@ -32,8 +32,8 @@
  
 import sys
 import os
-import mgdlib
-import accessionlib
+import db
+import mgi_utils
 import reportlib
 
 #
@@ -41,9 +41,6 @@ import reportlib
 #
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
-
-Marker = accessionlib.get_MGIType_key('Marker')
-Sequence = accessionlib.get_LogicalDB_key('Sequence DB')
 
 cmds = []
 
@@ -69,18 +66,18 @@ cmds.append('select m._Marker_key, m.mgiID, m.symbol, m.name, m.chromosome ' +
 cmds.append('select m.*, a.accID ' +
 	'from #markers m, ACC_Accession a ' +
         'where m._Marker_key = a._Object_key ' +
-        'and a._MGIType_key = ' + `Marker` +
-        ' and a._LogicalDB_key = ' + `Sequence` +
-	' union ' +
+        'and a._MGIType_key = 2 ' + \
+        'and a._LogicalDB_key = 9 ' + \
+	'union ' +
 	'select m.*, accID = null ' +
 	'from #markers m ' +
 	'where not exists (select a.* from ACC_Accession a ' +
         'where m._Marker_key = a._Object_key ' +
-        'and a._MGIType_key = ' + `Marker` +
-        ' and a._LogicalDB_key = ' + `Sequence` + ')' +
+        'and a._MGIType_key = 2 ' + \
+        'and a._LogicalDB_key = 9) ' + \
         'order by m.symbol, m.mgiID, a.accID')
 
-results = mgdlib.sql(cmds, 'auto')
+results = db.sql(cmds, 'auto')
 
 prevMarker = ''
 sequence = ''
@@ -89,25 +86,25 @@ for r in results[1]:
 
 	if r['mgiID'] is None or r['accID'] is None:
 		if len(sequence) > 0:
-			fp.write(mgdlib.prvalue(sequence) + reportlib.CRT)
+			fp.write(mgi_utils.prvalue(sequence) + reportlib.CRT)
 		sequence = ''
 
-		fp.write(mgdlib.prvalue(r['symbol']) + reportlib.TAB + \
-	                 mgdlib.prvalue(r['name']) + reportlib.TAB + \
-	        	 mgdlib.prvalue(r['mgiID']) + reportlib.TAB + \
-	                 mgdlib.prvalue(r['chromosome']) + reportlib.TAB + reportlib.CRT)
+		fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
+	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
+	        	 mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
+	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB + reportlib.CRT)
 
 		prevMarker = r['mgiID']
 
 	elif prevMarker != r['mgiID']:
 		if len(sequence) > 0:
-			fp.write(mgdlib.prvalue(sequence) + reportlib.CRT)
+			fp.write(mgi_utils.prvalue(sequence) + reportlib.CRT)
 		sequence = ''
 
-		fp.write(mgdlib.prvalue(r['symbol']) + reportlib.TAB + \
-	                 mgdlib.prvalue(r['name']) + reportlib.TAB + \
-	        	 mgdlib.prvalue(r['mgiID']) + reportlib.TAB + \
-	                 mgdlib.prvalue(r['chromosome']) + reportlib.TAB)
+		fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
+	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
+	        	 mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
+	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
 
 		prevMarker = r['mgiID']
 

@@ -30,7 +30,7 @@
 
 import sys
 import os
-import mgdlib
+import db
 import reportlib
 
 CRT = reportlib.CRT
@@ -43,7 +43,7 @@ command = 'select m.mgiID, m.symbol, l.name ' + \
 	  'and m._Marker_key = c._Marker_key ' + \
 	  'and c._Class_key = l._Class_key ' + \
 	  'order by m.symbol'
-results = mgdlib.sql(command, 'auto')
+results = db.sql(command, 'auto')
 
 for r in results:
 	fp.write(r['symbol'] + reportlib.TAB + \

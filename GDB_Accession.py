@@ -32,7 +32,7 @@
 import sys
 import os
 import string
-import mgdlib
+import db
 import reportlib
 
 def parseGDB(_tuple):
@@ -101,6 +101,6 @@ parsers.append(None)
 parsers.append(parseGDB)
 parsers.append(parseMGI)
 parsers.append(parseHomology)
-mgdlib.sql(cmds, parsers)
+db.sql(cmds, parsers)
 reportlib.finish_nonps(fp)
 

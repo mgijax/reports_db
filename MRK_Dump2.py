@@ -30,7 +30,7 @@
  
 import sys
 import os
-import mgdlib
+import db
 import reportlib
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
@@ -39,7 +39,7 @@ command = 'select symbol, name, offset_str, chromosome, mgiID ' + \
 	  'from MRK_Mouse_View ' + \
 	  'where _Marker_Status_key = 1 ' + \
 	  'order by symbol'
-results = mgdlib.sql(command, 'auto')
+results = db.sql(command, 'auto')
 
 for r in results:
 	fp.write(r['mgiID'] + reportlib.TAB + \

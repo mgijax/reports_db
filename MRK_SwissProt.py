@@ -32,8 +32,8 @@
  
 import sys
 import os
-import mgdlib
-import accessionlib
+import db
+import mgi_utils
 import reportlib
 
 #
@@ -42,19 +42,16 @@ import reportlib
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-MGIType = accessionlib.get_MGIType_key('Marker')
-Sequence = accessionlib.get_LogicalDB_key('SWISS-PROT')
-
 # Retrieve MGI Accession number, Marker symbol, name, etc.
 
 cmd = 'select m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID ' + \
       'from MRK_Mouse_View m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
-      ' and a._MGIType_key = ' + `MGIType` + \
-      ' and a._LogicalDB_key = ' + `Sequence` + \
+      'and a._MGIType_key = 2 ' + \
+      'and a._LogicalDB_key = 9 ' + \
       'order by m.symbol, m.mgiID'
 
-results = mgdlib.sql(cmd, 'auto')
+results = db.sql(cmd, 'auto')
 
 prevMarker = ''
 sequence = ''
@@ -63,7 +60,7 @@ for r in results:
 
 	if prevMarker != r['mgiID']:
 		if len(sequence) > 0:
-			fp.write(mgdlib.prvalue(sequence) + reportlib.CRT)
+			fp.write(mgi_utils.prvalue(sequence) + reportlib.CRT)
 		sequence = ''
 
 		if r['offset'] == -1.0:
@@ -73,11 +70,11 @@ for r in results:
 		else:
 			offset = str(r['offset'])
 
-		fp.write(mgdlib.prvalue(r['mgiID']) + reportlib.TAB + \
-	        	 mgdlib.prvalue(r['symbol']) + reportlib.TAB + \
-	                 mgdlib.prvalue(r['name']) + reportlib.TAB + \
-	                 mgdlib.prvalue(offset) + reportlib.TAB + \
-	                 mgdlib.prvalue(r['chromosome']) + reportlib.TAB)
+		fp.write(mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
+	        	 mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
+	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
+	                 mgi_utils.prvalue(offset) + reportlib.TAB + \
+	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
 
 		prevMarker = r['mgiID']
 

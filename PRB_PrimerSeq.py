@@ -12,7 +12,7 @@
 #
 # Notes:
 #	- all reports use mgireport directory for output file
-#	- all reports use mgdlib default of public login
+#	- all reports use db default of public login
 #	- all reports use server/database default of environment
 #	- use lowercase for all SQL commands (i.e. select not SELECT)
 #	- all public SQL reports require the header and footer
@@ -27,7 +27,7 @@
  
 import sys 
 import os
-import mgdlib
+import db
 import reportlib
 
 CRT = reportlib.CRT
@@ -44,7 +44,7 @@ cmd = 'select p.name, p.primer1sequence, p.primer2sequence, p.productSize, m.sym
 	'where p._Probe_key = m._Probe_key ' + \
 	'order by m.symbol'
 
-results = mgdlib.sql(cmd, 'auto')
+results = db.sql(cmd, 'auto')
 
 fp.write('%-40s' % ("name") + TAB)
 fp.write('%-25s' % ("symbol") + TAB)

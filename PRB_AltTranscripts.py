@@ -14,7 +14,7 @@
 #       PRB_AltTranscripts.py
 #
 # Notes:
-#       - all reports use mgdlib default of public login
+#       - all reports use db default of public login
 #       - all reports use server/database default of environment
 #       - use lowercase for all SQL commands (i.e. select not SELECT)
 #       - all public SQL reports require the header and footer
@@ -33,7 +33,7 @@
 import sys
 import os
 import string
-import mgdlib
+import db
 import reportlib
 
 CRT = reportlib.CRT
@@ -115,7 +115,7 @@ cmds.append('select distinct c.mouse_symbol, c.chromosome, a.jnumID, h.human_sym
             'and c._Marker_key *= h._Marker_key ' + \
             'order by c.mouse_symbol')
 
-results = mgdlib.sql(cmds, 'auto')
+results = db.sql(cmds, 'auto')
 
 prevSymbol = ''
 
