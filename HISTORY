@@ -1,3 +1,10 @@
+TAG: reports_db-18-0-14
+DATE: 12/18/2003
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 5440; MRK_Sequence.py; add Marker Type
+
 TAG: no tag
 DATE: 11/06/2003
 STAFF: lec
