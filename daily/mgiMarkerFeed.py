@@ -42,6 +42,7 @@
  
 import sys
 import os
+import string
 import db
 import reportlib
 import mgi_utils
@@ -50,6 +51,17 @@ TAB = reportlib.TAB
 CRT = reportlib.CRT
 
 OUTPUTDIR = os.environ['REPORTOUTPUTDIR'] + '/mgimarkerfeed/'
+
+def strip_newline(s):
+
+	if string.find (s, '\\n') > -1:
+		s = string.join(string.split(s, '\\n'), '')
+		return s
+	elif string.find(s, '\012') > -1:
+		s = string.join(string.split(s, '\012'), '')
+		return s
+	else:
+		return s
 
 def mgi_status(status):
 
@@ -240,8 +252,8 @@ for r in results[1]:
 	         `r['_Species_key']` + TAB + \
 	         `r['_Marker_Type_key']` + TAB + \
 		 mgi_status(r['status']) + TAB + \
-		 r['symbol'] + TAB + \
-		 r['name'] + TAB + \
+		 strip_newline(r['symbol']) + TAB + \
+		 strip_newline(r['name']) + TAB + \
 		 r['chromosome'] + TAB + \
 		 mgi_utils.prvalue(r['cytogeneticOffset']) + TAB + \
 		 `r['offset']` + TAB + \
@@ -363,14 +375,14 @@ for r in results[1]:
 	         `r['_CellLine_key']` + TAB + \
 		 mgi_status(r['status']) + TAB + \
 		 `r['_Strain_key']` + TAB + \
-		 r['symbol'] + TAB + \
-		 r['name'] + TAB + \
+		 strip_newline(r['symbol']) + TAB + \
+		 strip_newline(r['name']) + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
 for r in results[2]:
 	fp2.write(`r['_Allele_key']` + TAB + \
-		 r['name'] + TAB + \
+		 strip_newline(r['name']) + TAB + \
 		 r['labelType'] + TAB + \
 		 `r['status']` + TAB + \
 		 r['cdate'] + TAB + \
@@ -479,7 +491,7 @@ results = db.sql(cmds, 'auto', execute = 1)
 for r in results[2]:
 	fp1.write(`r['_Strain_key']` + TAB + \
 	         `r['_Species_key']` + TAB + \
-	         r['strain'] + TAB + \
+	         strip_newline(r['strain']) + TAB + \
 	         `r['standard']` + TAB + \
 	         `r['needsReview']` + TAB + \
 	         `r['private']` + TAB + \
@@ -497,7 +509,7 @@ for r in results[4]:
 	fp3.write(`r['_Synonym_key']` + TAB + \
 	         `r['_Strain_key']` + TAB + \
 	         `r['private']` + TAB + \
-	         r['synonym'] + TAB + \
+	         strip_newline(r['synonym']) + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
