@@ -397,8 +397,10 @@ fp = open(OUTPUTDIR + 'strain.bcp', 'w')
 cmd = 'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
       'cdate = convert(char(20), s.creation_date, 100), ' + \
       'mdate = convert(char(20), s.modification_date, 100) ' + \
-      'from PRB_Strain s, MLP_Strain m ' + \
-      'where s._Strain_key = m._Strain_key '
+      'from PRB_Strain s, MLP_Strain m, PRB_Strain_Acc_View a ' + \
+      'where s._Strain_key = m._Strain_key ' + \
+      'and s._Strain_key = a._Object_key ' + \
+      'and a._LogicalDB_key = 22'
 
 results = db.sql(cmd, 'auto')
 
@@ -423,8 +425,10 @@ fp = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
 cmd = 'select m._Strain_key, m._Marker_key, s.private, ' + \
       'cdate = convert(char(20), m.creation_date, 100), ' + \
       'mdate = convert(char(20), m.modification_date, 100) ' + \
-      'from PRB_Strain_Marker m, PRB_Strain s ' + \
-      'where m._Strain_key = s._Strain_key'
+      'from PRB_Strain_Marker m, PRB_Strain s, PRB_Strain_Acc_View a ' + \
+      'where m._Strain_key = s._Strain_key ' + \
+      'and s._Strain_key = a._Object_key ' + \
+      'and a._LogicalDB_key = 22'
 
 results = db.sql(cmd, 'auto')
 
@@ -446,8 +450,10 @@ fp = open(OUTPUTDIR + 'strain_synonym.bcp', 'w')
 cmd = 'select m._Synonym_key, m._Strain_key, m.synonym, s.private, ' + \
       'cdate = convert(char(20), m.creation_date, 100), ' + \
       'mdate = convert(char(20), m.modification_date, 100) ' + \
-      'from PRB_Strain_Synonym m, PRB_Strain s ' + \
-      'where m._Strain_key = s._Strain_key'
+      'from PRB_Strain_Synonym m, PRB_Strain s, PRB_Strain_Acc_View a ' + \
+      'where m._Strain_key = s._Strain_key ' + \
+      'and s._Strain_key = a._Object_key ' + \
+      'and a._LogicalDB_key = 22'
 
 results = db.sql(cmd, 'auto')
 
@@ -491,8 +497,10 @@ fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
 cmd = 'select m._Strain_key, m._StrainType_key, s.private, ' + \
       'cdate = convert(char(20), m.creation_date, 100), ' + \
       'mdate = convert(char(20), m.modification_date, 100) ' + \
-      'from MLP_StrainTypes m, PRB_Strain s ' + \
-      'where m._Strain_key = s._Strain_key'
+      'from MLP_StrainTypes m, PRB_Strain s, PRB_Strain_Acc_View a ' + \
+      'where m._Strain_key = s._Strain_key ' + \
+      'and s._Strain_key = a._Object_key ' + \
+      'and a._LogicalDB_key = 22'
 
 results = db.sql(cmd, 'auto')
 
@@ -515,7 +523,8 @@ cmd = 'select distinct a.accID, a.LogicalDB, a._Object_key, a.preferred, s.priva
       'cdate = convert(varchar(20), a.creation_date, 100), ' + \
       'mdate = convert(varchar(20), a.modification_date, 100) ' + \
       'from PRB_Strain_Acc_View a, PRB_Strain s ' + \
-      'where a._Object_key = s._Strain_key'
+      'where a._Object_key = s._Strain_key ' + \
+      'and exists (select 1 from PRB_Strain_Acc_View a where s._Strain_key = a._Object_key and a._LogicalDB_key = 22)'
 
 results = db.sql(cmd, 'auto')
 
