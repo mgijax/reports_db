@@ -419,21 +419,22 @@ cmds.append('select s._Strain_key, m._Species_key, s.strain, s.standard, s.needs
       'from PRB_Strain s, MLP_Strain m, PRB_Strain_Acc_View a ' + \
       'where s._Strain_key = m._Strain_key ' + \
       'and s._Strain_key = a._Object_key ' + \
-      'and a._LogicalDB_key = 22 ' + \
-      'union ' + \
-      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
-      'cdate = convert(char(20), s.creation_date, 100), ' + \
-      'mdate = convert(char(20), s.modification_date, 100) ' + \
-      'from PRB_Strain s, MLP_Strain m, All_Allele a ' + \
-      'where s._Strain_key = m._Strain_key ' + \
-      'and s._Strain_key = a._Strain_key ' + \
-      'union ' + \
-      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
-      'cdate = convert(char(20), s.creation_date, 100), ' + \
-      'mdate = convert(char(20), s.modification_date, 100) ' + \
-      'from PRB_Strain s, MLP_Strain m, All_CellLine a ' + \
-      'where s._Strain_key = m._Strain_key ' + \
-      'and s._Strain_key = a._Strain_key')
+      'and a._LogicalDB_key = 22 ')
+
+#      'union ' + \
+#      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+#      'cdate = convert(char(20), s.creation_date, 100), ' + \
+#      'mdate = convert(char(20), s.modification_date, 100) ' + \
+#      'from PRB_Strain s, MLP_Strain m, All_Allele a ' + \
+#      'where s._Strain_key = m._Strain_key ' + \
+#      'and s._Strain_key = a._Strain_key ' + \
+#      'union ' + \
+#      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+#      'cdate = convert(char(20), s.creation_date, 100), ' + \
+#      'mdate = convert(char(20), s.modification_date, 100) ' + \
+#      'from PRB_Strain s, MLP_Strain m, All_CellLine a ' + \
+#      'where s._Strain_key = m._Strain_key ' + \
+#      'and s._Strain_key = a._Strain_key')
 
 cmds.append('create unique index index_strain on #strains(_Strain_key)')
 

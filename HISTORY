@@ -1,3 +1,10 @@
+TAG: reports_db-10-0-9
+DATE: 03/04/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) MGI 2.8/GO_gene_association.py
+
 TAG: reports_db-10-0-8
 DATE: 02/22/2002
 STAFF: lec
