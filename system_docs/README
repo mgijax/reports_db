@@ -1,0 +1,27 @@
+Quick Documentation 
+
+Configuration.default - configuration file
+	- copy this file to "Configuration"; make necessary changes
+		before executing "installapp"
+
+installapp - installation script
+
+daily - contains reports which are run every night
+nightly_reports.sh - script to run daily reports
+	- executed by user 'sybase' cron (see John Gilbert)
+
+weekly - contains reports which are run weekly
+weekly_reports.sh - script to run weekly reports
+	- executed by user 'sybase' cron (see John Gilbert)
+
+monthly - contains reports which are run on the first of every month
+monthly_reports.sh - script to run monthly reports
+	- executed by user 'sybase' cron (see John Gilbert)
+
+tab-delimited.html
+index.html
+	- index files for FTP site (see ftp.informatics.jax.org/pub/informatics/reports)
+
+sql.sh - wrapper for executing SQL reports
+
+SQL files contain SQL commands only which are read in by isql (see sql.sh)
