@@ -34,7 +34,7 @@ db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmds = []
-cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, markerType = t.term, offset_str = str(o.offset,10,2) ' + \
+cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, markerType = t.name, offset_str = str(o.offset,10,2) ' + \
 	'into #markers ' + \
 	'from MRK_Marker m, MRK_Types t, MRK_Offset o ' + \
 	'where m._Organism_key = 1 ' + \
