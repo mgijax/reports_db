@@ -128,13 +128,13 @@ fp.close()
 
 fp = open(OUTPUTDIR + 'allele_type.bcp', 'w')
 
-results = db.sql('select _Allele_Type_key, alleleType, ' + \
+results = db.sql('select _Term_key, term, ' + \
 	'cdate = convert(char(20), creation_date, 100), ' + \
 	'mdate = convert(char(20), modification_date, 100) ' + \
-	'from ALL_Type', 'auto', execute = 1)
+	'from VOC_Term_ALLType_View', 'auto', execute = 1)
 for r in results:
-	fp.write(`r['_Allele_Type_key']` + TAB + \
-		 r['alleleType'] + TAB + \
+	fp.write(`r['_Term_key']` + TAB + \
+		 r['term'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 fp.close()
@@ -163,13 +163,13 @@ fp.close()
 
 fp = open(OUTPUTDIR + 'allele_inheritance_mode.bcp', 'w')
 
-results = db.sql('select _Mode_key, mode, ' + \
+results = db.sql('select _Term_key, term, ' + \
 	'cdate = convert(char(20), creation_date, 100), ' + \
 	'mdate = convert(char(20), modification_date, 100) ' + \
-	'from ALL_Inheritance_Mode', 'auto', execute = 1)
+	'from VOC_Term_ALLInheritMode_View', 'auto', execute = 1)
 for r in results:
-	fp.write(`r['_Mode_key']` + TAB + \
-		 r['mode'] + TAB + \
+	fp.write(`r['_Term_key']` + TAB + \
+		 r['term'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 fp.close()
@@ -330,8 +330,8 @@ cmds = []
 #
 
 cmds.append('select m._Allele_key into #alleles ' + \
-	'from ALL_Allele m ' + \
-	'where m._Allele_Status_key = 4 ')
+	'from ALL_Allele m, VOC_Term t ' + \
+	'where m._Allele_Status_key = t._Term_key and t.term = "Approved" ')
 
 #
 # select data fields for allele.bcp
@@ -366,9 +366,10 @@ cmds.append('select m._Allele_key, m.name, labelType = "AN", status = 1, ' + \
 	'select m._Allele_key, s.synonym, labelType = "AY", status = 0, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
-	'from #alleles a, ALL_Allele m, ALL_Synonym s ' + \
+	'from #alleles a, ALL_Allele m, MGI_Synonym s ' + \
 	'where a._Allele_key = m._Allele_key ' + \
-	'and a._Allele_key = s._Allele_key ')
+	'and a._Allele_key = s._Object_key ' + \
+	'and s._MGIType_key = 11')
 
 #
 # select data fields for accession_allele.bcp

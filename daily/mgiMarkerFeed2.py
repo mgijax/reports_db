@@ -141,13 +141,13 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_type.bcp', 'w')
 
-    results = db.sql('select _Allele_Type_key, alleleType, ' + \
+    results = db.sql('select _Term_key, term, ' + \
 	    'cdate = convert(char(20), creation_date, 100), ' + \
 	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from ALL_Type', 'auto', execute = 1)
+	    'from VOC_Term_ALLType_View', 'auto', execute = 1)
     for r in results:
-	    fp.write(`r['_Allele_Type_key']` + TAB + \
-		     r['alleleType'] + TAB + \
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
     fp.close()
@@ -176,13 +176,13 @@ def vocabs():
     
     fp = open(OUTPUTDIR + 'allele_inheritance_mode.bcp', 'w')
 
-    results = db.sql('select _Mode_key, mode, ' + \
+    results = db.sql('select _Term_key, term, ' + \
 	    'cdate = convert(char(20), creation_date, 100), ' + \
 	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from ALL_Inheritance_Mode', 'auto', execute = 1)
+	    'from VOC_Term_ALLInheritMode_View', 'auto', execute = 1)
     for r in results:
-	    fp.write(`r['_Mode_key']` + TAB + \
-		     r['mode'] + TAB + \
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
     fp.close()
@@ -404,7 +404,9 @@ def alleles():
     # all other statuses are private/confidential alleles
     #
 
-    db.sql('select m._Allele_key into #alleles from ALL_Allele m where m._Allele_Status_key = 4 ', None)
+    db.sql('select m._Allele_key into #alleles ' + \
+	'from ALL_Allele m, VOC_Term t ' + \
+	'where m._Allele_Status_key = t._Term_key and t.term = "Approved" ', None)
     db.sql('create index idx1 on #alleles(_Allele_key)', None)
 
     #
@@ -458,9 +460,10 @@ def alleles():
 	    'select m._Allele_key, s.synonym, labelType = "AY", status = 0, ' + \
 	    'cdate = convert(char(20), m.creation_date, 100), ' + \
 	    'mdate = convert(char(20), m.modification_date, 100) ' + \
-	    'from #alleles a, ALL_Allele m, ALL_Synonym s ' + \
+	    'from #alleles a, ALL_Allele m, MGI_Synonym s ' + \
 	    'where a._Allele_key = m._Allele_key ' + \
-	    'and a._Allele_key = s._Allele_key ', 'auto')
+	    'and a._Allele_key = s._Object_key ' + \
+	    'and s._MGIType_key = 11', 'auto')
 
     for r in results:
 	    fp.write(`r['_Allele_key']` + TAB + \
@@ -508,11 +511,13 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele_note.bcp', 'w')
 
-    results = db.sql('select a._Allele_key, note = rtrim(n.note), n.sequenceNum, nt.noteType, ' + \
+    results = db.sql('select a._Allele_key, note = rtrim(nc.note), nc.sequenceNum, nt.noteType, ' + \
 	    'cdate = convert(char(20), n.creation_date, 100), ' + \
 	    'mdate = convert(char(20), n.modification_date, 100) ' + \
-	    'from #alleles a, ALL_Note n, ALL_NoteType nt ' + \
-	    'where a._Allele_key = n._Allele_key ' + \
+	    'from #alleles a, MGI_Note n, MGI_NoteChunk nc, MGI_NoteType nt ' + \
+	    'where a._Allele_key = n._Object_key ' + \
+	    'and n._MGIType_key = 11 ' + \
+	    'and n._Note_key = nc._Note_key ' + \
 	    'and n._NoteType_key = nt._NoteType_key', 'auto')
 
     for r in results:
@@ -780,13 +785,15 @@ def references():
     # references annotated to an Allele via the Genotype
     #
 
-    db.sql('select r._Refs_key, r._Allele_key, r.referenceType, ' + \
+    db.sql('select r._Refs_key, r._Allele_key, rt.assocType, ' + \
 	    'cdate = convert(char(20), r.creation_date, 100), ' + \
 	    'mdate = convert(char(20), r.modification_date, 100) ' + \
 	    'into #allreferences ' + \
-	    'from #genotypes g, GXD_AlleleGenotype ag, ALL_Reference_View r ' + \
+	    'from #genotypes g, GXD_AlleleGenotype ag, MGI_Reference_Assoc r, MGI_RefAssocType rt ' + \
 	    'where g._Genotype_key = ag._Genotype_key ' + \
-	    'and ag._Allele_key = r._Allele_key', None)
+	    'and ag._Allele_key = r._Object_key ' + \
+	    'and r._MGIType_key = 11 ' + \
+	    'and r._RefAssocType_key = rt._RefAssocType_key', None)
 
     #
     # references annotated to a Marker via the Genotype
