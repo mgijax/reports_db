@@ -60,9 +60,16 @@ cmds.append('select a.accID, m._Marker_key, m.symbol, m.name ' + \
 
 cmds.append('create nonclustered index idx_marker on #markers(_Marker_key)')
 
-cmds.append('select distinct m._Marker_key, a.accID ' + \
-	'from #markers m, MRK_Reference r, BIB_Acc_View a ' + \
-	'where m._Marker_key = r._Marker_key ' + \
+cmds.append('select distinct m._Marker_key, r._Refs_key ' + \
+	'into #references ' + \
+	'from #markers m, MRK_Reference r ' + \
+	'where m._Marker_key = r._Refs_key')
+
+cmds.append('create nonclustered index idx_refs on #references(_Refs_key)')
+
+cmds.append('select r._Marker_key, a.accID ' + \
+	'from #references r, ACC_Accession a ' + \
+	'where a._MGIType_key = 1 ' + \
 	'and r._Refs_key = a._Object_key ' + \
 	'and a._LogicalDB_key = 29')
 
