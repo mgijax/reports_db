@@ -52,6 +52,7 @@ import reportlib
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
+TAB = reportlib.TAB
 REPORTNAME = 'HMD_Rat'
 
 reportLegend = 'Data Attributes:  M - MGI curated, C - HomoloGene calculated, B - MGI curated and HomoloGene calculated'
@@ -679,6 +680,80 @@ def processSort4(results):
 	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
+def processSort5(results):
+
+	# same as processSort1, but tab-delimited
+
+	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Rat Chromosome), tab-delimited'
+	reportName = REPORTNAME + '5'
+	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp.write(reportLegend + CRT + CRT)
+
+	fp.write('Rat Chr' + TAB)
+	fp.write('Rat LocusLink ID' + TAB)
+	fp.write('Rat Symbol' + TAB)
+	fp.write('Mouse MGI Acc ID' + TAB)
+	fp.write('Mouse Chr' + TAB)
+	fp.write('Mouse cM' + TAB)
+	fp.write('Mouse LocusLink ID' + TAB)
+	fp.write('Mouse Symbol' + TAB)
+	fp.write('Mouse Name' + TAB)
+	fp.write('Data Attributes' + CRT * 2)
+
+	#
+	# initialize a list to sort the rat chromosome & offset values.
+	# the first sort is by chromosome, second is by offset.
+	# that is, sortKeys[0] holds the sequence number of the chromosome order
+	# and sortKeys[1] holds the sort value of the cytogenetic offset
+	#
+	# store the sort key as a tuple in a dictionary (rows) so we can sort 
+	# the dictionary keys
+	#
+	# the dictionary values will be set to the row tuple
+	#
+
+	sortKeys = [''] * 3	# initialize list to 3 'blanks'
+	rows = {}
+
+	for r in results:
+		sortKeys[0] = r['sequenceNum']
+		sortKeys[1] = getSortableOffset(r['cytogeneticOffset'])
+		sortKeys[2] = r['ratSymbol']
+		rows[tuple(sortKeys)] = r
+
+	#
+	# now sort the "rows" dictionary keys
+	# and print out the dictionary values
+	#
+
+	keys = rows.keys()
+	keys.sort()
+	for key in keys:
+		r = rows[key]
+		fp.write(r['ratChr'] + TAB)
+
+		if ratLL.has_key(r['ratMarkerKey']):
+			fp.write(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]))
+		fp.write(TAB)
+
+		fp.write(r['ratSymbol'] + TAB)
+		fp.write(mouseMGI[r['mouseMarkerKey']] + TAB)
+		fp.write(r['mouseChr'] + TAB)
+		fp.write(r['mouseCm'] + TAB)
+
+		if mouseLL.has_key(r['mouseMarkerKey']):
+			fp.write(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]))
+		fp.write(TAB)
+
+		fp.write(r['mouseSymbol'] + TAB)
+		fp.write(r['mouseName'] + TAB)
+		printDataAttributes(fp, r['ratMarkerKey'])
+		fp.write(CRT)
+
+	reportlib.trailer(fp)
+	reportlib.finish_nonps(fp)
+
 #
 # Main
 #
@@ -699,10 +774,13 @@ elif sortOption == '3':
 	processSort3(r3)
 elif sortOption == '4':
 	processSort4(r4)
+elif sortOption == '5':
+	processSort5(r1)
 else:
 	processSort1(r1)
 	processSort2(r2)
 	processSort3(r3)
 	processSort4(r4)
+	processSort5(r1)
 
 db.useOneConnection(0)
