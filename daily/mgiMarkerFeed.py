@@ -122,14 +122,14 @@ fp.close
 
 fp = open(OUTPUTDIR + 'allele_cellline.bcp', 'w')
 
-results = db.sql('select _CellLine_key, cellLine, cellLineStrain, ' + \
+results = db.sql('select _CellLine_key, cellLine, _Strain_key, ' + \
 	'cdate = convert(char(20), creation_date, 100), ' + \
 	'mdate = convert(char(20), modification_date, 100) ' + \
-	'from ALL_CellLine_View', 'auto')
+	'from ALL_CellLine', 'auto')
 for r in results:
 	fp.write(`r['_CellLine_key']` + TAB + \
 		 r['cellLine'] + TAB + \
-		 r['cellLineStrain'] + TAB + \
+		 `r['_Strain_key']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 fp.close
@@ -310,7 +310,7 @@ cmds.append('select m._Allele_key into #alleles ' + \
 #
 
 cmds.append('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._CellLine_key, ' + \
-	'm.status, m.strain, m.symbol, m.name, ' + \
+	'm.status, m._Strain_key, m.symbol, m.name, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele_View m ' + \
@@ -362,7 +362,7 @@ for r in results[1]:
 	         `r['_Allele_Type_key']` + TAB + \
 	         `r['_CellLine_key']` + TAB + \
 		 mgi_status(r['status']) + TAB + \
-		 r['strain'] + TAB + \
+		 `r['_Strain_key']` + TAB + \
 		 r['symbol'] + TAB + \
 		 r['name'] + TAB + \
 		 r['cdate'] + TAB + \
