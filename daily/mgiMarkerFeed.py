@@ -20,7 +20,7 @@
 #	11. accession_allele.bcp
 #
 # Usage:
-#       Rosenstein.py
+#       mgiMarkerFeed.py
 #
 # Notes:
 #
@@ -33,7 +33,6 @@
  
 import sys
 import os
-import string
 import db
 import reportlib
 import mgi_utils
