@@ -1,5 +1,11 @@
+TAG: reports_db-1-0-5
+DATE: 04/03/2000
+STAFF: lec
+RELEASE: A
+CHANGES: fixed FTP dir
+
 TAG: reports_db-1-0-4
-DATE: 03/30/2000
+DATE: 04/03/2000
 STAFF: lec
 RELEASE: A
 CHANGES: permissions during installation
