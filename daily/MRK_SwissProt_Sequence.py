@@ -53,7 +53,7 @@ cmds.append('select m._Marker_key, m.mgiID, m.symbol, m.name, m.chromosome ' +
       'select m._Marker_key, mgiID = null, m.symbol, m.name, m.chromosome ' +
       'from MRK_Marker m ' +
       'where m._Marker_Type_key = 1 ' +
-      'and m._Species_key = 1 ' +
+      'and m._Organism_key = 1 ' +
       'and m._Marker_Status_key = 2 ' +
       'and not exists (select a.* from MRK_Acc_View a where a._Object_key = m._Marker_key) ' +
       'order by m.symbol, m.mgiID')

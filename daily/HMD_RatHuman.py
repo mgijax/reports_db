@@ -66,7 +66,7 @@ offset_special = {
 def getSortableOffset (cytogeneticOffset):
         # Purpose: use 'cytogeneticOffset' to generate and return a value
         #       which will sort as desired.  (using rat as a primary
-        #       species requires special handling, as of TR 211)
+        #       organism requires special handling, as of TR 211)
         # Returns: a float
         # Assumes: nothing
         # Effects: nothing
@@ -152,14 +152,14 @@ def processSort1():
 		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
 		'MRK_Marker m1, MRK_Marker m2, MRK_Chromosome c, ' + \
 		'ACC_Accession ha, ACC_Accession ma ' + \
-		'where m1._Species_key = 40 ' + \
+		'where m1._Organism_key = 40 ' + \
 		'and m1._Marker_key = h1._Marker_key ' + \
 		'and h1._Homology_key = r1._Homology_key ' + \
 		'and r1._Class_key = r2._Class_key ' + \
 		'and r2._Homology_key = h2._Homology_key ' + \
 		'and h2._Marker_key = m2._Marker_key ' + \
-		'and m2._Species_key = 2 ' + \
-		'and m1._Species_key = c._Species_key ' + \
+		'and m2._Organism_key = 2 ' + \
+		'and m1._Organism_key = c._Organism_key ' + \
 		'and m1.chromosome = c.chromosome ' + \
 		'and m1._Marker_key *= ha._Object_key ' + \
 		'and ha._MGIType_key = 2 ' + \
@@ -267,14 +267,14 @@ def processSort2():
               'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
               'MRK_Marker m1, MRK_Marker m2, MRK_Chromosome c, ' + \
 	      'ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Species_key = 40 ' + \
+              'where m1._Organism_key = 40 ' + \
               'and m1._Marker_key = h1._Marker_key ' + \
               'and h1._Homology_key = r1._Homology_key ' + \
               'and r1._Class_key = r2._Class_key ' + \
               'and r2._Homology_key = h2._Homology_key ' + \
               'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Species_key = 2 ' + \
-              'and m2._Species_key = c._Species_key ' + \
+              'and m2._Organism_key = 2 ' + \
+              'and m2._Organism_key = c._Organism_key ' + \
               'and m2.chromosome = c.chromosome ' + \
 	      'and m1._Marker_key *= ha._Object_key ' + \
 	      'and ha._MGIType_key = 2 ' + \
@@ -377,13 +377,13 @@ def processSort3():
               'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
               'MRK_Marker m1, MRK_Marker m2, ' + \
 	      'ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Species_key = 40 ' + \
+              'where m1._Organism_key = 40 ' + \
               'and m1._Marker_key = h1._Marker_key ' + \
               'and h1._Homology_key = r1._Homology_key ' + \
               'and r1._Class_key = r2._Class_key ' + \
               'and r2._Homology_key = h2._Homology_key ' + \
               'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Species_key = 2 ' + \
+              'and m2._Organism_key = 2 ' + \
 	      'and m1._Marker_key *= ha._Object_key ' + \
 	      'and ha._MGIType_key = 2 ' + \
 	      'and ha._LogicalDB_key = 24 ' + \
@@ -459,13 +459,13 @@ def processSort4():
               'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
               'MRK_Marker m1, MRK_Marker m2, ' + \
 	      'ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Species_key = 40 ' + \
+              'where m1._Organism_key = 40 ' + \
               'and m1._Marker_key = h1._Marker_key ' + \
               'and h1._Homology_key = r1._Homology_key ' + \
               'and r1._Class_key = r2._Class_key ' + \
               'and r2._Homology_key = h2._Homology_key ' + \
               'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Species_key = 2 ' + \
+              'and m2._Organism_key = 2 ' + \
 	      'and m1._Marker_key *= ha._Object_key ' + \
 	      'and ha._MGIType_key = 2 ' + \
 	      'and ha._LogicalDB_key = 24 ' + \

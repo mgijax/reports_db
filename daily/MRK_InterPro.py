@@ -40,7 +40,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 cmd = 'select distinct mgiID = a1.accID, m.symbol, a2.accID ' + \
       'from MRK_Marker m, MRK_Acc_View a1, VOC_Annot a, VOC_Term_Acc_View a2 ' + \
-      'where m._Species_key = 1 ' + \
+      'where m._Organism_key = 1 ' + \
       'and m._Marker_key = a1._Object_key ' + \
       'and a1._LogicalDB_key = 1 ' + \
       'and a1.prefixPart = "MGI:" ' + \

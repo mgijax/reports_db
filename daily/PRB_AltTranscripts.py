@@ -89,7 +89,7 @@ cmds.append('select distinct  mouse_symbol = mm.symbol, ' + \
             'from PRB_Reference pr, PRB_Source ps, PRB_Probe pb, PRB_Notes pn, ' + \
 	    'MRK_Marker mm, PRB_Marker pm ' + \
             'where pn.note like "%alternat%" ' + \
-            'and ps._ProbeSpecies_key = 1 ' + \
+            'and ps._ProbeOrganism_key = 1 ' + \
             'and pm.relationship = "E" ' + \
             'and pn._Probe_key = pb._Probe_key ' + \
             'and pb._Probe_key = pr._Probe_key ' + \
@@ -102,7 +102,7 @@ cmds.append('select distinct  c.mouse_symbol, c._Marker_key, human_symbol= m1.sy
             'from #csnr c, MRK_Marker m1, HMD_Homology r1, ' + \
             'HMD_Homology_Marker h1, HMD_Homology r2, ' + \
             'HMD_Homology_Marker h2 ' + \
-            'where m1._Species_key = 2 ' + \
+            'where m1._Organism_key = 2 ' + \
             'and m1._Marker_key = h1._Marker_key ' + \
             'and h1._Homology_key = r1._Homology_key ' + \
             'and r1._Class_key = r2._Class_key ' + \

@@ -33,7 +33,7 @@ go
 print ""
 print "This list represents genetic backgrounds for which polymporphism data have"
 print "been curated. These are not standard strains, but mixtures of strains, crosses, "
-print "common names, and species designations. See the Standard Strains for a list of "
+print "common names, and organism designations. See the Standard Strains for a list of "
 print "strains with accepted nomenclature."
 print ""
 

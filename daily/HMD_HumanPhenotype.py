@@ -100,8 +100,8 @@ cmds.append(string.join(['select distinct(hpv.markerkey2) as humanKey, ',
                          'from HMD_Homology_Pairs_View hpv,            ',
                          '     MRK_Marker m1,                          ',
                          '     MRK_Marker m2                           ',
-                         'where hpv.specieskey1    = 1                 ',
-                         '  and hpv.specieskey2    = 2                 ',
+                         'where hpv.organismkey1    = 1                 ',
+                         '  and hpv.organismkey2    = 2                 ',
                          '  and  m1._Marker_key    = hpv.markerkey1    ',
                          '  and  m2._Marker_key    = hpv.markerkey2    ',]))
 

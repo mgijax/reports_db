@@ -51,7 +51,7 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'm.chromosome, a.accID, markerType = t.name, isPrimary = 1, s.status ' + \
   'into #markers ' + \
   'from MRK_Marker m, MRK_Offset o, MRK_Acc_View a, MRK_Types t, MRK_Status s ' + \
-  'where m._Species_key = 1 ' + \
+  'where m._Organism_key = 1 ' + \
   'and m._Marker_Status_key in (1,3) ' + \
   'and m._Marker_key = o._Marker_key ' + \
   'and o.source = 0 ' + \
@@ -65,7 +65,7 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.offset,10,2), m.chromosome, ' + \
   'a.accID, markerType = t.name, isPrimary = 0, s.status ' + \
   'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Acc_View a, MRK_Types t, MRK_Status s ' + \
-  'where m._Species_key = 1 ' + \
+  'where m._Organism_key = 1 ' + \
   'and m._Marker_Status_key = 2 ' + \
   'and m._Marker_key = o._Marker_key ' + \
   'and o.source = 0 ' + \
