@@ -67,7 +67,7 @@ def parseHomology(_tuple):
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], None, os.environ['FTPREPORTDIR'])
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['FTPREPORTDIR'])
 
 gdb = {}
 mgi = {}

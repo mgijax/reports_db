@@ -40,7 +40,7 @@ import reportlib
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], None, os.environ['FTPREPORTDIR'])
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['FTPREPORTDIR'])
 
 Marker = accessionlib.get_MGIType_key('Marker')
 Sequence = accessionlib.get_LogicalDB_key('Sequence DB')

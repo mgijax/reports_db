@@ -35,7 +35,7 @@ import reportlib
 
 CRT = reportlib.CRT
 
-fp = reportlib.init(sys.argv[0], None, os.environ['FTPREPORTDIR'])
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['FTPREPORTDIR'])
 
 command = 'select m.mgiID, m.symbol, l.name ' + \
 	  'from MRK_Mouse_View m, MRK_Classes c, MRK_Class l ' + \

@@ -33,7 +33,7 @@ import os
 import mgdlib
 import reportlib
 
-fp = reportlib.init(sys.argv[0], None, os.environ['FTPREPORTDIR'])
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['FTPREPORTDIR'])
 
 command = 'select symbol, name, offset_str, chromosome, mgiID ' + \
 	  'from MRK_Mouse_View ' + \
