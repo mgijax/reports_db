@@ -44,7 +44,7 @@ select o.accID "MGI Accession ID", o.chromosome "Chr",
         when o.offset = -999.0 then "       N/A"
         when o.offset = -1.0 then "  syntenic"
         end
-, o.symbol "Symbol", o.name "Name", o.markerType "Type"
+, o.symbol "Symbol", o.status "Status", o.name "Name", o.markerType "Type"
 from #output o
 go
 
