@@ -116,7 +116,7 @@ def getSortableOffset (cytogeneticOffset):
 
 def processSort1():
 
-	reportTitle = 'Homology - Human vs. Mouse (Sorted by Human Chromosome)'
+	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Chromosome)'
 	reportName = REPORTNAME + '1'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
@@ -264,7 +264,7 @@ def processSort1():
 
 def processSort2():
 
-	reportTitle = 'Homology - Human vs. Mouse (Sorted by Mouse Chromosome)'
+	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Mouse Chromosome)'
 	reportName = REPORTNAME + '2'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
@@ -382,7 +382,7 @@ def processSort2():
 
 def processSort3():
 
-	reportTitle = 'Homology - Human vs. Mouse (Sorted by Human Symbol)'
+	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Symbol)'
 	reportName = REPORTNAME + '3'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
@@ -498,7 +498,7 @@ def processSort3():
 
 def processSort4():
 
-	reportTitle = 'Homology - Human vs. Mouse (Sorted by Mouse Symbol)'
+	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Mouse Symbol)'
 	reportName = REPORTNAME + '4'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
