@@ -1,3 +1,10 @@
+TAG: reports_db-19-0-8
+DATE: 02/09/2004
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) fix MRK_List3.sql, MRK_List4.sql
+
 TAG: reports_db-19-0-7
 DATE: 02/06/2004
 STAFF: lec
