@@ -64,7 +64,7 @@ cmds.append('create nonclustered index idx_marker on #markers(_Marker_key)')
 cmds.append('select distinct m._Marker_key, r._Refs_key ' + \
 	'into #references ' + \
 	'from #markers m, MRK_Reference r ' + \
-	'where m._Marker_key = r._Refs_key')
+	'where m._Marker_key = r._Marker_key')
 
 cmds.append('create nonclustered index idx_refs on #references(_Refs_key)')
 
