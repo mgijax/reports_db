@@ -26,7 +26,7 @@ foreach i (`ls Configuration *.sh *.sql *.py`)
 	cp -r $i $REPORTINSTALLDIR
 end
 
-foreach i (`ls index.html tab-delimited.html')
+foreach i (`ls index.html tab-delimited.html`)
 	cp -r $i $FTPREPORTDIR
 end
 
