@@ -99,7 +99,14 @@ cmd.append('select m._Marker_key, ' + \
 cmd.append('select m.*, a.accID ' + \
 'from #m2 m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
-'and a._LogicalDB_key = 9 '
+'and a._LogicalDB_key = 9 ' + \
+'union ' + \
+'select m.*, NULL ' + \
+'from #m2 m ' + \
+'where not exists ' + \
+'(select 1 from MRK_Acc_View a ' + \
+'where m._Marker_key = a._Object_key ' + \
+'and a._LogicalDB_key = 9) '
 )
 
 results = db.sql(cmd, 'auto')
@@ -136,7 +143,8 @@ for r in results[2]:
 		prevMarker = r['_Marker_key']
 		rows = rows + 1
 
-	sequence.append(r['accID'])
+	if r['accID'] != None:
+		sequence.append(r['accID'])
 
 fp.write(string.join(sequence, ',') + reportlib.CRT)
 fp.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
