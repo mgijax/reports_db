@@ -17,3 +17,5 @@ foreach i (`ls *.py`)
 $i
 end
 
+rcp ${REPORTOUTPUTDIR}/GO_nonmouse.rpt ${FTPCUSTOM}
+rm -rf ${REPORTOUTPUTDIR}/GO_nonmouse.rpt

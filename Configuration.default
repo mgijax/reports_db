@@ -19,6 +19,7 @@ setenv FTPURL                   ftp.informatics.jax.org
 # FTP report directory
 setenv FTPREPORTDIR		gondor:/export/gondor/ftp/pub/reports
 setenv FTPREPORTDIR2		/net/gondor/export/gondor/ftp/pub/reports
+setenv FTPCUSTOM                gondor:/export/gondor/ftp/pub/custom
 
 # MGI Feed FTP report directory
 setenv MGIFEEDFTPDIR		gondor:/export/gondor/ftp/private/mgifeed
