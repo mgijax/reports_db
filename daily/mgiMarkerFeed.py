@@ -420,16 +420,18 @@ fp.close
 
 fp = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
 
-cmd = 'select _Strain_key, _Marker_key, ' + \
-      'cdate = convert(char(20), creation_date, 100), ' + \
-      'mdate = convert(char(20), modification_date, 100) ' + \
-      'from PRB_Strain_Marker'
+cmd = 'select m._Strain_key, m._Marker_key, s.private, ' + \
+      'cdate = convert(char(20), m.creation_date, 100), ' + \
+      'mdate = convert(char(20), m.modification_date, 100) ' + \
+      'from PRB_Strain_Marker m, PRB_Strain s ' + \
+      'where m._Strain_key = s._Strain_key'
 
 results = db.sql(cmd, 'auto')
 
 for r in results:
 	fp.write(`r['_Strain_key']` + TAB + \
 	         `r['_Marker_key']` + TAB + \
+	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
@@ -441,16 +443,18 @@ fp.close
 
 fp = open(OUTPUTDIR + 'strain_synonym.bcp', 'w')
 
-cmd = 'select _Synonym_key, _Strain_key, synonym, ' + \
-      'cdate = convert(char(20), creation_date, 100), ' + \
-      'mdate = convert(char(20), modification_date, 100) ' + \
-      'from PRB_Strain_Synonym'
+cmd = 'select m._Synonym_key, m._Strain_key, m.synonym, s.private, ' + \
+      'cdate = convert(char(20), m.creation_date, 100), ' + \
+      'mdate = convert(char(20), m.modification_date, 100) ' + \
+      'from PRB_Strain_Synonym m, PRB_Strain s ' + \
+      'where m._Strain_key = s._Strain_key'
 
 results = db.sql(cmd, 'auto')
 
 for r in results:
 	fp.write(`r['_Synonym_key']` + TAB + \
 	         `r['_Strain_key']` + TAB + \
+	         `r['private']` + TAB + \
 	         r['synonym'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
@@ -484,16 +488,18 @@ fp.close
 
 fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
 
-cmd = 'select _Strain_key, _StrainType_key, ' + \
-      'cdate = convert(char(20), creation_date, 100), ' + \
-      'mdate = convert(char(20), modification_date, 100) ' + \
-      'from MLP_StrainTypes'
+cmd = 'select m._Strain_key, m._StrainType_key, s.private, ' + \
+      'cdate = convert(char(20), m.creation_date, 100), ' + \
+      'mdate = convert(char(20), m.modification_date, 100) ' + \
+      'from MLP_StrainTypes m, PRB_Strain s ' + \
+      'where m._Strain_key = s._Strain_key'
 
 results = db.sql(cmd, 'auto')
 
 for r in results:
 	fp.write(`r['_Strain_key']` + TAB + \
 	         `r['_StrainType_key']` + TAB + \
+	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
@@ -505,10 +511,11 @@ fp.close
 
 fp = open(OUTPUTDIR + 'accession_strain.bcp', 'w')
 
-cmd = 'select distinct accID, LogicalDB, _Object_key, preferred, ' + \
-      'cdate = convert(varchar(20), creation_date, 100), ' + \
-      'mdate = convert(varchar(20), modification_date, 100) ' + \
-      'from PRB_Strain_Acc_View'
+cmd = 'select distinct a.accID, a.LogicalDB, a._Object_key, a.preferred, s.private, ' + \
+      'cdate = convert(varchar(20), a.creation_date, 100), ' + \
+      'mdate = convert(varchar(20), a.modification_date, 100) ' + \
+      'from PRB_Strain_Acc_View a, PRB_Strain s ' + \
+      'where a._Object_key = s._Strain_key'
 
 results = db.sql(cmd, 'auto')
 
@@ -517,6 +524,7 @@ for r in results:
 		 r['LogicalDB'] + TAB + \
 	         `r['_Object_key']` + TAB + \
 	         `r['preferred']` + TAB + \
+	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 

@@ -1,3 +1,11 @@
+TAG: reports_db-10-0-6
+DATE: 02/13/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) MGI 2.8
+b) mgimarkerfeed - add private to all strain bcp files
+
 TAG: reports_db-10-0-5
 DATE: 02/08/2002
 STAFF: lec
