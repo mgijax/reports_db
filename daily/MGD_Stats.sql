@@ -103,10 +103,9 @@ go
 
 insert into #poly
 select distinct m._Marker_key
-from MRK_Marker m, Gbase_Matrix..MX_Loci x
+from MRK_Marker m
 where m._Species_key = 1
 and m._Marker_Status_key = 1
-and m.symbol = x.locus
 go
 
 print ""
@@ -128,11 +127,10 @@ go
 
 insert into #poly
 select distinct m._Marker_key
-from MRK_Marker m, Gbase_Matrix..MX_Loci x
+from MRK_Marker m
 where m._Species_key = 1
 and m._Marker_Type_key = 1
 and m._Marker_Status_key = 1
-and m.symbol = x.locus
 go
 
 print ""
