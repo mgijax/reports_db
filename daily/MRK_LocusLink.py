@@ -46,9 +46,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # 2. all Withdrawn Marker records
 #
 
-cmds = []
-
-cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, ' + \
+db.sql('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, ' + \
   'offset = str(o.offset,10,2), m.chromosome, markerType = t.name, isPrimary = 1, ' + \
   'markerStatus = upper(substring(s.status, 1, 1)) ' + \
   'into #markers ' + \
@@ -70,10 +68,8 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'and o.source = 0 ' + \
   'and m._Marker_key = c._Marker_key ' + \
   'and m._Marker_Type_key = t._Marker_Type_key ' + \
-  'and m._Marker_Status_key = s._Marker_Status_key ')
-
-cmds.append('create nonclustered index idx_key on #markers(_Marker_key)')
-db.sql(cmds, None)
+  'and m._Marker_Status_key = s._Marker_Status_key ', None)
+db.sql('create nonclustered index idx_key on #markers(_Marker_key)', None)
 
 # MGI ids
 
@@ -119,15 +115,20 @@ for r in results:
 	otherAccId[r['_Marker_key']].append(r['accID'])
 
 # Get Synonyms for Primary Marker
-results = db.sql('select m._Marker_key, o.name ' + \
-	'from #markers m, MRK_Other o ' + \
+results = db.sql('select m._Marker_key, s.synonym ' + \
+	'from #markers m, MGI_Synonym s, MGI_SynonymType st ' + \
 	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key = o._Marker_key ', 'auto')
-otherName = {}
+	'and m._Marker_key = s._Object_key ' + \
+	'and s._MGIType_key = 2 ' + \
+	'and s._SynonymType_key = st._SynonymType_key ' + \
+	'and st.synonymType = "exact"', 'auto')
+synonym = {}
 for r in results:
-	if not otherName.has_key(r['_Marker_key']):
-		otherName[r['_Marker_key']] = []
-	otherName[r['_Marker_key']].append(r['name'])
+	key = r['_Marker_key']
+	value = r['synonym']
+	if not synonym.has_key(key):
+		synonym[key] = []
+	synonym[key].append(value)
 
 results = db.sql('select * from #markers order by _Current_key, isPrimary desc', 'auto')
 for r in results:
@@ -148,8 +149,8 @@ for r in results:
 			fp.write(locusID[r['_Marker_key']])
 		fp.write(TAB)
 
-		if otherName.has_key(r['_Marker_key']):	
-			fp.write(string.joinfields(otherName[r['_Marker_key']], '|'))
+		if synonym.has_key(r['_Marker_key']):	
+			fp.write(string.joinfields(synonym[r['_Marker_key']], '|'))
 		fp.write(CRT)
 	else:
 		fp.write(TAB)
