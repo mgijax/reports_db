@@ -1,9 +1,10 @@
-TAG: reports_db-5-0-0
+TAG: reports_db-5-0-0, -1
 DATE: 01/15/2001
 STAFF: lec
 RELEASE: A
 CHANGES: 
 1) new Install
+2) bug fixes in monthly reports
 
 TAG: reports_db-4-4-0
 DATE: 10/30/2000
