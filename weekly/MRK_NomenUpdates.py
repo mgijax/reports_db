@@ -111,8 +111,8 @@ cmd.append('select distinct m._Marker_key, a.accID ' + \
 # get sequence ids (4)
 cmd.append('select distinct m._Marker_key, a.accID ' + \
 'from #markers m, ACC_Accession a ' + \
-'and a._MGIType_key = 2 ' + \
 'where m._Marker_key = a._Object_key ' + \
+'and a._MGIType_key = 2 ' + \
 'and a._LogicalDB_key = 9')
 
 # get human ortholog (5)
