@@ -2,7 +2,7 @@
 
 '''
 #
-# PRB_Strain.py 09/27/2001
+# PRB_Strain.py 02/07/2002
 #
 # Report:
 #       Tab-delimited file
@@ -12,7 +12,7 @@
 #       PRB_Strain.py
 #
 # Used by:
-#       Those who wish official Strain Nomenclature.
+#       Anyone who wants a dump of the Strain
 #
 # Notes:
 #
@@ -57,7 +57,7 @@ cmds.append('select _Strain_key, synonym from PRB_Strain_Synonym')
 
 # Retrieve all Strains
 
-cmds.append('select _Strain_key, strain from PRB_Strain where private = 0 order by strain')
+cmds.append('select _Strain_key, strain from PRB_Strain where standard = 1 and private = 0 order by strain')
 
 results = db.sql(cmds, 'auto')
 
