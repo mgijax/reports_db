@@ -1,7 +1,14 @@
+TAG: reports_db-13-0-6
+DATE: 11/04/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) index.html; removed duplicate PRB_TissueMouse.sql.rpt
+
 TAG: reports_db-13-0-5
 TAG: reports_db-13-0-4
 DATE: 11/04/2002
-STAFF: pm
+STAFF: lec
 RELEASE: A
 CHANGES:
 a) index.html; change "seq_dbs" to "seq_dbs.current"
