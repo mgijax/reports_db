@@ -5,6 +5,19 @@ RELEASE: A
 CHANGES: MGI 3.1
 1) mgimarkerfeed
 
+TAG: reports_db-21-0-10
+DATE: 11/08/2004
+STAFF: lec
+RELEASE: A
+CHANGES: MGI 3.02, TR 6284 (GO_GOA.py)
+
+TAG: reports_db-21-0-9
+DATE: 11/02/2004
+STAFF: lec
+RELEASE: A
+CHANGES: MGI 3.02, TR 6284 (GO_GOA.py)
+
+>>>>>>> 1.157.2.2
 TAG: reports_db-21-0-8
 DATE: 08/24/2004
 STAFF: lec
