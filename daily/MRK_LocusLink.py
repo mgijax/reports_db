@@ -48,9 +48,9 @@ cmds = []
 #
 
 cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, offset = str(o.offset,10,2), ' + \
-  'm.chromosome, a.accID, markerType = t.name, isPrimary = 1 ' + \
+  'm.chromosome, a.accID, markerType = t.name, isPrimary = 1, s.status ' + \
   'into #markers ' + \
-  'from MRK_Marker m, MRK_Offset o, MRK_Acc_View a, MRK_Types t ' + \
+  'from MRK_Marker m, MRK_Offset o, MRK_Acc_View a, MRK_Types t, MRK_Status s ' + \
   'where m._Species_key = 1 ' + \
   'and m._Marker_Status_key in (1,3) ' + \
   'and m._Marker_key = o._Marker_key ' + \
@@ -60,10 +60,11 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'and a._LogicalDB_key = 1 ' + \
   'and a.preferred = 1 ' + \
   'and m._Marker_Type_key = t._Marker_Type_key ' + \
+  'and m._Marker_Status_key = s._Marker_Status_key ' + \
   'union '  + \
   'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.offset,10,2), m.chromosome, ' + \
-  'a.accID, markerType = t.name, isPrimary = 0 ' + \
-  'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Acc_View a, MRK_Types t ' + \
+  'a.accID, markerType = t.name, isPrimary = 0, s.status ' + \
+  'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Acc_View a, MRK_Types t, MRK_Status s ' + \
   'where m._Species_key = 1 ' + \
   'and m._Marker_Status_key = 2 ' + \
   'and m._Marker_key = o._Marker_key ' + \
@@ -73,7 +74,8 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'and a.prefixPart = "MGI:" ' + \
   'and a._LogicalDB_key = 1 ' + \
   'and a.preferred = 1 ' + \
-  'and m._Marker_Type_key = t._Marker_Type_key')
+  'and m._Marker_Type_key = t._Marker_Type_key ' + \
+  'and m._Marker_Status_key = s._Marker_Status_key ')
 
 cmds.append('create nonclustered index idx_key on #markers(_Marker_key)')
 
@@ -124,6 +126,7 @@ for r in results[5]:
 
 	fp.write(r['accID'] + TAB + \
 	 	r['symbol'] + TAB + \
+		string.upper(r['status'][0]) + TAB + \
 	 	r['name'] + TAB + \
 	 	r['offset'] + TAB + \
 	 	r['chromosome'] + TAB + \

@@ -36,6 +36,7 @@
  
 import sys
 import os
+import string
 import db
 import mgi_utils
 import reportlib
@@ -106,7 +107,7 @@ for r in results:
 
 		fp.write(mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
 	        	 mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
-	        	 mgi_utils.prvalue(r['status']) + reportlib.TAB + \
+	        	 mgi_utils.prvalue(string.upper(r['status'][0])) + reportlib.TAB + \
 	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
 	                 mgi_utils.prvalue(offset) + reportlib.TAB + \
 	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
