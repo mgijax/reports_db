@@ -5,8 +5,8 @@ select c.sequenceNum, a.accID, m.chromosome, o.offset, m.symbol,
 status = upper(substring(s.status, 1, 1)), name = substring(m.name,1,150), markerType = substring(t.name,1,25)
 into #output
 from MRK_Marker m, MRK_Chromosome c, MRK_Acc_View a, MRK_Offset o, MRK_Types t, MRK_Status s
-where m._Species_key = 1
-and m._Species_key = c._Species_key
+where m._Organism_key = 1
+and m._Organism_key = c._Organism_key
 and m.chromosome = c.chromosome
 and m._Marker_key = a._Object_key
 and a.prefixPart = "MGI:"
@@ -20,9 +20,9 @@ union
 select c.sequenceNum, null, m.chromosome, o.offset, m.symbol, 
 status = upper(substring(s.status, 1, 1)), name = substring(m.name,1,150), markerType = substring(t.name,1,25)
 from MRK_Marker m, MRK_Chromosome c, MRK_Offset o, MRK_Types t, MRK_Status s
-where m._Species_key = 1
+where m._Organism_key = 1
 and m._Marker_Status_key = 2
-and m._Species_key = c._Species_key
+and m._Organism_key = c._Organism_key
 and m.chromosome = c.chromosome
 and m._Marker_key = o._Marker_key
 and m._Marker_Type_key = t._Marker_Type_key

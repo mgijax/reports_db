@@ -10,7 +10,7 @@ select a.accID "MGI Accession ID", m.chromosome "Chr", "cM Position" =
         end,
 "Marker Symbol" = m.symbol, "Synonym" = substring(s.name,1,90)
 from MRK_Marker m, MRK_Acc_View a, MRK_Other s, MRK_Offset o 
-where m._Species_key = 1 
+where m._Organism_key = 1 
 and m._Marker_key = a._Object_key 
 and a.prefixPart = "MGI:" 
 and a._LogicalDB_key = 1

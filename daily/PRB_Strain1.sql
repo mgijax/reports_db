@@ -4,8 +4,9 @@ go
 select distinct r._Reference_key, s.strain, s._Strain_key
 into #rflvs
 from PRB_Probe p, PRB_Reference f, PRB_RFLV r, PRB_Allele a, 
-PRB_Allele_Strain al, PRB_Strain s
-where p.DNAtype != 'primer'
+PRB_Allele_Strain al, PRB_Strain s, VOC_Term t
+where p._SegmentType_key = t._Term_key
+and t.term != 'primer'
 and p._Probe_key = f._Probe_key
 and f._Reference_key = r._Reference_key
 and r._RFLV_key = a._RFLV_key
@@ -16,8 +17,9 @@ go
 select distinct r._Reference_key, s.strain, s._Strain_key
 into #pcrs
 from PRB_Probe p, PRB_Reference f, PRB_RFLV r, PRB_Allele a, 
-PRB_Allele_Strain al, PRB_Strain s
-where p.DNAtype = 'primer'
+PRB_Allele_Strain al, PRB_Strain s, VOC_Term t
+where p._SegmentType_key = t._Term_key
+and t.term != 'primer'
 and p._Probe_key = f._Probe_key
 and f._Reference_key = r._Reference_key
 and r._RFLV_Key = a._RFLV_Key
@@ -31,7 +33,7 @@ go
 print ""
 print "This list represents genetic backgrounds for which polymporphism data have"
 print "been curated. These are not standard strains, but mixtures of strains, crosses, "
-print "common names, and species designations. See the Standard Strains for a list of "
+print "common names, and organism designations. See the Standard Strains for a list of "
 print "strains with accepted nomenclature."
 print ""
 

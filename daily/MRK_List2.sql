@@ -11,7 +11,7 @@ select a.accID "MGI Accession ID", m.chromosome "Chr",
         end
 , m.symbol "Symbol", upper(substring(s.status, 1, 1)) "Status", substring(m.name,1,150) "Name", substring(t.name,1,25) "Type"
 from MRK_Marker m, MRK_Acc_View a, MRK_Offset o, MRK_Types t, MRK_Status s
-where m._Species_key = 1
+where m._Organism_key = 1
 and m._Marker_Status_key in (1,3)
 and m._Marker_key = a._Object_key
 and a.prefixPart = "MGI:"

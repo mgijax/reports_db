@@ -52,13 +52,13 @@ cmds.append('select distinct gdbSymbol = m1.symbol, gdbKey = m1._Marker_key, ' +
             'from HMD_Homology h1, HMD_Homology h2, ' + \
             'HMD_Homology_Marker hm1, HMD_Homology_Marker hm2, ' + \
             'MRK_Marker m1, MRK_Marker m2 ' + \
-            'where m1._Species_key = 2 ' + \
+            'where m1._Organism_key = 2 ' + \
             'and m1._Marker_key = hm1._Marker_key ' + \
             'and hm1._Homology_key = h1._Homology_key ' + \
             'and h1._Class_key = h2._Class_key ' + \
             'and h2._Homology_key = hm2._Homology_key ' + \
             'and hm2._Marker_key = m2._Marker_key ' + \
-            'and m2._Species_key = 1')
+            'and m2._Organism_key = 1')
 
 cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
 	    'where h.gdbKey = a._Object_key and a.prefixPart = "GDB:" and a._LogicalDB_key = 2 and a.preferred = 1')
