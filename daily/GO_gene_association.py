@@ -59,7 +59,7 @@ markerTypes = {1: 'gene', 10: 'gene'}
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-fp = reportlib.init('gene_association.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 #
 # Header information
@@ -77,11 +77,12 @@ fp.write('!\n')
 cmds = []
 
 # retreive all dag abbrevations for each term
-cmds.append('select distinct _Object_key, dagAbbrev from DAG_Node_View where _Vocab_key = 4')
+cmds.append('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) ' + \
+	'from DAG_Node_View where _Vocab_key = 4')
 
 cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'm.symbol, m.name, m._Marker_key, markerID = ma.accID, m._Marker_Type_key, ' + \
-	'e.inferredFrom, eCode = t.abbreviation, ' + \
+	'e.inferredFrom, eCode = rtrim(t.abbreviation), ' + \
 	'mDate = convert(varchar(10), e.modification_date, 101), refID = b.accID ' + \
 	'into #gomarker ' + \
 	'from VOC_Annot_View a, MRK_Marker m, MRK_Acc_View ma, ' + \

@@ -35,7 +35,7 @@ import reportlib
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-fp = reportlib.init('go_terms.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init('go_terms', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmd = 'select t.term, t.accID, d.dag ' + \
 	'from VOC_Term_View t, DAG_Node_View d ' + \
