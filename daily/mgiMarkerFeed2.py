@@ -18,19 +18,20 @@
 #	6. allele_type.bcp
 #	7. allele_cellline.bcp
 #	8. allele_inheritance_mode.bcp
-#	9. allele.bcp
-#	10. allele_label.bcp
-#	11. allele_pair.bcp
-#	12. allele_note.bcp
-#	13. accession_allele.bcp
-#	14. strain_marker.bcp
-#	15. strain_synonym.bcp
-#	16. strain.bcp
-#	17. strain_type.bcp
-#	18. strain_strain_type.bcp
-#	19. accession_strain.bcp
-#	20. strain_species.bcp
-#	21. reference.bcp
+#	9. allele_pairstate.bcp
+#	10.allele.bcp
+#	11. allele_label.bcp
+#	12. allele_pair.bcp
+#	13. allele_note.bcp
+#	14. accession_allele.bcp
+#	15. strain_marker.bcp
+#	16. strain_synonym.bcp
+#	17. strain.bcp
+#	18. strain_type.bcp
+#	19. strain_strain_type.bcp
+#	20. accession_strain.bcp
+#	21. strain_species.bcp
+#	22. reference.bcp
 #	23. genotype_mpt_reference.bcp
 #	24. allele_reference.cp
 #	25. marker_reference.cp
@@ -180,6 +181,23 @@ def vocabs():
 	    'cdate = convert(char(20), creation_date, 100), ' + \
 	    'mdate = convert(char(20), modification_date, 100) ' + \
 	    'from VOC_Term_ALLInheritMode_View', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_pairstate
+    #
+    
+    fp = open(OUTPUTDIR + 'allele_pairstate.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term_ALLPairState_View', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -415,7 +433,8 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele.bcp', 'w')
 
-    results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._ESCellLine_key, m._MutantESCellLine_key, ' + \
+    results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, ' + \
+	'm._ESCellLine_key, m._MutantESCellLine_key, ' + \
 	'm._Strain_key, m.symbol, m.name, status = t.term, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
@@ -501,8 +520,8 @@ def alleles():
 		     mgi_utils.prvalue(r['_Allele_key_2']) + TAB + \
 		     `r['_Marker_key']` + TAB + \
 		     `r['_Genotype_key']` + TAB + \
+		     `r['_PairState_key']` + TAB + \
 		     `r['sequenceNum']` + TAB + \
-		     `r['isUnknown']` + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
     fp.close()
@@ -787,7 +806,7 @@ def references():
     # references annotated to an Allele via the Genotype
     #
 
-    db.sql('select r._Refs_key, r._Allele_key, rt.assocType, ' + \
+    db.sql('select r._Refs_key, ag._Allele_key, rt.assocType, ' + \
 	    'cdate = convert(char(20), r.creation_date, 100), ' + \
 	    'mdate = convert(char(20), r.modification_date, 100) ' + \
 	    'into #allreferences ' + \
@@ -913,7 +932,7 @@ def references():
     for r in results:
 	    fp.write(`r['_Allele_key']` + TAB + \
 		     `r['_Refs_key']` + TAB + \
-		     r['referenceType'] + TAB + \
+		     r['assocType'] + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
     fp.close()
