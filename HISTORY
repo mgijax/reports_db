@@ -1,3 +1,10 @@
+TAG: reports_db-3-0-4
+DATE: 07/07/2000
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) TR 1627; removed MRK_Mutants1.sql MRK_Mutants2.sql MRK_Mutants3.sql
+
 TAG: reports_db-3-0-3
 DATE: 06/29/2000
 STAFF: lec
