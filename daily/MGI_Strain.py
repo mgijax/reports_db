@@ -51,7 +51,6 @@ cmds.append('select distinct a._Object_key, a.accID ' + \
 	'where s._Strain_key = a._Object_key ' + \
 	'and a._LogicalDB_key = 1 ' + \
 	'and a.prefixPart = "MGI:" ' + \
-	'and a._LogicalDB_key = 1 ' + \
 	'and a.preferred = 1')
 
 cmds.append('select * from #strains order by strain')
