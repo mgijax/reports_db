@@ -68,6 +68,8 @@ markerTypes = {1: 'gene'}
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
+db.useOneConnection(1)
+
 fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 #
@@ -83,13 +85,16 @@ fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
 
-cmds = []
-
 # retrieve all dag abbrevations for each term
-cmds.append('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) ' + \
-	'from DAG_Node_View where _Vocab_key = 4')
+results = db.sql('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) from DAG_Node_View where _Vocab_key = 4', 'auto')
 
-cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
+# Get DAG abbreviations
+
+dag = {}
+for r in results:
+	dag[r['_Object_key']] = r['dagAbbrev']
+
+db.sql('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'm.symbol, m.name, m._Marker_key, markerID = ma.accID, m._Marker_Type_key, ' + \
 	'e.inferredFrom, modifiedBy = u.login, eCode = rtrim(t.abbreviation), ' + \
 	'mDate = convert(varchar(10), e.modification_date, 112), refID = b.accID ' + \
@@ -110,33 +115,29 @@ cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'and b._MGIType_key = 1 ' + \
 	'and b.prefixPart = "MGI:" ' + \
 	'and b._LogicalDB_key = 1 ' + \
-	'and e._ModifiedBy_key = u._User_key')
+	'and e._ModifiedBy_key = u._User_key', None)
+db.sql('create index idx1 on #gomarker(_Marker_key)', None)
 
-cmds.append('select distinct m._Marker_key, o.name ' + \
-	'from #gomarker m, MRK_Other o ' + \
-	'where m._Marker_key = o._Marker_key ' + \
-	'order by m._Marker_key')
+# synonyms
 
-cmds.append('select * from #gomarker order by symbol')
+results = db.sql('select distinct m._Marker_key, s.synonym ' + \
+	'from #gomarker m, MGI_Synonym s, MGI_SynonymType st ' + \
+	'where m._Marker_key = s._Object_key ' + \
+	'and s._MGIType_key = 2 ' + \
+	'and s._SynonymType_key = st._SynonymType_key ' + \
+	'and s.synonymType = "exact" ' + \
+	'order by m._Marker_key', 'auto')
 
-results = db.sql(cmds, 'auto')
-
-# Get DAG abbreviations
-
-dag = {}
-for r in results[0]:
-	dag[r['_Object_key']] = r['dagAbbrev']
-
-# Get Marker Synonyms
 syns = {}
-for r in results[2]:
-	if syns.has_key(r['_Marker_key']):
-		syns[r['_Marker_key']].append(r['name'])
-	else:
-		syns[r['_Marker_key']] = []
-		syns[r['_Marker_key']].append(r['name'])
+for r in results:
+	key = r['_Marker_key']
+	value = r['synonym']
+	if not syns.has_key(key):
+		syns[key] = []
+	syns[key].append(value)
 
-for r in results[3]:
+results =- db.sql('select * from #gomarker order by symbol', 'auto')
+for r in results:
 
 	# if we can't find the DAG for the Term, skip it
 
@@ -187,4 +188,4 @@ for r in results[3]:
 		fp.write(CRT)
 	
 reportlib.finish_nonps(fp)
-
+db.useOneConnection(0)
