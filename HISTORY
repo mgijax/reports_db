@@ -1,3 +1,9 @@
+TAG: reports_db-1-0-10
+DATE: 04/20/2000
+STAFF: lec
+RELEASE: A
+CHANGES: added HMD_Human.py; deleted old HMD_Human?.sql; TR 211
+
 TAG: reports_db-1-0-9
 DATE: 04/20/2000
 STAFF: lec
