@@ -10,6 +10,11 @@
 # Usage:
 #       GO_gp2protein.py
 #
+# Output
+#
+#	A tab-delimited file in this format:
+#	field 1: MGI Marker ID
+#	field 2: SWP:#####;SWP:#####;...
 # Used by:
 #
 # Notes:
@@ -38,7 +43,10 @@ fp = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REPO
 
 # Retrieve Markers with GO Annotations that have SP IDs
 
-cmd = 'select distinct m._Marker_key, a.accID, spID = a2.accID ' + \
+cmds = []
+
+cmds.append('select distinct m._Marker_key, a.accID, spID = a2.accID ' + \
+	'into #markers ' + \
 	'from MRK_Marker m, MRK_Acc_View a, MRK_Acc_View a2 ' + \
 	'where m._Marker_key = a._Object_key ' + \
 	'and a._LogicalDB_key = 1 ' + \
@@ -49,13 +57,25 @@ cmd = 'select distinct m._Marker_key, a.accID, spID = a2.accID ' + \
 	'and exists (select 1 from VOC_Annot v ' + \
 	'where v._AnnotType_key = 1000 ' + \
 	'and m._Marker_key = v._Object_key) ' + \
-	'order by a.accID'
+	'order by a.accID')
 
-results = db.sql(cmd, 'auto')
+cmds.append('select _Marker_key, spID from #markers')
+cmds.append('select distinct _Marker_key, accID from #markers')
 
-for r in results:
+results = db.sql(cmds, 'auto')
 
-    fp.write(r['accID'] + reportlib.TAB + 'SP:' + r['spID'] + reportlib.CRT)
+spIDs = {}
+for r in results[-2]:
+    key = r['_Marker_key']
+    value = 'SWP:' + r['spID']
+    if not spIDs.has_key(key):
+	spIDs[key] = []
+    spIDs[key].append(value)
+
+for r in results[-1]:
+
+    fp.write(r['accID'] + reportlib.TAB + \
+	string.join(spIDs[r['_Marker_key']], ';') + CRT)
 
 reportlib.finish_nonps(fp)
 
