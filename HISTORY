@@ -1,3 +1,11 @@
+TAG: reports_db-10-0-5
+DATE: 02/08/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) MGI 2.8
+b) mgimarkerfeed - use date/time
+
 TAG: reports_db-10-0-4
 DATE: 02/08/2002
 STAFF: lec
