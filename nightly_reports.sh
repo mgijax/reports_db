@@ -13,7 +13,7 @@ cd `dirname $0` && source Configuration
 umask 002
 
 foreach i (`ls daily/*.sql`)
-sql.sh $MGD $i
+reportisql.csh $i $REPORTOUTPUTDIR/`basename $i`.rpt $DSQUERY $MGD
 end
 
 cd daily

@@ -1,3 +1,13 @@
+TAG: reports_db-
+DATE: 09/26/2001
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 2714
+	PRB_AltTranscripts.py
+	PRB_TissueMouse.sql
+b) use mgidbutilities/bin/reportisql.csh 
+
 TAG: reports_db-7-0-0
 DATE: 09/18/2001
 STAFF: lec
