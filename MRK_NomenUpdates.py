@@ -16,6 +16,9 @@
 #
 # History:
 #
+# lec	06/08/2000
+#	- TR 1650; added Sequence ID
+#
 # lec	01/04/99
 #	- created
 #
@@ -23,6 +26,7 @@
  
 import sys 
 import os
+import string
 import db
 import mgi_utils
 import reportlib
@@ -76,38 +80,63 @@ cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
 'and h._Marker_Event_key in (2,3,4,5)'
 )
 
-cmd.append('select ' + \
+cmd.append('select m._Marker_key, ' + \
 'chr = substring(r.chromosome,1,2), ' + \
 'm.mgiID, r.symbol,  ' + \
 'name = substring(r.name,1,25),  ' + \
 'b.jnumID, jnum = convert(char(6), b.jnum), ' + \
 'author = substring(b._primary, 1, 16) ' + \
+'into #m2 ' + \
 'from #m1 m, MRK_Marker r, BIB_All_View b ' + \
 'where m._Marker_key = r._Marker_key ' + \
 'and m._Refs_key = b._Refs_key ' + \
 'order by m.sequenceNum, r.symbol'
 )
 
+cmd.append('select m.*, a.accID ' + \
+'from #m2 m, MRK_Acc_View a ' + \
+'where m._Marker_key = a._Object_key ' + \
+'and a._LogicalDB_key = 9 '
+)
+
 results = db.sql(cmd, 'auto')
 
-fp.write('%-2s %-25s %-25s %-6s %-16s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author'))
-fp.write('%-2s %-25s %-25s %-6s %-16s\n' % ('--', '------', '---------', '--', '------------'))
+fp.write('%-2s %-25s %-25s %-6s %-20s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'Sequence ID'))
+fp.write('%-2s %-25s %-25s %-6s %-20s %-25s\n' % ('--', '------', '---------', '--', '----------------', '-----------'))
 
 rows = 0
-for r in results[1]:
-	fp.write('%-2s ' % (r['chr']))
+prevMarker = ''
+sequence = []
 
-	if r['mgiID'] != "None":
-		fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(r['mgiID']), r['symbol'], reportlib.close_accession_anchor()))
-	else:
-		fp.write('%-25s ' % (r['symbol']))
+for r in results[2]:
+
+	if prevMarker != r['_Marker_key']:
+
+		if len(sequence) > 0:
+			fp.write(string.join(sequence, ','))
+		sequence = []
+
+		if prevMarker != '':
+			fp.write(reportlib.CRT)
+
+		fp.write('%-2s ' % (r['chr']))
+
+		if r['mgiID'] != "None":
+			fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(r['mgiID']), r['symbol'], reportlib.close_accession_anchor()))
+		else:
+			fp.write('%-25s ' % (r['symbol']))
 		
-	fp.write('%-25s ' % (r['name']))
-	fp.write('%s%-6s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnum'], reportlib.close_accession_anchor()))
-	fp.write('%-16s\n' % (r['author']))
-	rows = rows + 1
+		fp.write('%-25s ' % (r['name']))
+		fp.write('%s%-6s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnum'], reportlib.close_accession_anchor()))
+		fp.write('%-20s ' % (r['author']))
 
-fp.write('\n(%d rows affected)\n' % (rows))
+		prevMarker = r['_Marker_key']
+		rows = rows + 1
+
+	sequence.append(r['accID'])
+
+fp.write(string.join(sequence, ',') + reportlib.CRT)
+fp.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
 
 reportlib.trailer(fp)
 reportlib.finish_nonps(fp, isHTML = 1)	# non-postscript file
