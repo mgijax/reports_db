@@ -31,8 +31,14 @@ setenv PYTHONPATH       	/usr/local/mgi/lib/python
 # DB UTILITIES
 setenv DBUTILITIESPATH		/usr/local/mgi/dbutils/mgidbutilities
 
+# Mammalian Vocabulary Source
+setenv MPVOCSOURCE		/usr/local/mgi/dataload/vocload/runTimeMP/MPheno.ontology
+
+# Mammalian Vocabulary Destination
+setenv MPVOCDEST  		${REPORTOUTPUTDIR}/MPheno.ontology
+
 # PATH
-set path = ($DBUTILITIESPATH/bin $path $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)
+set path = ($path $DBUTILITIESPATH/bin $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)
 
 # Database Server
 setenv DBSERVER PROD_MGI
