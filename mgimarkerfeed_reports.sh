@@ -20,4 +20,4 @@ mgiMarkerFeed.py
 cd $REPORTOUTPUTDIR/mgimarkerfeed
 tar cvf $TARFILE *.bcp
 compress -f $TARFILE
-cp $TARFILE.Z $FTPREPORTDIR
+cp $TARFILE.Z $MGIFEEDFTPDIR

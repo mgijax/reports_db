@@ -16,6 +16,9 @@ setenv REPORTOUTPUTDIR		$REPORTINSTALLDIR/output
 # FTP report directory
 setenv FTPREPORTDIR		/net/l1/export/l1/ftp/pub/informatics/reports
 
+# MGI Feed FTP report directory
+setenv MGIFEEDFTPDIR		/net/l1/export/l1/ftp/pub/informatics/reports
+
 # SYBASE
 setenv SYBASE			/opt/sybase
 
