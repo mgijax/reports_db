@@ -1,3 +1,10 @@
+TAG: reports_db-14-0-0
+DATE: 02/03/2003
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 4378; added MGI_Strain.py
+
 TAG: reports_db-13-3-0
 DATE: 01/29/2003
 STAFF: lec
