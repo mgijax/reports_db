@@ -16,6 +16,9 @@
 #
 # History:
 #
+# lec	06/25/2002
+#	- TR 3827; add Human Ortholog 
+#
 # lec	06/14/2000
 #	- TR 2613; display current MGI IDs and Other MGI IDs
 #
@@ -41,6 +44,7 @@ import reportlib
 # Main
 #
 
+nomenDB = os.environ['NOMEN']
 currentReport = 'Nomenclature-current.html'
 
 # remove current report link if it exists
@@ -70,111 +74,110 @@ fp.write('J:23000 generally indicates gene family nomenclature revision event.\n
 
 cmd = []
 
-cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key, otherID = ma.accID ' + \
-'into #m1 ' + \
-'from MRK_Mouse_View m, MRK_History h, MRK_Chromosome c, MRK_Acc_View ma ' + \
-'where m.creation_date between dateadd(day, -7, "%s") ' % (currentDate) + \
-'and dateadd(day, 1, "%s") ' % (currentDate) + \
-'and m._Marker_key = h._Marker_key ' + \
+cmd.append('select h._Marker_key, m.symbol, name = substring(m.name,1,35), ' + \
+'chromosome = substring(m.chromosome,1,2), ' + \
+'c.sequenceNum, ' + \
+'b.jnumID, author = substring(b._primary,1,16) ' + \
+'into #markers ' + \
+'from MRK_Marker m, MRK_History h, MRK_Chromosome c, BIB_All_View b ' + \
+'where m._Species_key = 1 ' + \
 'and m._Marker_key = h._History_key ' + \
-'and h._Marker_Event_key = 1 ' + \
-'and m.chromosome = c.chromosome ' + \
-'and m._Species_key = c._Species_key ' + \
-'and m._Marker_key = ma._Object_key ' + \
-'and ma.prefixPart = "MGI:" ' + \
-'union ' + \
-'select h._History_key, m.mgiID, c.sequenceNum, h._Refs_key, otherID = ma.accID ' + \
-'from MRK_History h, MRK_Mouse_View m, MRK_Chromosome c, MRK_Acc_View ma ' + \
-'where h.event_date between dateadd(day, -7, "%s") ' % (currentDate) + \
+'and h.event_date between dateadd(day, -7, "%s") ' % (currentDate) + \
 'and dateadd(day, 1, "%s") ' % (currentDate) + \
-'and h._Marker_key = m._Marker_key ' + \
-'and h._Marker_Event_key in (2,3,4,5) ' + \
 'and m.chromosome = c.chromosome ' + \
 'and m._Species_key = c._Species_key ' + \
-'and m._Marker_key = ma._Object_key ' + \
-'and ma.prefixPart = "MGI:" '
-)
+'and h._Refs_key = b._Refs_key')
 
-cmd.append('select m.sequenceNum, m._Marker_key, ' + \
-'chr = substring(r.chromosome,1,2), ' + \
-'m.mgiID, m.otherID, r.symbol,  ' + \
-'name = substring(r.name,1,35),  ' + \
-'jnumID, ' + \
-'author = substring(b._primary, 1, 16) ' + \
-'into #m2 ' + \
-'from #m1 m, MRK_Marker r, BIB_All_View b ' + \
-'where m._Marker_key = r._Marker_key ' + \
-'and m._Refs_key = b._Refs_key ' + \
-'order by m.sequenceNum, r.symbol'
-)
+cmd.append('create nonclustered index idx_key on #markers(_Marker_key)')
 
-cmd.append('select m.*, a.accID ' + \
-'from #m2 m, MRK_Acc_View a ' + \
+# get primary MGI ids (2)
+cmd.append('select distinct m._Marker_key, a.accID ' + \
+'from #markers m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
-'and a._LogicalDB_key = 9 ' + \
-'union ' + \
-'select m.*, NULL ' + \
-'from #m2 m ' + \
-'where not exists ' + \
-'(select 1 from MRK_Acc_View a ' + \
+'and a.prefixPart = "MGI:" ' + \
+'and a.preferred = 1')
+
+# other MGI ids (3)
+cmd.append('select distinct m._Marker_key, a.accID ' + \
+'from #markers m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
-'and a._LogicalDB_key = 9) ' + \
-'order by m.sequenceNum, m.symbol '
-)
+'and a.prefixPart = "MGI:" ' + \
+'and a.preferred = 0')
+
+# get sequence ids (4)
+cmd.append('select distinct m._Marker_key, a.accID ' + \
+'from #markers m, MRK_Acc_View a ' + \
+'where m._Marker_key = a._Object_key ' + \
+'and a._LogicalDB_key = 9')
+
+# get human ortholog (5)
+cmd.append('select distinct m._Marker_key, n.humanSymbol ' + \
+'from #markers m, MRK_Acc_View ma, %s..ACC_Accession a, %s..MRK_Nomen n ' % (nomenDB, nomenDB) + \
+'where m._Marker_key = ma._Object_key ' + \
+'and ma.prefixPart = "MGI:" ' + \
+'and ma.preferred = 1 ' + \
+'and ma.accID = a.accID ' + \
+'and a._Object_key = n._Nomen_key ' + \
+'and n.humanSymbol is not null')
+
+# retrieve markers, sort (6)
+cmd.append('select * from #markers order by sequenceNum, symbol')
 
 results = db.sql(cmd, 'auto')
 
-fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Other MGI IDs'))
-fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '-------------'))
+fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Human Symbol', 'Other MGI IDs'))
+fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '-------------', '-------------'))
+
+primaryID = {}
+for r in results[2]:
+	primaryID[r['_Marker_key']] = r['accID']
+
+otherIDs = {}
+for r in results[3]:
+	if not otherIDs.has_key(r['_Marker_key']):
+		otherIDs[r['_Marker_key']] = []
+	otherIDs[r['_Marker_key']].append(r['accID'])
+
+seqIDs = {}
+for r in results[4]:
+	if not seqIDs.has_key(r['_Marker_key']):
+		seqIDs[r['_Marker_key']] = []
+	seqIDs[r['_Marker_key']].append(r['accID'])
+
+human = {}
+for r in results[5]:
+	human[r['_Marker_key']] = r['humanSymbol']
 
 rows = 0
-prevMarker = ''
-sequence = []
-otherID = []
+for r in results[6]:
 
-for r in results[2]:
+	key = r['_Marker_key']
 
-	if prevMarker != r['_Marker_key']:
+	fp.write('%-2s ' % (r['chromosome']))
 
-		if len(sequence) > 0:
-			fp.write('%-75s ' % (string.join(sequence, ',')))
-		elif prevMarker != '':
-			fp.write('%-75s ' % (''))
-		sequence = []
+	fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), r['symbol'], reportlib.close_accession_anchor()))
+	fp.write('%-35s ' % (r['name']))
+	fp.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnumID'], reportlib.close_accession_anchor()))
+	fp.write('%-20s ' % (r['author']))
+	fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), primaryID[key], reportlib.close_accession_anchor()))
 
-		if len(otherID) > 0:
-			fp.write(string.join(otherID, ','))
-		otherID = []
+	if seqIDs.has_key(key):
+		fp.write('%-75s ' % (string.join(seqIDs[key], ',')))
+	else:
+		fp.write('%-75s ' % (''))
 
-		if prevMarker != '':
-			fp.write(reportlib.CRT)
+	if human.has_key(key):
+		fp.write('%-15s ' % (human[key]))
+	else:
+		fp.write('%-15s ' % (''))
 
-		fp.write('%-2s ' % (r['chr']))
+	if otherIDs.has_key(key):
+		fp.write(string.join(otherIDs[key], ','))
+	fp.write(reportlib.CRT)
 
-		if r['mgiID'] != "None":
-			fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(r['mgiID']), r['symbol'], reportlib.close_accession_anchor()))
-		else:
-			fp.write('%-25s ' % (r['symbol']))
-		
-		fp.write('%-35s ' % (r['name']))
-		fp.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnumID'], reportlib.close_accession_anchor()))
-		fp.write('%-20s ' % (r['author']))
-		fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(r['mgiID']), r['mgiID'], reportlib.close_accession_anchor()))
+	rows = rows + 1
 
-		prevMarker = r['_Marker_key']
-		rows = rows + 1
-
-	if r['accID'] != None:
-		sequence.append(r['accID'])
-
-	if r['otherID'] != None and r['otherID'] != r['mgiID'] \
-		and r['otherID'] not in otherID:
-		otherID.append(r['otherID'])
-
-fp.write('%-75s ' % (string.join(sequence, ',')))
-fp.write(string.join(otherID, ',') + reportlib.CRT)
 fp.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
-
 reportlib.trailer(fp)
 reportlib.finish_nonps(fp, isHTML = 1)	# non-postscript file
 
