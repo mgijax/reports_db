@@ -83,7 +83,8 @@ cmds.append('select m._Marker_key, a.accID ' + \
 # Get Secondary MGI Ids for Primary Marker
 cmds.append('select m._Marker_key, a.accID ' + \
 	'from #markers m, MRK_Acc_View a ' + \
-	'where m._Marker_key = a._Object_key ' + \
+	'where m.isPrimary = 1 ' + \
+	'and m._Marker_key = a._Object_key ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a.preferred = 0')
 
