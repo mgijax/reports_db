@@ -2,7 +2,7 @@
 
 '''
 #
-# PRB_CloneSet.py
+# MGI_CloneSet.py
 #
 # Report:
 #
@@ -13,7 +13,7 @@
 #	Clone Set
 #
 # Usage:
-#       PRB_CloneSet.py [list of logical DB names]
+#       MGI_CloneSet.py [list of logical DB names]
 #
 #	1.  separate logical db names by a single comma, no spaces
 #	2.  if one logical DB name is the superset, then list that one last
