@@ -22,7 +22,7 @@ and a.preferred = 1
 and m._Marker_key = o._Marker_key
 and o.source = 0
 and m._Marker_Type_key = t._Marker_Type_key
-and m._Marker_Status_key = t._Marker_Type_key
+and m._Marker_Status_key = t._Marker_Status_key
 order by c.sequenceNum, m.symbol
 go
 
