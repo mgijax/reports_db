@@ -15,7 +15,7 @@
 
 source Configuration
 
-foreach i (`ls index.html tab-delimited.html`)
+foreach i (`ls index.html`)
 	cp -r $i $FTPREPORTDIR
 end
 
