@@ -68,9 +68,9 @@ cmds = []
 # and the GO ID is not in (GO:0000004,GO:0008372,GO:0005554)
 #
 
-cmds.append('select m._Marker_key, m.symbol, m.name, ma.accID, a.term, goID = a.accID, e._Refs_key ' + \
+cmds.append('select m._Marker_key, m.symbol, m.name, ma.accID, a.term, goID = a.accID, e._Refs_key, e.evidenceCode ' + \
 'into #m1 ' + \
-'from MRK_Marker m, MRK_Acc_View ma, VOC_Annot_View a, VOC_Evidence e ' + \
+'from MRK_Marker m, MRK_Acc_View ma, VOC_Annot_View a, VOC_Evidence_View e ' + \
 'where m._Species_key = 1 ' + \
 'and m._Marker_Type_key = 1 ' + \
 'and m._Marker_Status_key = 1 ' + \
@@ -150,7 +150,8 @@ for r in results[6]:
 		r['symbol'] + TAB + \
 		r['name'] + TAB + \
 		r['goID'] + TAB + \
-		r['term'] + TAB)
+		r['term'] + TAB + \
+		r['evidenceCode'] + TAB)
 
 	if pmid.has_key(r['_Refs_key']):
 		fp.write(pmid[r['_Refs_key']])
