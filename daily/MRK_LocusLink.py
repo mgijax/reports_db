@@ -20,6 +20,9 @@
 #
 # History:
 #
+# lec	06/18/2002
+#	- rewrote to use dictionaries for locusID, other Acc IDs, other names
+#
 # lec	01/19/2000
 #	- created
 #
@@ -32,11 +35,20 @@ import db
 import reportlib
 import mgi_utils
 
+CRT = reportlib.CRT
+TAB = reportlib.TAB
+
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmds = []
 
-cmds.append('select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.offset,10,2), m.chromosome, a.accID, markerType = t.name, isPrimary = 1 ' + \
+#
+# 1. all Approved Marker records
+# 2. all Withdrawn Marker records
+#
+
+cmds.append('select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.offset,10,2), ' + \
+  'm.chromosome, a.accID, markerType = t.name, isPrimary = 1 ' + \
   'into #markers ' + \
   'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Acc_View a, MRK_Types t ' + \
   'where m._Species_key = 1 ' + \
@@ -47,17 +59,9 @@ cmds.append('select m._Marker_key, m.symbol, m.name, c._Current_key, offset = st
   'and a.prefixPart = "MGI:" ' + \
   'and a.preferred = 1 ' + \
   'and m._Marker_Type_key = t._Marker_Type_key ' + \
-  'union ' + \
-  'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = null, m.chromosome, a.accID, markerType = t.name, isPrimary = 0 ' + \
-  'from MRK_Marker m, MRK_Current c, MRK_Acc_View a, MRK_Types t ' + \
-  'where m._Species_key = 1 ' + \
-  'and m._Marker_key = c._Marker_key ' + \
-  'and c._Current_key = a._Object_key ' + \
-  'and a.prefixPart = "MGI:" ' + \
-  'and a.preferred = 0 ' + \
-  'and m._Marker_Type_key = t._Marker_Type_key ' + \
   'union '  + \
-  'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = null, m.chromosome, a.accID, markerType = t.name, isPrimary = 0 ' + \
+  'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = null, m.chromosome, ' + \
+  'a.accID, markerType = t.name, isPrimary = 0 ' + \
   'from MRK_Marker m, MRK_Current c, MRK_Acc_View a, MRK_Types t ' + \
   'where m._Species_key = 1 ' + \
   'and m._Marker_Status_key = 2' + \
@@ -67,69 +71,74 @@ cmds.append('select m._Marker_key, m.symbol, m.name, c._Current_key, offset = st
   'and a.preferred = 1 ' + \
   'and m._Marker_Type_key = t._Marker_Type_key')
 
-cmds.append('select m.*, locusID = a.accID ' + \
-	'into #markers2 ' + \
+cmds.append('create nonclustered index idx_key on #markers(_Marker_key)')
+
+# Get Locus ID for Primary Markers
+cmds.append('select m._Marker_key, a.accID ' + \
+	'from #markers m, MRK_Acc_View a ' + \
+	'where m.isPrimary = 1 ' + \
+	'and m._Marker_key = a._Object_key ' + \
+	'and a._LogicalDB_key = 24 ')
+
+# Get Secondary MGI Ids for Primary Marker
+cmds.append('select m._Marker_key, a.accID ' + \
 	'from #markers m, MRK_Acc_View a ' + \
 	'where m._Marker_key = a._Object_key ' + \
-	'and a._LogicalDB_key = 24 ' + \
-        'union ' + \
-	'select m.*, locusID = null ' + \
-	'from #markers m ' + \
-	'where not exists (select 1 from MRK_Acc_View a ' + \
-	'where m._Marker_key = a._Object_key ' + \
-	'and a._LogicalDB_key = 24)')
+	'and a.prefixPart = "MGI:" ' + \
+	'and a.preferred = 0')
 
-cmds.append('select m.*, otherName = o.name ' + \
-	'from #markers2 m, MRK_Other o ' + \
+# Get Synonyms for Primary Marker
+cmds.append('select m._Marker_key, o.name ' + \
+	'from #markers m, MRK_Other o ' + \
 	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key *= o._Marker_key ' + \
-	'union ' +
-	'select m.*, otherName = null ' + \
-	'from #markers2 m ' + \
-	'where m.isPrimary = 0 ' + \
-	'order by _Current_key, isPrimary desc')
+	'and m._Marker_key = o._Marker_key ')
+
+cmds.append('select * from #markers order by _Current_key, isPrimary desc')
 
 results = db.sql(cmds, 'auto')
 
-prevMarker = ''
-otherAccIds = []
-otherNames = []
-locusID = ''
-num = 0
-
+locusID = {}
 for r in results[2]:
+	if not locusID.has_key(r['_Marker_key']):
+		locusID[r['_Marker_key']] = r['accID']
+
+otherAccId = {}
+for r in results[3]:
+	if not otherAccId.has_key(r['_Marker_key']):
+		otherAccId[r['_Marker_key']] = []
+	otherAccId[r['_Marker_key']].append(r['accID'])
+
+otherName = {}
+for r in results[4]:
+	if not otherName.has_key(r['_Marker_key']):
+		otherName[r['_Marker_key']] = []
+	otherName[r['_Marker_key']].append(r['name'])
+
+for r in results[5]:
+
+	fp.write(r['accID'] + TAB + \
+	       	r['symbol'] + TAB + \
+	 	r['name'] + TAB + \
+	 	r['offset'] + TAB + \
+	 	r['chromosome'] + TAB + \
+		r['markerType'] + TAB)
 
 	if r['isPrimary']:
+		if otherAccId.has_key(r['_Marker_key']):	
+			fp.write(string.joinfields(otherAccId[r['_Marker_key']], ','))
+		fp.write(TAB)
 
-		if prevMarker != r['_Marker_key']:
+		if locusID.has_key(r['_Marker_key']):	
+			fp.write(locusID[r['_Marker_key']])
+		fp.write(TAB)
 
-			if num > 0:
-				fp.write(string.join(otherAccIds, ',') + reportlib.TAB)
-				fp.write(mgi_utils.prvalue(locusID) + reportlib.TAB) 
-				fp.write(string.join(otherNames, '|') + reportlib.CRT)
-
-			fp.write(r['accID'] + reportlib.TAB + \
-	         		r['symbol'] + reportlib.TAB + \
-		 		r['name'] + reportlib.TAB + \
-		 		r['offset'] + reportlib.TAB + \
-		 		r['chromosome'] + reportlib.TAB + \
-				r['markerType'] + reportlib.TAB)
-
-			prevMarker = r['_Marker_key']
-			otherAccIds = []
-			otherNames = []
-			locusID = r['locusID']
-			num = num + 1
-
-		if r['otherName'] is not None:
-			otherNames.append(r['otherName'])
+		if otherName.has_key(r['_Marker_key']):	
+			fp.write(string.joinfields(otherName[r['_Marker_key']], ','))
+		fp.write(CRT)
 	else:
-		if r['accID'] not in otherAccIds:
-			otherAccIds.append(r['accID'])
-
-fp.write(string.join(otherAccIds, ',') + reportlib.TAB)
-fp.write(mgi_utils.prvalue(locusID) + reportlib.TAB) 
-fp.write(string.join(otherNames, ',') + reportlib.CRT)
+		fp.write(TAB)
+		fp.write(TAB)
+		fp.write(CRT)
 
 reportlib.finish_nonps(fp)
 
