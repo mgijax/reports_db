@@ -34,7 +34,7 @@ db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmds = []
-cmds.append('select m._Marker_key, m.symbol, m.chromosome, markerType = t.term, offset_str = str(o.offset,10,2) ' + \
+cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, markerType = t.term, offset_str = str(o.offset,10,2) ' + \
 	'into #markers ' + \
 	'from MRK_Marker m, VOC_Term t, MRK_Offset o ' + \
 	'where m._Organism_key = 1 ' + \
@@ -46,7 +46,7 @@ cmds.append('create index idx1 on #markers(_Marker_key)')
 cmds.append('create index idx2 on #markers(symbol)')
 db.sql(cmds, None)
 
-results = db.sql('select m.symbol, m.symbol, m.chromosome, m.markerType, m.offset_str, a.accID ' + \
+results = db.sql('select m.symbol, m.symbol, m.name, m.chromosome, m.markerType, m.offset_str, a.accID ' + \
 	'from #markers m, ACC_Accession a ' + \
 	'where m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
