@@ -23,12 +23,17 @@
 # lec	11/05/1999
 #	- created
 #
+# dbm	02/11/2003
+#	- added marker AccID, chromosome and offset for TR 4506
+#
 '''
  
 import sys 
 import os
 import db
 import reportlib
+import string
+import regsub
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -39,28 +44,44 @@ TAB = reportlib.TAB
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-cmd = 'select p.name, p.primer1sequence, p.primer2sequence, p.productSize, m.symbol, p.mgiID ' + \
-	'from PRB_Primer_View p, PRB_Marker_View m ' + \
-	'where p._Probe_key = m._Probe_key ' + \
-	'order by m.symbol'
+cmd = 'select m.symbol, m.name, a.accID, p.mgiID, ' + \
+             'p.primer1sequence, p.primer2sequence, ' + \
+             'p.productSize, m.chromosome, o.offset ' + \
+      'from PRB_Primer_View p, PRB_Marker_View m, ' + \
+           'MRK_ACC_View a, MRK_Offset o ' + \
+      'where p._Probe_key = m._Probe_key and ' + \
+            'm._Marker_key = a._Object_key and ' + \
+            'a.prefixPart = "MGI:" and ' + \
+            'a.preferred = 1 and ' + \
+            'a._LogicalDB_key = 1 and ' + \
+            'm._Marker_key = o._Marker_key and ' + \
+            'o.source = 0 ' + \
+      'order by m.symbol'
 
 results = db.sql(cmd, 'auto')
 
-fp.write('%-40s' % ("name") + TAB)
-fp.write('%-25s' % ("symbol") + TAB)
-fp.write('%-80s' % ("primer1sequence") + TAB)
-fp.write('%-80s' % ("primer2sequence") + TAB)
-fp.write('%-40s' % ("productSize") + TAB)
-fp.write('%-30s' % ("mgiID") + CRT)
-
 for r in results:
-	fp.write('%-40s' % (r['name']) + TAB)
-	fp.write('%-25s' % (r['symbol']) + TAB)
-	fp.write('%-80s' % (str(r['primer1sequence'])) + TAB)
-	fp.write('%-80s' % (str(r['primer2sequence'])) + TAB)
-	fp.write('%-40s' % (str(r['productSize'])) + TAB)
-	fp.write('%-30s' % (r['mgiID']) + CRT)
+    name = r['name']
+    p1seq = r['primer1sequence']
+    p2seq = r['primer2sequence']
+    prodSize = r['productSize']
 
-reportlib.trailer(fp)
-reportlib.finish_nonps(fp)	# non-postscript file
+    if (name == None):
+        name = ""
+    if (p1seq == None):
+        p1seq = ""
+    else:
+        p1seq = string.strip(regsub.gsub('\n', '', p1seq))
+    if (p2seq == None):
+        p2seq = ""
+    else:
+        p2seq = string.strip(regsub.gsub('\n', '', p2seq))
+    if (prodSize == None):
+        prodSize = ""
 
+    fp.write(r['symbol'] + TAB + name + TAB +
+             r['accID'] + TAB + r['mgiID'] + TAB +
+             p1seq + TAB + p2seq + TAB + prodSize + TAB +
+             r['chromosome'] + TAB + str(r['offset']) + CRT)
+
+reportlib.finish_nonps(fp)
