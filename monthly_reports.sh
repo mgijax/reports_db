@@ -12,7 +12,7 @@ cd `dirname $0` && source ./Configuration
 
 umask 002
 
-setenv LOG	${REPORTLOGSDIR}/$0.log
+setenv LOG	${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
