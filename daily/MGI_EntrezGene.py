@@ -8,7 +8,7 @@
 #	and list of non-preferred MGI accession IDs of each Marker
 #
 # Usage:
-#       MGI_NCBI.py
+#       MGI_EntrezGene.py
 #
 # Used by:
 # 	TR 1283 - Donna Maglott at NCBI for EntrezGene
