@@ -27,7 +27,7 @@ select null, m.chromosome,
         when o.offset = -999.0 then "       N/A"
         when o.offset = -1.0 then "  syntenic"
         end
-,m.symbol "Symbol", substring(m.name,1,150) "Name", t.name "Type"
+,m.symbol "Symbol", substring(m.name,1,150) "Name", substring(t.name,1,25) "Type"
 from MRK_Marker m, MRK_Offset o, MRK_Types t
 where m._Species_key = 1
 and m._Marker_Status_key = 2
