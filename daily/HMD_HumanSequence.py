@@ -76,7 +76,6 @@ db.sql('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' +
 db.sql('create nonclustered index index_mouseKey on #homology(mouseKey)', None)
 db.sql('create nonclustered index index_humanKey on #homology(humanKey)', None)
 db.sql('create nonclustered index index_humanSym on #homology(humanSym)', None)
-db.sql(cmds, None)
 
 ##
 
