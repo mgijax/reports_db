@@ -146,7 +146,7 @@ for r in results[3]:
 		fp.write(r['symbol'] + TAB)
 
 		if r['isNot'] == 1:
-			fp.write('Not')
+			fp.write('NOT')
 
 		fp.write(TAB)
 		fp.write(r['termID'] + TAB)
