@@ -14,7 +14,7 @@ umask 002
 
 foreach i (daily/*.sql)
 echo $i, `date`
-reportisql.csh $i $REPORTOUTPUTDIR/`basename $i`.rpt $DSQUERY $MGD
+reportisql.csh $i ${REPORTOUTPUTDIR}/`basename $i`.rpt ${DSQUERY} ${MGD}
 echo $i, `date`
 end
 
@@ -46,8 +46,8 @@ $i
 end
 cd ..
 
-foreach i ($REPORTOUTPUTDIR/*)
-rcp $i $FTPREPORTDIR
+foreach i (${REPORTOUTPUTDIR}/*)
+rcp $i ${FTPREPORTDIR}
 end
 
 ./mgimarkerfeed_reports.sh

@@ -10,8 +10,14 @@
 # install directory
 setenv REPORTINSTALLDIR		/usr/local/mgi/live/reports_db
 
+# report directory
+setenv REPORTDIR		/data/reports/reports_db
+
 # report output directory
-setenv REPORTOUTPUTDIR		$REPORTINSTALLDIR/output
+setenv REPORTOUTPUTDIR		${REPORTDIR}/output
+
+# report logs directory
+setenv REPORTLOGSDIR		${REPORTDIR}/logs
 
 # FTP 
 setenv FTPURL                   ftp.informatics.jax.org

@@ -17,7 +17,7 @@ umask 002
 cd daily
 mgiMarkerFeed.py
 
-cd $REPORTOUTPUTDIR/mgimarkerfeed
-tar cvf $TARFILE *.bcp
-compress -f $TARFILE
-rcp $TARFILE.Z $MGIFEEDFTPDIR
+cd ${REPORTOUTPUTDIR}/mgimarkerfeed
+tar cvf ${TARFILE} *.bcp
+compress -f ${TARFILE}
+rcp ${TARFILE}.Z ${MGIFEEDFTPDIR}
