@@ -1,3 +1,10 @@
+TAG: reports_db-5-0-3
+DATE: 02/14/2001
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) MGD_Stats.sql; problem w/ polymorphism count
+
 TAG: reports_db-5-0-2
 DATE: 02/13/2001
 STAFF: lec

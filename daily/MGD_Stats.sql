@@ -96,7 +96,7 @@ go
 
 print ""
 print "Number of Genetic Markers with Molecular Polymorphisms" 
-select count(distinct _Marker_key)
+select count(distinct m._Marker_key)
 from MRK_Marker m, PRB_RFLV p
 where m._Species_key = 1
 and m._Marker_Status_key = 1
@@ -105,14 +105,11 @@ go
 
 print ""
 print "Number of Genes with Molecular Polymorphisms" 
-select count(distinct _Marker_key)
+select count(distinct m._Marker_key)
 from MRK_Marker m, PRB_RFLV p
 where m._Species_key = 1
 and m._Marker_Type_key = 1
 and m._Marker_Status_key = 1
 and m._Marker_key = p._Marker_key
-go
-
-drop table #poly
 go
 
