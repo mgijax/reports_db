@@ -6,6 +6,7 @@
 #       Create several tab-delimited (bcp) files for Michael Rosenstein.
 #	TR 2794
 #	TR 3137 - add MRK_Offset
+#	TR 3345 - add Strain info; incorporate marker offset into marker.bcp
 #
 # bcp files
 #	1. marker_type.bcp
@@ -19,7 +20,13 @@
 #	9. allele.bcp
 #	10. allele_label.bcp
 #	11. accession_allele.bcp
-#	12. marker_offset.bcp
+#	12. strain_marker.bcp
+#	13. strain_synonym.bcp
+#	14. strain.bcp
+#	15. strain_type.bcp
+#	16. strain_strain_type.bcp
+#	17. accession_strain.bcp
+#	18. strain_species.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
@@ -153,7 +160,6 @@ fp.close
 fp1 = open(OUTPUTDIR + 'marker.bcp', 'w')
 fp2 = open(OUTPUTDIR + 'marker_label.bcp', 'w')
 fp3 = open(OUTPUTDIR + 'accession_marker.bcp', 'w')
-fp4 = open(OUTPUTDIR + 'marker_offset.bcp', 'w')
 
 cmds = []
 
@@ -177,12 +183,14 @@ cmds.append('select m._Marker_key, m.symbol, m.name into #markers ' + \
 #
 
 cmds.append('select m._Marker_key, m._Species_key, m._Marker_Type_key, s.status, ' + \
-	'm.symbol, m.name, m.chromosome, m.cytogeneticOffset, ' + \
+	'm.symbol, m.name, m.chromosome, m.cytogeneticOffset, o.offset, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
-	'from #markers k, MRK_Marker m, MRK_Status s ' + \
+	'from #markers k, MRK_Marker m, MRK_Status s, MRK_Offset o ' + \
 	'where k._Marker_key = m._Marker_key ' + \
-	'and m._Marker_Status_key = s._Marker_Status_key ')
+	'and m._Marker_Status_key = s._Marker_Status_key ' + \
+	'and k._Marker_key = o._Marker_key ' + \
+	'and o.source = 0')
 
 #
 # select data fields for marker_label.bcp
@@ -225,17 +233,6 @@ cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'where k._Marker_key = m._Object_key ' + \
 	'and m.prefixPart = "MGI:"')
 
-#
-# select data fields for marker_offset.bcp
-#
-
-cmds.append('select distinct o._Marker_key, o.offset, ' + \
-	'cdate = convert(char(10), o.creation_date, 101), ' + \
-	'mdate = convert(char(10), o.modification_date, 101) ' + \
-	'from #markers k, MRK_Offset o ' + \
-	'where k._Marker_key = o._Marker_key ' + \
-	'and o.source = 0')
-
 results = db.sql(cmds, 'auto')
 
 for r in results[1]:
@@ -247,6 +244,7 @@ for r in results[1]:
 		 r['name'] + TAB + \
 		 r['chromosome'] + TAB + \
 		 mgi_utils.prvalue(r['cytogeneticOffset']) + TAB + \
+		 `r['offset']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
@@ -282,16 +280,9 @@ for r in results[5]:
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-for r in results[6]:
-	fp4.write(`r['_Marker_key']` + TAB + \
-		 `r['offset']` + TAB + \
-		 r['cdate'] + TAB + \
-		 r['mdate'] + CRT)
-
 fp1.close
 fp2.close
 fp3.close
-fp4.close
 
 #
 # allele
@@ -396,4 +387,159 @@ for r in results[3]:
 fp1.close
 fp2.close
 fp3.close
+
+#
+# strain.bcp
+#
+
+fp = open(OUTPUTDIR + 'strain.bcp', 'w')
+
+cmd = 'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+      'cdate = convert(char(10), s.creation_date, 101), ' + \
+      'mdate = convert(char(10), s.modification_date, 101) ' + \
+      'from PRB_Strain s, MLP_Strain m ' + \
+      'where s._Strain_key = m._Strain_key '
+
+results = db.sql(cmd, 'auto')
+
+for r in results:
+	fp.write(`r['_Strain_key']` + TAB + \
+	         `r['_Species_key']` + TAB + \
+	         r['strain'] + TAB + \
+	         `r['standard']` + TAB + \
+	         `r['needsReview']` + TAB + \
+	         `r['private']` + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+fp.close
+
+#
+# strain_marker.bcp
+#
+
+fp = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
+
+cmd = 'select _Strain_key, _Marker_key, ' + \
+      'cdate = convert(char(10), creation_date, 101), ' + \
+      'mdate = convert(char(10), modification_date, 101) ' + \
+      'from PRB_Strain_Marker'
+
+results = db.sql(cmd, 'auto')
+
+for r in results:
+	fp.write(`r['_Strain_key']` + TAB + \
+	         `r['_Marker_key']` + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+fp.close
+
+#
+# strain_synonym.bcp
+#
+
+fp = open(OUTPUTDIR + 'strain_synonym.bcp', 'w')
+
+cmd = 'select _Synonym_key, _Strain_key, synonym, ' + \
+      'cdate = convert(char(10), creation_date, 101), ' + \
+      'mdate = convert(char(10), modification_date, 101) ' + \
+      'from PRB_Strain_Synonym'
+
+results = db.sql(cmd, 'auto')
+
+for r in results:
+	fp.write(`r['_Synonym_key']` + TAB + \
+	         `r['_Strain_key']` + TAB + \
+	         r['synonym'] + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+fp.close
+
+#
+# strain_type.bcp
+#
+
+fp = open(OUTPUTDIR + 'strain_type.bcp', 'w')
+
+cmd = 'select _StrainType_key, strainType, ' + \
+      'cdate = convert(char(10), creation_date, 101), ' + \
+      'mdate = convert(char(10), modification_date, 101) ' + \
+      'from MLP_StrainType'
+
+results = db.sql(cmd, 'auto')
+
+for r in results:
+	fp.write(`r['_StrainType_key']` + TAB + \
+	         r['strainType'] + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+fp.close
+
+#
+# strain_strain_type.bcp
+#
+
+fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
+
+cmd = 'select _Strain_key, _StrainType_key, ' + \
+      'cdate = convert(char(10), creation_date, 101), ' + \
+      'mdate = convert(char(10), modification_date, 101) ' + \
+      'from MLP_StrainTypes'
+
+results = db.sql(cmd, 'auto')
+
+for r in results:
+	fp.write(`r['_Strain_key']` + TAB + \
+	         `r['_StrainType_key']` + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+fp.close
+
+#
+# accession_strain.bcp
+#
+
+fp = open(OUTPUTDIR + 'accession_strain.bcp', 'w')
+
+cmd = 'select distinct accID, LogicalDB, _Object_key, preferred, ' + \
+      'cdate = convert(varchar(10), creation_date, 101), ' + \
+      'mdate = convert(varchar(10), modification_date, 101) ' + \
+      'from PRB_Strain_Acc_View'
+
+results = db.sql(cmd, 'auto')
+
+for r in results:
+	fp.write(r['accID'] + TAB + \
+		 r['LogicalDB'] + TAB + \
+	         `r['_Object_key']` + TAB + \
+	         `r['preferred']` + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+fp.close
+
+#
+# strain_species.bcp
+#
+
+fp = open(OUTPUTDIR + 'strain_species.bcp', 'w')
+
+cmd = 'select _Species_key, species, ' + \
+      'cdate = convert(char(10), creation_date, 101), ' + \
+      'mdate = convert(char(10), modification_date, 101) ' + \
+      'from MLP_Species'
+
+results = db.sql(cmd, 'auto')
+
+for r in results:
+	fp.write(`r['_Species_key']` + TAB + \
+	         r['species'] + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+fp.close
 
