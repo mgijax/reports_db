@@ -14,13 +14,13 @@ setenv REPORTINSTALLDIR		/usr/local/mgi/reports_db
 setenv REPORTOUTPUTDIR		$REPORTINSTALLDIR/output
 
 # FTP report directory
-setenv FTPREPORTDIR		/net/l1/export/l1/ftp/pub/informatics/reports
+setenv FTPREPORTDIR		/export/l1/ftp/pub/informatics/reports
 
 # MGI Feed FTP report directory
-setenv MGIFEEDFTPDIR		/net/l1/export/l1/ftp/private/mgifeed
+setenv MGIFEEDFTPDIR		/export/l1/ftp/private/mgifeed
 
 # SYBASE
-setenv SYBASE			/opt/sybase
+setenv SYBASE			/opt/sybase/12.5
 
 # PYTHON
 setenv PYTHONPATH       	/usr/local/mgi/lib/python
@@ -29,7 +29,7 @@ setenv PYTHONPATH       	/usr/local/mgi/lib/python
 setenv DBUTILITIESPATH		/usr/local/mgi/dbutils/mgidbutilities
 
 # PATH
-set path = ($DBUTILITIESPATH/bin $path $SYBASE/bin)
+set path = ($DBUTILITIESPATH/bin $path $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)
 
 # Database Server
 setenv DBSERVER MGD
