@@ -119,7 +119,7 @@ for r in results:
 # Retrieve MP IDs for MP annotations
 
 results = db.sql('select distinct s._Allele_key, a.accID ' + \
-	'from #alleles s, GXD_AlleleGenotype ga, VOC_Annot na, ACC_Accession a ' + \
+	'from #alleles s, GXD_AlleleGenotype ga, VOC_AnnotHeader na, ACC_Accession a ' + \
 	'where s._Allele_key = ga._Allele_key ' + \
 	'and ga._Genotype_key = na._Object_key ' + \
 	'and na._AnnotType_key = 1002 ' + \

@@ -115,13 +115,13 @@ results = db.sql('select a._Object_key, a.accID ' + \
 hlocus = createDict(results, '_Object_key', 'accID')
 
 #
-# Get the MP for the mouse markers
+# Get the MP Header Terms for the mouse markers
 #
 
 results = db.sql('select distinct h.mouseKey, a.accID ' + \
-                'from #homology h, GXD_AlleleGenotype g, VOC_Annot v, ACC_Accession a ' + \
-                'where g._Marker_key = h.mouseKey ' + \
-                'and v._Object_key = g._Genotype_key ' + \
+                'from #homology h, GXD_AlleleGenotype g, VOC_AnnotHeader v, ACC_Accession a ' + \
+                'where h.mouseKey = g._Marker_key ' + \
+                'and g._Genotype_key = v._Object_key ' + \
                 'and v._AnnotType_key = 1002 ' + \
                 'and a._Object_key = v._Term_key ' + \
                 'and a._MGIType_key = 13 ' + \
