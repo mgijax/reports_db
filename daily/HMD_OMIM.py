@@ -112,7 +112,7 @@ for r in results:
     value = str(r['mim'])
     if not mimIDs.has_key(key):
 	mimIDs[key] = []
-    mimIDs[key].append = value
+    mimIDs[key].append(value)
 
 results = db.sql('select h.* from #homology h order by h.mouseSymbol', 'auto')
 count = 0
