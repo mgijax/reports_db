@@ -2,13 +2,13 @@
 
 '''
 #
-# MRK_GXD.py 06/20/2002
+# MRK_GXDAssay.py 08/28/2002
 #
 # Report:
-#       Tab-delimited file of MGI Genes with associated GXD Index records
+#       Tab-delimited file of MGI Genes with associated GXD Assay records
 #
 # Usage:
-#       MRK_GXD.py
+#       MRK_GXDAssay.py
 #
 # Used by:
 #	Deanna Church of NCBI
@@ -17,8 +17,8 @@
 #
 # History:
 #
-# lec	06/20/2002
-#	- TR 3798
+# lec	08/28/2002
+#	- TR 4027
 #
 '''
  
@@ -38,7 +38,7 @@ CRT = reportlib.CRT
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 cmd = 'select distinct a.accID, m.symbol ' + \
-	'from MRK_Marker m, GXD_Index g, MRK_Acc_View a ' + \
+	'from MRK_Marker m, GXD_Assay g, MRK_Acc_View a ' + \
 	'where m._Marker_key = g._Marker_key ' + \
 	'and m._Marker_key = a._Object_key ' + \
 	'and a.prefixPart = "MGI:" ' + \
