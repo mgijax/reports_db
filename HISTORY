@@ -1,3 +1,10 @@
+TAG: reports_db-18-0-1
+DATE: 04/15/2003
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) added _Allele_key to mgimarkerfeed/strain_marker.bcp
+
 TAG: reports_db-18-0-0
 DATE: 03/26/2003
 STAFF: lec
