@@ -4,16 +4,18 @@ go
 
 select distinct p._Probe_key, db = ldb.name
 into #riken
-from PRB_Probe p, PRB_ACC_View pa, ACC_LogicalDB ldb
+from PRB_Probe p, ACC_Accession pa, ACC_LogicalDB ldb
 where p._Probe_key = pa._Object_key
+and pa._MGIType_key = 3
 and pa._LogicalDB_key = 26
 and pa._LogicalDB_key = ldb._LogicalDB_key
 go
 
 insert #riken
 select distinct p._Probe_key, db = ldb.name
-from PRB_Probe p, PRB_ACC_View pa, ACC_LogicalDB ldb
+from PRB_Probe p, ACC_Accession pa, ACC_LogicalDB ldb
 where p._Probe_key = pa._Object_key
+and pa._MGIType_key = 3
 and pa._LogicalDB_key = 51
 and pa._LogicalDB_key = ldb._LogicalDB_key
 and not exists (select 1 from #riken where p._Probe_key = _Probe_key)
@@ -45,13 +47,15 @@ print ""
 
 select segmentID = pa.accID, segmentName = p.name, markerID = ma.accID, 
 markerSymbol = m.symbol, tmp.db
-from #prbs tmp, PRB_Probe p, PRB_ACC_View pa, MRK_Marker m, MRK_ACC_View ma
+from #prbs tmp, PRB_Probe p, ACC_Accession pa, MRK_Marker m, ACC_Accession ma
 where tmp._Probe_key = p._Probe_key 
 and p._Probe_key = pa._Object_key 
+and pa._MGIType_key = 3
 and pa.preferred = 1
 and pa.prefixPart = 'MGI:'
 and tmp._Marker_key *= m._Marker_key 
 and tmp._Marker_key *= ma._Object_key
+and ma._MGIType_key = 2
 and ma.preferred = 1
 and ma.prefixPart = 'MGI:'
 order by db, markerSymbol, pa.accID

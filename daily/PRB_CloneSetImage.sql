@@ -28,12 +28,12 @@ markerSymbol = m.symbol
 from #prbs tmp, PRB_Probe p, ACC_Accession pa, MRK_Marker m, ACC_Accession ma
 where tmp._Probe_key = p._Probe_key 
 and p._Probe_key = pa._Object_key 
-and pa_MGIType_key = 3
+and pa.MGIType_key = 3
 and pa.preferred = 1
 and pa.prefixPart = 'MGI:'
 and tmp._Marker_key *= m._Marker_key 
 and tmp._Marker_key *= ma._Object_key
-and ma_MGIType_key = 2
+and ma.MGIType_key = 2
 and ma.preferred = 1
 and ma.prefixPart = 'MGI:'
 order by markerSymbol, pa.accID
