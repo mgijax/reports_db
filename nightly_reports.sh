@@ -12,23 +12,23 @@ cd `dirname $0` && source Configuration
 
 umask 002
 
-foreach i (`ls daily/*.sql`)
+foreach i (daily/*.sql)
 reportisql.csh $i $REPORTOUTPUTDIR/`basename $i`.rpt $DSQUERY $MGD
 end
 
 cd daily
-foreach i (`ls *.py`)
+foreach i (*.py)
 $i
 end
 cd ..
 
 cd anatdict
-foreach i (`ls *.py`)
+foreach i (*.py)
 $i
 end
 cd ..
 
-foreach i (`ls $REPORTOUTPUTDIR`)
+foreach i ($REPORTOUTPUTDIR)
 cp $REPORTOUTPUTDIR/$i $FTPREPORTDIR
 end
 
