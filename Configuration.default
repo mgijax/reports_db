@@ -14,7 +14,7 @@ setenv REPORTINSTALLDIR		/usr/local/mgi/reports_db
 setenv REPORTOUTPUTDIR		/usr/local/mgi/reports_db/output
 
 # FTP report directory
-setenv FTPREPORTDIR		/net/l1/ftp/pub/informatics/reports
+setenv FTPREPORTDIR		/net/l1/export/l1/ftp/pub/informatics/reports
 
 # SYBASE
 setenv SYBASE			/opt/sybase
