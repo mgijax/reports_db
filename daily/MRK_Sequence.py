@@ -80,10 +80,14 @@ for r in results:
 	if prevMarker != r['mgiID']:
 		if len(sequence) > 0:
 			fp.write(mgi_utils.prvalue(sequence) + reportlib.TAB)
+		elif prevMarker != '':
+			fp.write(reportlib.TAB)
 		sequence = ''
 
 		if len(unigene) > 0:
 			fp.write(mgi_utils.prvalue(unigene) + reportlib.TAB)
+		elif prevMarker != '':
+			fp.write(reportlib.TAB)
 		unigene = ''
 
 		if len(refseq) > 0:
