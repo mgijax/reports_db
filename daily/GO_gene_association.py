@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	03/10/2004
+#	- only include Markers of type Gene
+#
 # lec	02/11/2003
 #	- TR 4511; add new column "assigned by"
 #
@@ -60,7 +63,7 @@ DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 
 # mapping between MGI Marker Type and what gets printed in the gene association file
-markerTypes = {1: 'gene', 10: 'gene'}
+markerTypes = {1: 'gene'}
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -95,6 +98,7 @@ cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'VOC_Evidence e, VOC_Term t, BIB_Acc_View b ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Object_key = m._Marker_key ' + \
+	'and m._Marker_Type_key = 1 ' + \
 	'and m._Marker_key = ma._Object_key ' + \
 	'and ma.prefixPart = "MGI:" ' + \
 	'and ma._LogicalDB_key = 1 ' + \
@@ -167,8 +171,6 @@ for r in results[3]:
 
 		if markerTypes.has_key(r['_Marker_Type_key']):
 			fp.write(markerTypes[r['_Marker_Type_key']] + TAB)
-		else:
-			fp.write('UNKNOWN' + TAB)
 
 		fp.write(SPECIES + TAB)
 
