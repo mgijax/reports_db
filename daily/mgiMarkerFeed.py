@@ -344,19 +344,19 @@ cmds.append('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_ke
 # field, else status = 0
 #
 
-cmds.append('select m._Allele_key, m.name, labelType = "N", status = 1, ' + \
+cmds.append('select m._Allele_key, m.name, labelType = "AN", status = 1, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m ' + \
 	'where a._Allele_key = m._Allele_key ' + \
 	'union ' + \
-	'select m._Allele_key, m.symbol, labelType = "S", status = 1, ' + \
+	'select m._Allele_key, m.symbol, labelType = "AS", status = 1, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m ' + \
 	'where a._Allele_key = m._Allele_key ' + \
 	'union ' + \
-	'select m._Allele_key, s.synonym, labelType = "Y", status = 0, ' + \
+	'select m._Allele_key, s.synonym, labelType = "AY", status = 0, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m, ALL_Synonym s ' + \
