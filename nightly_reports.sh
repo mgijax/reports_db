@@ -29,7 +29,7 @@ end
 cd ..
 
 foreach i ($REPORTOUTPUTDIR/*)
-cp $i $FTPREPORTDIR
+rcp $i $FTPREPORTDIR
 end
 
 ./mgimarkerfeed_reports.sh
