@@ -426,7 +426,7 @@ def alleles():
 
     db.sql('select m._Allele_key into #alleles ' + \
 	'from ALL_Allele m, VOC_Term t ' + \
-	'where m._Allele_Status_key = t._Term_key and t.term = "Approved" ', None)
+	'where m._Marker_key is not null and m._Allele_Status_key = t._Term_key and t.term = "Approved" ', None)
     db.sql('create index idx1 on #alleles(_Allele_key)', None)
 
     #
@@ -602,7 +602,19 @@ def strains():
           'from PRB_Strain s, ACC_Accession a ' + \
           'where s._Strain_key = a._Object_key ' + \
           'and a._MGIType_key = 10 ' + \
-          'and a._LogicalDB_key in (22, 38) ', None)
+          'and a._LogicalDB_key in (22, 38) ' + \
+          'union ' + \
+          'select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
+          'cdate = convert(char(20), s.creation_date, 100), ' + \
+          'mdate = convert(char(20), s.modification_date, 100) ' + \
+          'from PRB_Strain s, ALL_Allele a ' + \
+          'where s._Strain_key = a._Strain_key ' + \
+          'union ' + \
+          'select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
+          'cdate = convert(char(20), s.creation_date, 100), ' + \
+          'mdate = convert(char(20), s.modification_date, 100) ' + \
+          'from PRB_Strain s, ALL_CellLine a ' + \
+          'where s._Strain_key = a._Strain_key ', None)
 
     db.sql('create index idx1 on #strains(_Strain_key)', None)
 
@@ -751,7 +763,6 @@ def strains():
 
 def genotypes():
 
-
     db.sql('select distinct g._Genotype_key ' + \
 	    'into #genotypes ' + \
 	    'from #strains s, GXD_Genotype g, VOC_Annot a ' + \
@@ -870,7 +881,7 @@ def references():
     db.sql('create index idx1 on #strainreferences(_Refs_key)', None)
     db.sql('create index idx1 on #mrkreferences(_Refs_key)', None)
 
-    db.sql('select _Refs_key into #references from #genoreferences ' + \
+    db.sql('select distinct _Refs_key into #references from #genoreferences ' + \
 	    'union select distinct _Refs_key from #allreferences ' + \
 	    'union select distinct _Refs_key from #strainreferences ' + \
 	    'union select distinct _Refs_key from #mrkreferences', None)
