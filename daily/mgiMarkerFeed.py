@@ -44,20 +44,14 @@ OUTPUTDIR = os.environ['REPORTOUTPUTDIR'] + '/mgimarkerfeed/'
 
 def mgi_status(status):
 
-	if status == "Not Applicable":
-		return "NA"
-
-	if status == "Not Specified":
-		return "NS"
-
 	if status == "approved":
+		return "A"
+
+	if status == "Approved":
 		return "A"
 
 	if status == "withdrawn":
 		return "W"
-
-	if status == "Approved":
-		return "A"
 
 	return ''
 
@@ -166,7 +160,7 @@ cmds = []
 # the split symbol).
 #
 
-cmds.append('select m._Marker_key into #markers ' + \
+cmds.append('select m._Marker_key, m.symbol, m.name into #markers ' + \
 	'from MRK_Marker m ' + \
 	'where m._Species_key = 1 ' + \
 	'and exists (select 1 from ACC_Accession a ' + \
@@ -189,14 +183,23 @@ cmds.append('select m._Marker_key, m._Species_key, m._Marker_Type_key, s.status,
 
 #
 # select data fields for marker_label.bcp
+# status = 1 if the label matches the MRK_Marker.symbol or MRK_Marker.name
+# field, else status = 0
 #
 
-cmds.append('select m._Marker_key, m.label, m.labelType, s.status, ' + \
+cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
-	'from #markers k, MRK_Label m, MRK_Status s ' + \
+	'from #markers k, MRK_Label m ' + \
 	'where k._Marker_key = m._Marker_key ' + \
-	'and m._Marker_Status_key = s._Marker_Status_key')
+	'and (k.symbol = m.label or k.name = m.label) ')
+
+cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' + \
+	'cdate = convert(char(10), m.creation_date, 101), ' + \
+	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'from #markers k, MRK_Label m ' + \
+	'where k._Marker_key = m._Marker_key ' + \
+	'and k.symbol != m.label and k.name != m.label ')
 
 #
 # select data fields for accession_marker.bcp
@@ -228,11 +231,19 @@ for r in results[2]:
 	fp2.write(`r['_Marker_key']` + TAB + \
 		 r['label'] + TAB + \
 		 r['labelType'] + TAB + \
-		 mgi_status(r['status']) + TAB + \
+		 `r['status']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
 for r in results[3]:
+	fp2.write(`r['_Marker_key']` + TAB + \
+		 r['label'] + TAB + \
+		 r['labelType'] + TAB + \
+		 `r['status']` + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+for r in results[4]:
 	fp3.write(r['accID'] + TAB + \
 		 r['LogicalDB'] + TAB + \
 		 `r['_Object_key']` + TAB + \
@@ -279,24 +290,26 @@ cmds.append('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_ke
 #
 # select data fields for allele_label.bcp
 # this includes all allele symbols, names and synonyms
+# status = 1 if the label matches the ALL_Allele.symbol or ALL_Allele.name
+# field, else status = 0
 #
 
-cmds.append('select m._Allele_key, m.name, labelType = "N", m.status, ' + \
+cmds.append('select m._Allele_key, m.name, labelType = "N", status = 1, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
-	'from #alleles a, ALL_Allele_View m ' + \
+	'from #alleles a, ALL_Allele m ' + \
 	'where a._Allele_key = m._Allele_key ' + \
 	'union ' + \
-	'select m._Allele_key, m.symbol, labelType = "S", m.status, ' + \
+	'select m._Allele_key, m.symbol, labelType = "S", status = 1, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
-	'from #alleles a, ALL_Allele_View m ' + \
+	'from #alleles a, ALL_Allele m ' + \
 	'where a._Allele_key = m._Allele_key ' + \
 	'union ' + \
-	'select m._Allele_key, s.synonym, labelType = "Y", m.status, ' + \
+	'select m._Allele_key, s.synonym, labelType = "Y", status = 0, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
-	'from #alleles a, ALL_Allele_View m, ALL_Synonym s ' + \
+	'from #alleles a, ALL_Allele m, ALL_Synonym s ' + \
 	'where a._Allele_key = m._Allele_key ' + \
 	'and a._Allele_key = s._Allele_key ')
 
@@ -330,7 +343,7 @@ for r in results[2]:
 	fp2.write(`r['_Allele_key']` + TAB + \
 		 r['name'] + TAB + \
 		 r['labelType'] + TAB + \
-		 mgi_status(r['status']) + TAB + \
+		 `r['status']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
