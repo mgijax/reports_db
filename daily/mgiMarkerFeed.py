@@ -429,7 +429,7 @@ fp6 = open(OUTPUTDIR + 'accession_strain.bcp', 'w')
 fp7 = open(OUTPUTDIR + 'strain_species.bcp', 'w')
 
 #
-# select all strains which have a Jax Registry ID
+# select all strains which have a Jax Registry ID or MMRRC ID
 # plus all strains which are cross-referenced by Allele or Allele CellLine
 #
 
@@ -441,7 +441,7 @@ cmds.append('select distinct s._Strain_key, m._Species_key, s.strain, s.private,
       'from PRB_Strain s, MLP_Strain m, PRB_Strain_Acc_View a ' + \
       'where s._Strain_key = m._Strain_key ' + \
       'and s._Strain_key = a._Object_key ' + \
-      'and a._LogicalDB_key = 22 ')
+      'and a._LogicalDB_key in (22, 38) ')
 
 #      'union ' + \
 #      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
