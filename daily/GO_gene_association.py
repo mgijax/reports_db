@@ -69,7 +69,7 @@ fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ
 #
 
 fp.write('!software version: $Revision$\n')
-fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
+fp.write('!date: %s $\n' % (mgi_utils.date("%Y%m%d")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
