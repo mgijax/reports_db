@@ -31,6 +31,9 @@
 #
 # History:
 #
+# lec	07/01/2003
+#	- TR 4945; added LocusLink IDs for Mouse and Human
+#
 # lec	05/07/2002
 #	- created
 #
@@ -82,6 +85,13 @@ cmds.append('select a._Object_key, a.accID ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a.preferred = 1')
+
+# LocusLink for Mouse
+cmds.append('select distinct a._Object_key, a.accID ' + \
+	'from #homology h, ACC_Accession a ' + \
+	'where h.mouseKey = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
+	'and a._LogicalDB_key = 24 ')
 
 # LocusLink for Human
 cmds.append('select distinct a._Object_key, a.accID ' + \
@@ -136,49 +146,58 @@ mgiID = {}
 for r in results[4]:
 	mgiID[r['_Object_key']] = r['accID']
 
-llID = {}
+mllID = {}
 for r in results[5]:
-	llID[r['_Object_key']] = r['accID']
+	mllID[r['_Object_key']] = r['accID']
+
+hllID = {}
+for r in results[6]:
+	hllID[r['_Object_key']] = r['accID']
 
 mrefseqID = {}
-for r in results[6]:
+for r in results[7]:
 	mrefseqID[r['_Object_key']] = r['accID']
 
 hrefseqID = {}
-for r in results[7]:
+for r in results[8]:
 	hrefseqID[r['_Object_key']] = r['accID']
 
 mspID = {}
-for r in results[8]:
+for r in results[9]:
 	if not mspID.has_key(r['_Object_key']):
 		mspID[r['_Object_key']] = []
 	mspID[r['_Object_key']].append(r['accID'])
 
 hspID = {}
-for r in results[9]:
+for r in results[10]:
 	if r['accID'] != None:
 		hspID[r['_Object_key']] = r['accID']
 
 gbID = {}
-for r in results[10]:
+for r in results[11]:
 	if not gbID.has_key(r['_Object_key']):
 		gbID[r['_Object_key']] = []
 	gbID[r['_Object_key']].append(r['accID'])
 
 habbrev = {}
-for r in results[11]:
+for r in results[12]:
 	if not habbrev.has_key(r['mouseKey']):
 		habbrev[r['mouseKey']] = []
 	habbrev[r['mouseKey']].append(r['abbrev'])
 
-for r in results[12]:
+for r in results[13]:
 
 	fp.write(r['mouseSym'] + TAB)
 	fp.write(mgiID[r['mouseKey']] + TAB)
+
+	if mllID.has_key(r['mouseKey']):
+		fp.write(mllID[r['mouseKey']])
+	fp.write(TAB)
+
 	fp.write(r['humanSym'] + TAB)
 
-	if llID.has_key(r['humanKey']):
-		fp.write(llID[r['humanKey']])
+	if hllID.has_key(r['humanKey']):
+		fp.write(hllID[r['humanKey']])
 	fp.write(TAB)
 
 	if mrefseqID.has_key(r['mouseKey']):
