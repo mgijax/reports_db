@@ -1,3 +1,10 @@
+TAG: reports_db-9-0-0
+DATE: 11/28/2001
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 3137 - add MRK_Offset to MGI Marker Feed
+
 TAG: reports_db-8-0-0
 DATE: 11/01/2001
 STAFF: lec
