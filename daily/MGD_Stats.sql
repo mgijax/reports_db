@@ -80,7 +80,7 @@ and m2._Organism_key = 1
 go
 
 print ""
-print "Number of Homologies Mouse/Human" 
+print "Number of Orthologies Mouse/Human" 
 select count(*)
 from #homology
 go
