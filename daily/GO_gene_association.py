@@ -33,6 +33,10 @@
 #
 # History:
 #
+# lec	04/02/2002
+#	- TR 3527; some terms may not have DAGs; this shouldn't happen
+#	but we don't want the report to bomb if it does.
+#
 # lec	01/28/2002
 #	- new - revision 2.0
 #
@@ -120,42 +124,45 @@ for r in results[2]:
 
 for r in results[3]:
 
-	fp.write(DBABBREV + TAB)
-	fp.write(r['markerID'] + TAB)
-	fp.write(r['symbol'] + TAB)
+	# if we can't find the DAG for the Term, skip it
 
-	if r['isNot'] == 1:
-		fp.write('Not')
+	if dag.has_key(r['_Term_key']):
+		fp.write(DBABBREV + TAB)
+		fp.write(r['markerID'] + TAB)
+		fp.write(r['symbol'] + TAB)
 
-	fp.write(TAB)
-	fp.write(r['termID'] + TAB)
-	fp.write(DBABBREV + ':' + r['refID'] + TAB)
-	fp.write(r['eCode'] + TAB)
+		if r['isNot'] == 1:
+			fp.write('Not')
 
-	# substitute | for ", " in inferredFrom
+		fp.write(TAB)
+		fp.write(r['termID'] + TAB)
+		fp.write(DBABBREV + ':' + r['refID'] + TAB)
+		fp.write(r['eCode'] + TAB)
 
-	if r['inferredFrom'] != None:
-		inferredFrom = regsub.gsub(', ', '|', r['inferredFrom'])
-	else:
-		inferredFrom = r['inferredFrom']
+		# substitute | for ", " in inferredFrom
 
-	fp.write(mgi_utils.prvalue(inferredFrom) + TAB)
+		if r['inferredFrom'] != None:
+			inferredFrom = regsub.gsub(', ', '|', r['inferredFrom'])
+		else:
+			inferredFrom = r['inferredFrom']
 
-	fp.write(dag[r['_Term_key']] + TAB)
-	fp.write(r['name'] + TAB)
+		fp.write(mgi_utils.prvalue(inferredFrom) + TAB)
 
-	if syns.has_key(r['_Marker_key']):
-		fp.write(string.join(syns[r['_Marker_key']], '|'))
+		fp.write(dag[r['_Term_key']] + TAB)
+		fp.write(r['name'] + TAB)
 
-	fp.write(TAB)
+		if syns.has_key(r['_Marker_key']):
+			fp.write(string.join(syns[r['_Marker_key']], '|'))
 
-	if markerTypes.has_key(r['_Marker_Type_key']):
-		fp.write(markerTypes[r['_Marker_Type_key']] + TAB)
-	else:
-		fp.write('UNKNOWN' + TAB)
+		fp.write(TAB)
 
-	fp.write(SPECIES + TAB)
-	fp.write(r['mDate'] + CRT)
+		if markerTypes.has_key(r['_Marker_Type_key']):
+			fp.write(markerTypes[r['_Marker_Type_key']] + TAB)
+		else:
+			fp.write('UNKNOWN' + TAB)
+
+		fp.write(SPECIES + TAB)
+		fp.write(r['mDate'] + CRT)
 	
 reportlib.finish_nonps(fp)
 
