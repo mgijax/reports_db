@@ -192,7 +192,16 @@ cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' 
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
 	'from #markers k, MRK_Label m ' + \
 	'where k._Marker_key = m._Marker_key ' + \
-	'and (k.symbol = m.label or k.name = m.label) ')
+	'and m.labelType = "S" ' + \
+	'and k.symbol = m.label ')
+
+cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' + \
+	'cdate = convert(char(10), m.creation_date, 101), ' + \
+	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'from #markers k, MRK_Label m ' + \
+	'where k._Marker_key = m._Marker_key ' + \
+	'and m.labelType = "N" ' + \
+	'and k.name = m.label')
 
 cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
@@ -244,6 +253,14 @@ for r in results[3]:
 		 r['mdate'] + CRT)
 
 for r in results[4]:
+	fp2.write(`r['_Marker_key']` + TAB + \
+		 r['label'] + TAB + \
+		 r['labelType'] + TAB + \
+		 `r['status']` + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
+for r in results[5]:
 	fp3.write(r['accID'] + TAB + \
 		 r['LogicalDB'] + TAB + \
 		 `r['_Object_key']` + TAB + \
