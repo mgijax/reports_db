@@ -128,7 +128,7 @@ for r in results:
 
 # RefSeq for Human
 results = db.sql('select distinct _Object_key = h.humanKey, accID = r.refseqID ' + \
-	'from #homology h, ACC_Accession a, radar_2..DP_LLRef r ' + \
+	'from #homology h, ACC_Accession a, radar..DP_LLRef r ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 24 ' + \
@@ -151,7 +151,7 @@ for r in results:
 
 # SWISSPROT for Human
 results = db.sql('select distinct _Object_key = h.humanKey, accID = r.proteinID ' + \
-	'from #homology h, radar_2..DP_LL l, radar_2..DP_LLRef r ' + \
+	'from #homology h, radar..DP_LL l, radar..DP_LLRef r ' + \
 	'where h.humanSym = l.osymbol ' + \
 	'and l.taxID = 9606 ' + \
 	'and l.locusID = r.locusID', 'auto')

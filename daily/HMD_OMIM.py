@@ -85,7 +85,7 @@ db.sql(cmds, None)
 
 results = db.sql('select h.mouseKey, a.accID ' + \
 	'from #homology h, ACC_Accession a ' + \
-	'where h._Marker_key = a._Object_key ' + \
+	'where h.mouseKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a._LogicalDB_key = 1 ' + \
@@ -97,31 +97,30 @@ for r in results:
     mgiIDs[key] = value
 
 results = db.sql('select h.humanKey, l.mim ' + \
-	'from #homology h, ACC_Accession a, radar_2..DP_LL l ' + \
-	'where h._Marker_key = h._Object_key ' + \
-	'and h._MGIType_key = 2 ' + \
-	'and h._LogicalDB_key = 24 ' + \
-	'and h.accID = l.locusID ' + \
+	'from #homology h, ACC_Accession a, radar..DP_LL l ' + \
+	'where h.humanKey = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
+	'and a._LogicalDB_key = 24 ' + \
+	'and a.accID = l.locusID ' + \
 	'and l.mim is not null ', 'auto')
 mimIDs = {}
 for r in results:
     key = r['humanKey']
-    value = r['accID']
+    value = str(r['mim'])
     mimIDs[key] = value
 
-results = db.sql('select h.* from #homology order by mouseSymbol', 'auto')
+results = db.sql('select h.* from #homology h order by h.mouseSymbol', 'auto')
 count = 0
 for r in results:
-    if not mimIDs.has_key(h.humanKey):
+    if not mimIDs.has_key(r['humanKey']):
 	continue
-
     fp.write(string.ljust(mgiIDs[r['mouseKey']], 30))
     fp.write(SPACE)
     fp.write(string.ljust(r['mouseSymbol'], 25))
     fp.write(SPACE)
     fp.write(string.ljust(r['humanSymbol'], 25))
     fp.write(SPACE)
-    fp.write(string.ljust(mimIDs[r['humanKey']]), 10))
+    fp.write(string.ljust(mimIDs[r['humanKey']], 10))
     fp.write(SPACE)
     fp.write(CRT)
     count = count + 1
