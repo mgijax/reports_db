@@ -1,3 +1,10 @@
+TAG: reports_db-3-3-2
+DATE: 07/18/2000
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) TR 1688; modified MRK_LocusLink.py to include LocusLink ID and Other Names
+
 TAG: reports_db-3-3-1
 DATE: 07/18/2000
 STAFF: lec
