@@ -110,16 +110,26 @@
     </TABLE></TD></TR>
     
     <TR><TD><TABLE>
-        <TR><TD><B>2. MGI Marker associations to SwissProt protein IDs (tab-delimited)</B></TD></TR>
+        <TR><TD><B>2. MGI Marker associations to SWISS-PROT protein IDs (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
-        <TD>SwissProt Protein<BR>Accession IDs<BR>(space-separated)</TD></TR></TABLE>
+        <TD>SWISS-PROT Protein<BR>Accession IDs<BR>(space-separated)</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_SwissProt.rpt">MRK_SwissProt.rpt</A></TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
     
-    <TR><TD><TABLE><B>3. MGI Marker associations to LocusLink (tab-delimited)</B></TD></TR>
+    <TR><TD><TABLE>
+        <TR><TD><B>3. MGI Marker associations to SWISS-PROT and TrEMBL protein IDs (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
+        <TD>SWISS-PROT/TrEMBL Protein<BR>Accession IDs<BR>(space-separated)</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_SwissProt_TrEMBL.rpt">MRK_SwissProt_TrEMBL.rpt</A></TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+    
+    <TR><TD><TABLE><B>4. MGI Marker associations to LocusLink (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>Type<BR><FONT SIZE=-1>Gene<BR>DNA Segment<BR>Other Genome Feature<BR>Complex/Cluster/Region</FONT></TD>
@@ -129,7 +139,7 @@
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE><B>4. Primer Sequences</B></TD></TR>
+    <TR><TD><TABLE><B>5. Primer Sequences</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>Primer Name</TD><TD>MGI Marker Accession ID</TD><TD>MGI Primer Pair ID</TD><TD>Primer 1 Sequence</TD><TD>Primer 2 Sequence</TD><TD>Amplimer Size</TD><TD>Chromosome</TD><TD>Map Position</TD></TR></TABLE>
         </TD></TR>
@@ -137,7 +147,7 @@
         </TD></TR>
     </TABLE></TD></TR>
     
-    <TR><TD><TABLE><B>5. Mapped ESTs (tab-delimited)</B></TD></TR>
+    <TR><TD><TABLE><B>6. Mapped ESTs (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>EST MGI Acc ID</TD><TD>EST GenBank ID</TD><TD>Chromosome</TD><TD>cM Position</TD><TD>Marker Symbol</TD><TD>Marker Name</TD></TR></TABLE>
         </TD></TR>
@@ -146,7 +156,7 @@
     </TABLE></TD></TR>
     
     <TR><TD><TABLE>
-        <TR><TD><B>6. MGI Marker associations to InterPro IDs (tab-delimited)</B></TD></TR>
+        <TR><TD><B>7. MGI Marker associations to InterPro IDs (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>InterPro Accession IDs (space-separated)</TD></TR></TABLE>
         </TD></TR>
@@ -154,7 +164,16 @@
         </TD></TR>
     </TABLE></TD></TR>
     
-    <TR><TD><TABLE><B>7. MGI-DoTS and MGI-TIGR mouse gene index Associations (tab-delimited)</B></TD></TR>
+    <TR><TD><TABLE>
+        <TR><TD><B>8. InterPro Domains (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>InterPro ID</TD><TDDomain Name</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_InterProDomains.rpt">MGI_InterProDomains.rpt</A></TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+    
+    <TR><TD><TABLE><B>9. MGI-DoTS and MGI-TIGR mouse gene index Associations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>DT/TC ID</TD><TD>GenBank Sequence IDs (comma-separated)</TD></TABLE>
         </TD></TR>
@@ -169,7 +188,7 @@
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE><B>8. <A HREF="../sequence_dbs/seq_dbs.current/index.html">MouseBLAST Sequence Databases</A></B> (a link to the MouseBLAST Sequence Databases page)</TD></TR>
+    <TR><TD><TABLE><B>10. <A HREF="../sequence_dbs/seq_dbs.current/index.html">MouseBLAST Sequence Databases</A></B> (a link to the MouseBLAST Sequence Databases page)</TD></TR>
     </TABLE></TD></TR>
     
 </TABLE><BR>
@@ -232,9 +251,9 @@
 		<TD>Human LocusLink ID</TD>
 		<TD>Mouse RefSeq ID</TD>
 		<TD>Human RefSeq ID</TD>
-		<TD>Mouse SwissProt IDs<BR>(if any, comma-separated)</TD>
-		<TD>Human SwissProt ID<BR>(if any)</TD>
-		<TD>Mouse GenBank Accession IDs<BR>(if no RefSeq or SwissProt, comma-separated)</TD>
+		<TD>Mouse SWISS-PROT IDs<BR>(if any, comma-separated)</TD>
+		<TD>Human SWISS-PROT ID<BR>(if any)</TD>
+		<TD>Mouse GenBank Accession IDs<BR>(if no RefSeq or SWISS-PROT, comma-separated)</TD>
 		<TD>Evidences used to support the mouse-human orthology<BR>(comma-separated)</TD>
 	</TABLE>
         </TD></TR>
@@ -317,7 +336,7 @@
         <TR><TD><B>4. GO annotations to mouse Markers that have human orthologs</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>GO ID</TD><TD>GO Term</TD>
-        <TD>GO Evidence Code</TD><TD>PubMed ID</TD><TD>SWISS-PROT/<BR>TREMBL ID</TD><TD>GenBank ID<BR>EMBL ID<BR>DDBJ ID</TD></TR></TABLE>
+        <TD>GO Evidence Code</TD><TD>PubMed ID</TD><TD>SWISS-PROT</TD><TD>GenBank ID<BR>EMBL ID<BR>DDBJ ID</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_GOHuman.rpt">MRK_GOHuman.rpt</A></TD></TR>
         </TD></TR>
