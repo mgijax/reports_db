@@ -42,6 +42,69 @@ CRT = reportlib.CRT
 SPACE = reportlib.SPACE
 REPORTNAME = 'HMD_Rat'
 
+#
+# NOTE: The following globals and getSortableOffset are variations on
+# the original algorithm which can be found in the WI homology_report.cgi.py
+# python module.
+#
+
+# special global variables used by getSortableOffset().  We declare them
+# outside the function to yield a small speed benefit (we only create them
+# once).
+
+offset_cre = regex.compile ('\([pq]\)\([0-9\.]+\)')     # eg- q23.2
+offset_special = {
+        'pter'  : -10000.0,     # p terminus
+        'p'     :     -1.0,     # p arm
+        'cen'   :      0.0,     # centromere
+        'q'     :      1.0,     # q arm
+        'qter'  :  10000.0,     # q terminus
+        'None'  :  12000.0,     # no defined offset - go to bottom (syntenic)
+        'pter-qter'  :  12000.0 # equivalent to syntenic - go to bottom
+        }
+
+def getSortableOffset (cytogeneticOffset):
+        # Purpose: use 'cytogeneticOffset' to generate and return a value
+        #       which will sort as desired.  (using rat as a primary
+        #       species requires special handling, as of TR 211)
+        # Returns: a float
+        # Assumes: nothing
+        # Effects: nothing
+        # Throws: nothing
+        # Notes: 
+        #       the markers on a
+        #       chromosome sort by their cytogenetic offset as follows:
+        #               1. pter         (p terminus)
+        #               2. p<number>    (number in descending order)
+        #               3. p            (specifies the whole p arm)
+        #               4. cen          (centromere)
+        #               5. q            (specifies the whole q arm)
+        #               6. q<number>    (number in ascending order)
+        #               7. qter         (q terminus)
+
+	cyto_str = str(cytogeneticOffset)
+
+	if offset_special.has_key (cyto_str):   # try to match whole offset
+		return offset_special [cyto_str]
+
+	cyto = string.split (cyto_str, '-' )[0]
+
+	if offset_special.has_key (cyto):       # just match first band
+                return offset_special [cyto]
+
+        if offset_cre.match (cyto) != -1:
+                pq, value = offset_cre.group (1,2)
+                if pq == 'p':
+                        factor = -1
+                else:
+                        factor = 1
+                try:
+                        float_value = string.atof (value)
+                        return factor * (float_value + 5)
+                except:
+                        pass
+        return 0.0
+
 def processSort1():
 
 	reportTitle = 'Homology - Rat vs. Mouse (Sorted by Rat Chromosome)'
@@ -130,13 +193,42 @@ def processSort1():
 		'and ha._LogicalDB_key = 24 ' + \
 		'and m2._Marker_key *= ma._Object_key ' + \
 		'and ma._MGIType_key = 2 ' + \
-		'and ma._LogicalDB_key = 24 ' + \
-                'order by c.sequenceNum'
+		'and ma._LogicalDB_key = 24 '
 
 	results = db.sql(cmd, 'auto')
 	count = 0
 
+	#
+	# initialize a list to sort the rat chromosome & offset values.
+	# the first sort is by chromosome, second is by offset.
+	# that is, sortKeys[0] holds the sequence number of the chromosome order
+	# and sortKeys[1] holds the sort value of the cytogenetic offset
+	#
+	# store the sort key as a tuple in a dictionary (rows) so we can sort 
+	# the dictionary keys
+	#
+	# the dictionary values will be set to the row tuple
+	#
+
+	sortKeys = [''] * 3	# initialize list to 3 'blanks'
+	rows = {}
+
 	for r in results:
+		sortKeys[0] = r['sequenceNum']
+		sortKeys[1] = getSortableOffset(r['cytogeneticOffset'])
+		sortKeys[2] = r['ratSymbol']
+		rows[tuple(sortKeys)] = r
+		count = count + 1
+
+	#
+	# now sort the "rows" dictionary keys
+	# and print out the dictionary values
+	#
+
+	keys = rows.keys()
+	keys.sort()
+	for key in keys:
+		r = rows[key]
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
@@ -156,7 +248,6 @@ def processSort1():
 		fp.write(string.ljust(r['mouseName'], 10))
 		fp.write(SPACE)
 		fp.write(CRT)
-		count = count + 1
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 	reportlib.trailer(fp)
