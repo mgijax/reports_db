@@ -1,3 +1,11 @@
+TAG: reports_db-11-0-5
+DATE: 04/25/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) modified GO reports to use fileExt
+  and to trim the trailing spaces from the DAG column
+
 TAG: reports_db-11-0-4
 DATE: 04/25/2002
 STAFF: lec
