@@ -35,6 +35,9 @@
 #
 # History:
 #
+# lec	02/20/2003
+#	- TR 1892; MRK_Label
+#
 # lec	04/09/2002
 #	- removed needsReview and standard
 #
@@ -219,7 +222,7 @@ cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' 
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Label m ' + \
 	'where k._Marker_key = m._Marker_key ' + \
-	'and m.labelType = "S" ' + \
+	'and m.labelType = "MS" ' + \
 	'and k.symbol = m.label ')
 
 cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' + \
@@ -227,7 +230,7 @@ cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' 
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Label m ' + \
 	'where k._Marker_key = m._Marker_key ' + \
-	'and m.labelType = "N" ' + \
+	'and m.labelType = "MN" ' + \
 	'and k.name = m.label')
 
 cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' + \
@@ -235,6 +238,7 @@ cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' 
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Label m ' + \
 	'where k._Marker_key = m._Marker_key ' + \
+	'and m.labelType in ("MS", "MN", "MY") ' + \
 	'and k.symbol != m.label and k.name != m.label ')
 
 #
