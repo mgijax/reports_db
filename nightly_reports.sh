@@ -28,8 +28,8 @@ $i
 end
 cd ..
 
-foreach i ($REPORTOUTPUTDIR)
-cp $REPORTOUTPUTDIR/$i $FTPREPORTDIR
+foreach i ($REPORTOUTPUTDIR/*)
+cp $i $FTPREPORTDIR
 end
 
 ./mgimarkerfeed_reports.sh
