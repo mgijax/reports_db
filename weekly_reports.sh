@@ -21,6 +21,6 @@ foreach i (`ls *.py`)
 $i >>& ${LOG}
 end
 
-cd `dirname $0`
+cd ..
 ./inparanoid.sh
 
