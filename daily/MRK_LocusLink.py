@@ -47,26 +47,28 @@ cmds = []
 # 2. all Withdrawn Marker records
 #
 
-cmds.append('select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.offset,10,2), ' + \
+cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, offset = str(o.offset,10,2), ' + \
   'm.chromosome, a.accID, markerType = t.name, isPrimary = 1 ' + \
   'into #markers ' + \
-  'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Acc_View a, MRK_Types t ' + \
+  'from MRK_Marker m, MRK_Offset o, MRK_Acc_View a, MRK_Types t ' + \
   'where m._Species_key = 1 ' + \
+  'and m._Marker_Status_key = 1 ' + \
   'and m._Marker_key = o._Marker_key ' + \
   'and o.source = 0 ' + \
-  'and m._Marker_key = c._Marker_key ' + \
-  'and c._Current_key = a._Object_key ' + \
+  'and m._Marker_key = a._Object_key ' + \
   'and a.prefixPart = "MGI:" ' + \
   'and a.preferred = 1 ' + \
   'and m._Marker_Type_key = t._Marker_Type_key ' + \
   'union '  + \
-  'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = null, m.chromosome, ' + \
+  'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.offset,10,2), m.chromosome, ' + \
   'a.accID, markerType = t.name, isPrimary = 0 ' + \
-  'from MRK_Marker m, MRK_Current c, MRK_Acc_View a, MRK_Types t ' + \
+  'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Acc_View a, MRK_Types t ' + \
   'where m._Species_key = 1 ' + \
-  'and m._Marker_Status_key = 2' + \
+  'and m._Marker_Status_key = 2 ' + \
+  'and m._Marker_key = o._Marker_key ' + \
+  'and o.source = 0 ' + \
   'and m._Marker_key = c._Marker_key ' + \
-  'and m._Marker_key = a._Object_key ' + \
+  'and c._Current_key = a._Object_key ' + \
   'and a.prefixPart = "MGI:" ' + \
   'and a.preferred = 1 ' + \
   'and m._Marker_Type_key = t._Marker_Type_key')
@@ -118,7 +120,7 @@ for r in results[4]:
 for r in results[5]:
 
 	fp.write(r['accID'] + TAB + \
-	       	r['symbol'] + TAB + \
+	 	r['symbol'] + TAB + \
 	 	r['name'] + TAB + \
 	 	r['offset'] + TAB + \
 	 	r['chromosome'] + TAB + \
