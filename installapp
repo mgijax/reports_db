@@ -42,5 +42,11 @@ if ( ! -e $REPORTOUTPUTDIR ) then
 	mkdir $REPORTOUTPUTDIR
 endif
 
+# Copy system_docs
+
+cp -r system_docs $REPORTINSTALLDIR
+chmod 755 $REPORTINSTALLDIR/system_docs
+chmod 644 $REPORTINSTALLDIR/system_docs/*
+
 chmod 755 $REPORTINSTALLDIR/*.sh $REPORTINSTALLDIR/*/*.sql $REPORTINSTALLDIR/*/*.py
 
