@@ -9,8 +9,8 @@ select a.accID "MGI Accession ID", m.chromosome "Chr",
         when o.offset = -999.0 then "       N/A"
         when o.offset = -1.0 then "  syntenic"
         end
-, m.symbol "Symbol", m.name "Name"
-from MRK_Marker m, MRK_Acc_View a, MRK_Offset o
+, m.symbol "Symbol", m.name "Name", t.name "Type"
+from MRK_Marker m, MRK_Acc_View a, MRK_Offset o, MRK_Types t
 where m._Species_key = 1
 and m._Marker_Status_key = 1
 and m._Marker_key = a._Object_key
@@ -18,5 +18,6 @@ and a.prefixPart = "MGI:"
 and a.preferred = 1
 and m._Marker_key = o._Marker_key
 and o.source = 0
+and m._Marker_Type_key = t._Marker_Type_key
 order by m.symbol
 go
