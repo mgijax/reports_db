@@ -58,7 +58,7 @@ PAGE = reportlib.PAGE
 # Main
 #
 
-fp = reportlib.init("MRK_GOHuman.rpt", printHeading = 0, outputdir = os.environ['QCREPORTOUTPUTDIR'])
+fp = reportlib.init("MRK_GOHuman.rpt", printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 cmds = []
 
