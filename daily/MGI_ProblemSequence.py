@@ -51,19 +51,23 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 cmds = []
 
+/* Select probes w/ problem note */
 cmds.append('select _Probe_key ' + \
       'into #probes ' + \
       'from PRB_Notes ' + \
       'where note like "MGI curatorial staff have found evidence of artifact in the sequence of this molecular%"')
 
+/* Select probes w/ Seq IDs */
 cmds.append('select distinct p._Probe_key, a.accID ' + \
 'into #probeseqs ' + \
 'from #probes p, PRB_Acc_View a ' + \
 'where p._Probe_key = a._Object_key  ' + \
 'and a._LogicalDB_key = 9 ')
 
+/* Select probes w/ only one Seq ID */
 cmds.append('select * into #forncbi from #probeseqs group by accID having count(*) = 1')
 
+/* Select probe's markers which hybridizie */
 cmds.append('select n.*, markerID = ma.accID ' + \
 'from #forncbi n, PRB_Marker_View m, MRK_Acc_View ma ' + \
 'where n._Probe_key = m._Probe_key ' + \
