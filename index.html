@@ -100,7 +100,7 @@
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Sequence Data</TH></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>1. MGI markers with sequence information in GenBank (tab-delimited)</B></TD></TR>
+        <TR><TD><B>1. MGI markers associations to GenBank sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>cM position</TD><TD>Chromosome</TD>
         <TD>GenBank Accession IDs<BR>(space-separated)</TD><TD>Unigene ID<BR>(if any)</TD><TD>RefSeq ID<BR>(if any)</TD></TR></TABLE>
@@ -110,7 +110,7 @@
     </TABLE></TD></TR>
     
     <TR><TD><TABLE>
-        <TR><TD><B>2. SwissProt protein IDs for MGI markers (tab-delimited)</B></TD></TR>
+        <TR><TD><B>2. MGI marker associations to SwissProt protein IDs (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>cM position</TD><TD>Chromosome</TD>
         <TD>SwissProt Protein<BR>Accession IDs<BR>(space-separated)</TD></TR></TABLE>
@@ -119,7 +119,7 @@
         </TD></TR>
     </TABLE></TD></TR>
     
-    <TR><TD><TABLE><B>3. MGI markers in LocusLink (tab-delimited)</B></TD></TR>
+    <TR><TD><TABLE><B>3. MGI marker associations to LocusLink (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker ID</TD><TD>Symbol</TD><TD>Name</TD><TD>cM position</TD><TD>Chromosome</TD>
         <TD>Type<BR><FONT SIZE=-1>Gene<BR>DNA Segment<BR>Other Genome Feature<BR>Complex/Cluster/Region</FONT></TD>
@@ -214,8 +214,27 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="GDB_Accession.rpt">GDB_Accession.rpt</A></TD></TR>
     </TABLE></TD></TR>
         
+    <TR><TD><TABLE><B>6. Human and Mouse Orthology with Sequence information (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR>
+		<TD>Mouse Symbol</TD>
+		<TD>MGI Marker ID</TD>
+		<TD>Human Symbol</TD>
+		<TD>Human LocusLink ID</TD>
+		<TD>Mouse RefSeq ID</TD>
+		<TD>Human RefSeq ID</TD>
+		<TD>Mouse SwissProt ID</TD>
+		<TD>Human SwissProt ID</TD>
+		<TD>Mouse GenBank Accession ID (if no RefSeq or SwissProt)</TD>
+		<TD>Evidence used to support the mouse-human orthology</TD>
+	</TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_HumanSeq.rpt">HMD_HumanSeq.rpt</A></TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+
     <TR><TD><TABLE>
-        <TR><TD><B>6. Rat and Mouse Orthology</B></TD></TR>
+        <TR><TD><B>7. Rat and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Rat<BR>Chromosome</TD><TD>Rat<BR>Symbol</TD><TD>Mouse<BR>Chromosome</TD><TD>Mouse<BR>cM Position</TD>
         <TD>Mouse<BR>Symbol</TD><TD>Mouse<BR>Name</TD></TR></TABLE>
@@ -224,7 +243,7 @@
     </TABLE></TD></TR> 
 
     <TR><TD><TABLE>
-        <TR><TD><B>7. Rat and Mouse Orthology</B></TD></TR>
+        <TR><TD><B>8. Rat and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Mouse<BR>Chromosome</TD><TD>Mouse<BR>cM Position</TD><TD>Mouse<BR>Symbol</TD><TD>Rat<BR>Chromosome</TD>
         <TD>Rat<BR>Symbol</TD><TD>Mouse<BR>Name</TD></TR></TABLE>
@@ -233,7 +252,7 @@
     </TABLE></TD></TR>
     
     <TR><TD><TABLE>
-        <TR><TD><B>8. Rat and Mouse Orthology</B></TD></TR>        
+        <TR><TD><B>9. Rat and Mouse Orthology</B></TD></TR>        
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Rat<BR>Symbol<BR></TD><TD>Rat<BR>Chromosome</TD><TD>Mouse<BR>Symbol</TD><TD>Mouse<BR>Chromosome</TD>
         <TD>Mouse<BR>cM Position</TD><TD>Mouse<BR>Band</TD></TR></TABLE>
@@ -242,7 +261,7 @@
     </TABLE></TD></TR>
     
     <TR><TD><TABLE>
-        <TR><TD><B>9. Rat and Mouse Orthology</B></TD></TR>        
+        <TR><TD><B>10. Rat and Mouse Orthology</B></TD></TR>        
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Mouse<BR>Symbol</TD><TD>Mouse<BR>Chromosome</TD><TD>Mouse<BR>cM Position</TD><TD>Mouse<BR>Band</TD>
         <TD>Rat<BR>Symbol</TD><TD>Rat<BR>Chromosome</TD></TR></TABLE>
