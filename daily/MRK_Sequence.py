@@ -60,6 +60,12 @@ cmd = 'select distinct m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accI
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
       'and a._LogicalDB_key = 23 ' + \
+      'union ' + \
+      'select distinct m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID, type = "R" ' + \
+      'from MRK_Mouse_View m, ACC_Accession a ' + \
+      'where m._Marker_key = a._Object_key ' + \
+      'and a._MGIType_key = 2 ' + \
+      'and a._LogicalDB_key = 27 ' + \
       'order by m.symbol, m.mgiID, type, a.accID'
 
 results = db.sql(cmd, 'auto')
@@ -67,6 +73,7 @@ results = db.sql(cmd, 'auto')
 prevMarker = ''
 sequence = ''
 unigene = ''
+refseq = ''
 
 for r in results:
 
@@ -76,8 +83,12 @@ for r in results:
 		sequence = ''
 
 		if len(unigene) > 0:
-			fp.write(mgi_utils.prvalue(unigene))
+			fp.write(mgi_utils.prvalue(unigene) + reportlib.TAB)
 		unigene = ''
+
+		if len(refseq) > 0:
+			fp.write(mgi_utils.prvalue(refseq))
+		refseq = ''
 
 		if prevMarker != '':
 			fp.write(reportlib.CRT)
@@ -109,7 +120,14 @@ for r in results:
 
         	unigene = unigene + r['accID']
 
+	if r['type'] == 'R':
+		if len(refseq) > 0:
+			refseq = refseq + ' '
+
+        	refseq = refseq + r['accID']
+
 fp.write(sequence + reportlib.TAB)	# Don't forget to write out the last one
-fp.write(unigene + reportlib.CRT)	# Don't forget to write out the last one
+fp.write(unigene + reportlib.TAB)	# Don't forget to write out the last one
+fp.write(refseq + reportlib.CRT)	# Don't forget to write out the last one
 reportlib.finish_nonps(fp)
 

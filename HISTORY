@@ -1,3 +1,10 @@
+TAG: reports_db-5-0-5
+DATE: 05/23/2001
+STAFF: jsb
+RELEASE: A
+CHANGES:
+1) MRK_Sequence.py - added RefSeq IDs, per TR 2561
+
 TAG: reports_db-5-0-4
 DATE: 02/19/2001
 STAFF: lec
