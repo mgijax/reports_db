@@ -73,7 +73,7 @@ fp = open(OUTPUTDIR + 'marker_type.bcp', 'w')
 results = db.sql('select _Marker_Type_key, name, ' + \
 	'cdate = convert(char(20), creation_date, 100), ' + \
 	'mdate = convert(char(20), modification_date, 100) ' + \
-	'from MRK_Types', 'auto')
+	'from MRK_Types', 'auto', execute = 1)
 for r in results:
 	fp.write(`r['_Marker_Type_key']` + TAB + \
 		 r['name'] + TAB + \
@@ -90,7 +90,7 @@ fp = open(OUTPUTDIR + 'species.bcp', 'w')
 results = db.sql('select _Species_key, name, species, ' + \
 	'cdate = convert(char(20), creation_date, 100), ' + \
 	'mdate = convert(char(20), modification_date, 100) ' + \
-	'from MRK_Species', 'auto')
+	'from MRK_Species', 'auto', execute = 1)
 for r in results:
 	fp.write(`r['_Species_key']` + TAB + \
 		 r['name'] + TAB + \
@@ -108,7 +108,7 @@ fp = open(OUTPUTDIR + 'allele_type.bcp', 'w')
 results = db.sql('select _Allele_Type_key, alleleType, ' + \
 	'cdate = convert(char(20), creation_date, 100), ' + \
 	'mdate = convert(char(20), modification_date, 100) ' + \
-	'from ALL_Type', 'auto')
+	'from ALL_Type', 'auto', execute = 1)
 for r in results:
 	fp.write(`r['_Allele_Type_key']` + TAB + \
 		 r['alleleType'] + TAB + \
@@ -125,7 +125,7 @@ fp = open(OUTPUTDIR + 'allele_cellline.bcp', 'w')
 results = db.sql('select _CellLine_key, cellLine, _Strain_key, ' + \
 	'cdate = convert(char(20), creation_date, 100), ' + \
 	'mdate = convert(char(20), modification_date, 100) ' + \
-	'from ALL_CellLine', 'auto')
+	'from ALL_CellLine', 'auto', execute = 1)
 for r in results:
 	fp.write(`r['_CellLine_key']` + TAB + \
 		 r['cellLine'] + TAB + \
@@ -143,7 +143,7 @@ fp = open(OUTPUTDIR + 'allele_inheritance_mode.bcp', 'w')
 results = db.sql('select _Mode_key, mode, ' + \
 	'cdate = convert(char(20), creation_date, 100), ' + \
 	'mdate = convert(char(20), modification_date, 100) ' + \
-	'from ALL_Inheritance_Mode', 'auto')
+	'from ALL_Inheritance_Mode', 'auto', execute = 1)
 for r in results:
 	fp.write(`r['_Mode_key']` + TAB + \
 		 r['mode'] + TAB + \
@@ -233,7 +233,7 @@ cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'where k._Marker_key = m._Object_key ' + \
 	'and m.prefixPart = "MGI:"')
 
-results = db.sql(cmds, 'auto')
+results = db.sql(cmds, 'auto', execute = 1)
 
 for r in results[1]:
 	fp1.write(`r['_Marker_key']` + TAB + \
@@ -353,7 +353,7 @@ cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'where k._Allele_key = m._Object_key ' + \
 	'and m.prefixPart = "MGI:"')
 
-results = db.sql(cmds, 'auto')
+results = db.sql(cmds, 'auto', execute = 1)
 
 for r in results[1]:
 	fp1.write(`r['_Allele_key']` + TAB + \
@@ -390,22 +390,93 @@ fp3.close
 
 #
 # strain.bcp
+# strain_marker.bcp
+# strain_synonym.bcp
+# strain_type.bcp
+# strain_strain_type.bcp
+# accession_strain.bcp
+# strain_species.bcp
 #
 
-fp = open(OUTPUTDIR + 'strain.bcp', 'w')
+fp1 = open(OUTPUTDIR + 'strain.bcp', 'w')
+fp2 = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
+fp3 = open(OUTPUTDIR + 'strain_synonym.bcp', 'w')
+fp4 = open(OUTPUTDIR + 'strain_type.bcp', 'w')
+fp5 = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
+fp6 = open(OUTPUTDIR + 'accession_strain.bcp', 'w')
+fp7 = open(OUTPUTDIR + 'strain_species.bcp', 'w')
 
-cmd = 'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+#
+# select all strains which have a Jax Registry ID
+# plus all strains which are cross-referenced by Allele or Allele CellLine
+#
+
+cmds = []
+cmds.append('select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
       'cdate = convert(char(20), s.creation_date, 100), ' + \
       'mdate = convert(char(20), s.modification_date, 100) ' + \
+      'into #strains ' + \
       'from PRB_Strain s, MLP_Strain m, PRB_Strain_Acc_View a ' + \
       'where s._Strain_key = m._Strain_key ' + \
       'and s._Strain_key = a._Object_key ' + \
-      'and a._LogicalDB_key = 22'
+      'and a._LogicalDB_key = 22 ' + \
+      'union ' + \
+      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+      'cdate = convert(char(20), s.creation_date, 100), ' + \
+      'mdate = convert(char(20), s.modification_date, 100) ' + \
+      'from PRB_Strain s, MLP_Strain m, All_Allele a ' + \
+      'where s._Strain_key = m._Strain_key ' + \
+      'and s._Strain_key = a._Strain_key ' + \
+      'union ' + \
+      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+      'cdate = convert(char(20), s.creation_date, 100), ' + \
+      'mdate = convert(char(20), s.modification_date, 100) ' + \
+      'from PRB_Strain s, MLP_Strain m, All_CellLine a ' + \
+      'where s._Strain_key = m._Strain_key ' + \
+      'and s._Strain_key = a._Strain_key')
 
-results = db.sql(cmd, 'auto')
+cmds.append('create unique index index_strain on #strains(_Strain_key)')
 
-for r in results:
-	fp.write(`r['_Strain_key']` + TAB + \
+cmds.append('select * from #strains')
+
+cmds.append('select m._Strain_key, m._Marker_key, s.private, ' + \
+      'cdate = convert(char(20), m.creation_date, 100), ' + \
+      'mdate = convert(char(20), m.modification_date, 100) ' + \
+      'from #strains s, PRB_Strain_Marker m ' + \
+      'where s._Strain_key = m._Strain_key')
+
+cmds.append('select m._Synonym_key, m._Strain_key, m.synonym, s.private, ' + \
+      'cdate = convert(char(20), m.creation_date, 100), ' + \
+      'mdate = convert(char(20), m.modification_date, 100) ' + \
+      'from #strains s, PRB_Strain_Synonym m ' + \
+      'where s._Strain_key = m._Strain_key')
+
+cmds.append('select _StrainType_key, strainType, ' + \
+      'cdate = convert(char(20), creation_date, 100), ' + \
+      'mdate = convert(char(20), modification_date, 100) ' + \
+      'from MLP_StrainType')
+
+cmds.append('select m._Strain_key, m._StrainType_key, s.private, ' + \
+      'cdate = convert(char(20), m.creation_date, 100), ' + \
+      'mdate = convert(char(20), m.modification_date, 100) ' + \
+      'from #strains s, MLP_StrainTypes m ' + \
+      'where s._Strain_key = m._Strain_key')
+
+cmds.append('select distinct a.accID, a.LogicalDB, a._Object_key, a.preferred, s.private, ' + \
+      'cdate = convert(varchar(20), a.creation_date, 100), ' + \
+      'mdate = convert(varchar(20), a.modification_date, 100) ' + \
+      'from #strains s, PRB_Strain_Acc_View a ' + \
+      'where s._Strain_key = a._Object_key')
+
+cmds.append('select _Species_key, species, ' + \
+      'cdate = convert(char(20), creation_date, 100), ' + \
+      'mdate = convert(char(20), modification_date, 100) ' + \
+      'from MLP_Species')
+
+results = db.sql(cmds, 'auto', execute = 1)
+
+for r in results[2]:
+	fp1.write(`r['_Strain_key']` + TAB + \
 	         `r['_Species_key']` + TAB + \
 	         r['strain'] + TAB + \
 	         `r['standard']` + TAB + \
@@ -414,122 +485,36 @@ for r in results:
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp.close
-
-#
-# strain_marker.bcp
-#
-
-fp = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
-
-cmd = 'select m._Strain_key, m._Marker_key, s.private, ' + \
-      'cdate = convert(char(20), m.creation_date, 100), ' + \
-      'mdate = convert(char(20), m.modification_date, 100) ' + \
-      'from PRB_Strain_Marker m, PRB_Strain s, PRB_Strain_Acc_View a ' + \
-      'where m._Strain_key = s._Strain_key ' + \
-      'and s._Strain_key = a._Object_key ' + \
-      'and a._LogicalDB_key = 22'
-
-results = db.sql(cmd, 'auto')
-
-for r in results:
-	fp.write(`r['_Strain_key']` + TAB + \
+for r in results[3]:
+	fp2.write(`r['_Strain_key']` + TAB + \
 	         `r['_Marker_key']` + TAB + \
 	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp.close
-
-#
-# strain_synonym.bcp
-#
-
-fp = open(OUTPUTDIR + 'strain_synonym.bcp', 'w')
-
-cmd = 'select m._Synonym_key, m._Strain_key, m.synonym, s.private, ' + \
-      'cdate = convert(char(20), m.creation_date, 100), ' + \
-      'mdate = convert(char(20), m.modification_date, 100) ' + \
-      'from PRB_Strain_Synonym m, PRB_Strain s, PRB_Strain_Acc_View a ' + \
-      'where m._Strain_key = s._Strain_key ' + \
-      'and s._Strain_key = a._Object_key ' + \
-      'and a._LogicalDB_key = 22'
-
-results = db.sql(cmd, 'auto')
-
-for r in results:
-	fp.write(`r['_Synonym_key']` + TAB + \
+for r in results[4]:
+	fp3.write(`r['_Synonym_key']` + TAB + \
 	         `r['_Strain_key']` + TAB + \
 	         `r['private']` + TAB + \
 	         r['synonym'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp.close
-
-#
-# strain_type.bcp
-#
-
-fp = open(OUTPUTDIR + 'strain_type.bcp', 'w')
-
-cmd = 'select _StrainType_key, strainType, ' + \
-      'cdate = convert(char(20), creation_date, 100), ' + \
-      'mdate = convert(char(20), modification_date, 100) ' + \
-      'from MLP_StrainType'
-
-results = db.sql(cmd, 'auto')
-
-for r in results:
-	fp.write(`r['_StrainType_key']` + TAB + \
+for r in results[5]:
+	fp4.write(`r['_StrainType_key']` + TAB + \
 	         r['strainType'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp.close
-
-#
-# strain_strain_type.bcp
-#
-
-fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
-
-cmd = 'select m._Strain_key, m._StrainType_key, s.private, ' + \
-      'cdate = convert(char(20), m.creation_date, 100), ' + \
-      'mdate = convert(char(20), m.modification_date, 100) ' + \
-      'from MLP_StrainTypes m, PRB_Strain s, PRB_Strain_Acc_View a ' + \
-      'where m._Strain_key = s._Strain_key ' + \
-      'and s._Strain_key = a._Object_key ' + \
-      'and a._LogicalDB_key = 22'
-
-results = db.sql(cmd, 'auto')
-
-for r in results:
-	fp.write(`r['_Strain_key']` + TAB + \
+for r in results[6]:
+	fp5.write(`r['_Strain_key']` + TAB + \
 	         `r['_StrainType_key']` + TAB + \
 	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp.close
-
-#
-# accession_strain.bcp
-#
-
-fp = open(OUTPUTDIR + 'accession_strain.bcp', 'w')
-
-cmd = 'select distinct a.accID, a.LogicalDB, a._Object_key, a.preferred, s.private, ' + \
-      'cdate = convert(varchar(20), a.creation_date, 100), ' + \
-      'mdate = convert(varchar(20), a.modification_date, 100) ' + \
-      'from PRB_Strain_Acc_View a, PRB_Strain s ' + \
-      'where a._Object_key = s._Strain_key ' + \
-      'and exists (select 1 from PRB_Strain_Acc_View a where s._Strain_key = a._Object_key and a._LogicalDB_key = 22)'
-
-results = db.sql(cmd, 'auto')
-
-for r in results:
-	fp.write(r['accID'] + TAB + \
+for r in results[7]:
+	fp6.write(r['accID'] + TAB + \
 		 r['LogicalDB'] + TAB + \
 	         `r['_Object_key']` + TAB + \
 	         `r['preferred']` + TAB + \
@@ -537,26 +522,17 @@ for r in results:
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp.close
-
-#
-# strain_species.bcp
-#
-
-fp = open(OUTPUTDIR + 'strain_species.bcp', 'w')
-
-cmd = 'select _Species_key, species, ' + \
-      'cdate = convert(char(20), creation_date, 100), ' + \
-      'mdate = convert(char(20), modification_date, 100) ' + \
-      'from MLP_Species'
-
-results = db.sql(cmd, 'auto')
-
-for r in results:
-	fp.write(`r['_Species_key']` + TAB + \
+for r in results[8]:
+	fp7.write(`r['_Species_key']` + TAB + \
 	         r['species'] + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
 
-fp.close
+fp1.close
+fp2.close
+fp3.close
+fp4.close
+fp5.close
+fp6.close
+fp7.close
 

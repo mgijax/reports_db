@@ -48,6 +48,9 @@ import mgi_utils
 
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
+
+markerTypes {(1, 'gene'), (10, 'complex')}
+
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
@@ -72,15 +75,15 @@ cmds = []
 cmds.append('select distinct _Object_key, dagAbbrev from DAG_Node_View where _Vocab_key = 4')
 
 cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
-	'm.symbol, m.name, m._Marker_key, markerID = ma.accID, markerType = t.name, ' + \
+	'm.symbol, m.name, m._Marker_key, markerID = ma.accID, markerType = mt.name, ' + \
 	'e.inferredFrom, eCode = t.abbreviation, ' + \
 	'mDate = convert(varchar(10), e.modification_date, 101), refID = b.accID ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot_View a, MRK_Marker m, MRK_Acc_View ma, MRK_Types t, ' + \
+	'from VOC_Annot_View a, MRK_Marker m, MRK_Acc_View ma, MRK_Types mt, ' + \
 	'VOC_Evidence e, VOC_Term t, BIB_Acc_View b ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Object_key = m._Marker_key ' + \
-	'and m._Marker_Type_key = t._Marker_Type_key ' + \
+	'and m._Marker_Type_key = mt._Marker_Type_key ' + \
 	'and m._Marker_key = ma._Object_key ' + \
 	'and ma.prefixPart = "MGI:" ' + \
 	'and ma.preferred = 1 ' + \
