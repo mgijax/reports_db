@@ -278,7 +278,10 @@ def print_structure_tree(snode, fd, indent):
 	snode.setGOName(snode.getPrintName())
 	name = snode.getGOName()
 	depth = snode.getDepth()
-	fd.write('%s%s\n' % (depth * indent , name))
+
+	# only print structure if it is a root node or has an edinburgh key
+	if snode.getEBKey() != None or snode.getParent() == None:
+		fd.write('%s%s\n' % (depth * indent , name))
 
 	children = {}
 
