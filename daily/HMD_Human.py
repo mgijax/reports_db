@@ -54,9 +54,10 @@ CRT = reportlib.CRT
 SPACE = reportlib.SPACE
 REPORTNAME = 'HMD_Human'
 
-reportLegend = 'Data Attributes:  C = Curated, c = calculated'
-isCurated = 'C'
-isCalculated = 'c'
+reportLegend = 'Data Attributes:  M - MGI curated, C - HomoloGene calculated, B - Both MGI and HomoloGene calculated'
+mgiCurated = 'M'
+hgCurated = 'C'
+bothCurated = 'B'
 
 curated = []
 calculated = []
@@ -272,6 +273,15 @@ def runQueries():
 
 	return results
 
+def printDataAttributes(fp, key):
+
+	if key in curated and not key in calculated:
+  		fp.write(mgiCurated)
+	elif key not in curated and key in calculated:
+  		fp.write(hgCurated)
+	else:
+  		fp.write(bothCurated)
+
 def processSort1(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Chromosome)'
@@ -384,12 +394,7 @@ def processSort1(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseName'], 80))
 		fp.write(SPACE)
-
-		if r['humanMarkerKey'] in curated:
-		  fp.write(isCurated)
-		if r['humanMarkerKey'] in calculated:
-		  fp.write(isCalculated)
-
+		printDataAttributes(fp, r['humanMarkerKey'])
 		fp.write(CRT)
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
@@ -479,12 +484,7 @@ def processSort2(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseName'], 80))
 		fp.write(SPACE)
-
-		if r['humanMarkerKey'] in curated:
-		  fp.write(isCurated)
-		if r['humanMarkerKey'] in calculated:
-		  fp.write(isCalculated)
-
+		printDataAttributes(fp, r['humanMarkerKey'])
 		fp.write(CRT)
 		count = count + 1
 
@@ -574,12 +574,7 @@ def processSort3(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseBand']), 10))
 		fp.write(SPACE)
-
-		if r['humanMarkerKey'] in curated:
-		  fp.write(isCurated)
-		if r['humanMarkerKey'] in calculated:
-		  fp.write(isCalculated)
-
+		printDataAttributes(fp, r['humanMarkerKey'])
 		fp.write(CRT)
 		count = count + 1
 
@@ -670,12 +665,7 @@ def processSort4(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
-
-		if r['humanMarkerKey'] in curated:
-		  fp.write(isCurated)
-		if r['humanMarkerKey'] in calculated:
-		  fp.write(isCalculated)
-
+		printDataAttributes(fp, r['humanMarkerKey'])
 		fp.write(CRT)
 		count = count + 1
 
