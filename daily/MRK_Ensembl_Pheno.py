@@ -73,7 +73,7 @@ cmds.append(
           'a2._MGIType_key = 2 and ' + \
           'a2.preferred = 1 and ' + \
           'm._Marker_Type_key = 1 and ' + \
-          'a._AnnotType_key = 1001')
+          'a._AnnotType_key = 1002')
 
 cmds.append(
     'select distinct m.MGI, m.symbol, m.name, m.Ensembl, ' + \

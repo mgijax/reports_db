@@ -149,7 +149,7 @@ results = db.sql('select distinct h.mouseKey, a.accID ' + \
                 'from #homology h, GXD_AlleleGenotype g, VOC_Annot v, ACC_Accession a ' + \
                 'where g._Marker_key = h.mouseKey ' + \
                 'and v._Object_key = g._Genotype_key ' + \
-                'and v._AnnotType_key = 1001 ' + \
+                'and v._AnnotType_key = 1002 ' + \
                 'and a._Object_key = v._Term_key ' + \
                 'and a._MGIType_key = 13 ' + \
                 'and a._LogicalDB_key = 34 ', 'auto')
