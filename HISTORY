@@ -1,3 +1,10 @@
+TAG: reports_db-3-4-0
+DATE: 09/11/2000
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) TR 1930; MRK_List?.sql were truncating Marker Names
+
 TAG: reports_db-3-3-2
 DATE: 07/18/2000
 STAFF: lec
