@@ -49,7 +49,8 @@ import mgi_utils
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 
-markerTypes = {1: 'gene', 10: 'complex'}
+# mapping between MGI Marker Type and what gets printed in the gene association file
+markerTypes = {1: 'gene', 10: 'gene'}
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
