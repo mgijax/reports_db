@@ -24,6 +24,9 @@
 #
 # History:
 #
+# lec	07/02/2002
+#	- TR 3855; add human LocusLink ID column
+#
 # lec	01/13/98
 #	- added comments
 #
@@ -35,45 +38,13 @@ import string
 import db
 import reportlib
 
-def parseGDB(_tuple):
-	global gdb
-
-	gdb[_tuple['_Object_key']] = _tuple['accID']
-
-def parseMGI(_tuple):
-	global mgi
-
-	mgi[_tuple['_Object_key']] = _tuple['accID']
-
-def parseHomology(_tuple):
-
-	try:
-		gdbID = gdb[_tuple['gdbKey']]
-	except:
-		gdbID = 'None'
-
-	# Might hit a Marker which doesn't have an Accession number
-
-	try:
-		fp.write(mgi[_tuple['mgiKey']] + reportlib.TAB + \
-	         	_tuple['mgiSymbol'] + reportlib.TAB + \
-	         	_tuple['mgiName'][0:50] + reportlib.TAB + \
-	         	gdbID + reportlib.TAB + \
-	         	_tuple['gdbSymbol'] + reportlib.CRT)
-	except:
-		pass
-
 #
 # Main
 #
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-gdb = {}
-mgi = {}
-
 cmds = []
-parsers = []
 
 cmds.append('select distinct gdbSymbol = m1.symbol, gdbKey = m1._Marker_key, ' + \
             'mgiSymbol = m2.symbol, mgiName = m2.name, mgiKey = m2._Marker_key ' + \
@@ -95,12 +66,44 @@ cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' +
 cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
 	    'where h.mgiKey = a._Object_key and a.prefixPart = "MGI:" and a.preferred = 1')
 
+cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
+	    'where h.gdbKey = a._Object_key and a._LogicalDB_key = 24')
+
 cmds.append('select * from #homology order by mgiSymbol')
 
-parsers.append(None)
-parsers.append(parseGDB)
-parsers.append(parseMGI)
-parsers.append(parseHomology)
-db.sql(cmds, parsers)
+results = db.sql(cmds, 'auto')
+
+gdb = {}
+for r in results[1]:
+	gdb[r['_Object_key']] = r['accID']
+
+mgi = {}
+for r in results[2]:
+	mgi[r['_Object_key']] = r['accID']
+
+ll = {}
+for r in results[3]:
+	ll[r['_Object_key']] = r['accID']
+
+
+for r in results[4]:
+
+	if mgi.has_key(r['mgiKey']):
+
+		fp.write(mgi[r['mgiKey']] + reportlib.TAB + \
+	         	r['mgiSymbol'] + reportlib.TAB + \
+	         	r['mgiName'][0:50] + reportlib.TAB)
+
+		if gdb.has_key(r['gdbKey']):
+			fp.write(gdb[r['gdbKey']])
+
+		fp.write(reportlib.TAB + \
+	         	r['gdbSymbol'] + reportlib.TAB)
+
+		if ll.has_key(r['gdbKey']):
+			fp.write(ll[r['gdbKey']])
+
+		fp.write (reportlib.CRT)
+
 reportlib.finish_nonps(fp)
 
