@@ -49,19 +49,19 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # Retrieve MGI Accession number, Marker symbol, name, offset and 
 # all associated Nucleotide Seq IDs for Markers
 
-cmd = 'select distinct m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID, type = "N" ' + \
+cmd = 'select distinct m.mgiID, m.symbol, m.status, m.name, m.chromosome, m.offset, a.accID, type = "N" ' + \
       'from MRK_Mouse_View m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
       'and a._LogicalDB_key = 9 ' + \
       'union ' + \
-      'select distinct m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID, type = "U" ' + \
+      'select distinct m.mgiID, m.symbol, m.status, m.name, m.chromosome, m.offset, a.accID, type = "U" ' + \
       'from MRK_Mouse_View m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
       'and a._LogicalDB_key = 23 ' + \
       'union ' + \
-      'select distinct m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID, type = "R" ' + \
+      'select distinct m.mgiID, m.symbol, m.status, m.name, m.chromosome, m.offset, a.accID, type = "R" ' + \
       'from MRK_Mouse_View m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
@@ -106,6 +106,7 @@ for r in results:
 
 		fp.write(mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
 	        	 mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
+	        	 mgi_utils.prvalue(r['status']) + reportlib.TAB + \
 	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
 	                 mgi_utils.prvalue(offset) + reportlib.TAB + \
 	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
