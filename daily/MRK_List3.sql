@@ -4,11 +4,12 @@ go
 select c.sequenceNum, a.accID, m.chromosome, o.offset, m.symbol, 
 status = upper(substring(s.status, 1, 1)), name = substring(m.name,1,150), markerType = substring(t.name,1,25)
 into #output
-from MRK_Marker m, MRK_Chromosome c, MRK_Acc_View a, MRK_Offset o, MRK_Types t, MRK_Status s
+from MRK_Marker m, MRK_Chromosome c, ACC_Accession a, MRK_Offset o, MRK_Types t, MRK_Status s
 where m._Organism_key = 1
 and m._Organism_key = c._Organism_key
 and m.chromosome = c.chromosome
 and m._Marker_key = a._Object_key
+and a._MGIType_key = 2
 and a.prefixPart = "MGI:"
 and a._LogicalDB_key = 1
 and a.preferred = 1

@@ -45,73 +45,57 @@ cmds = []
 # Union
 # Retrieve all withdrawn Gene Markers (which don't have MGI Acc IDs, except for splits)
 
-cmds.append('select m._Marker_key, m.mgiID, m.symbol, m.name, m.chromosome ' +
+cmds.append('select m._Marker_key, mgiID = a.accID, m.symbol, m.name, m.chromosome ' +
       'into #markers ' +
-      'from MRK_Mouse_View m ' +
+      'from MRK_Marker m, ACC_Accession a ' +
       'where m._Marker_Type_key = 1 ' +
+      'and m._Organism_key = 1 ' +
+      'and m._Marker_key = a._Object_key ' +
+      'and a._MGIType_key = 2 ' +
+      'and a._LogicalDB_key = 1 ' +
+      'and a.prefixPart = "MGI:" ' +
+      'and a.preferred = 1 ' +
       'union ' +
       'select m._Marker_key, mgiID = null, m.symbol, m.name, m.chromosome ' +
       'from MRK_Marker m ' +
       'where m._Marker_Type_key = 1 ' +
       'and m._Organism_key = 1 ' +
       'and m._Marker_Status_key = 2 ' +
-      'and not exists (select a.* from MRK_Acc_View a where a._Object_key = m._Marker_key) ' +
+      'and not exists (select 1 from ACC_Accession a ' +
+      'where m._Marker_key = a._Object_key ' +
+      'and a._MGIType_key = 2) ' +
       'order by m.symbol, m.mgiID')
 
 # Retrieve any Nucleotide Seq IDs which exist for Markers
 
-cmds.append('select m.*, a.accID ' +
+cmds.append('select m._Marker_key, a.accID ' +
 	'from #markers m, ACC_Accession a ' +
         'where m._Marker_key = a._Object_key ' +
-        'and a._MGIType_key = 2 ' + \
-        'and a._LogicalDB_key = 9 ' + \
-	'union ' +
-	'select m.*, accID = null ' +
-	'from #markers m ' +
-	'where not exists (select a.* from ACC_Accession a ' +
-        'where m._Marker_key = a._Object_key ' +
-        'and a._MGIType_key = 2 ' + \
-        'and a._LogicalDB_key = 9) ' + \
-        'order by m.symbol, m.mgiID, a.accID')
+        'and a._MGIType_key = 2 ' +
+        'and a._LogicalDB_key = 9 ' +
+	'order by m._Marker_key, a.accID')
+
+cmds.append('select m.* from #markers order by m.symbol, m.mgiID')
 
 results = db.sql(cmds, 'auto')
 
-prevMarker = ''
-sequence = ''
+seqIDs = {}
+for r in results[-2]:
+    if not seqIDs.has_key(r['_Marker_key']):
+	seqIDs[r['_Marker_key']] = []
+    seqIDs[r['_Marker_key']].append(r['accID'])
 
 for r in results[1]:
 
-	if r['mgiID'] is None or r['accID'] is None:
-		if len(sequence) > 0:
-			fp.write(mgi_utils.prvalue(sequence) + reportlib.CRT)
-		sequence = ''
+	fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
+	         mgi_utils.prvalue(r['name']) + reportlib.TAB + \
+	         mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
+	         mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
 
-		fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
-	        	 mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB + reportlib.CRT)
+	if seqIDs.has_key(r['_Marker_key']):
+		fp.write(string.join(seqIDs[r['_Marker_key']], ' '))
 
-		prevMarker = r['mgiID']
+	fp.write(reportlib.CRT)
 
-	elif prevMarker != r['mgiID']:
-		if len(sequence) > 0:
-			fp.write(mgi_utils.prvalue(sequence) + reportlib.CRT)
-		sequence = ''
-
-		fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
-	        	 mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
-
-		prevMarker = r['mgiID']
-
-	if len(sequence) > 0:
-		sequence = sequence + ' '
-
-	if r['accID'] is not None:
-        	sequence = sequence + r['accID']
-
-
-fp.write(sequence + reportlib.CRT)	# Don't forget to write out the last one
 reportlib.finish_nonps(fp)
 

@@ -252,8 +252,9 @@ cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' 
 cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
-	'from #markers k, MRK_Acc_View m ' + \
+	'from #markers k, ACC_Accession m ' + \
 	'where k._Marker_key = m._Object_key ' + \
+	'and m._MGIType_key = 2 ' + \
 	'and m.prefixPart = "MGI:" ' + \
 	'and m._LogicalDB_key = 1')
 

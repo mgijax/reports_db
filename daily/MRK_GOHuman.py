@@ -70,11 +70,12 @@ cmds = []
 
 cmds.append('select m._Marker_key, m.symbol, m.name, ma.accID, a.term, goID = a.accID, e._Refs_key, e.evidenceCode ' + \
 'into #m1 ' + \
-'from MRK_Marker m, MRK_Acc_View ma, VOC_Annot_View a, VOC_Evidence_View e ' + \
+'from MRK_Marker m, ACC_Accession ma, VOC_Annot_View a, VOC_Evidence_View e ' + \
 'where m._Organism_key = 1 ' + \
 'and m._Marker_Type_key = 1 ' + \
 'and m._Marker_Status_key in (1,3) ' + \
 'and m._Marker_key = ma._Object_key ' + \
+'and ma._MGIType_key = 2 ' + \
 'and ma.prefixPart = "MGI:" ' + \
 'and ma._LogicalDB_key = 1 ' + \
 'and ma.preferred = 1 ' + \
@@ -110,14 +111,16 @@ cmds.append('select distinct a._Object_key, a.accID ' + \
 
 # retrieve sp ids for mouse markers
 cmds.append('select distinct a._Object_key, a.accID ' + \
-'from #m2 m, MRK_Acc_View a ' + \
+'from #m2 m, ACC_Accession a ' + \
 'where m._Marker_key = a._Object_key ' + \
+'and a._MGIType_key = 2 ' + \
 'and a._LogicalDB_key = 13')
 
 # retrieve genbank ids for human markers
 cmds.append('select distinct a._Object_key, a.accID ' + \
-'from #m2 m, MRK_Acc_View a ' + \
+'from #m2 m, ACC_Accession a ' + \
 'where m.humanMarker = a._Object_key ' + \
+'and a._MGIType_key = 2 ' + \
 'and a._LogicalDB_key = 9')
 
 cmds.append('select distinct * from #m2 order by symbol')

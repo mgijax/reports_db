@@ -71,9 +71,10 @@ cmds.append('select distinct r._Object_key ' + \
 	'and n.note like "%curatorial staff have found evidence of artifact in the sequence of this molecular%"')
 
 cmds.append('select r.*, markerID = ma.accID, m.symbol, m.name ' + \
-	'from #riken r, PRB_Marker pm, MRK_Acc_View ma, MRK_Marker m ' + \
+	'from #riken r, PRB_Marker pm, ACC_Accession ma, MRK_Marker m ' + \
 	'where r._Object_key = pm._Probe_key ' + \
 	'and pm._Marker_key = ma._Object_key ' + \
+	'and ma._MGIType_key = 2 ' + \
 	'and ma._LogicalDB_key = 1 ' + \
 	'and ma.prefixPart = "MGI:" ' + \
 	'and ma.preferred = 1 ' + \

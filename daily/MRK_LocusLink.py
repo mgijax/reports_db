@@ -50,12 +50,13 @@ cmds = []
 cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, offset = str(o.offset,10,2), ' + \
   'm.chromosome, a.accID, markerType = t.name, isPrimary = 1, s.status ' + \
   'into #markers ' + \
-  'from MRK_Marker m, MRK_Offset o, MRK_Acc_View a, MRK_Types t, MRK_Status s ' + \
+  'from MRK_Marker m, MRK_Offset o, ACC_Accession a, MRK_Types t, MRK_Status s ' + \
   'where m._Organism_key = 1 ' + \
   'and m._Marker_Status_key in (1,3) ' + \
   'and m._Marker_key = o._Marker_key ' + \
   'and o.source = 0 ' + \
   'and m._Marker_key = a._Object_key ' + \
+  'and a._MGIType_key = 2 ' + \
   'and a.prefixPart = "MGI:" ' + \
   'and a._LogicalDB_key = 1 ' + \
   'and a.preferred = 1 ' + \
@@ -64,13 +65,14 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'union '  + \
   'select m._Marker_key, m.symbol, m.name, c._Current_key, offset = str(o.offset,10,2), m.chromosome, ' + \
   'a.accID, markerType = t.name, isPrimary = 0, s.status ' + \
-  'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Acc_View a, MRK_Types t, MRK_Status s ' + \
+  'from MRK_Marker m, MRK_Offset o, MRK_Current c, ACC_Accession a, MRK_Types t, MRK_Status s ' + \
   'where m._Organism_key = 1 ' + \
   'and m._Marker_Status_key = 2 ' + \
   'and m._Marker_key = o._Marker_key ' + \
   'and o.source = 0 ' + \
   'and m._Marker_key = c._Marker_key ' + \
   'and c._Current_key = a._Object_key ' + \
+  'and a._MGIType_key = 2 ' + \
   'and a.prefixPart = "MGI:" ' + \
   'and a._LogicalDB_key = 1 ' + \
   'and a.preferred = 1 ' + \
@@ -81,16 +83,18 @@ cmds.append('create nonclustered index idx_key on #markers(_Marker_key)')
 
 # Get Locus ID for Primary Markers
 cmds.append('select m._Marker_key, a.accID ' + \
-	'from #markers m, MRK_Acc_View a ' + \
+	'from #markers m, ACC_Accession a ' + \
 	'where m.isPrimary = 1 ' + \
 	'and m._Marker_key = a._Object_key ' + \
+        'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 24 ')
 
 # Get Secondary MGI Ids for Primary Marker
 cmds.append('select m._Marker_key, a.accID ' + \
-	'from #markers m, MRK_Acc_View a ' + \
+	'from #markers m, ACC_Accession a ' + \
 	'where m.isPrimary = 1 ' + \
 	'and m._Marker_key = a._Object_key ' + \
+        'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
         'and a._LogicalDB_key = 1 ' + \
 	'and a.preferred = 0')

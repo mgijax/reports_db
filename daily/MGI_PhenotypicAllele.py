@@ -94,8 +94,9 @@ cmds.append('select s._Allele_key, b.accID ' + \
 # Retrieve RefSeq ID for Gene
 
 cmds.append('select s._Marker_key, a.accID ' + \
-	'from #alleles s, MRK_Acc_View a ' + \
+	'from #alleles s, ACC_Accession a ' + \
 	'where s._Marker_key = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 27 ')
 
 cmds.append('select * from #alleles order by marker, symbol')

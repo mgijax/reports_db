@@ -47,12 +47,14 @@ cmds = []
 
 cmds.append('select distinct m._Marker_key, a.accID, spID = a2.accID ' + \
 	'into #markers ' + \
-	'from MRK_Marker m, MRK_Acc_View a, MRK_Acc_View a2 ' + \
+	'from MRK_Marker m, ACC_Accession a, ACC_Accession a2 ' + \
 	'where m._Marker_key = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 1 ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a.preferred = 1 ' + \
 	'and m._Marker_key = a2._Object_key ' + \
+	'and a2._MGIType_key = 2 ' + \
 	'and a2._LogicalDB_key = 13 ' + \
 	'and exists (select 1 from VOC_Annot v ' + \
 	'where v._AnnotType_key = 1000 ' + \

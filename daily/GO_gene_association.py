@@ -94,12 +94,13 @@ cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'e.inferredFrom, modifiedBy = u.login, eCode = rtrim(t.abbreviation), ' + \
 	'mDate = convert(varchar(10), e.modification_date, 112), refID = b.accID ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot_View a, MRK_Marker m, MRK_Acc_View ma, ' + \
+	'from VOC_Annot_View a, MRK_Marker m, ACC_Accession ma, ' + \
 	'VOC_Evidence e, VOC_Term t, BIB_Acc_View b, MGI_User u ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Object_key = m._Marker_key ' + \
         'and m._Marker_Type_key = 1 ' + \
 	'and m._Marker_key = ma._Object_key ' + \
+	'and ma._MGIType_key = 2 ' + \
 	'and ma.prefixPart = "MGI:" ' + \
 	'and ma._LogicalDB_key = 1 ' + \
 	'and ma.preferred = 1 ' + \

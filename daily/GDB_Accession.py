@@ -60,14 +60,22 @@ cmds.append('select distinct gdbSymbol = m1.symbol, gdbKey = m1._Marker_key, ' +
             'and hm2._Marker_key = m2._Marker_key ' + \
             'and m2._Organism_key = 1')
 
-cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
-	    'where h.gdbKey = a._Object_key and a.prefixPart = "GDB:" and a._LogicalDB_key = 2 and a.preferred = 1')
+cmds.append('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
+	    'where h.gdbKey = a._Object_key ' + \
+	    'and a._MGIType_key = 2 ' + \
+	    'and a.prefixPart = "GDB:" ' + \
+	    'and a._LogicalDB_key = 2 ' + \
+	    'and a.preferred = 1')
 
-cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
-	    'where h.mgiKey = a._Object_key and a.prefixPart = "MGI:" and a._LogicalDB_key = 1 and a.preferred = 1')
+cmds.append('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
+	    'where h.mgiKey = a._Object_key ' + \
+	    'and a._MGIType_key = 2 ' + \
+	    'and a.prefixPart = "MGI:" and a._LogicalDB_key = 1 and a.preferred = 1')
 
-cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
-	    'where h.gdbKey = a._Object_key and a._LogicalDB_key = 24')
+cmds.append('select a.accID, a._Object_key from ACC_Accession a, #homology h ' + 
+	    'where h.gdbKey = a._Object_key ' + \
+	    'and a._MGIType_key = 2 ' + \
+	    'and a._LogicalDB_key = 24')
 
 cmds.append('select * from #homology order by mgiSymbol')
 

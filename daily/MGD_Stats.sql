@@ -28,22 +28,24 @@ go
 print ""
 print "Number of Genes w/ DNA Sequence information"
 select count(distinct m._Marker_key)
-from MRK_Marker m, MRK_Acc_View a
+from MRK_Marker m, ACC_Accession a
 where m._Organism_key = 1 
 and m._Marker_Type_key = 1
 and m._Marker_Status_key in (1,3)
 and m._Marker_key = a._Object_key
+and a._MGIType_key = 2
 and a._LogicalDB_Key = 9
 go
 
 print ""
 print "Number of Genes w/ Protein Sequence information"
 select count(distinct m._Marker_key)
-from MRK_Marker m, MRK_Acc_View a
+from MRK_Marker m, ACC_Accession a
 where m._Organism_key = 1 
 and m._Marker_Type_key = 1
 and m._Marker_Status_key in (1,3)
 and m._Marker_key = a._Object_key
+and a._MGIType_key = 2
 and a._LogicalDB_Key = 13
 go
 

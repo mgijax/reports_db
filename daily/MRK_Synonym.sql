@@ -9,9 +9,10 @@ select a.accID "MGI Accession ID", m.chromosome "Chr", "cM Position" =
         when o.offset = -1.0 then "  syntenic"
         end,
 "Marker Symbol" = m.symbol, "Synonym" = substring(s.name,1,90)
-from MRK_Marker m, MRK_Acc_View a, MRK_Other s, MRK_Offset o 
+from MRK_Marker m, ACC_Accession a, MRK_Other s, MRK_Offset o 
 where m._Organism_key = 1 
 and m._Marker_key = a._Object_key 
+and a._MGIType_key = 2
 and a.prefixPart = "MGI:" 
 and a._LogicalDB_key = 1
 and a.preferred = 1 
