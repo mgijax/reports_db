@@ -47,9 +47,15 @@ if os.path.isfile('%s/%s' % (os.environ['FTPREPORTDIR'], currentReport)):
 # move existing Nomen reports to the archive
 os.system('mv %s/Nomenclature-*.html %s/archive/nomen' % (os.environ['FTPREPORTDIR'], os.environ['FTPREPORTDIR']))
 
-reportName = 'Nomenclature-' + mgi_utils.date('%Y-%m-%d')
+if sys.argv[1]:
+	reportName = 'Nomenclature-' + sys.argv[1]
+else:
+	reportName = 'Nomenclature-' + mgi_utils.date('%Y-%m-%d')
 
-currentDate = mgi_utils.date('%m/%d/%Y')
+if sys.argv[2]:
+	currentDate = sys.argv[2]
+else:
+	currentDate = mgi_utils.date('%m/%d/%Y')
 
 results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
 bdate = results[0]['']
@@ -75,15 +81,17 @@ cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
 'and m.chromosome = c.chromosome ' + \
 'and m._Species_key = c._Species_key ' + \
 'union ' + \
-'select h._History_key, m.mgiID, sequenceNum = 100, h._Refs_key ' + \
-'from MRK_History h, MRK_Mouse_View m ' + \
+'select h._History_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
+'from MRK_History h, MRK_Mouse_View m, MRK_Chromosome c ' + \
 'where h.event_date between dateadd(day, -7, "%s") ' % (currentDate) + \
 'and dateadd(day, 1, "%s") ' % (currentDate) + \
 'and h._Marker_key = m._Marker_key ' + \
-'and h._Marker_Event_key in (2,3,4,5)'
+'and h._Marker_Event_key in (2,3,4,5) ' + \
+'and m.chromosome = c.chromosome ' + \
+'and m._Species_key = c._Species_key '
 )
 
-cmd.append('select m._Marker_key, ' + \
+cmd.append('select m.sequenceNum, m._Marker_key, ' + \
 'chr = substring(r.chromosome,1,2), ' + \
 'm.mgiID, r.symbol,  ' + \
 'name = substring(r.name,1,25),  ' + \
@@ -106,7 +114,8 @@ cmd.append('select m.*, a.accID ' + \
 'where not exists ' + \
 '(select 1 from MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
-'and a._LogicalDB_key = 9) '
+'and a._LogicalDB_key = 9) ' + \
+'order by m.sequenceNum, m.symbol '
 )
 
 results = db.sql(cmd, 'auto')
