@@ -32,10 +32,8 @@ setenv PYTHONPATH       	/usr/local/mgi/lib/python
 setenv DBUTILITIESPATH		/usr/local/mgi/dbutils/mgidbutilities
 
 # Mammalian Vocabulary Source
-setenv MPVOCSOURCE		/usr/local/mgi/dataload/vocload/runTimeMP/MPheno.ontology
-
-# Mammalian Vocabulary Destination
-setenv MPVOCDEST  		${REPORTOUTPUTDIR}/MPheno.ontology
+setenv MPVOCSOURCE		/usr/local/mgi/dataload/vocload/runTimeMP
+setenv MPFILES                  "MPheno.ontology MP.defs"
 
 # PATH
 set path = ($path $DBUTILITIESPATH/bin $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)

@@ -26,6 +26,8 @@ chmod 755 daily monthly weekly
 chmod 775 output
 
 # provide a link to the Mammalian Phenotype vocabulary
-cd output
-rm -rf $MPVOCDEST
-ln -s $MPVOCSOURCE $MPVOCDEST
+cd ${REPORTOUTPUTDIR}
+foreach f (${MPFILES})
+rm -rf $f
+ln -s ${MPVOCSOURCE}/$f .
+end
