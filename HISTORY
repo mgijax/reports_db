@@ -1,3 +1,10 @@
+TAG: reports_db-11-0-18
+DATE: 08/28/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 4027; added MRK_GXDAssay.py
+
 TAG: reports_db-11-0-17
 DATE: 07/26/2002
 STAFF: lec
