@@ -7,6 +7,7 @@
 # Report:
 #       Tab-delimited file
 #       Mouse Markers and their Nucleotide Sequence Accession numbers.
+#	and their UniGene Accession numbers (TR 1631).
 #
 # Usage:
 #       MRK_Sequence.py
@@ -18,6 +19,9 @@
 # Notes:
 #
 # History:
+#
+# lec	05/30/1999
+#	- TR 1631; add UniGene Accession numbers
 #
 # lec	03/02/1999
 #	- TR 130; now use direct Marker-Seq ID relationships
@@ -45,24 +49,38 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # Retrieve MGI Accession number, Marker symbol, name, offset and 
 # all associated Nucleotide Seq IDs for Markers
 
-cmd = 'select distinct m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID ' + \
+cmd = 'select distinct m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID, type = "N" ' + \
       'from MRK_Mouse_View m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
       'and a._LogicalDB_key = 9 ' + \
-      'order by m.symbol, m.mgiID, a.accID'
+      'union ' + \
+      'select distinct m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID, type = "U" ' + \
+      'from MRK_Mouse_View m, ACC_Accession a ' + \
+      'where m._Marker_key = a._Object_key ' + \
+      'and a._MGIType_key = 2 ' + \
+      'and a._LogicalDB_key = 23 ' + \
+      'order by m.symbol, m.mgiID, type, a.accID'
 
 results = db.sql(cmd, 'auto')
 
 prevMarker = ''
 sequence = ''
+unigene = ''
 
 for r in results:
 
 	if prevMarker != r['mgiID']:
 		if len(sequence) > 0:
-			fp.write(mgi_utils.prvalue(sequence) + reportlib.CRT)
+			fp.write(mgi_utils.prvalue(sequence) + reportlib.TAB)
 		sequence = ''
+
+		if len(unigene) > 0:
+			fp.write(mgi_utils.prvalue(unigene))
+		unigene = ''
+
+		if prevMarker != '':
+			fp.write(reportlib.CRT)
 
 		if r['offset'] == -1.0:
 			offset = 'syntenic'
@@ -79,12 +97,16 @@ for r in results:
 
 		prevMarker = r['mgiID']
 
-	if len(sequence) > 0:
-		sequence = sequence + ' '
+	if r['type'] == 'N':
+		if len(sequence) > 0:
+			sequence = sequence + ' '
 
-        sequence = sequence + r['accID']
+        	sequence = sequence + r['accID']
 
+	if r['type'] == 'U':
+        	unigene = r['accID']
 
-fp.write(sequence + reportlib.CRT)	# Don't forget to write out the last one
+fp.write(sequence + reportlib.TAB)	# Don't forget to write out the last one
+fp.write(unigene + reportlib.CRT)	# Don't forget to write out the last one
 reportlib.finish_nonps(fp)
 
