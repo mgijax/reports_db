@@ -41,22 +41,25 @@ cmds = []
 
 cmds.append('select distinct e._Refs_key, b.accID ' + \
 	'into #gorefs ' + \
-	'from VOC_Annot a, VOC_Evidence e, BIB_Acc_View b ' + \
+	'from VOC_Annot a, VOC_Evidence e, ACC_Accession b ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and e._Refs_key = b._Object_key ' + \
+	'and b._MGIType_key = 1 ' + \
 	'and b.prefixPart = "MGI:" ' + \
 	'and b._LogicalDB_key = 1')
 
 cmds.append('select g.*, pubMedID = b.accID ' + \
-	'from #gorefs g, BIB_Acc_View b ' + \
+	'from #gorefs g, ACC_Accession b ' + \
 	'where g._Refs_key = b._Object_key ' + \
+	'and b._MGIType_key = 1 ' + \
 	'and b._LogicalDB_key = 29 ' + \
         'union ' + \
         'select g.*, null ' + \
 	'from #gorefs g ' + \
-	'where not exists (select 1 from BIB_Acc_View b ' + \
+	'where not exists (select 1 from ACC_Accession b ' + \
 	'where g._Refs_key = b._Object_key ' + \
+	'and b._MGIType_key = 1 ' + \
 	'and b._LogicalDB_key = 29)')
 
 results = db.sql(cmds, 'auto')

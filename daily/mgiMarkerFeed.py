@@ -249,14 +249,15 @@ cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' 
 # select MGI Accession IDs only
 #
 
-cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
+cmds.append('select m.accID, LogicalDB = l.name, m._Object_key, m.preferred, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
-	'from #markers k, ACC_Accession m ' + \
+	'from #markers k, ACC_Accession m, ACC_LogicalDB l ' + \
 	'where k._Marker_key = m._Object_key ' + \
 	'and m._MGIType_key = 2 ' + \
 	'and m.prefixPart = "MGI:" ' + \
-	'and m._LogicalDB_key = 1')
+	'and m._LogicalDB_key = 1 ' + \
+	'and m._LogicalDB_key = l._LogicalDB_key')
 
 results = db.sql(cmds, 'auto', execute = 1)
 
@@ -374,8 +375,9 @@ cmds.append('select m._Allele_key, m.name, labelType = "AN", status = 1, ' + \
 cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
-	'from #alleles k, ALL_Acc_View m ' + \
+	'from #alleles k, ACC_Accession m ' + \
 	'where k._Allele_key = m._Object_key ' + \
+	'and m._MGIType_key = 11 ' + \
 	'and m.prefixPart = "MGI:" ' + \
 	'and m._LogicalDB_key = 1')
 
@@ -442,9 +444,10 @@ cmds.append('select distinct s._Strain_key, m._Species_key, s.strain, s.private,
       'cdate = convert(char(20), s.creation_date, 100), ' + \
       'mdate = convert(char(20), s.modification_date, 100) ' + \
       'into #strains ' + \
-      'from PRB_Strain s, MLP_Strain m, PRB_Strain_Acc_View a ' + \
+      'from PRB_Strain s, MLP_Strain m, ACC_Accession a ' + \
       'where s._Strain_key = m._Strain_key ' + \
       'and s._Strain_key = a._Object_key ' + \
+      'and a._MGIType_key = 10 ' + \
       'and a._LogicalDB_key in (22, 38) ')
 
 #      'union ' + \
@@ -492,8 +495,9 @@ cmds.append('select m._Strain_key, m._StrainType_key, s.private, ' + \
 cmds.append('select distinct a.accID, a.LogicalDB, a._Object_key, a.preferred, s.private, ' + \
       'cdate = convert(varchar(20), a.creation_date, 100), ' + \
       'mdate = convert(varchar(20), a.modification_date, 100) ' + \
-      'from #strains s, PRB_Strain_Acc_View a ' + \
-      'where s._Strain_key = a._Object_key')
+      'from #strains s, ACC_Accession a ' + \
+      'where s._Strain_key = a._Object_key ' + \
+      'and a._MGIType_key = 10')
 
 cmds.append('select _Species_key, species, ' + \
       'cdate = convert(char(20), creation_date, 100), ' + \

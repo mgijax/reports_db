@@ -47,8 +47,9 @@ cmds.append('select s._Strain_key, s.strain ' + \
 # Retrieve MGI Accession number
 
 cmds.append('select distinct a._Object_key, a.accID ' + \
-	'from #strains s, PRB_Strain_Acc_View a ' + \
+	'from #strains s, ACC_Accession a ' + \
 	'where s._Strain_key = a._Object_key ' + \
+	'and a._MGIType_key = 10 ' + \
 	'and a._LogicalDB_key = 1 ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a.preferred = 1')

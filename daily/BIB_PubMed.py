@@ -42,16 +42,18 @@ cmds = []
 
 cmds.append('select a.accID, a._Object_key ' + \
 	'into #refs ' + \
-	'from BIB_Acc_View a ' + \
-	'where a._LogicalDB_key = 1 ' + \
+	'from ACC_Accession a ' + \
+	'where a._MGIType_key = 1 ' + \
+	'and a._LogicalDB_key = 1 ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a._LogicalDB_key = 1')
 
 cmds.append('create unique index index_object_key on #refs(_Object_key)')
 
 cmds.append('select r.accID, pubMedID = b.accID ' + \
-	'from #refs r, BIB_Acc_View b ' + \
+	'from #refs r, ACC_Accession b ' + \
 	'where r._Object_key = b._Object_key ' + \
+	'and b._MGIType_key = 1 ' + \
 	'and b._LogicalDB_key = 29 ')
 
 results = db.sql(cmds, 'auto')

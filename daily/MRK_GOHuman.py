@@ -105,8 +105,9 @@ cmds.append('select distinct m.*, humanMarker = m2._Marker_key ' + \
 
 # retrieve pubmedids for references
 cmds.append('select distinct a._Object_key, a.accID ' + \
-'from #m2 m, BIB_Acc_View a ' + \
+'from #m2 m, ACC_Accession a ' + \
 'where m._Refs_key = a._Object_key ' + \
+'and a._MGIType_key = 1 ' + \
 'and a._LogicalDB_key = 29')
 
 # retrieve sp ids for mouse markers
