@@ -437,7 +437,7 @@ fp7 = open(OUTPUTDIR + 'strain_species.bcp', 'w')
 #
 
 cmds = []
-cmds.append('select distinct s._Strain_key, m._Organism_key, s.strain, s.private, ' + \
+cmds.append('select distinct s._Strain_key, m._Species_key, s.strain, s.private, ' + \
       'cdate = convert(char(20), s.creation_date, 100), ' + \
       'mdate = convert(char(20), s.modification_date, 100) ' + \
       'into #strains ' + \
@@ -447,14 +447,14 @@ cmds.append('select distinct s._Strain_key, m._Organism_key, s.strain, s.private
       'and a._LogicalDB_key in (22, 38) ')
 
 #      'union ' + \
-#      'select s._Strain_key, m._Organism_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+#      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
 #      'cdate = convert(char(20), s.creation_date, 100), ' + \
 #      'mdate = convert(char(20), s.modification_date, 100) ' + \
 #      'from PRB_Strain s, MLP_Strain m, All_Allele a ' + \
 #      'where s._Strain_key = m._Strain_key ' + \
 #      'and s._Strain_key = a._Strain_key ' + \
 #      'union ' + \
-#      'select s._Strain_key, m._Organism_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+#      'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
 #      'cdate = convert(char(20), s.creation_date, 100), ' + \
 #      'mdate = convert(char(20), s.modification_date, 100) ' + \
 #      'from PRB_Strain s, MLP_Strain m, All_CellLine a ' + \
@@ -503,7 +503,7 @@ results = db.sql(cmds, 'auto', execute = 1)
 
 for r in results[2]:
 	fp1.write(`r['_Strain_key']` + TAB + \
-	         `r['_Organism_key']` + TAB + \
+	         `r['_Species_key']` + TAB + \
 	         strip_newline(r['strain']) + TAB + \
 	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
