@@ -92,39 +92,34 @@ cmd.append('create nonclustered index idx_key on #markers(_Marker_key)')
 
 # get primary MGI ids (2)
 cmd.append('select distinct m._Marker_key, a.accID ' + \
-'from #markers m, ACC_Accession a ' + \
+'from #markers m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
-'and a._MGIType_key = 2 ' + \
 'and a.prefixPart = "MGI:" ' + \
 'and a._LogicalDB_key = 1 ' + \
 'and a.preferred = 1')
 
 # other MGI ids (3)
 cmd.append('select distinct m._Marker_key, a.accID ' + \
-'from #markers m, ACC_Accession a ' + \
+'from #markers m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
-'and a._MGIType_key = 2 ' + \
 'and a.prefixPart = "MGI:" ' + \
 'and a._LogicalDB_key = 1 ' + \
 'and a.preferred = 0')
 
 # get sequence ids (4)
 cmd.append('select distinct m._Marker_key, a.accID ' + \
-'from #markers m, ACC_Accession a ' + \
+'from #markers m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
-'and a._MGIType_key = 2 ' + \
 'and a._LogicalDB_key = 9')
 
 # get human ortholog (5)
 cmd.append('select distinct m._Marker_key, n.humanSymbol ' + \
-'from #markers m, ACC_Accession ma, ACC_Accession na, NOM_Marker n ' + \
+'from #markers m, MRK_Acc_View ma, NOM_Acc_View na, NOM_Marker n ' + \
 'where m._Marker_key = ma._Object_key ' + \
-'and ma._MGIType_key = 2 ' + \
 'and ma.prefixPart = "MGI:" ' + \
 'and ma._LogicalDB_key = 1 ' + \
 'and ma.preferred = 1 ' + \
 'and ma.accID = na.accID ' + \
-'and na._MGIType_key = 21' + \
 'and na._Object_key = n._Nomen_key ' + \
 'and n.humanSymbol is not null')
 

@@ -121,11 +121,11 @@ def processSort1():
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	
-	fp.write(string.ljust('Human Chr', 20))
+	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human LocusLink ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Symbol', 30))
+	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
 	fp.write(SPACE)
@@ -135,17 +135,17 @@ def processSort1():
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse LocusLink ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse Symbol', 30))
+	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Name', 10))
 	fp.write(SPACE)
 	fp.write(CRT)
 
-	fp.write(string.ljust('---------', 20))
+	fp.write(string.ljust('---------', 15))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------', 30))
+	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('----------------', 30))
 	fp.write(SPACE)
@@ -155,7 +155,7 @@ def processSort1():
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------', 30))
+	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 10))
 	fp.write(SPACE)
@@ -238,17 +238,11 @@ def processSort1():
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-
-		if r['humanChr'] == 'mitochonmitochondrion':
-		  humanChr = 'mitochondrion'
-		else:
-		  humanChr = r['humanChr']
-
-		fp.write(string.ljust(humanChr, 20))
+		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanSymbol'], 30))
+		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseMGI'], 30))
 		fp.write(SPACE)
@@ -258,7 +252,7 @@ def processSort1():
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['mouseSymbol'], 30))
+		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseName'], 10))
 		fp.write(SPACE)
@@ -283,13 +277,13 @@ def processSort2():
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse LocusLink ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse Symbol', 30))
+	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Chr', 20))
+	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human LocusLink ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Symbol', 30))
+	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Name', 10))
 	fp.write(SPACE)
@@ -303,13 +297,13 @@ def processSort2():
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------', 30))
+	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('----------', 20))
+	fp.write(string.ljust('----------', 15))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------', 30))
+	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 10))
 	fp.write(SPACE)
@@ -361,12 +355,6 @@ def processSort2():
 	count = 0
 
 	for r in results:
-
-		if r['humanChr'] == 'mitochonmitochondrion':
-		  humanChr = 'mitochondrion'
-		else:
-		  humanChr = r['humanChr']
-
 		fp.write(string.ljust(r['mouseMGI'], 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseChr'], 10))
@@ -375,13 +363,13 @@ def processSort2():
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['mouseSymbol'], 30))
+		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(humanChr, 20))
+		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanSymbol'], 30))
+		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseName'], 10))
 		fp.write(SPACE)
@@ -401,15 +389,15 @@ def processSort3():
 	
 	fp.write(string.ljust('Human LocusLink ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Symbol', 30))
+	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Chr', 20))
+	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse LocusLink ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse Symbol', 30))
+	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Chr', 10))
 	fp.write(SPACE)
@@ -421,15 +409,15 @@ def processSort3():
 
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------', 30))
+	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('----------', 20))
+	fp.write(string.ljust('----------', 15))
 	fp.write(SPACE)
 	fp.write(string.ljust('----------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------', 30))
+	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 10))
 	fp.write(SPACE)
@@ -483,23 +471,17 @@ def processSort3():
 	count = 0
 
 	for r in results:
-
-		if r['humanChr'] == 'mitochonmitochondrion':
-		  humanChr = 'mitochondrion'
-		else:
-		  humanChr = r['humanChr']
-
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanSymbol'], 30))
+		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(humanChr, 20))
+		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseMGI'], 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['mouseSymbol'], 30))
+		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseChr'], 10))
 		fp.write(SPACE)
@@ -525,7 +507,7 @@ def processSort4():
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse LocusLink ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse Symbol', 30))
+	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Chr', 10))
 	fp.write(SPACE)
@@ -535,9 +517,9 @@ def processSort4():
 	fp.write(SPACE)
 	fp.write(string.ljust('Human LocusLink ID', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Symbol', 30))
+	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Chr', 20))
+	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
 	fp.write(CRT)
 
@@ -545,7 +527,7 @@ def processSort4():
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------', 30))
+	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 10))
 	fp.write(SPACE)
@@ -555,9 +537,9 @@ def processSort4():
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------', 30))
+	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('----------', 20))
+	fp.write(string.ljust('----------', 15))
 	fp.write(SPACE)
 	fp.write(CRT)
 
@@ -605,17 +587,11 @@ def processSort4():
 	count = 0
 
 	for r in results:
-
-		if r['humanChr'] == 'mitochonmitochondrion':
-		  humanChr = 'mitochondrion'
-		else:
-		  humanChr = r['humanChr']
-
 		fp.write(string.ljust(r['mouseMGI'], 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['mouseSymbol'], 30))
+		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseChr'], 10))
 		fp.write(SPACE)
@@ -625,9 +601,9 @@ def processSort4():
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanSymbol'], 30))
+		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(humanChr, 20))
+		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
 		fp.write(CRT)
 		count = count + 1
