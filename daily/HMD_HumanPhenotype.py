@@ -71,7 +71,6 @@ def createDict(results, keyField, valueField):
         d = {}
         for r in results:
                 key = r[keyField]
-
                 value = r[valueField]
                 if not d.has_key(key):
                         d[key] = ' '
@@ -84,7 +83,7 @@ def createDict(results, keyField, valueField):
 #      #
 ########
 
-cmds = []
+db.useOneConnection(1)
 
 #################################################################
 # Get mouse to human orthologous marker pair's symbols and keys #
@@ -92,18 +91,20 @@ cmds = []
 # place them in a temp table to be used by other queries        #
 # needed to produce the desired report                          #
 #################################################################
-cmds.append(string.join(['select distinct(hpv.markerkey2) as humanKey, ',
-                         '                 m2.symbol as humanSym,      ',
-                         '                hpv.markerkey1 as mouseKey,  ',
-                         '                 m1.symbol as mouseSym       ',
-                         'into #homology                               ',
-                         'from HMD_Homology_Pairs_View hpv,            ',
-                         '     MRK_Marker m1,                          ',
-                         '     MRK_Marker m2                           ',
-                         'where hpv.organismkey1    = 1                 ',
-                         '  and hpv.organismkey2    = 2                 ',
-                         '  and  m1._Marker_key    = hpv.markerkey1    ',
-                         '  and  m2._Marker_key    = hpv.markerkey2    ',]))
+cmds = []
+cmds.append('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' + \
+		'humanKey = h2._Marker_key, humanSym = m2.symbol ' + \
+		'into #homology ' + \
+		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
+		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
+		'MRK_Marker m1, MRK_Marker m2 ' + \
+		'where m1._Organism_key = 1 ' + \
+		'and m1._Marker_key = h1._Marker_key ' + \
+		'and h1._Homology_key = r1._Homology_key ' + \
+		'and r1._Class_key = r2._Class_key ' + \
+		'and r2._Homology_key = h2._Homology_key ' + \
+		'and h2._Marker_key = m2._Marker_key ' + \
+		'and m2._Organism_key = 2')
 
 ######################################################
 # Create some indexes to speed up the report queries #
@@ -111,66 +112,52 @@ cmds.append(string.join(['select distinct(hpv.markerkey2) as humanKey, ',
 cmds.append('create nonclustered index index_mouseKey on #homology(mouseKey)')
 cmds.append('create nonclustered index index_humanKey on #homology(humanKey)')
 cmds.append('create nonclustered index index_humanSym on #homology(humanSym)')
+db.sql(cmds, None)
+
+###################################################################
+# Get the MGI IDs for the Mouse markers in the temp table created #
+# by the first query                                              #
+###################################################################
+results = db.sql('select a._Object_key, a.accID ' + \
+		'from #homology h, ACC_Accession a ' + \
+		'where a._Object_key = h.mouseKey ' + \
+		'and a._MGIType_key = 2 ' + \
+		'and a._LogicalDB_key = 1 ' + \
+		'and a.prefixPart = "MGI:" ' + \
+		'and a.preferred = 1 ', 'auto')
+mmgi = createDict(results, '_Object_key', 'accID')
+
+#####################################################################
+# Get the LocusLink for the Human markers in the temp table created # 
+# by the first query                                                #
+#####################################################################
+results = db.sql('select a._Object_key, a.accID ' + \
+                'from #homology h, ACC_Accession a ' + \
+                'where a._Object_key = h.humanKey ' + \
+                'and a._MGIType_key = 2 ' + \
+                'and a._LogicalDB_key = 24', 'auto')
+hlocus = createDict(results, '_Object_key', 'accID')
+
+#####################################################################
+# Get the Phenoslim for the Mouse markers in the temp table created # 
+# by the first query                                                #
+#####################################################################
+results = db.sql('select distinct h.mouseKey, a.accID ' + \
+                'from #homology h, GXD_AlleleGenotype g, VOC_Annot v, ACC_Accession a ' + \
+                'where g._Marker_key = h.mouseKey ' + \
+                'and v._Object_key = g._Genotype_key ' + \
+                'and v._AnnotType_key = 1001 ' + \
+                'and a._Object_key = v._Term_key ' + \
+                'and a._MGIType_key = 13 ' + \
+                'and a._LogicalDB_key = 34 ', 'auto')
+mpheno = createDict(results, 'mouseKey', 'accID')
 
 #################################################################
 # Get the mouse to human orthologous marker pairs from the temp #
 # table created in the first query so that it can be used as    #
 # data for creating the desired report                          #
 #################################################################
-cmds.append('select * from #homology order by humanSym')
-
-###################################################################
-# Get the MGI IDs for the Mouse markers in the temp table created #
-# by the first query                                              #
-###################################################################
-cmds.append(string.join(['select distinct(a._Object_key),   ',
-                         '       a.accID                    ',
-                         'from #homology h,                 ',
-                         '     ACC_Accession a              ',
-                         'where a._Object_key  = h.mouseKey ',
-                         '  and a._MGIType_key = 2          ',
-                         '  and a._LogicalDB_key = 1        ',
-                         '  and a.prefixPart   = "MGI:"     ',
-                         '  and a.preferred    = 1          ',]))
-
-#####################################################################
-# Get the LocusLink for the Human markers in the temp table created # 
-# by the first query                                                #
-#####################################################################
-cmds.append(string.join(['select distinct(a._Object_key),     ',
-                         '       a.accID                      ',
-                         'from #homology h,                   ',
-                         '     ACC_Accession a                ',
-                         'where a._Object_key    = h.humanKey ',
-                         '  and a._MGIType_key   = 2          ',
-                         '  and a._LogicalDB_key = 24         ',]))
-
-#####################################################################
-# Get the Phenoslim for the Mouse markers in the temp table created # 
-# by the first query                                                #
-#####################################################################
-cmds.append(string.join(['select h.mouseKey,                       ',
-                         '       a.accID                           ',
-                         'from #homology h,                        ',
-                         '     GXD_AlleleGenotype g,               ',
-                         '     VOC_Annot v,                        ',
-                         '     ACC_Accession a                     ',
-                         'where g._Marker_key    = h.mouseKey      ',
-                         '  and v._Object_key    = g._Genotype_key ',
-                         '  and v._AnnotType_key = 1001            ',
-                         '  and a._Object_key    = v._Term_key     ',
-                         '  and a._MGIType_key   = 13              ',
-                         '  and a._LogicalDB_key = 34              ',]))
-
-results = db.sql(cmds, 'auto')
-
-########################################################
-# Create keyed dictionaries of the results so they can #
-# be called by there associated _Marker_key.           #
-########################################################
-mmgi   = createDict(results[5], '_Object_key', 'accID')
-hlocus = createDict(results[6], '_Object_key', 'accID')
-mpheno = createDict(results[7], 'mouseKey', 'accID')
+results = db.sql('select * from #homology order by humanSym', 'auto')
 
 ####################
 # Open report file #
@@ -180,7 +167,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 ############################
 # Process db query results #
 ############################
-for r in results[4]:
+for r in results:
     ################################
     # Output the human gene symbol #
     ################################
@@ -220,3 +207,4 @@ for r in results[4]:
 #########################
 reportlib.finish_nonps(fp)
 
+db.useOneConnection(0)
