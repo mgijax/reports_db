@@ -1,3 +1,10 @@
+TAG: reports_db-3-3-1
+DATE: 07/18/2000
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) revert to old MRK_LocusLink.py....install in July 24 instead
+
 TAG: reports_db-3-3-0
 DATE: 07/18/2000
 STAFF: lec
