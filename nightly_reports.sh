@@ -27,7 +27,7 @@ cd daily
 # exclude mgiMarkerFeed and clone reports 
 
 foreach i (*.py)
-if ( $i != "mgiMarkerFeed.py" && $i != "MGI_CloneSet.py" ) then
+if ( $i != "mgiMarkerFeed.py" && $i != "mgiMarkerFeed2.py" && $i != "MGI_CloneSet.py" ) then
 echo $i, `date`
 $i >>& ${LOG}
 echo $i, `date`
