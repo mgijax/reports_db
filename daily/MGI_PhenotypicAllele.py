@@ -2,7 +2,7 @@
 
 '''
 #
-# MGI_Allele.py 04/01/2004
+# MGI_PhenotypicAllele.py 05/04/2004
 #
 # Report:
 #       Tab-delimited file
@@ -13,11 +13,12 @@
 #		Allele Symbol
 #		Allele Name
 #		PubMed ID of Original Reference
+#		MGI ID of Gene
 #		Gene Symbol
 #		RefSeq ID of Gene
 #
 # Usage:
-#       MGI_Allele.py
+#       MGI_PhenotypicAllele.py
 #
 # Used by:
 #
@@ -25,7 +26,7 @@
 #
 # History:
 #
-# lec	04/01/2004
+# lec	05/04/2004
 #	- TR 5637
 #
 '''
