@@ -412,7 +412,7 @@ fp7 = open(OUTPUTDIR + 'strain_species.bcp', 'w')
 #
 
 cmds = []
-cmds.append('select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+cmds.append('select distinct s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
       'cdate = convert(char(20), s.creation_date, 100), ' + \
       'mdate = convert(char(20), s.modification_date, 100) ' + \
       'into #strains ' + \
