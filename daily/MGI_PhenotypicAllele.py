@@ -43,17 +43,21 @@ import reportlib
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
+fp.write('#\n#Allele symbols are usually of the form xxx<yy>, where the <> enclose the part of the symbol that is superscripted.\n#\n')
+
 cmds = []
 
 # Retrieve all Approved Alleles
 # exclude wild types
+# exclude QTLs
 
 cmds.append('select a._Allele_key, a._Marker_key, a.symbol, a.name, marker = m.symbol ' + \
 	'into #alleles ' + \
 	'from ALL_Allele a, MRK_Marker m ' + \
 	'where a._Allele_Status_key = 4 ' + \
 	'and a.symbol not like "%<+>" ' + \
-	'and a._Marker_key = m._Marker_key')
+	'and a._Marker_key = m._Marker_key ' + \
+	'and m._Marker_Type_key != 6')
 
 # Retrieve MGI Accession number for Allele
 
@@ -121,8 +125,12 @@ for r in results[-1]:
 		fp.write(pubIDs[r['_Allele_key']])
 	fp.write(reportlib.TAB)
 
-	fp.write(mmgiIDs[r['_Marker_key']] + reportlib.TAB + \
-		r['marker'] + reportlib.TAB)
+	# if Transgene, do not print gene ID or gene symbol
+	if string.find(r['symbol'], 'Tg(') < 0:
+		fp.write(mmgiIDs[r['_Marker_key']] + reportlib.TAB + \
+			r['marker'] + reportlib.TAB)
+	else:
+		fp.write(reportlib.TAB + reportlib.TAB)
 
 	if refIDs.has_key(r['_Marker_key']):
 		fp.write(refIDs[r['_Marker_key']])
