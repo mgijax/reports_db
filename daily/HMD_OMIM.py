@@ -110,7 +110,9 @@ mimIDs = {}
 for r in results:
     key = r['humanKey']
     value = str(r['mim'])
-    mimIDs[key] = value
+    if not mimIDs.has_key(key):
+	mimIDs[key] = []
+    mimIDs[key].append = value
 
 results = db.sql('select h.* from #homology h order by h.mouseSymbol', 'auto')
 count = 0
@@ -123,7 +125,7 @@ for r in results:
     fp.write(SPACE)
     fp.write(string.ljust(r['humanSymbol'], 25))
     fp.write(SPACE)
-    fp.write(string.ljust(mimIDs[r['humanKey']], 10))
+    fp.write(string.ljust(string.join(mimIDs[r['humanKey']], ','), 10))
     fp.write(SPACE)
     fp.write(CRT)
     count = count + 1
