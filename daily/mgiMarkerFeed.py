@@ -35,6 +35,9 @@
 #
 # History:
 #
+# lec	04/09/2002
+#	- removed needsReview and standard
+#
 # lec	08/14/2001
 #	- created
 #
@@ -424,7 +427,7 @@ fp7 = open(OUTPUTDIR + 'strain_species.bcp', 'w')
 #
 
 cmds = []
-cmds.append('select distinct s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
+cmds.append('select distinct s._Strain_key, m._Species_key, s.strain, s.private, ' + \
       'cdate = convert(char(20), s.creation_date, 100), ' + \
       'mdate = convert(char(20), s.modification_date, 100) ' + \
       'into #strains ' + \
@@ -492,8 +495,6 @@ for r in results[2]:
 	fp1.write(`r['_Strain_key']` + TAB + \
 	         `r['_Species_key']` + TAB + \
 	         strip_newline(r['strain']) + TAB + \
-	         `r['standard']` + TAB + \
-	         `r['needsReview']` + TAB + \
 	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
