@@ -1,4 +1,4 @@
-TAG: reports_db-11-0-10
+TAG: reports_db-11-0-11
 DATE: 06/18/2002
 STAFF: lec
 RELEASE: A
@@ -6,7 +6,7 @@ CHANGES:
 a) TR 3762; MRK_GOHuman.py
 b) ; MRK_LocusLink.py
 
-TAG: reports_db-11-0-9
+TAG: reports_db-11-0-9, reports_db-11-0-10
 DATE: 06/10/2002
 STAFF: lec
 RELEASE: A
