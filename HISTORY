@@ -1,4 +1,11 @@
 TAG: reports_db-13-0-3
+DATE: 10/29/2002
+STAFF: pm
+RELEASE: A
+CHANGES:
+a) index.html; change "Homology" to "Orthology" (wording only), change path to mouseBLAST per sc
+
+
 TAG: reports_db-13-0-2
 DATE: 10/23/2002
 STAFF: lec
