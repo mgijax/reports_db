@@ -462,7 +462,7 @@ cmds.append('create unique index index_strain on #strains(_Strain_key)')
 
 cmds.append('select * from #strains')
 
-cmds.append('select m._Strain_key, m._Marker_key, s.private, ' + \
+cmds.append('select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.private, ' + \
       'cdate = convert(char(20), m.creation_date, 100), ' + \
       'mdate = convert(char(20), m.modification_date, 100) ' + \
       'from #strains s, PRB_Strain_Marker m ' + \
@@ -509,6 +509,7 @@ for r in results[2]:
 for r in results[3]:
 	fp2.write(`r['_Strain_key']` + TAB + \
 	         `r['_Marker_key']` + TAB + \
+	         `r['_Allele_key']` + TAB + \
 	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
