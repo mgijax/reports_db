@@ -1,3 +1,10 @@
+TAG: reports_db-13-1-0
+DATE: 12/31/2002
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 4292; added MRK_InterPro.py
+
 TAG: reports_db-13-0-9
 DATE: 11/22/2002
 STAFF: lec
