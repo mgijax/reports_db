@@ -2,11 +2,14 @@
 
 '''
 #
-# HMD_Rat.py 02/04/2004
+# HMD_RatHuman.py 04/20/2000
 #
 # Report:
-#	TR 5539
-#	RGD would like Rat/Human reports similar to Human/Human format.
+#	TR 211
+#	Originally 4 separate .sql reports (HMD_Rat1.sql, etc.)
+#	Re-implemeneted in Python due to sorting of rat cytogenetic offsets.
+#	The offset sorting algorithm is duplicated in the WI homology_report.cgi.py
+#	module.
 #
 # Usage:
 #       HMD_RatHuman.py [1234]
@@ -25,8 +28,17 @@
 #
 # History:
 #
-# lec	02/04/2004
-#	- TR 5539; created; converted from HMD_Rat.py
+# lec	07/23/2004
+#	- TR 5611; added curated/calculated
+#
+# lec	07/01/2003
+#	- TR 4945; added LocusLink IDs for Human and Rat
+#
+# lec   07/18/2000
+#	- TR 1806; added MGI Accession ID for Human Symbols
+#
+# lec   04/20/2000
+#       - created
 #
 '''
 
@@ -41,6 +53,15 @@ import reportlib
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
 REPORTNAME = 'HMD_RatHuman'
+
+reportLegend = 'Data Attributes:  C = Curated, c = calculated'
+isCurated = 'C'
+isCalculated = 'c'
+
+curated = []
+calculated = []
+ratLL = {}
+humanLL = {}
 
 #
 # NOTE: The following globals and getSortableOffset are variations on
@@ -105,13 +126,137 @@ def getSortableOffset (cytogeneticOffset):
                         pass
         return 0.0
 
-def processSort1():
+def runQueries():
+
+	global curated, calculated, ratLL, humanLL
+
+	cmd = 'select distinct h1._Marker_key ' + \
+		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
+		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
+		'MRK_Marker m1, MRK_Marker m2 ' + \
+		'where r1._Refs_key = 91485 ' + \
+		'and m1._Organism_key = 40 ' + \
+		'and m1._Marker_key = h1._Marker_key ' + \
+		'and h1._Homology_key = r1._Homology_key ' + \
+		'and r1._Class_key = r2._Class_key ' + \
+		'and r2._Homology_key = h2._Homology_key ' + \
+		'and h2._Marker_key = m2._Marker_key ' + \
+		'and m2._Organism_key = 2'
+
+	results = db.sql(cmd, 'auto')
+	for r in results:
+		calculated.append(r['_Marker_key'])
+
+	cmd = 'select distinct h1._Marker_key ' + \
+		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
+		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
+		'MRK_Marker m1, MRK_Marker m2 ' + \
+		'where r1._Refs_key != 91485 ' + \
+		'and m1._Organism_key = 40 ' + \
+		'and m1._Marker_key = h1._Marker_key ' + \
+		'and h1._Homology_key = r1._Homology_key ' + \
+		'and r1._Class_key = r2._Class_key ' + \
+		'and r2._Homology_key = h2._Homology_key ' + \
+		'and h2._Marker_key = m2._Marker_key ' + \
+		'and m2._Organism_key = 2'
+
+	results = db.sql(cmd, 'auto')
+	for r in results:
+    		curated.append(r['_Marker_key'])
+
+	cmds = []
+
+	cmds.append('select distinct ratMarkerKey = h1._Marker_key, humanMarkerKey = h2._Marker_key ' + \
+	'into #allhomologies ' + \
+      	'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
+      	'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
+      	'MRK_Marker m1, MRK_Marker m2 ' + \
+      	'where m1._Organism_key = 40 ' + \
+      	'and m1._Marker_key = h1._Marker_key ' + \
+      	'and h1._Homology_key = r1._Homology_key ' + \
+      	'and r1._Class_key = r2._Class_key ' + \
+      	'and r2._Homology_key = h2._Homology_key ' + \
+      	'and h2._Marker_key = m2._Marker_key ' + \
+      	'and m2._Organism_key = 2')
+
+	cmds.append('create nonclustered index idx_hkey on #allhomologies(ratMarkerKey)')
+	cmds.append('create nonclustered index idx_mkey on #allhomologies(humanMarkerKey)')
+
+	cmds.append('select h.ratMarkerKey, h.humanMarkerKey, ' + \
+		'ratOrganism = m1._Organism_key, ' + \
+		'ratSymbol = m1.symbol, ' + \
+		'ratChr = m1.chromosome + m1.cytogeneticOffset, ' + \
+		'ratChrOnly = m1.chromosome, ' + \
+		'ratCyto = m1.cytogeneticOffset, ' + \
+		'humanOrganism = m2._Organism_key, ' + \
+		'humanSymbol = m2.symbol, ' + \
+		'humanChr = m2.chromosome + m2.cytogeneticOffset, ' + \
+		'humanChrOnly = m2.chromosome, ' + \
+		'humanCyto = m2.cytogeneticOffset ' + \
+		'into #homologies ' + \
+		'from #allhomologies h, MRK_Marker m1, MRK_Marker m2 ' + \
+		'where h.ratMarkerKey = m1._Marker_key ' + \
+		'and h.humanMarkerKey = m2._Marker_key ')
+
+	cmds.append('create nonclustered index idx_hkey1 on #homologies(ratOrganism)')
+	cmds.append('create nonclustered index idx_mkey1 on #homologies(humanOrganism)')
+	cmds.append('create nonclustered index idx_hkey2 on #homologies(ratSymbol)')
+	cmds.append('create nonclustered index idx_mkey2 on #homologies(humanSymbol)')
+
+	# rat locus link ids
+
+	cmds.append('select h.ratMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+		'where h.ratMarkerKey = a._Object_key ' + \
+		'and a._MGIType_key = 2 ' + \
+		'and a._LogicalDB_key = 24 ')
+
+	# human locus link ids
+
+	cmds.append('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+		'where h.humanMarkerKey = a._Object_key ' + \
+		'and a._MGIType_key = 2 ' + \
+		'and a._LogicalDB_key = 24 ')
+
+	# sorted by rat chromosome
+
+	cmds.append('select h.*, c.sequenceNum ' + \
+		'from #homologies h, MRK_Chromosome c ' + \
+		'where h.ratOrganism = c._Organism_key ' + \
+		'and h.ratChrOnly = c.chromosome ')
+
+	# sorted by human chromosome
+
+	cmds.append('select h.*, c.sequenceNum ' + \
+		'from #homologies h, MRK_Chromosome c ' + \
+		'where h.humanOrganism = c._Organism_key ' + \
+		'and h.humanChrOnly = c.chromosome ')
+
+	# sorted by rat symbol
+
+	cmds.append('select * from #homologies order by ratSymbol')
+
+	# sorted by human symbol
+
+	cmds.append('select * from #homologies order by humanSymbol')
+	
+	results = db.sql(cmds, 'auto')
+
+	for r in results[8]:
+		ratLL[r['ratMarkerKey']] = r['accID']
+
+	for r in results[9]:
+		humanLL[r['humanMarkerKey']] = r['accID']
+
+	return results
+
+def processSort1(results):
 
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Rat Chromosome)'
 	reportName = REPORTNAME + '1'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
-	
+	fp.write(reportLegend + CRT + CRT)
+
 	fp.write(string.ljust('Rat Chr', 15))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat LocusLink ID', 30))
@@ -124,6 +269,8 @@ def processSort1():
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
+	fp.write(string.ljust('Data Attributes', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
 
 	fp.write(string.ljust('---------', 15))
@@ -138,38 +285,9 @@ def processSort1():
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
+	fp.write(string.ljust('---------------', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
-
-	cmd = 'select distinct ratChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-		      'c.sequenceNum, ' + \
-		      'm1.cytogeneticOffset, ' + \
-                      'ratSymbol = m1.symbol, ' + \
-		      'humanChr = m2.chromosome  + m2.cytogeneticOffset, ' + \
-                      'humanSymbol = m2.symbol, ' + \
-		      'ratLL = ha.accID, ' + \
-		      'humanLL = ma.accID ' + \
-		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-		'MRK_Marker m1, MRK_Marker m2, MRK_Chromosome c, ' + \
-		'ACC_Accession ha, ACC_Accession ma ' + \
-		'where m1._Organism_key = 40 ' + \
-		'and m1._Marker_key = h1._Marker_key ' + \
-		'and h1._Homology_key = r1._Homology_key ' + \
-		'and r1._Class_key = r2._Class_key ' + \
-		'and r2._Homology_key = h2._Homology_key ' + \
-		'and h2._Marker_key = m2._Marker_key ' + \
-		'and m2._Organism_key = 2 ' + \
-		'and m1._Organism_key = c._Organism_key ' + \
-		'and m1.chromosome = c.chromosome ' + \
-		'and m1._Marker_key *= ha._Object_key ' + \
-		'and ha._MGIType_key = 2 ' + \
-		'and ha._LogicalDB_key = 24 ' + \
-		'and m2._Marker_key *= ma._Object_key ' + \
-		'and ma._MGIType_key = 2 ' + \
-		'and ma._LogicalDB_key = 24 '
-
-	results = db.sql(cmd, 'auto')
-	count = 0
 
 	#
 	# initialize a list to sort the rat chromosome & offset values.
@@ -183,12 +301,13 @@ def processSort1():
 	# the dictionary values will be set to the row tuple
 	#
 
+	count = 0
 	sortKeys = [''] * 3	# initialize list to 3 'blanks'
 	rows = {}
 
 	for r in results:
 		sortKeys[0] = r['sequenceNum']
-		sortKeys[1] = getSortableOffset(r['cytogeneticOffset'])
+		sortKeys[1] = getSortableOffset(r['ratCyto'])
 		sortKeys[2] = r['ratSymbol']
 		rows[tuple(sortKeys)] = r
 		count = count + 1
@@ -204,28 +323,45 @@ def processSort1():
 		r = rows[key]
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
+
+		if ratLL.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
+
+		if humanLL.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
+
+		if r['ratMarkerKey'] in curated:
+		  fp.write(isCurated)
+		if r['ratMarkerKey'] in calculated:
+		  fp.write(isCalculated)
+
 		fp.write(CRT)
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
-def processSort2():
+def processSort2(results):
 
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Human Chromosome)'
 	reportName = REPORTNAME + '2'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
@@ -239,6 +375,8 @@ def processSort2():
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
+	fp.write(string.ljust('Data Attributes', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
 
 	fp.write(string.ljust('----------', 15))
@@ -253,41 +391,12 @@ def processSort2():
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
+	fp.write(string.ljust('---------------', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
-
-	cmd = 'select distinct humanChr = m2.chromosome + m2.cytogeneticOffset, ' + \
-	      'c.sequenceNum, ' + \
-	      'm2.cytogeneticOffset, ' + \
-              'humanSymbol = m2.symbol, ' + \
-              'ratChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-              'ratSymbol = m1.symbol, ' + \
-              'ratLL = ha.accID, ' + \
-              'humanLL = ma.accID ' + \
-              'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-              'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-              'MRK_Marker m1, MRK_Marker m2, MRK_Chromosome c, ' + \
-	      'ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Organism_key = 40 ' + \
-              'and m1._Marker_key = h1._Marker_key ' + \
-              'and h1._Homology_key = r1._Homology_key ' + \
-              'and r1._Class_key = r2._Class_key ' + \
-              'and r2._Homology_key = h2._Homology_key ' + \
-              'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Organism_key = 2 ' + \
-              'and m2._Organism_key = c._Organism_key ' + \
-              'and m2.chromosome = c.chromosome ' + \
-	      'and m1._Marker_key *= ha._Object_key ' + \
-	      'and ha._MGIType_key = 2 ' + \
-	      'and ha._LogicalDB_key = 24 ' + \
-	      'and m2._Marker_key *= ma._Object_key ' + \
-	      'and ma._MGIType_key = 2 ' + \
-	      'and ma._LogicalDB_key = 24'
-
-	results = db.sql(cmd, 'auto')
-	count = 0
 
 	#
-	# initialize a list to sort the rat chromosome & offset values.
+	# initialize a list to sort the human chromosome & offset values.
 	# the first sort is by chromosome, second is by offset.
 	# that is, sortKeys[0] holds the sequence number of the chromosome order
 	# and sortKeys[1] holds the sort value of the cytogenetic offset
@@ -298,12 +407,13 @@ def processSort2():
 	# the dictionary values will be set to the row tuple
 	#
 
+	count = 0
 	sortKeys = [''] * 3	# initialize list to 3 'blanks'
 	rows = {}
 
 	for r in results:
 		sortKeys[0] = r['sequenceNum']
-		sortKeys[1] = getSortableOffset(r['cytogeneticOffset'])
+		sortKeys[1] = getSortableOffset(r['humanCyto'])
 		sortKeys[2] = r['humanSymbol']
 		rows[tuple(sortKeys)] = r
 		count = count + 1
@@ -319,27 +429,45 @@ def processSort2():
 		r = rows[key]
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
+
+		if humanLL.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
+
+		if ratLL.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
+		fp.write(SPACE)
+
+		if r['ratMarkerKey'] in curated:
+		  fp.write(isCurated)
+		if r['ratMarkerKey'] in calculated:
+		  fp.write(isCalculated)
+
 		fp.write(CRT)
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
-def processSort3():
+def processSort3(results):
 
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Rat Symbol)'
 	reportName = REPORTNAME + '3'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Rat LocusLink ID', 30))
 	fp.write(SPACE)
@@ -352,6 +480,9 @@ def processSort3():
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Chr', 15))
+	fp.write(SPACE)
+	fp.write(string.ljust('Data Attributes', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
 
 	fp.write(string.ljust('------------------', 30))
@@ -360,53 +491,46 @@ def processSort3():
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 15))
 	fp.write(SPACE)
-	fp.write(string.ljust('------------------', 30))
+	fp.write(string.ljust('----------------', 30))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 15))
+	fp.write(SPACE)
+	fp.write(string.ljust('---------------', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
 
-	cmd = 'select distinct humanChr = m2.chromosome + m2.cytogeneticOffset, ' + \
-              'humanSymbol = m2.symbol, ' + \
-              'ratChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-              'ratSymbol = m1.symbol, ' + \
-              'ratLL = ha.accID, ' + \
-              'humanLL = ma.accID ' + \
-              'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-              'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-              'MRK_Marker m1, MRK_Marker m2, ' + \
-	      'ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Organism_key = 40 ' + \
-              'and m1._Marker_key = h1._Marker_key ' + \
-              'and h1._Homology_key = r1._Homology_key ' + \
-              'and r1._Class_key = r2._Class_key ' + \
-              'and r2._Homology_key = h2._Homology_key ' + \
-              'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Organism_key = 2 ' + \
-	      'and m1._Marker_key *= ha._Object_key ' + \
-	      'and ha._MGIType_key = 2 ' + \
-	      'and ha._LogicalDB_key = 24 ' + \
-	      'and m2._Marker_key *= ma._Object_key ' + \
-	      'and ma._MGIType_key = 2 ' + \
-	      'and ma._LogicalDB_key = 24 ' + \
-              'order by m1.symbol, m1.chromosome, m1.cytogeneticOffset'
-
-	results = db.sql(cmd, 'auto')
 	count = 0
 
 	for r in results:
-		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
+		if ratLL.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
+
+		if humanLL.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanChr'], 15))
+		fp.write(SPACE)
+
+		if r['ratMarkerKey'] in curated:
+		  fp.write(isCurated)
+		if r['ratMarkerKey'] in calculated:
+		  fp.write(isCalculated)
+
 		fp.write(CRT)
 		count = count + 1
 
@@ -414,12 +538,13 @@ def processSort3():
 	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
-def processSort4():
+def processSort4(results):
 
 	reportTitle = 'Orthology - Rat vs. Human (Sorted by Human Symbol)'
 	reportName = REPORTNAME + '4'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Human LocusLink ID', 30))
 	fp.write(SPACE)
@@ -433,6 +558,8 @@ def processSort4():
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Chr', 15))
 	fp.write(SPACE)
+	fp.write(string.ljust('Data Attributes', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
 
 	fp.write(string.ljust('------------------', 30))
@@ -447,48 +574,40 @@ def processSort4():
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 15))
 	fp.write(SPACE)
+	fp.write(string.ljust('---------------', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
 
-	cmd = 'select distinct humanChr = m2.chromosome + m2.cytogeneticOffset, ' + \
-              'humanSymbol = m2.symbol, ' + \
-              'ratChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-              'ratSymbol = m1.symbol, ' + \
-              'ratLL = ha.accID, ' + \
-              'humanLL = ma.accID ' + \
-              'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-              'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-              'MRK_Marker m1, MRK_Marker m2, ' + \
-	      'ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Organism_key = 40 ' + \
-              'and m1._Marker_key = h1._Marker_key ' + \
-              'and h1._Homology_key = r1._Homology_key ' + \
-              'and r1._Class_key = r2._Class_key ' + \
-              'and r2._Homology_key = h2._Homology_key ' + \
-              'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Organism_key = 2 ' + \
-	      'and m1._Marker_key *= ha._Object_key ' + \
-	      'and ha._MGIType_key = 2 ' + \
-	      'and ha._LogicalDB_key = 24 ' + \
-	      'and m2._Marker_key *= ma._Object_key ' + \
-	      'and ma._MGIType_key = 2 ' + \
-	      'and ma._LogicalDB_key = 24 ' + \
-              'order by m2.symbol, m2.chromosome, m2.cytogeneticOffset'
-
-	results = db.sql(cmd, 'auto')
 	count = 0
 
 	for r in results:
-		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
+		if humanLL.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
+
+		if ratLL.has_key(r['ratMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(ratLL[r['ratMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(SPACE)
+
+		if r['ratMarkerKey'] in curated:
+		  fp.write(isCurated)
+		if r['ratMarkerKey'] in calculated:
+		  fp.write(isCalculated)
+
 		fp.write(CRT)
 		count = count + 1
 
@@ -505,17 +624,18 @@ sortOption = None
 if len(sys.argv) > 1:
 	sortOption = sys.argv[1]
 
+results = runQueries()
+
 if sortOption == '1':
-	processSort1()
+	processSort1(results[10])
 elif sortOption == '2':
-	processSort2()
+	processSort2(results[11])
 elif sortOption == '3':
-	processSort3()
+	processSort3(results[12])
 elif sortOption == '4':
-	processSort4()
+	processSort4(results[13])
 else:
-	processSort1()
-	processSort2()
-	processSort3()
-	processSort4()
-	
+	processSort1(results[10])
+	processSort2(results[11])
+	processSort3(results[12])
+	processSort4(results[13])
