@@ -1,3 +1,9 @@
+TAG: reports_db-3-0-2
+DATE: 06/27/2000
+STAFF: lec
+RELEASE: A
+CHANGES: TR 1683; added DEPENDENCIES file
+
 TAG: reports_db-3-0-1
 DATE: 06/19/2000
 STAFF: lec
