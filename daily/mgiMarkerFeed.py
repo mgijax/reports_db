@@ -509,7 +509,7 @@ for r in results[2]:
 for r in results[3]:
 	fp2.write(`r['_Strain_key']` + TAB + \
 	         `r['_Marker_key']` + TAB + \
-	         `r['_Allele_key']` + TAB + \
+	         mgi_utils.prvalue(r['_Allele_key']) + TAB + \
 	         `r['private']` + TAB + \
 		 r['cdate'] + TAB + \
 		 r['mdate'] + CRT)
