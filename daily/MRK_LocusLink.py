@@ -128,7 +128,7 @@ for r in results[5]:
 
 	if r['isPrimary']:
 		if otherAccId.has_key(r['_Marker_key']):	
-			fp.write(string.joinfields(otherAccId[r['_Marker_key']], ','))
+			fp.write(string.joinfields(otherAccId[r['_Marker_key']], '|'))
 		fp.write(TAB)
 
 		if locusID.has_key(r['_Marker_key']):	
@@ -136,7 +136,7 @@ for r in results[5]:
 		fp.write(TAB)
 
 		if otherName.has_key(r['_Marker_key']):	
-			fp.write(string.joinfields(otherName[r['_Marker_key']], ','))
+			fp.write(string.joinfields(otherName[r['_Marker_key']], '|'))
 		fp.write(CRT)
 	else:
 		fp.write(TAB)
