@@ -1,3 +1,10 @@
+TAG: reports_db-5-0-6
+DATE: 06/19/2001
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) MRK_Nomen.py - TR 2613; added MGI IDs
+
 TAG: reports_db-5-0-5
 DATE: 05/23/2001
 STAFF: jsb
