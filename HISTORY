@@ -1,3 +1,10 @@
+TAG: reports_db-16-0-0
+DATE: 02/12/2003
+STAFF: dbm
+RELEASE: A
+CHANGES:
+a) Added Primer Name to the report
+
 TAG: reports_db-15-0-0
 DATE: 02/11/2003
 STAFF: dbm
