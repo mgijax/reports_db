@@ -4,7 +4,7 @@ print ""
 
 select m2.symbol "Marker Symbol", m1.symbol "Mutant Symbol", m2.chromosome "Chr ", 
 a.symbol "Allele", substring(a.name, 1, 30) "Allele Name"
-from MRK_Current c, MRK_Marker m1, MRK_Marker m2, MRK_Allele a
+from MRK_Current c, MRK_Marker m1, MRK_Marker m2, ALL_Allele a
 where m1._Marker_Status_key = 2
 and m1.name like '%allele of%'
 and m1._Marker_key = c._Marker_key
