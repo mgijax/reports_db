@@ -1,3 +1,10 @@
+TAG: reports_db-19-0-1
+DATE: 01/14/2004
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) use "rcp" instead of "cp" to avoid using /net
+
 TAG: reports_db-19-0-0
 DATE: 12/19/2003
 STAFF: lec
