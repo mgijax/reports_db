@@ -1,3 +1,12 @@
+TAG: reports_db-18-0-8
+DATE: 08/27/2003
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) TR 4708 - MRK_List2.sql, MRK_Sequence.py, MRK_SwissProt.py
+b) TR 4970 - MRK_ENSEMBL.py
+c) TR 5082 - HMD_HumanPhenotype.py
+
 TAG: reports_db-18-0-7
 DATE: 07/03/2003
 STAFF: lec
