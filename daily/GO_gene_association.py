@@ -88,11 +88,11 @@ cmds.append('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) ' + \
 
 cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'm.symbol, m.name, m._Marker_key, markerID = ma.accID, m._Marker_Type_key, ' + \
-	'e.inferredFrom, e.modifiedBy, eCode = rtrim(t.abbreviation), ' + \
+	'e.inferredFrom, modifiedBy = u.login, eCode = rtrim(t.abbreviation), ' + \
 	'mDate = convert(varchar(10), e.modification_date, 112), refID = b.accID ' + \
 	'into #gomarker ' + \
 	'from VOC_Annot_View a, MRK_Marker m, MRK_Acc_View ma, ' + \
-	'VOC_Evidence e, VOC_Term t, BIB_Acc_View b ' + \
+	'VOC_Evidence e, VOC_Term t, BIB_Acc_View b, MGI_User u ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Object_key = m._Marker_key ' + \
 	'and m._Marker_key = ma._Object_key ' + \
@@ -103,7 +103,8 @@ cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'and e._EvidenceTerm_key = t._Term_key ' + \
 	'and e._Refs_key = b._Object_key ' + \
 	'and b.prefixPart = "MGI:" ' + \
-	'and b._LogicalDB_key = 1')
+	'and b._LogicalDB_key = 1 ' + \
+	'and e._ModifiedBy_key = u._User_key'
 
 cmds.append('select distinct m._Marker_key, o.name ' + \
 	'from #gomarker m, MRK_Other o ' + \

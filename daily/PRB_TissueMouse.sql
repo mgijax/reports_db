@@ -3,8 +3,9 @@ go
 
 select distinct _Tissue_key
 into #tissues
-from PRB_Probe p, PRB_Source s
-where p.DNAType in ('cDNA')
+from PRB_Probe p, PRB_Source s, VOC_Term t
+where p._SegmentType_key = t._Term_key
+and t.term = 'cDNA'
 and p._Source_key = s._Source_key
 and s._ProbeOrganism_key = 1
 go
