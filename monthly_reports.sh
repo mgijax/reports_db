@@ -8,7 +8,7 @@
 # Usage: monthly_reports.sh
 #
 
-cd `dirname $0` && source Configuration
+cd `dirname $0` && source ./Configuration
 
 umask 002
 
