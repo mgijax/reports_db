@@ -4,7 +4,7 @@ STAFF: lec
 RELEASE: A
 CHANGES:
 a) TR 4270; added MRK_SwissProt_TrEMBL.py
-b) TR 3702; added MGI_InterProDomains.py
+b) TR 3702; added MGI_InterProDomains.sql
 
 TAG: reports_db-17-0-2
 DATE: 03/13/2003
