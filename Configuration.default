@@ -46,9 +46,6 @@ setenv DSQUERY ${DBSERVER}
 setenv DBNAME mgd
 setenv MGD ${DBNAME}
 
-# Nomen Database
-setenv NOMEN nomen
-
 # Databse User
 setenv DBUSER			mgd_public
 

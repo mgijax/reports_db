@@ -45,7 +45,6 @@ import reportlib
 # Main
 #
 
-nomenDB = os.environ['NOMEN']
 currentReport = 'Nomenclature-current.html'
 
 # remove current report link if it exists
@@ -115,13 +114,13 @@ cmd.append('select distinct m._Marker_key, a.accID ' + \
 
 # get human ortholog (5)
 cmd.append('select distinct m._Marker_key, n.humanSymbol ' + \
-'from #markers m, MRK_Acc_View ma, %s..ACC_Accession a, %s..MRK_Nomen n ' % (nomenDB, nomenDB) + \
+'from #markers m, MRK_Acc_View ma, NOM_Acc_View na, NOM_Marker n ' + \
 'where m._Marker_key = ma._Object_key ' + \
 'and ma.prefixPart = "MGI:" ' + \
 'and ma._LogicalDB_key = 1 ' + \
 'and ma.preferred = 1 ' + \
-'and ma.accID = a.accID ' + \
-'and a._Object_key = n._Nomen_key ' + \
+'and ma.accID = na.accID ' + \
+'and na._Object_key = n._Nomen_key ' + \
 'and n.humanSymbol is not null')
 
 # retrieve markers, sort (6)
