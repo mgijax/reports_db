@@ -180,13 +180,13 @@ def processSort1():
 	# the dictionary values will be set to the row tuple
 	#
 
-	sortKeys = []
-	sortKeys = [''] * 2	# initialize list to 2 'blanks'
+	sortKeys = [''] * 3	# initialize list to 3 'blanks'
 	rows = {}
 
 	for r in results:
 		sortKeys[0] = r['sequenceNum']
 		sortKeys[1] = getSortableOffset(r['cytogeneticOffset'])
+		sortKeys[2] = r['humanSymbol']
 		rows[tuple(sortKeys)] = r
 		count = count + 1
 
