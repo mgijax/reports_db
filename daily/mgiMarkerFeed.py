@@ -71,8 +71,8 @@ def mgi_status(status):
 fp = open(OUTPUTDIR + 'marker_type.bcp', 'w')
 
 results = db.sql('select _Marker_Type_key, name, ' + \
-	'cdate = convert(char(10), creation_date, 101), ' + \
-	'mdate = convert(char(10), modification_date, 101) ' + \
+	'cdate = convert(char(20), creation_date, 100), ' + \
+	'mdate = convert(char(20), modification_date, 100) ' + \
 	'from MRK_Types', 'auto')
 for r in results:
 	fp.write(`r['_Marker_Type_key']` + TAB + \
@@ -88,8 +88,8 @@ fp.close
 fp = open(OUTPUTDIR + 'species.bcp', 'w')
 
 results = db.sql('select _Species_key, name, species, ' + \
-	'cdate = convert(char(10), creation_date, 101), ' + \
-	'mdate = convert(char(10), modification_date, 101) ' + \
+	'cdate = convert(char(20), creation_date, 100), ' + \
+	'mdate = convert(char(20), modification_date, 100) ' + \
 	'from MRK_Species', 'auto')
 for r in results:
 	fp.write(`r['_Species_key']` + TAB + \
@@ -106,8 +106,8 @@ fp.close
 fp = open(OUTPUTDIR + 'allele_type.bcp', 'w')
 
 results = db.sql('select _Allele_Type_key, alleleType, ' + \
-	'cdate = convert(char(10), creation_date, 101), ' + \
-	'mdate = convert(char(10), modification_date, 101) ' + \
+	'cdate = convert(char(20), creation_date, 100), ' + \
+	'mdate = convert(char(20), modification_date, 100) ' + \
 	'from ALL_Type', 'auto')
 for r in results:
 	fp.write(`r['_Allele_Type_key']` + TAB + \
@@ -123,8 +123,8 @@ fp.close
 fp = open(OUTPUTDIR + 'allele_cellline.bcp', 'w')
 
 results = db.sql('select _CellLine_key, cellLine, cellLineStrain, ' + \
-	'cdate = convert(char(10), creation_date, 101), ' + \
-	'mdate = convert(char(10), modification_date, 101) ' + \
+	'cdate = convert(char(20), creation_date, 100), ' + \
+	'mdate = convert(char(20), modification_date, 100) ' + \
 	'from ALL_CellLine_View', 'auto')
 for r in results:
 	fp.write(`r['_CellLine_key']` + TAB + \
@@ -141,8 +141,8 @@ fp.close
 fp = open(OUTPUTDIR + 'allele_inheritance_mode.bcp', 'w')
 
 results = db.sql('select _Mode_key, mode, ' + \
-	'cdate = convert(char(10), creation_date, 101), ' + \
-	'mdate = convert(char(10), modification_date, 101) ' + \
+	'cdate = convert(char(20), creation_date, 100), ' + \
+	'mdate = convert(char(20), modification_date, 100) ' + \
 	'from ALL_Inheritance_Mode', 'auto')
 for r in results:
 	fp.write(`r['_Mode_key']` + TAB + \
@@ -184,8 +184,8 @@ cmds.append('select m._Marker_key, m.symbol, m.name into #markers ' + \
 
 cmds.append('select m._Marker_key, m._Species_key, m._Marker_Type_key, s.status, ' + \
 	'm.symbol, m.name, m.chromosome, m.cytogeneticOffset, o.offset, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Marker m, MRK_Status s, MRK_Offset o ' + \
 	'where k._Marker_key = m._Marker_key ' + \
 	'and m._Marker_Status_key = s._Marker_Status_key ' + \
@@ -199,24 +199,24 @@ cmds.append('select m._Marker_key, m._Species_key, m._Marker_Type_key, s.status,
 #
 
 cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Label m ' + \
 	'where k._Marker_key = m._Marker_key ' + \
 	'and m.labelType = "S" ' + \
 	'and k.symbol = m.label ')
 
 cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Label m ' + \
 	'where k._Marker_key = m._Marker_key ' + \
 	'and m.labelType = "N" ' + \
 	'and k.name = m.label')
 
 cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Label m ' + \
 	'where k._Marker_key = m._Marker_key ' + \
 	'and k.symbol != m.label and k.name != m.label ')
@@ -227,8 +227,8 @@ cmds.append('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' 
 #
 
 cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Acc_View m ' + \
 	'where k._Marker_key = m._Object_key ' + \
 	'and m.prefixPart = "MGI:"')
@@ -311,8 +311,8 @@ cmds.append('select m._Allele_key into #alleles ' + \
 
 cmds.append('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._CellLine_key, ' + \
 	'm.status, m.strain, m.symbol, m.name, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele_View m ' + \
 	'where a._Allele_key = m._Allele_key ')
 
@@ -324,20 +324,20 @@ cmds.append('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_ke
 #
 
 cmds.append('select m._Allele_key, m.name, labelType = "N", status = 1, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m ' + \
 	'where a._Allele_key = m._Allele_key ' + \
 	'union ' + \
 	'select m._Allele_key, m.symbol, labelType = "S", status = 1, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m ' + \
 	'where a._Allele_key = m._Allele_key ' + \
 	'union ' + \
 	'select m._Allele_key, s.synonym, labelType = "Y", status = 0, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m, ALL_Synonym s ' + \
 	'where a._Allele_key = m._Allele_key ' + \
 	'and a._Allele_key = s._Allele_key ')
@@ -347,8 +347,8 @@ cmds.append('select m._Allele_key, m.name, labelType = "N", status = 1, ' + \
 #
 
 cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
-	'cdate = convert(char(10), m.creation_date, 101), ' + \
-	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'cdate = convert(char(20), m.creation_date, 100), ' + \
+	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles k, ALL_Acc_View m ' + \
 	'where k._Allele_key = m._Object_key ' + \
 	'and m.prefixPart = "MGI:"')
@@ -395,8 +395,8 @@ fp3.close
 fp = open(OUTPUTDIR + 'strain.bcp', 'w')
 
 cmd = 'select s._Strain_key, m._Species_key, s.strain, s.standard, s.needsReview, s.private, ' + \
-      'cdate = convert(char(10), s.creation_date, 101), ' + \
-      'mdate = convert(char(10), s.modification_date, 101) ' + \
+      'cdate = convert(char(20), s.creation_date, 100), ' + \
+      'mdate = convert(char(20), s.modification_date, 100) ' + \
       'from PRB_Strain s, MLP_Strain m ' + \
       'where s._Strain_key = m._Strain_key '
 
@@ -421,8 +421,8 @@ fp.close
 fp = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
 
 cmd = 'select _Strain_key, _Marker_key, ' + \
-      'cdate = convert(char(10), creation_date, 101), ' + \
-      'mdate = convert(char(10), modification_date, 101) ' + \
+      'cdate = convert(char(20), creation_date, 100), ' + \
+      'mdate = convert(char(20), modification_date, 100) ' + \
       'from PRB_Strain_Marker'
 
 results = db.sql(cmd, 'auto')
@@ -442,8 +442,8 @@ fp.close
 fp = open(OUTPUTDIR + 'strain_synonym.bcp', 'w')
 
 cmd = 'select _Synonym_key, _Strain_key, synonym, ' + \
-      'cdate = convert(char(10), creation_date, 101), ' + \
-      'mdate = convert(char(10), modification_date, 101) ' + \
+      'cdate = convert(char(20), creation_date, 100), ' + \
+      'mdate = convert(char(20), modification_date, 100) ' + \
       'from PRB_Strain_Synonym'
 
 results = db.sql(cmd, 'auto')
@@ -464,8 +464,8 @@ fp.close
 fp = open(OUTPUTDIR + 'strain_type.bcp', 'w')
 
 cmd = 'select _StrainType_key, strainType, ' + \
-      'cdate = convert(char(10), creation_date, 101), ' + \
-      'mdate = convert(char(10), modification_date, 101) ' + \
+      'cdate = convert(char(20), creation_date, 100), ' + \
+      'mdate = convert(char(20), modification_date, 100) ' + \
       'from MLP_StrainType'
 
 results = db.sql(cmd, 'auto')
@@ -485,8 +485,8 @@ fp.close
 fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
 
 cmd = 'select _Strain_key, _StrainType_key, ' + \
-      'cdate = convert(char(10), creation_date, 101), ' + \
-      'mdate = convert(char(10), modification_date, 101) ' + \
+      'cdate = convert(char(20), creation_date, 100), ' + \
+      'mdate = convert(char(20), modification_date, 100) ' + \
       'from MLP_StrainTypes'
 
 results = db.sql(cmd, 'auto')
@@ -506,8 +506,8 @@ fp.close
 fp = open(OUTPUTDIR + 'accession_strain.bcp', 'w')
 
 cmd = 'select distinct accID, LogicalDB, _Object_key, preferred, ' + \
-      'cdate = convert(varchar(10), creation_date, 101), ' + \
-      'mdate = convert(varchar(10), modification_date, 101) ' + \
+      'cdate = convert(varchar(20), creation_date, 100), ' + \
+      'mdate = convert(varchar(20), modification_date, 100) ' + \
       'from PRB_Strain_Acc_View'
 
 results = db.sql(cmd, 'auto')
@@ -529,8 +529,8 @@ fp.close
 fp = open(OUTPUTDIR + 'strain_species.bcp', 'w')
 
 cmd = 'select _Species_key, species, ' + \
-      'cdate = convert(char(10), creation_date, 101), ' + \
-      'mdate = convert(char(10), modification_date, 101) ' + \
+      'cdate = convert(char(20), creation_date, 100), ' + \
+      'mdate = convert(char(20), modification_date, 100) ' + \
       'from MLP_Species'
 
 results = db.sql(cmd, 'auto')
