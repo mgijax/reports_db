@@ -421,7 +421,7 @@ def alleles():
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m, VOC_Term t ' + \
 	'where a._Allele_key = m._Allele_key ' + \
-	'and m._Allele_Status_key = t._Term_key')
+	'and m._Allele_Status_key = t._Term_key', 'auto')
 
     for r in results:
 	    fp.write(`r['_Allele_key']` + TAB + \
