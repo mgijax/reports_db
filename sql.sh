@@ -10,7 +10,7 @@ cd `dirname $0` && source Configuration
 
 setenv DATABASE	$1
 setenv SQL	$2
-setenv OUTPUT	$REPORTOUTPUTDIR/$SQL.rpt
+setenv OUTPUT	$REPORTOUTPUTDIR/`basename $SQL.rpt`
 
 cat > $OUTPUT <<END
 The Jackson Laboratory - Mouse Genome Informatics - Mouse Genome Database (MGD)
