@@ -11,6 +11,8 @@
 #               where the 'GO' association is not IEA
 #               where the reference exludes J:60000 (61933), J:72447 (73199)
 #		where the marker has a human ortholog
+#		where the GO ID is not in (GO:0000004,GO:0008372,GO:0005554)
+#		(these are the "unknown" terms within each DAG)
 #
 #       Report in a tab delimited file with the following columns:
 #
@@ -19,9 +21,9 @@
 #    		Name
 #    		GO ID
 #		GO Term
-#		PMID for GO assertion
-#		SP ID (SP:)
-#		GB ID of Human Marker (if it exists)
+#		PubMed ID for GO assertion (PMID:)
+#		SwissProt ID (SP:)
+#		GenBank ID of Human Marker (if it exists)
 #
 # Usage:
 #       MRK_GOHuman.py
@@ -60,6 +62,12 @@ fp = reportlib.init("MRK_GOHuman.rpt", printHeading = 0, outputdir = os.environ[
 
 cmds = []
 
+#
+# select all mouse genes with annotation where evidence code != IEA (115)
+# and the reference exludes J:60000 (61933), J:72447 (73199)
+# and the GO ID is not in (GO:0000004,GO:0008372,GO:0005554)
+#
+
 cmds.append('select m._Marker_key, m.symbol, m.name, ma.accID, a.term, goID = a.accID, e._Refs_key ' + \
 'into #m1 ' + \
 'from MRK_Marker m, MRK_Acc_View ma, VOC_Annot_View a, VOC_Evidence e ' + \
@@ -78,6 +86,11 @@ cmds.append('select m._Marker_key, m.symbol, m.name, ma.accID, a.term, goID = a.
 
 cmds.append('create nonclustered index idx_marker_key on #m1(_Marker_key)')
 
+#
+# select all records from our initial set (m1)
+# where the mouse gene has a human ortholog
+#
+
 cmds.append('select distinct m.*, humanMarker = m2._Marker_key ' + \
 'into #m2 ' + \
 'from #m1 m, HMD_Homology h1, HMD_Homology_Marker hm1, HMD_Homology h2, HMD_Homology_Marker hm2, MRK_Marker m2 ' + \
@@ -88,19 +101,19 @@ cmds.append('select distinct m.*, humanMarker = m2._Marker_key ' + \
 'and hm2._Marker_key = m2._Marker_key ' + \
 'and m2._Species_key = 2 ')
 
-# pubmedids for references
+# retrieve pubmedids for references
 cmds.append('select distinct a._Object_key, a.accID ' + \
 'from #m2 m, BIB_Acc_View a ' + \
 'where m._Refs_key = a._Object_key ' + \
 'and a._LogicalDB_key = 29')
 
-# sp ids for mouse markers
+# retrieve sp ids for mouse markers
 cmds.append('select distinct a._Object_key, a.accID ' + \
 'from #m2 m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
 'and a._LogicalDB_key = 13')
 
-# genbank ids for human markers
+# retrieve genbank ids for human markers
 cmds.append('select distinct a._Object_key, a.accID ' + \
 'from #m2 m, MRK_Acc_View a ' + \
 'where m.humanMarker = a._Object_key ' + \
@@ -110,10 +123,12 @@ cmds.append('select distinct * from #m2 order by symbol')
 
 results = db.sql(cmds, 'auto')
 
+# store dictionary of pubmedids by reference
 pmid = {}
 for r in results[3]:
 	pmid[r['_Object_key']] = 'PMID:' + r['accID']
 
+# store dictionary of swissprot ids by mouse marker
 spid = {}
 for r in results[4]:
 	if not spid.has_key(r['_Object_key']):
@@ -121,6 +136,7 @@ for r in results[4]:
 
 	spid[r['_Object_key']].append('SP:' + r['accID'])
 
+# store dictionary of genbank ids by human marker
 gbid = {}
 for r in results[5]:
 	if not gbid.has_key(r['_Object_key']):
@@ -128,6 +144,7 @@ for r in results[5]:
 
 	gbid[r['_Object_key']].append(r['accID'])
 
+# process each record in the final set
 for r in results[6]:
 	fp.write(r['accID'] + TAB + \
 		r['symbol'] + TAB + \
