@@ -14,6 +14,9 @@
 #
 # History:
 #
+# lec	04/22/2003
+#	- TR 3702; InterPro annotations are now made via the VOC Annotation tables
+#
 # lec	12/31/2002
 #	- made a regular nightly report
 #
@@ -36,13 +39,15 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # Retrieve MGI Accession number, InterPro accession Id's.
 
 cmd = 'select distinct mgiID = a1.accID, m.symbol, a2.accID ' + \
-      'from MRK_Marker m, MRK_Acc_View a1, MRK_Acc_View a2 ' + \
+      'from MRK_Marker m, MRK_Acc_View a1, VOC_Annot a, VOC_Term_Acc_View a2 ' + \
       'where m._Species_key = 1 ' + \
       'and m._Marker_key = a1._Object_key ' + \
       'and a1._LogicalDB_key = 1 ' + \
       'and a1.prefixPart = "MGI:" ' + \
       'and a1.preferred = 1 ' + \
-      'and m._Marker_key = a2._Object_key ' + \
+      'and m._Marker_key = a._Object_key ' + \
+      'and a._AnnotType_key = 1003 ' + \
+      'and a._Term_key = a2._Object_key ' + \
       'and a2._LogicalDB_key = 28 ' + \
       'order by m.symbol '
 
