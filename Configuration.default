@@ -17,10 +17,10 @@ setenv REPORTOUTPUTDIR		$REPORTINSTALLDIR/output
 setenv FTPURL                   ftp.informatics.jax.org
 
 # FTP report directory
-setenv FTPREPORTDIR		/export/gondor/ftp/pub/reports
+setenv FTPREPORTDIR		/net/gondor/export/gondor/ftp/pub/reports
 
 # MGI Feed FTP report directory
-setenv MGIFEEDFTPDIR		/export/gondor/ftp/private/mgifeed
+setenv MGIFEEDFTPDIR		/net/gondor/export/gondor/ftp/private/mgifeed
 
 # SYBASE
 setenv SYBASE			/opt/sybase/12.5
