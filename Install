@@ -25,6 +25,13 @@ chmod 550 *.sh */*.py */*.sql Install
 chmod 755 daily monthly weekly
 chmod 775 output
 
+cd daily
+set toEdit=`grep -l radar *`
+foreach i ($toEdit)
+sed "s/radar/$RADARDB/" $i > $i.new
+mv -f $i.new $i
+end
+
 # provide a link to the Mammalian Phenotype vocabulary
 cd ${REPORTOUTPUTDIR}
 foreach f (${MPFILES})
