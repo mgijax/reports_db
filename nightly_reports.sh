@@ -22,6 +22,12 @@ $i
 end
 cd ..
 
+cd anatdict
+foreach i (`ls *.py`)
+$i
+end
+cd ..
+
 foreach i (`ls $REPORTOUTPUTDIR`)
 cp $REPORTOUTPUTDIR/$i $FTPREPORTDIR
 end
