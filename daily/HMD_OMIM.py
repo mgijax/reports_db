@@ -61,7 +61,7 @@ fp.write(CRT)
 
 cmd = 'select distinct humanSymbol = m1.symbol, mouseMGI = a.accID, mouseSymbol = m2.symbol, l.mim ' + \
 	'from HMD_Homology r1, HMD_Homology_Marker h1, HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-	'MRK_Marker m1, MRK_Marker m2, ACC_Accession a, ACC_Accession ha, radar..DP_LL l ' + \
+	'MRK_Marker m1, MRK_Marker m2, ACC_Accession a, ACC_Accession ha, radar_2..DP_LL l ' + \
 	'where m1._Organism_key = 2 ' + \
 	'and m1._Marker_key = h1._Marker_key ' + \
 	'and h1._Homology_key = r1._Homology_key ' + \
