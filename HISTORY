@@ -1,3 +1,10 @@
+TAG: reports_db-18-0-4
+DATE: 05/06/2003
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) mgiMarkerFeed.py; added MMRRC strains
+
 TAG: reports_db-18-0-3
 DATE: 04/22/2003
 STAFF: lec
