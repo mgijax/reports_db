@@ -267,7 +267,7 @@ for r in results[1]:
 
 for r in results[2]:
 	fp2.write(`r['_Marker_key']` + TAB + \
-		 r['label'] + TAB + \
+		 strip_newline(r['label']) + TAB + \
 		 r['labelType'] + TAB + \
 		 `r['status']` + TAB + \
 		 r['cdate'] + TAB + \
@@ -275,7 +275,7 @@ for r in results[2]:
 
 for r in results[3]:
 	fp2.write(`r['_Marker_key']` + TAB + \
-		 r['label'] + TAB + \
+		 strip_newline(r['label']) + TAB + \
 		 r['labelType'] + TAB + \
 		 `r['status']` + TAB + \
 		 r['cdate'] + TAB + \
@@ -283,7 +283,7 @@ for r in results[3]:
 
 for r in results[4]:
 	fp2.write(`r['_Marker_key']` + TAB + \
-		 r['label'] + TAB + \
+		 strip_newline(r['label']) + TAB + \
 		 r['labelType'] + TAB + \
 		 `r['status']` + TAB + \
 		 r['cdate'] + TAB + \
