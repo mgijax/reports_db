@@ -278,6 +278,7 @@ cmds.append('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_ke
 
 #
 # select data fields for allele_label.bcp
+# this includes all allele symbols, names and synonyms
 #
 
 cmds.append('select m._Allele_key, m.name, labelType = "N", m.status, ' + \
@@ -290,7 +291,14 @@ cmds.append('select m._Allele_key, m.name, labelType = "N", m.status, ' + \
 	'cdate = convert(char(10), m.creation_date, 101), ' + \
 	'mdate = convert(char(10), m.modification_date, 101) ' + \
 	'from #alleles a, ALL_Allele_View m ' + \
-	'where a._Allele_key = m._Allele_key ')
+	'where a._Allele_key = m._Allele_key ' + \
+	'union ' + \
+	'select m._Allele_key, s.synonym, labelType = "Y", m.status, ' + \
+	'cdate = convert(char(10), m.creation_date, 101), ' + \
+	'mdate = convert(char(10), m.modification_date, 101) ' + \
+	'from #alleles a, ALL_Allele_View m, ALL_Synonym s ' + \
+	'where a._Allele_key = m._Allele_key ' + \
+	'and a._Allele_key = s._Allele_key ')
 
 #
 # select data fields for accession_allele.bcp
