@@ -38,20 +38,18 @@ CRT = reportlib.CRT
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-cmds = []
-
-cmds.append('select a.accID, a._Object_key ' + \
+db.sql('select a.accID, a._Object_key ' + \
 	'into #refs ' + \
 	'from ACC_Accession a ' + \
 	'where a._MGIType_key = 1 ' + \
 	'and a._LogicalDB_key = 1 ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a._LogicalDB_key = 1 ' + \
-	'and a.preferred = 1')
+	'and a.preferred = 1', None)
 
-cmds.append('create unique index index_object_key on #refs(_Object_key)')
+db.sql('create unique index index_object_key on #refs(_Object_key)', None)
 
-cmds.append('select r.accID, pubMedID = b.accID, jnum = a.accID ' + \
+results = db.sql('select r.accID, pubMedID = b.accID, jnum = a.accID ' + \
 	'from #refs r, ACC_Accession b, ACC_Accession a ' + \
 	'where r._Object_key = b._Object_key ' + \
 	'and b._MGIType_key = 1 ' + \
@@ -60,11 +58,9 @@ cmds.append('select r.accID, pubMedID = b.accID, jnum = a.accID ' + \
 	'and a._MGIType_key = 1 ' + \
 	'and a._LogicalDB_key = 1 ' + \
 	'and a.prefixPart = "J:" ' + \
-	'and a.preferred = 1')
+	'and a.preferred = 1', 'auto')
 
-results = db.sql(cmds, 'auto')
-
-for r in results[-1]:
+for r in results:
 
 	fp.write(r['accID'] + TAB)
 	fp.write(r['pubMedID'] + TAB)

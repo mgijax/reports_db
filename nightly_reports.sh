@@ -10,13 +10,17 @@
 
 cd `dirname $0` && source ./Configuration
 
+setenv LOG	${REPORTLOGSDIR}/$0.log
+rm -rf ${LOG}
+touch ${LOG}
+
 umask 002
 
-foreach i (daily/*.sql)
-echo $i, `date`
-reportisql.csh $i ${REPORTOUTPUTDIR}/`basename $i`.rpt ${DSQUERY} ${MGD}
-echo $i, `date`
-end
+#foreach i (daily/*.sql)
+#echo $i, `date`
+#reportisql.csh $i ${REPORTOUTPUTDIR}/`basename $i`.rpt ${DSQUERY} ${MGD} >> ${LOG}
+#echo $i, `date`
+#end
 
 cd daily
 
@@ -25,16 +29,17 @@ cd daily
 foreach i (*.py)
 if ( $i != "mgiMarkerFeed.py" && $i != "MGI_CloneSet.py" ) then
 echo $i, `date`
-$i
+$i >>& ${LOG}
 echo $i, `date`
 endif
 end
+exit 0
 
 # clone reports
 
 foreach i ("Image", "NIA 15K,NIA 7.4K,NIA", "RIKEN (FANTOM),RIKEN", "RPCI-23", "RPCI-24")
 echo $i, `date`
-./MGI_CloneSet.py "$i"
+./MGI_CloneSet.py "$i" >> ${LOG}
 echo $i, `date`
 end
 
@@ -42,7 +47,7 @@ cd ..
 
 cd anatdict
 foreach i (*.py)
-$i
+$i >> ${LOG}
 end
 cd ..
 

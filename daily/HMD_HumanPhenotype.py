@@ -83,8 +83,6 @@ def createDict(results, keyField, valueField):
 #      #
 ########
 
-db.useOneConnection(1)
-
 #################################################################
 # Get mouse to human orthologous marker pair's symbols and keys #
 # and the Phenoslim IDs associated to the mouse markers and     #
@@ -207,4 +205,3 @@ for r in results:
 #########################
 reportlib.finish_nonps(fp)
 
-db.useOneConnection(0)

@@ -684,7 +684,6 @@ def processSort4(results):
 # Main
 #
 
-db.useOneConnection(1)
 sortOption = None
 
 if len(sys.argv) > 1:
@@ -706,4 +705,3 @@ else:
 	processSort3(r3)
 	processSort4(r4)
 
-db.useOneConnection(0)
