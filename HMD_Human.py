@@ -119,7 +119,7 @@ def processSort1():
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse Band', 10))
+	fp.write(string.ljust('Mouse Name', 10))
 	fp.write(SPACE)
 	fp.write(CRT)
 
@@ -149,7 +149,7 @@ def processSort1():
         		'when o.offset = -1.0 then "  syntenic" ' + \
         		'end' + \
                       ', mouseSymbol = m2.symbol, ' + \
-                      'mouseBand = m2.cytogeneticOffset ' + \
+                      'mouseName = substring(m2.name, 1, 75) ' + \
 		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
 		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
 		'MRK_Marker m1, MRK_Marker m2, MRK_Offset o, MRK_Chromosome c ' + \
@@ -209,7 +209,7 @@ def processSort1():
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['mouseBand']), 10))
+		fp.write(string.ljust(r['mouseName'], 10))
 		fp.write(SPACE)
 		fp.write(CRT)
 
