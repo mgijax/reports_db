@@ -10,7 +10,7 @@
 #	1. mouse gene symbol
 #	2. mgi acc id
 #	3. gene symbol for human ortholog
-#	4. locuslink acc id for human gene
+#	4. genelink acc id for human gene
 #	5. refseq acc id for mouse gene
 #	6. refseq acc id for human gene
 #	7. sp acc id for mouse gene
@@ -57,9 +57,8 @@ PAGE = reportlib.PAGE
 db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
 
-cmds = []
 
-cmds.append('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' +
+db.sql('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' +
 	'humanKey = h2._Marker_key, humanSym = m2.symbol, a.abbrev ' + \
 	'into #homology ' +
         'from HMD_Homology r1, HMD_Homology_Marker h1, HMD_Homology_Assay ha, HMD_Assay a, ' + \
@@ -73,12 +72,10 @@ cmds.append('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' 
         'and h2._Marker_key = m2._Marker_key ' + \
         'and m2._Organism_key = 2 ' + \
 	'and h1._Homology_key = ha._Homology_key ' + \
-	'and ha._Assay_key = a._Assay_key')
-
-cmds.append('create nonclustered index index_mouseKey on #homology(mouseKey)')
-cmds.append('create nonclustered index index_humanKey on #homology(humanKey)')
-cmds.append('create nonclustered index index_humanSym on #homology(humanSym)')
-
+	'and ha._Assay_key = a._Assay_key', None)
+db.sql('create nonclustered index index_mouseKey on #homology(mouseKey)', None)
+db.sql('create nonclustered index index_humanKey on #homology(humanKey)', None)
+db.sql('create nonclustered index index_humanSym on #homology(humanSym)', None)
 db.sql(cmds, None)
 
 ##
@@ -127,12 +124,12 @@ for r in results:
 	mrefseqID[r['_Object_key']] = r['accID']
 
 # RefSeq for Human
-results = db.sql('select distinct _Object_key = h.humanKey, accID = r.refseqID ' + \
-	'from #homology h, ACC_Accession a, radar..DP_LLRef r ' + \
+results = db.sql('select distinct _Object_key = h.humanKey, accID = r.rna ' + \
+	'from #homology h, ACC_Accession a, radar..DP_EntrezGene_RefSeq r ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 24 ' + \
-	'and a.accID = r.locusID ', 'auto')
+	'and a.accID = r.geneID ', 'auto')
 hrefseqID = {}
 for r in results:
 	hrefseqID[r['_Object_key']] = r['accID']
@@ -150,11 +147,11 @@ for r in results:
 	mspID[r['_Object_key']].append(r['accID'])
 
 # SWISSPROT for Human
-results = db.sql('select distinct _Object_key = h.humanKey, accID = r.proteinID ' + \
-	'from #homology h, radar..DP_LL l, radar..DP_LLRef r ' + \
-	'where h.humanSym = l.osymbol ' + \
-	'and l.taxID = 9606 ' + \
-	'and l.locusID = r.locusID', 'auto')
+results = db.sql('select distinct _Object_key = h.humanKey, accID = r.protein ' + \
+	'from #homology h, radar..DP_EntrezGene_Info e, radar..DP_EntrezGene_RefSeq r ' + \
+	'where h.humanSym = e.symbol ' + \
+	'and e.taxID = 9606 ' + \
+	'and e.geneID = r.geneID', 'auto')
 hspID = {}
 for r in results:
 	if r['accID'] != None:
