@@ -62,7 +62,8 @@ offset_special = {
         'cen'   :      0.0,     # centromere
         'q'     :      1.0,     # q arm
         'qter'  :  10000.0,     # q terminus
-        'None'  :  12000.0      # no defined offset - go to bottom (syntenic)
+        'None'  :  12000.0,     # no defined offset - go to bottom (syntenic)
+        'pter-qter'  :  12000.0 # equivalent to syntenic - go to bottom
         }
 
 def getSortableOffset (cytogeneticOffset):
@@ -84,9 +85,14 @@ def getSortableOffset (cytogeneticOffset):
         #               6. q<number>    (number in ascending order)
         #               7. qter         (q terminus)
 
-        cyto = string.split(str(cytogeneticOffset), '-' )[0]
+	cyto_str = str(cytogeneticOffset)
 
-        if offset_special.has_key (cyto):
+	if offset_special.has_key (cyto_str):   # try to match whole offset
+		return offset_special [cyto_str]
+
+	cyto = string.split (cyto_str, '-' )[0]
+
+	if offset_special.has_key (cyto):       # just match first band
                 return offset_special [cyto]
 
         if offset_cre.match (cyto) != -1:
