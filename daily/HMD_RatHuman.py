@@ -203,10 +203,15 @@ def processSort1():
 	for key in keys:
 		r = rows[key]
 
-		if r['ratChr'] = 'mitochonmitochondrion':
+		if r['ratChr'] == 'mitochonmitochondrion':
 		  ratChr = 'mitochondrion'
 		else:
 		  ratChr = r['ratChr']
+
+		if r['humanChr'] == 'mitochonmitochondrion':
+		  humanChr = 'mitochondrion'
+		else:
+		  humanChr = r['humanChr']
 
 		fp.write(string.ljust(ratChr, 20))
 		fp.write(SPACE)
@@ -214,7 +219,7 @@ def processSort1():
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 20))
+		fp.write(string.ljust(humanChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
@@ -324,12 +329,17 @@ def processSort2():
 	for key in keys:
 		r = rows[key]
 
-		if r['ratChr'] = 'mitochonmitochondrion':
+		if r['ratChr'] == 'mitochonmitochondrion':
 		  ratChr = 'mitochondrion'
 		else:
 		  ratChr = r['ratChr']
 
-		fp.write(string.ljust(r['humanChr'], 20))
+		if r['humanChr'] == 'mitochonmitochondrion':
+		  humanChr = 'mitochondrion'
+		else:
+		  humanChr = r['humanChr']
+
+		fp.write(string.ljust(humanChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
@@ -409,10 +419,15 @@ def processSort3():
 
 	for r in results:
 
-		if r['ratChr'] = 'mitochonmitochondrion':
+		if r['ratChr'] == 'mitochonmitochondrion':
 		  ratChr = 'mitochondrion'
 		else:
 		  ratChr = r['ratChr']
+
+		if r['humanChr'] == 'mitochonmitochondrion':
+		  humanChr = 'mitochondrion'
+		else:
+		  humanChr = r['humanChr']
 
 		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
 		fp.write(SPACE)
@@ -424,7 +439,7 @@ def processSort3():
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 20))
+		fp.write(string.ljust(humanChr, 20))
 		fp.write(CRT)
 		count = count + 1
 
@@ -497,16 +512,21 @@ def processSort4():
 
 	for r in results:
 
-		if r['ratChr'] = 'mitochonmitochondrion':
+		if r['ratChr'] == 'mitochonmitochondrion':
 		  ratChr = 'mitochondrion'
 		else:
 		  ratChr = r['ratChr']
+
+		if r['humanChr'] == 'mitochonmitochondrion':
+		  humanChr = 'mitochondrion'
+		else:
+		  humanChr = r['humanChr']
 
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 20))
+		fp.write(string.ljust(humanChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
 		fp.write(SPACE)

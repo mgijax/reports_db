@@ -238,7 +238,13 @@ def processSort1():
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(string.ljust(r['humanChr'], 20))
+
+		if r['humanChr'] == 'mitochonmitochondrion':
+		  humanChr = 'mitochondrion'
+		else:
+		  humanChr = r['humanChr']
+
+		fp.write(string.ljust(humanChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
@@ -355,6 +361,12 @@ def processSort2():
 	count = 0
 
 	for r in results:
+
+		if r['humanChr'] == 'mitochonmitochondrion':
+		  humanChr = 'mitochondrion'
+		else:
+		  humanChr = r['humanChr']
+
 		fp.write(string.ljust(r['mouseMGI'], 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseChr'], 10))
@@ -365,7 +377,7 @@ def processSort2():
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 20))
+		fp.write(string.ljust(humanChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
@@ -471,11 +483,17 @@ def processSort3():
 	count = 0
 
 	for r in results:
+
+		if r['humanChr'] == 'mitochonmitochondrion':
+		  humanChr = 'mitochondrion'
+		else:
+		  humanChr = r['humanChr']
+
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 20))
+		fp.write(string.ljust(humanChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseMGI'], 30))
 		fp.write(SPACE)
@@ -587,6 +605,12 @@ def processSort4():
 	count = 0
 
 	for r in results:
+
+		if r['humanChr'] == 'mitochonmitochondrion':
+		  humanChr = 'mitochondrion'
+		else:
+		  humanChr = r['humanChr']
+
 		fp.write(string.ljust(r['mouseMGI'], 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
@@ -603,7 +627,7 @@ def processSort4():
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 20))
+		fp.write(string.ljust(humanChr, 20))
 		fp.write(SPACE)
 		fp.write(CRT)
 		count = count + 1
