@@ -1,3 +1,11 @@
+TAG: reports_db-18-0-10
+DATE: 10/23/2003
+STAFF: lec
+RELEASE: A
+CHANGES:
+a) fixed GO_gene_association.py
+b) TR 4708 - MRK_List1.sql, MRK_List2.sql, MRK_List3.sql, MRK_List4.sql, MRK_Sequence.py, MRK_SwissProt.py
+
 TAG: reports_db-18-0-9
 DATE: 10/10/2003
 STAFF: lec
