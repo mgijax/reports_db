@@ -2,17 +2,11 @@ print ""
 print "Genetic Marker List (sorted by chromosome/includes withdrawns)"
 print ""
 
-select chromosome "Chr", symbol "Symbol", substring(name, 1, 40) "Name"
-from MRK_Marker
-where _Species_key = 1
-and chromosome like '[0-9]'
-order by chromosome, symbol
-go
-
-select chromosome "Chr", symbol "Symbol", substring(name, 1, 40) "Name"
-from MRK_Marker
-where _Species_key = 1
-and chromosome not like '[0-9]'
-order by chromosome, symbol
+select m.chromosome "Chr", m.symbol "Symbol", substring(m.name, 1, 40) "Name"
+from MRK_Marker m, MRK_Chromosome c
+where m._Species_key = 1
+and m._Species_key = c._Species_key
+and m.chromosome = c.chromosome
+order by c.sequenceNum, m.symbol
 go
 
