@@ -11,7 +11,7 @@
 # 6. run Install
 #
 
-source Configuration
+source ./Configuration
 
 sed "s/ftp.informatics.jax.org/$FTPURL/" index.html > index.html.new
 mv -f index.html.new index.html
@@ -19,11 +19,6 @@ mv -f index.html.new index.html
 foreach i (index.html)
 	rcp -r $i $FTPREPORTDIR
 end
-
-chmod 444 Configuration* HISTORY *.html
-chmod 550 *.sh */*.py */*.sql Install
-chmod 755 daily monthly weekly
-chmod 775 output
 
 cd daily
 set toEdit=`grep -l radar *`
@@ -38,3 +33,10 @@ foreach f (${MPFILES})
 rm -rf $f
 ln -s ${MPVOCSOURCE}/$f .
 end
+
+cd ${REPORTINSTALLDIR}
+chmod 444 Configuration* HISTORY *.html
+chmod 550 *.sh */*.py */*.sql Install
+chmod 755 daily monthly weekly
+chmod 775 output
+
