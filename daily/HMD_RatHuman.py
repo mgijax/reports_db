@@ -202,7 +202,13 @@ def processSort1():
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(string.ljust(r['ratChr'], 20))
+
+		if r['ratChr'] = 'mitochonmitochondrion':
+		  ratChr = 'mitochondrion'
+		else:
+		  ratChr = r['ratChr']
+
+		fp.write(string.ljust(ratChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
 		fp.write(SPACE)
@@ -317,13 +323,19 @@ def processSort2():
 	keys.sort()
 	for key in keys:
 		r = rows[key]
+
+		if r['ratChr'] = 'mitochonmitochondrion':
+		  ratChr = 'mitochondrion'
+		else:
+		  ratChr = r['ratChr']
+
 		fp.write(string.ljust(r['humanChr'], 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 20))
+		fp.write(string.ljust(ratChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
 		fp.write(SPACE)
@@ -396,11 +408,17 @@ def processSort3():
 	count = 0
 
 	for r in results:
+
+		if r['ratChr'] = 'mitochonmitochondrion':
+		  ratChr = 'mitochondrion'
+		else:
+		  ratChr = r['ratChr']
+
 		fp.write(string.ljust(mgi_utils.prvalue(r['ratLL']), 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 20))
+		fp.write(string.ljust(ratChr, 20))
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
@@ -478,6 +496,12 @@ def processSort4():
 	count = 0
 
 	for r in results:
+
+		if r['ratChr'] = 'mitochonmitochondrion':
+		  ratChr = 'mitochondrion'
+		else:
+		  ratChr = r['ratChr']
+
 		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
@@ -488,7 +512,7 @@ def processSort4():
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 20))
+		fp.write(string.ljust(ratChr, 20))
 		fp.write(CRT)
 		count = count + 1
 
