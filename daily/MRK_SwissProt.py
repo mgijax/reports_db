@@ -45,7 +45,7 @@ cmd = 'select m.mgiID, m.symbol, m.name, m.chromosome, m.offset, a.accID ' + \
       'from MRK_Mouse_View m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 9 ' + \
+      'and a._LogicalDB_key = 13 ' + \
       'order by m.symbol, m.mgiID'
 
 results = db.sql(cmd, 'auto')
