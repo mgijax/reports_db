@@ -64,7 +64,7 @@ cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
 'into #m1 ' + \
 'from MRK_Mouse_View m, MRK_History h, MRK_Chromosome c ' + \
 'where m.creation_date between dateadd(day, -7, "%s") ' % (currentDate) + \
-'and "%s" ' % (currentDate) + \
+'and dateadd(day, 1, "%s") ' % (currentDate) + \
 'and m._Marker_key = h._Marker_key ' + \
 'and m._Marker_key = h._History_key ' + \
 'and h._Marker_Event_key = 1 ' + \
@@ -74,7 +74,7 @@ cmd.append('select m._Marker_key, m.mgiID, c.sequenceNum, h._Refs_key ' + \
 'select h._History_key, m.mgiID, sequenceNum = 100, h._Refs_key ' + \
 'from MRK_History h, MRK_Mouse_View m ' + \
 'where h.event_date between dateadd(day, -7, "%s") ' % (currentDate) + \
-'and "%s" ' % (currentDate) + \
+'and dateadd(day, 1, "%s") ' % (currentDate) + \
 'and h._Marker_key = m._Marker_key ' + \
 'and h._Marker_Event_key in (2,3,4,5)'
 )
