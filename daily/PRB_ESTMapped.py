@@ -53,8 +53,9 @@ cmds.append('select p._Probe_key, m._Marker_key, m.symbol, m.name, m.chromosome,
 
 cmds.append('select m.*, mgiID = a.accID ' + \
       'into #acc ' + \
-      'from #marker m, PRB_Acc_View a ' + \
+      'from #marker m, ACC_Accession a ' + \
       'where m._Probe_key = a._Object_key ' + \
+      'and a._MGIType_key = 3 ' + \
       'and a.prefixPart = "MGI:"' + \
       'and a._LogicalDB_key = 1 ' + \
       'and a.preferred = 1')
@@ -62,8 +63,9 @@ cmds.append('select m.*, mgiID = a.accID ' + \
 # Select GenBank ID for ESTs
 
 cmds.append('select m.*, genbankID = a.accID ' + \
-      'from #acc m, PRB_Acc_View a ' + \
+      'from #acc m, ACC_Accession a ' + \
       'where m._Probe_key = a._Object_key ' + \
+      'and a._MGIType_key = 3 ' + \
       'and a._LogicalDB_key = 9 ' + \
       'order by symbol')
 
