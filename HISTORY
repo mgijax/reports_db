@@ -1,3 +1,10 @@
+TAG: reports_db-3-1-1-10
+DATE: 03/18/2005
+STAFF: lec
+RELEASE: A
+CHANGES: TR 6670, 6671
+
+1) TR 6573/MGI_Coordinate.py
 TAG: reports_db-mpr-BP
 DATE: 03/16/2005
 STAFF: lec
