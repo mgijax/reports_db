@@ -24,6 +24,7 @@ cd ..
 
 mv -f $REPORTOUTPUTDIR/gene_association.rpt $REPORTOUTPUTDIR/gene_association.mgi
 mv -f $REPORTOUTPUTDIR/go_terms.rpt $REPORTOUTPUTDIR/go_terms.mgi
+mv -f $REPORTOUTPUTDIR/go_refs.rpt $REPORTOUTPUTDIR/go_refs.mgi
 
 foreach i (`ls $REPORTOUTPUTDIR`)
 cp $REPORTOUTPUTDIR/$i $FTPREPORTDIR
