@@ -21,5 +21,6 @@ end
 
 chmod 444 Configuration* HISTORY DEPENDENCIES *.html
 chmod 550 *.sh */*.py */*.sql Install
-chmod 755 daily monthly weekly output
+chmod 755 daily monthly weekly
+chmod 775 output
 
