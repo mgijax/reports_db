@@ -11,7 +11,7 @@
 setenv REPORTINSTALLDIR		/usr/local/mgi/reports_db
 
 # report output directory
-setenv REPORTOUTPUTDIR		/usr/local/mgi/reports_db/output
+setenv REPORTOUTPUTDIR		$REPORTINSTALLDIR/output
 
 # FTP report directory
 setenv FTPREPORTDIR		/net/l1/export/l1/ftp/pub/informatics/reports
