@@ -96,6 +96,7 @@ cmd.append('select distinct m._Marker_key, a.accID ' + \
 'from #markers m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
 'and a.prefixPart = "MGI:" ' + \
+'and a._LogicalDB_key = 1 ' + \
 'and a.preferred = 1')
 
 # other MGI ids (3)
@@ -103,6 +104,7 @@ cmd.append('select distinct m._Marker_key, a.accID ' + \
 'from #markers m, MRK_Acc_View a ' + \
 'where m._Marker_key = a._Object_key ' + \
 'and a.prefixPart = "MGI:" ' + \
+'and a._LogicalDB_key = 1 ' + \
 'and a.preferred = 0')
 
 # get sequence ids (4)
@@ -116,6 +118,7 @@ cmd.append('select distinct m._Marker_key, n.humanSymbol ' + \
 'from #markers m, MRK_Acc_View ma, %s..ACC_Accession a, %s..MRK_Nomen n ' % (nomenDB, nomenDB) + \
 'where m._Marker_key = ma._Object_key ' + \
 'and ma.prefixPart = "MGI:" ' + \
+'and ma._LogicalDB_key = 1 ' + \
 'and ma.preferred = 1 ' + \
 'and ma.accID = a.accID ' + \
 'and a._Object_key = n._Nomen_key ' + \

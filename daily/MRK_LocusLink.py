@@ -57,6 +57,7 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'and o.source = 0 ' + \
   'and m._Marker_key = a._Object_key ' + \
   'and a.prefixPart = "MGI:" ' + \
+  'and a._LogicalDB_key = 1 ' + \
   'and a.preferred = 1 ' + \
   'and m._Marker_Type_key = t._Marker_Type_key ' + \
   'union '  + \
@@ -70,6 +71,7 @@ cmds.append('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_ke
   'and m._Marker_key = c._Marker_key ' + \
   'and c._Current_key = a._Object_key ' + \
   'and a.prefixPart = "MGI:" ' + \
+  'and a._LogicalDB_key = 1 ' + \
   'and a.preferred = 1 ' + \
   'and m._Marker_Type_key = t._Marker_Type_key')
 
@@ -88,6 +90,7 @@ cmds.append('select m._Marker_key, a.accID ' + \
 	'where m.isPrimary = 1 ' + \
 	'and m._Marker_key = a._Object_key ' + \
 	'and a.prefixPart = "MGI:" ' + \
+        'and a._LogicalDB_key = 1 ' + \
 	'and a.preferred = 0')
 
 # Get Synonyms for Primary Marker

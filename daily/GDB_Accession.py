@@ -61,10 +61,10 @@ cmds.append('select distinct gdbSymbol = m1.symbol, gdbKey = m1._Marker_key, ' +
             'and m2._Species_key = 1')
 
 cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
-	    'where h.gdbKey = a._Object_key and a.prefixPart = "GDB:" and a.preferred = 1')
+	    'where h.gdbKey = a._Object_key and a.prefixPart = "GDB:" and a._LogicalDB_key = 2 and a.preferred = 1')
 
 cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
-	    'where h.mgiKey = a._Object_key and a.prefixPart = "MGI:" and a.preferred = 1')
+	    'where h.mgiKey = a._Object_key and a.prefixPart = "MGI:" and a._LogicalDB_key = 1 and a.preferred = 1')
 
 cmds.append('select a.accID, a._Object_key from MRK_Acc_View a, #homology h ' + 
 	    'where h.gdbKey = a._Object_key and a._LogicalDB_key = 24')

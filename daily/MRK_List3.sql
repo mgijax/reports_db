@@ -10,6 +10,7 @@ and m._Species_key = c._Species_key
 and m.chromosome = c.chromosome
 and m._Marker_key = a._Object_key
 and a.prefixPart = "MGI:"
+and a._LogicalDB_key = 1
 and a.preferred = 1
 and m._Marker_key = o._Marker_key
 and o.source = 0

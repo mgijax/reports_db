@@ -56,6 +56,7 @@ cmds.append('select m.*, mgiID = a.accID ' + \
       'from #marker m, PRB_Acc_View a ' + \
       'where m._Probe_key = a._Object_key ' + \
       'and a.prefixPart = "MGI:"' + \
+      'and a._LogicalDB_key = 1 ' + \
       'and a.preferred = 1')
 
 # Select GenBank ID for ESTs

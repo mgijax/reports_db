@@ -44,7 +44,8 @@ cmds.append('select a.accID, a._Object_key ' + \
 	'into #refs ' + \
 	'from BIB_Acc_View a ' + \
 	'where a._LogicalDB_key = 1 ' + \
-	'and a.prefixPart = "MGI:" ')
+	'and a.prefixPart = "MGI:" ' + \
+	'and a._LogicalDB_key = 1')
 
 cmds.append('create unique index index_object_key on #refs(_Object_key)')
 

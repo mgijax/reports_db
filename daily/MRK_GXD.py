@@ -46,6 +46,7 @@ cmd = 'select distinct a.accID, m.symbol ' + \
 	'where m._Marker_key = g._Marker_key ' + \
 	'and m._Marker_key = a._Object_key ' + \
 	'and a.prefixPart = "MGI:" ' + \
+	'and a._LogicalDB_key = 1 ' + \
 	'and a.preferred = 1'
 
 results = db.sql(cmd, 'auto')

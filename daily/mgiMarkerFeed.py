@@ -191,6 +191,7 @@ cmds.append('select m._Marker_key, m.symbol, m.name into #markers ' + \
 	'where m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
+	'and a._LogicalDB_key = 1 ' + \
 	'and a.preferred = 1) ')
 
 #
@@ -246,7 +247,8 @@ cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #markers k, MRK_Acc_View m ' + \
 	'where k._Marker_key = m._Object_key ' + \
-	'and m.prefixPart = "MGI:"')
+	'and m.prefixPart = "MGI:" ' + \
+	'and m._LogicalDB_key = 1')
 
 results = db.sql(cmds, 'auto', execute = 1)
 
@@ -366,7 +368,8 @@ cmds.append('select m.accID, m.LogicalDB, m._Object_key, m.preferred, ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles k, ALL_Acc_View m ' + \
 	'where k._Allele_key = m._Object_key ' + \
-	'and m.prefixPart = "MGI:"')
+	'and m.prefixPart = "MGI:" ' + \
+	'and m._LogicalDB_key = 1')
 
 results = db.sql(cmds, 'auto', execute = 1)
 

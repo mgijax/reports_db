@@ -70,6 +70,7 @@ cmds.append('select distinct p._Probe_key, p.name, a.accID ' + \
 'from #probes p, PRB_Acc_View pa ' + \
 'where p._Probe_key = pa._Object_key ' + \
 'and pa.prefixPart = "MGI:" ' + \
+'and pa._LogicalDB_key = 1 ' + \
 'and not exists (select 1 from PRB_Acc_View a ' + \
 'where p._Probe_key = a._Object_key  ' + \
 'and a._LogicalDB_key = 9) ' + \
@@ -85,6 +86,7 @@ cmds.append('select n.*, markerID = ma.accID ' + \
 'and m.relationship = "H" ' + \
 'and m._Marker_key = ma._Object_key ' + \
 'and ma.prefixPart = "MGI:" ' + \
+'and ma._LogicalDB_key = 1 ' + \
 'and ma.preferred = 1 ' + \
 'order by n.accID')
 

@@ -91,11 +91,13 @@ cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'and a._Object_key = m._Marker_key ' + \
 	'and m._Marker_key = ma._Object_key ' + \
 	'and ma.prefixPart = "MGI:" ' + \
+	'and ma._LogicalDB_key = 1 ' + \
 	'and ma.preferred = 1 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and e._EvidenceTerm_key = t._Term_key ' + \
 	'and e._Refs_key = b._Object_key ' + \
-	'and b.prefixPart = "MGI:"')
+	'and b.prefixPart = "MGI:" ' + \
+	'and b._LogicalDB_key = 1')
 
 cmds.append('select distinct m._Marker_key, o.name ' + \
 	'from #gomarker m, MRK_Other o ' + \

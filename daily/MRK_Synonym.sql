@@ -13,6 +13,7 @@ from MRK_Marker m, MRK_Acc_View a, MRK_Other s, MRK_Offset o
 where m._Species_key = 1 
 and m._Marker_key = a._Object_key 
 and a.prefixPart = "MGI:" 
+and a._LogicalDB_key = 1
 and a.preferred = 1 
 and m._Marker_key = o._Marker_key 
 and o.source = 0 

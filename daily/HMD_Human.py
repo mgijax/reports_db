@@ -179,6 +179,7 @@ def processSort1():
 		'and m2._Marker_key = a._Object_key ' + \
 		'and a._MGIType_key = 2 ' + \
 		'and a.prefixPart = "MGI:" ' + \
+		'and a._LogicalDB_key = 1 ' + \
 		'and a.preferred = 1 ' + \
 		'and m1._Species_key = c._Species_key ' + \
 		'and m1.chromosome = c.chromosome '
@@ -303,6 +304,7 @@ def processSort2():
 	      'and m2._Marker_key = a._Object_key ' + \
 	      'and a._MGIType_key = 2 ' + \
 	      'and a.prefixPart = "MGI:" ' + \
+	      'and a._LogicalDB_key = 1 ' + \
 	      'and a.preferred = 1 ' + \
               'and m2._Species_key = c._Species_key ' + \
               'and m2.chromosome = c.chromosome ' + \
@@ -399,6 +401,7 @@ def processSort3():
 	      'and m2._Marker_key = a._Object_key ' + \
 	      'and a._MGIType_key = 2 ' + \
 	      'and a.prefixPart = "MGI:" ' + \
+	      'and a._LogicalDB_key = 1 ' + \
 	      'and a.preferred = 1 ' + \
               'order by m1.symbol, m1.chromosome, m1.cytogeneticOffset'
 
@@ -493,6 +496,7 @@ def processSort4():
 	      'and m2._Marker_key = a._Object_key ' + \
 	      'and a._MGIType_key = 2 ' + \
 	      'and a.prefixPart = "MGI:" ' + \
+	      'and a._LogicalDB_key = 1 ' + \
 	      'and a.preferred = 1 ' + \
               'order by m2.symbol, m2.chromosome, m2.cytogeneticOffset'
 

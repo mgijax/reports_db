@@ -45,7 +45,8 @@ cmds.append('select distinct e._Refs_key, b.accID ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and e._Refs_key = b._Object_key ' + \
-	'and b.prefixPart = "MGI:"')
+	'and b.prefixPart = "MGI:" ' + \
+	'and b._LogicalDB_key = 1')
 
 cmds.append('select g.*, pubMedID = b.accID ' + \
 	'from #gorefs g, BIB_Acc_View b ' + \
