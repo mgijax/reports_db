@@ -1,3 +1,10 @@
+TAG: reports_db-3-1-0
+DATE: 07/12/2000
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) fixed MRK_SwissProt.py - logicaldb key should be 13
+
 TAG: reports_db-3-0-5
 DATE: 07/07/2000
 STAFF: lec
