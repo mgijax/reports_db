@@ -41,7 +41,7 @@ cmds = []
 cmds.append('select s._Strain_key, s.strain ' + \
 	'into #strains ' + \
 	'from PRB_Strain s, VOC_Annot a ' + \
-	'where a._AnnotType_key = 1003 ' + \
+	'where a._AnnotType_key = 1004 ' + \
 	'and a._Object_key = s._Strain_key')
 
 # Retrieve MGI Accession number
