@@ -47,14 +47,11 @@ if os.path.isfile('%s/%s' % (os.environ['FTPREPORTDIR'], currentReport)):
 # move existing Nomen reports to the archive
 os.system('mv %s/Nomenclature-*.html %s/archive/nomen' % (os.environ['FTPREPORTDIR'], os.environ['FTPREPORTDIR']))
 
-if sys.argv[1]:
+if len(sys.argv) > 1:
 	reportName = 'Nomenclature-' + sys.argv[1]
-else:
-	reportName = 'Nomenclature-' + mgi_utils.date('%Y-%m-%d')
-
-if sys.argv[2]:
 	currentDate = sys.argv[2]
 else:
+	reportName = 'Nomenclature-' + mgi_utils.date('%Y-%m-%d')
 	currentDate = mgi_utils.date('%m/%d/%Y')
 
 results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
