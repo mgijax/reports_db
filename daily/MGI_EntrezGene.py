@@ -115,17 +115,14 @@ for r in results:
 	otherAccId[r['_Marker_key']].append(r['accID'])
 
 # Get Synonyms for Primary Marker
-results = db.sql('select m._Marker_key, s.synonym ' + \
-	'from #markers m, MGI_Synonym s, MGI_SynonymType st ' + \
+results = db.sql('select m._Marker_key, s.name ' + \
+	'from #markers m, MRK_Other s ' + \
 	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key = s._Object_key ' + \
-	'and s._MGIType_key = 2 ' + \
-	'and s._SynonymType_key = st._SynonymType_key ' + \
-	'and st.synonymType = "exact"', 'auto')
+	'and m._Marker_key = s._Marker_key ', 'auto')
 synonym = {}
 for r in results:
 	key = r['_Marker_key']
-	value = r['synonym']
+	value = r['name']
 	if not synonym.has_key(key):
 		synonym[key] = []
 	synonym[key].append(value)
