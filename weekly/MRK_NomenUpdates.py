@@ -16,6 +16,9 @@
 #
 # History:
 #
+# lec	10/20/2000
+#	- TR 2023; display J: as "J:#####"
+#
 # lec	06/08/2000
 #	- TR 1650; added Sequence ID
 #
@@ -84,7 +87,7 @@ cmd.append('select m._Marker_key, ' + \
 'chr = substring(r.chromosome,1,2), ' + \
 'm.mgiID, r.symbol,  ' + \
 'name = substring(r.name,1,25),  ' + \
-'b.jnumID, jnum = convert(char(6), b.jnum), ' + \
+'jnumID, ' + \
 'author = substring(b._primary, 1, 16) ' + \
 'into #m2 ' + \
 'from #m1 m, MRK_Marker r, BIB_All_View b ' + \
@@ -101,8 +104,8 @@ cmd.append('select m.*, a.accID ' + \
 
 results = db.sql(cmd, 'auto')
 
-fp.write('%-2s %-25s %-25s %-6s %-20s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'Sequence ID'))
-fp.write('%-2s %-25s %-25s %-6s %-20s %-25s\n' % ('--', '------', '---------', '--', '----------------', '-----------'))
+fp.write('%-2s %-25s %-25s %-10s %-20s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'Sequence ID'))
+fp.write('%-2s %-25s %-25s %-10s %-20s %-25s\n' % ('--', '------', '---------', '--', '----------------', '-----------'))
 
 rows = 0
 prevMarker = ''
@@ -127,7 +130,7 @@ for r in results[2]:
 			fp.write('%-25s ' % (r['symbol']))
 		
 		fp.write('%-25s ' % (r['name']))
-		fp.write('%s%-6s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnum'], reportlib.close_accession_anchor()))
+		fp.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnumID'], reportlib.close_accession_anchor()))
 		fp.write('%-20s ' % (r['author']))
 
 		prevMarker = r['_Marker_key']
