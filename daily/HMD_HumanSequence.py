@@ -165,7 +165,7 @@ results = db.sql('select distinct a._Object_key, a.accID ' + \
 	'from #homology h, ACC_Accession a ' + \
 	'where h.mouseKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 9 ')
+	'and a._LogicalDB_key = 9 ', 'auto')
 gbID = {}
 for r in results:
 	if not gbID.has_key(r['_Object_key']):
