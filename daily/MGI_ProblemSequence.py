@@ -12,7 +12,8 @@
 #       should have the fields indicated below. This is the report for NCBI.
 #
 #       1. GenBank sequence identifier associated with the Molecular Segment 
-#       2. MGI Accession ID(s) for the MGI Marker(s) to which the Molecular Segment 
+#	2. Molecular Segment Name
+#       3. MGI Accession ID(s) for the MGI Marker(s) to which the Molecular Segment 
 #          has a Hybridizes relationship. If there is more than one Marker, delimit the MGI:IDs by commas. 
 #
 # Problem Sequence Note:
@@ -51,23 +52,33 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 cmds = []
 
-/* Select probes w/ problem note */
-cmds.append('select _Probe_key ' + \
+# Select probes w/ problem note
+cmds.append('select p._Probe_key, p.name ' + \
       'into #probes ' + \
-      'from PRB_Notes ' + \
-      'where note like "MGI curatorial staff have found evidence of artifact in the sequence of this molecular%"')
+      'from PRB_Notes n, PRB_Probe p ' + \
+      'where n.note like "%staff have found evidence of artifact in the sequence of this molecular%" ' + \
+      'and n._Probe_key = p._Probe_key')
 
-/* Select probes w/ Seq IDs */
-cmds.append('select distinct p._Probe_key, a.accID ' + \
+# Select probes w/ Seq IDs and without Seq IDs
+cmds.append('select distinct p._Probe_key, p.name, a.accID ' + \
 'into #probeseqs ' + \
 'from #probes p, PRB_Acc_View a ' + \
 'where p._Probe_key = a._Object_key  ' + \
-'and a._LogicalDB_key = 9 ')
+'and a._LogicalDB_key = 9 ' + \
+'union ' + \
+'select distinct p._Probe_key, p.name, null ' + \
+'from #probes p, PRB_Acc_View pa ' + \
+'where p._Probe_key = pa._Object_key ' + \
+'and pa.prefixPart = "MGI:" ' + \
+'and not exists (select 1 from PRB_Acc_View a ' + \
+'where p._Probe_key = a._Object_key  ' + \
+'and a._LogicalDB_key = 9) ' + \
+'order by p._Probe_key')
 
-/* Select probes w/ only one Seq ID */
-cmds.append('select * into #forncbi from #probeseqs group by accID having count(*) = 1')
+# Select probes w/ only one Seq ID
+cmds.append('select * into #forncbi from #probeseqs group by _Probe_key having count(*) = 1')
 
-/* Select probe's markers which hybridizie */
+# Select probe's markers which hybridizie
 cmds.append('select n.*, markerID = ma.accID ' + \
 'from #forncbi n, PRB_Marker_View m, MRK_Acc_View ma ' + \
 'where n._Probe_key = m._Probe_key ' + \
@@ -75,7 +86,7 @@ cmds.append('select n.*, markerID = ma.accID ' + \
 'and m._Marker_key = ma._Object_key ' + \
 'and ma.prefixPart = "MGI:" ' + \
 'and ma.preferred = 1 ' + \
-'order by n._Probe_key')
+'order by n.accID')
 
 results = db.sql(cmds, 'auto')
 
@@ -93,6 +104,7 @@ for r in results[-1]:
 			fp.write(reportlib.CRT)
 
 		fp.write(mgi_utils.prvalue(r['accID']) + reportlib.TAB)
+		fp.write(mgi_utils.prvalue(r['name']) + reportlib.TAB)
 
 		prevProbe = r['_Probe_key']
 		markers = []
