@@ -25,13 +25,19 @@
 #   5.  GO id
 #   6.  MGI ID of Reference (in format MGI:MGI:####) (double MGI: necessary)
 #   7.  Evidence abbreviation
-#   8.  GO Vocab Abbreviation (F, P, C)
-#   9.  Gene name
-#   10. Gene synonym(s) - list of |-delimited synonyms
-#   11. Marker Type (gene, complex, etc.)
-#   12. Species (10090)
+#   8.  Inferred From
+#   9.  GO DAG Abbreviation (F, P, C)
+#   10. Gene name
+#   11. Gene synonym(s) - list of |-delimited synonyms
+#   12. Marker Type (gene)
+#   13. Species (taxon:10090)
+#   14. Modification Date (YYYYMMDD)
+#   15. Assigned By
 #
 # History:
+#
+# lec	02/11/2003
+#	- TR 4511; add new column "assigned by"
 #
 # lec	04/02/2002
 #	- TR 3527; some terms may not have DAGs; this shouldn't happen
@@ -82,7 +88,7 @@ cmds.append('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) ' + \
 
 cmds.append('select a._Term_key, a.term, termID = a.accID, a.isNot, ' + \
 	'm.symbol, m.name, m._Marker_key, markerID = ma.accID, m._Marker_Type_key, ' + \
-	'e.inferredFrom, eCode = rtrim(t.abbreviation), ' + \
+	'e.inferredFrom, e.modifiedBy, eCode = rtrim(t.abbreviation), ' + \
 	'mDate = convert(varchar(10), e.modification_date, 112), refID = b.accID ' + \
 	'into #gomarker ' + \
 	'from VOC_Annot_View a, MRK_Marker m, MRK_Acc_View ma, ' + \
@@ -163,7 +169,15 @@ for r in results[3]:
 			fp.write('UNKNOWN' + TAB)
 
 		fp.write(SPECIES + TAB)
-		fp.write(r['mDate'] + CRT)
+
+		fp.write(r['mDate'] + TAB)
+
+		if r['modifiedBy'] == 'swissload':
+			fp.write('SWALL')
+		else:
+			fp.write(DBABBREV)
+
+		fp.write(CRT)
 	
 reportlib.finish_nonps(fp)
 
