@@ -34,7 +34,7 @@ setenv DBUTILITIESPATH		/usr/local/mgi/live/dbutils/mgidbutilities
 
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		/usr/local/mgi/live/dataload/vocload/runTimeMP
-setenv MPFILES                  "MPheno.ontology MP.defs"
+setenv MPFILES                  "MPheno.ontology MP.defs MPheno_OBO.ontology"
 
 # PATH
 set path = ($path $DBUTILITIESPATH/bin $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)
