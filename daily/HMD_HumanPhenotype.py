@@ -6,7 +6,7 @@
 #
 # Report:
 #     A tab-delimited report of all mouse-human orthologous gene pairs, 
-#     with all PhenoSlim IDs associated with any allele of the mouse gene.
+#     with all MP IDs associated with any allele of the mouse gene.
 #
 #     Output fields: 
 #     
@@ -14,7 +14,7 @@
 #     Human EntrezGene ID 
 #     Mouse Gene Symbol 
 #     MGI Accession ID 
-#     PhenoSlim IDs associated with any allele of the mouse gene (space- or comma-separated) 
+#     MP IDs associated with any allele of the mouse gene (space- or comma-separated) 
 #
 #     Sorted by:
 #     Human Gene Symbol. 

@@ -5,7 +5,7 @@
 # TR 4533/TR 5485
 #
 # Report:
-#       Produce a tab-delimited report of PhenoSlim terms and associated
+#       Produce a tab-delimited report of MP terms and associated
 #       PubMed IDs for MGI markers that have associations to ENSEMBL records.
 #
 #       Display the following fields:

@@ -16,7 +16,7 @@
 #		MGI ID of Gene
 #		Gene Symbol
 #		RefSeq ID of Gene
-#		MP IDs of PhenoSlim annotations
+#		MP IDs of MP annotations
 #
 # Usage:
 #       MGI_PhenotypicAllele.py
