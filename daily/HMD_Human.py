@@ -28,6 +28,9 @@
 #
 # History:
 #
+# lec	07/23/2004
+#	- TR 5611; added curated/calculated
+#
 # lec	07/01/2003
 #	- TR 4945; added LocusLink IDs for Mouse and Human
 #
@@ -50,6 +53,16 @@ import reportlib
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
 REPORTNAME = 'HMD_Human'
+
+reportLegend = 'Data Attributes:  C = Curated, c = calculated'
+isCurated = 'C'
+isCalculated = 'c'
+
+curated = []
+calculated = []
+humanLL = {}
+mouseLL = {}
+mouseMGI = {}
 
 #
 # NOTE: The following globals and getSortableOffset are variations on
@@ -114,13 +127,159 @@ def getSortableOffset (cytogeneticOffset):
                         pass
         return 0.0
 
-def processSort1():
+def runQueries():
+
+	global curated, calculated, humanLL, mouseLL, mouseMGI
+
+	cmd = 'select distinct h1._Marker_key ' + \
+		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
+		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
+		'MRK_Marker m1, MRK_Marker m2 ' + \
+		'where r1._Refs_key = 91485 ' + \
+		'and m1._Organism_key = 2 ' + \
+		'and m1._Marker_key = h1._Marker_key ' + \
+		'and h1._Homology_key = r1._Homology_key ' + \
+		'and r1._Class_key = r2._Class_key ' + \
+		'and r2._Homology_key = h2._Homology_key ' + \
+		'and h2._Marker_key = m2._Marker_key ' + \
+		'and m2._Organism_key = 1'
+
+	results = db.sql(cmd, 'auto')
+	for r in results:
+		calculated.append(r['_Marker_key'])
+
+	cmd = 'select distinct h1._Marker_key ' + \
+		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
+		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
+		'MRK_Marker m1, MRK_Marker m2 ' + \
+		'where r1._Refs_key != 91485 ' + \
+		'and m1._Organism_key = 2 ' + \
+		'and m1._Marker_key = h1._Marker_key ' + \
+		'and h1._Homology_key = r1._Homology_key ' + \
+		'and r1._Class_key = r2._Class_key ' + \
+		'and r2._Homology_key = h2._Homology_key ' + \
+		'and h2._Marker_key = m2._Marker_key ' + \
+		'and m2._Organism_key = 1'
+
+	results = db.sql(cmd, 'auto')
+	for r in results:
+    		curated.append(r['_Marker_key'])
+
+	cmds = []
+
+	cmds.append('select distinct humanMarkerKey = h1._Marker_key, mouseMarkerKey = h2._Marker_key ' + \
+	'into #allhomologies ' + \
+      	'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
+      	'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
+      	'MRK_Marker m1, MRK_Marker m2 ' + \
+      	'where m1._Organism_key = 2 ' + \
+      	'and m1._Marker_key = h1._Marker_key ' + \
+      	'and h1._Homology_key = r1._Homology_key ' + \
+      	'and r1._Class_key = r2._Class_key ' + \
+      	'and r2._Homology_key = h2._Homology_key ' + \
+      	'and h2._Marker_key = m2._Marker_key ' + \
+      	'and m2._Organism_key = 1')
+
+	cmds.append('create nonclustered index idx_hkey on #allhomologies(humanMarkerKey)')
+	cmds.append('create nonclustered index idx_mkey on #allhomologies(mouseMarkerKey)')
+
+	cmds.append('select h.humanMarkerKey, h.mouseMarkerKey, ' + \
+		'humanOrganism = m1._Organism_key, ' + \
+		'humanSymbol = m1.symbol, ' + \
+		'humanChr = m1.chromosome + m1.cytogeneticOffset, ' + \
+		'm1.chromosome, ' + \
+		'm1.cytogeneticOffset, ' + \
+		'mouseOrganism = m2._Organism_key, ' + \
+		'mouseSymbol = m2.symbol, ' + \
+		'mouseChr = m2.chromosome, ' + \
+		'mouseBand = m2.cytogeneticOffset, ' + \
+		'mouseName = substring(m2.name, 1, 75), ' + \
+                'mouseCm = ' + \
+        	'case ' + \
+        	'when o.offset >= 0 then str(o.offset, 10, 2) ' + \
+        	'when o.offset = -999.0 then "       N/A" ' + \
+        	'when o.offset = -1.0 then "  syntenic" ' + \
+        	'end,' + \
+		'mouseOffset = o.offset ' + \
+		'into #homologies ' + \
+		'from #allhomologies h, MRK_Marker m1, MRK_Marker m2, MRK_Offset o ' + \
+		'where h.humanMarkerKey = m1._Marker_key ' + \
+		'and h.mouseMarkerKey = m2._Marker_key ' + \
+		'and h.mouseMarkerKey = o._Marker_key ' + \
+		'and o.source = 0 ')
+
+	cmds.append('create nonclustered index idx_hkey1 on #homologies(humanOrganism)')
+	cmds.append('create nonclustered index idx_mkey1 on #homologies(mouseOrganism)')
+	cmds.append('create nonclustered index idx_hkey2 on #homologies(humanSymbol)')
+	cmds.append('create nonclustered index idx_mkey2 on #homologies(mouseSymbol)')
+
+	# human locus link ids
+
+	cmds.append('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+		'where h.humanMarkerKey = a._Object_key ' + \
+		'and a._MGIType_key = 2 ' + \
+		'and a._LogicalDB_key = 24 ')
+
+	# mouse locus link ids
+
+	cmds.append('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+		'where h.mouseMarkerKey = a._Object_key ' + \
+		'and a._MGIType_key = 2 ' + \
+		'and a._LogicalDB_key = 24 ')
+
+	# mouse MGI 
+
+	cmds.append('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
+		'where h.mouseMarkerKey = a._Object_key ' + \
+		'and a._MGIType_key = 2 ' + \
+		'and a.prefixPart = "MGI:" ' + \
+		'and a._LogicalDB_key = 1 ' + \
+		'and a.preferred = 1 ')
+
+	# sorted by human chromosome
+
+	cmds.append('select h.*, c.sequenceNum ' + \
+		'from #homologies h, MRK_Chromosome c ' + \
+		'where h.humanOrganism = c._Organism_key ' + \
+		'and h.chromosome = c.chromosome ')
+
+	# sorted by mouse chromosome
+
+	cmds.append('select h.*, c.sequenceNum ' + \
+		'from #homologies h, MRK_Chromosome c ' + \
+		'where h.mouseOrganism = c._Organism_key ' + \
+		'and h.mouseChr = c.chromosome ' + \
+		'order by c.sequenceNum, h.mouseOffset')
+
+	# sorted by human symbol
+
+	cmds.append('select * from #homologies order by humanSymbol')
+
+	# sorted by mouse symbol
+
+	cmds.append('select * from #homologies order by mouseSymbol')
+	
+	results = db.sql(cmds, 'auto')
+
+	for r in results[8]:
+		humanLL[r['humanMarkerKey']] = r['accID']
+
+	for r in results[9]:
+		mouseLL[r['mouseMarkerKey']] = r['accID']
+
+	for r in results[10]:
+		mouseMGI[r['mouseMarkerKey']] = r['accID']
+
+	return results
+
+def processSort1(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Chromosome)'
 	reportName = REPORTNAME + '1'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
-	
+	fp.write(reportLegend + CRT + CRT)
+
 	fp.write(string.ljust('Human Chr', 15))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human LocusLink ID', 30))
@@ -137,7 +296,9 @@ def processSort1():
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse Name', 10))
+	fp.write(string.ljust('Mouse Name', 80))
+	fp.write(SPACE)
+	fp.write(string.ljust('Data Attributes', 15))
 	fp.write(SPACE)
 	fp.write(CRT)
 
@@ -157,55 +318,11 @@ def processSort1():
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('----------', 10))
+	fp.write(string.ljust('----------', 80))
+	fp.write(SPACE)
+	fp.write(string.ljust('---------------', 15))
 	fp.write(SPACE)
 	fp.write(CRT)
-
-	cmd = 'select distinct humanChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-		      'c.sequenceNum, ' + \
-		      'm1.cytogeneticOffset, ' + \
-                      'humanSymbol = m1.symbol, ' + \
-		      'mouseChr = m2.chromosome, ' + \
-                      'mouseCm = ' + \
-        		'case ' + \
-        		'when o.offset >= 0 then str(o.offset, 10, 2) ' + \
-        		'when o.offset = -999.0 then "       N/A" ' + \
-        		'when o.offset = -1.0 then "  syntenic" ' + \
-        		'end' + \
-                      ', mouseMGI = a.accID, ' + \
-                      'mouseSymbol = m2.symbol, ' + \
-                      'mouseName = substring(m2.name, 1, 75), ' + \
-		      'humanLL = ha.accID, ' + \
-		      'mouseLL = ma.accID ' + \
-		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-		'MRK_Marker m1, MRK_Marker m2, MRK_Offset o, MRK_Chromosome c, ' + \
-		'ACC_Accession a, ACC_Accession ha, ACC_Accession ma ' + \
-		'where m1._Organism_key = 2 ' + \
-		'and m1._Marker_key = h1._Marker_key ' + \
-		'and h1._Homology_key = r1._Homology_key ' + \
-		'and r1._Class_key = r2._Class_key ' + \
-		'and r2._Homology_key = h2._Homology_key ' + \
-		'and h2._Marker_key = m2._Marker_key ' + \
-		'and m2._Organism_key = 1 ' + \
-		'and m2._Marker_key = o._Marker_key ' + \
-		'and o.source = 0 ' + \
-		'and m1._Organism_key = c._Organism_key ' + \
-		'and m1.chromosome = c.chromosome ' + \
-		'and m2._Marker_key = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a.prefixPart = "MGI:" ' + \
-		'and a._LogicalDB_key = 1 ' + \
-		'and a.preferred = 1 ' + \
-		'and m1._Marker_key *= ha._Object_key ' + \
-		'and ha._MGIType_key = 2 ' + \
-		'and ha._LogicalDB_key = 24 ' + \
-		'and m2._Marker_key *= ma._Object_key ' + \
-		'and ma._MGIType_key = 2 ' + \
-		'and ma._LogicalDB_key = 24 '
-
-	results = db.sql(cmd, 'auto')
-	count = 0
 
 	#
 	# initialize a list to sort the human chromosome & offset values.
@@ -219,6 +336,7 @@ def processSort1():
 	# the dictionary values will be set to the row tuple
 	#
 
+	count = 0
 	sortKeys = [''] * 3	# initialize list to 3 'blanks'
 	rows = {}
 
@@ -240,34 +358,51 @@ def processSort1():
 		r = rows[key]
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
+
+		if humanLL.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['mouseMGI'], 30))
+		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseChr'], 10))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseCm'], 10))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
+
+		if mouseLL.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['mouseName'], 10))
+		fp.write(string.ljust(r['mouseName'], 80))
 		fp.write(SPACE)
+
+		if r['humanMarkerKey'] in curated:
+		  fp.write(isCurated)
+		if r['humanMarkerKey'] in calculated:
+		  fp.write(isCalculated)
+
 		fp.write(CRT)
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
 	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
-def processSort2():
+def processSort2(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Mouse Chromosome)'
 	reportName = REPORTNAME + '2'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
 	fp.write(SPACE)
@@ -285,7 +420,9 @@ def processSort2():
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Mouse Name', 10))
+	fp.write(string.ljust('Mouse Name', 80))
+	fp.write(SPACE)
+	fp.write(string.ljust('Data Attributes', 15))
 	fp.write(SPACE)
 	fp.write(CRT)
 
@@ -305,74 +442,49 @@ def processSort2():
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('----------', 10))
+	fp.write(string.ljust('----------', 80))
+	fp.write(SPACE)
+	fp.write(string.ljust('---------------', 15))
 	fp.write(SPACE)
 	fp.write(CRT)
 
-	cmd = 'select distinct mouseMGI = a.accID, ' + \
-	      'mouseChr = m2.chromosome, ' + \
-              'mouseCm =  ' + \
-              'case ' + \
-              'when o.offset >= 0 then str(o.offset, 10, 2) ' + \
-              'when o.offset = -999.0 then "       N/A" ' + \
-              'when o.offset = -1.0 then "  syntenic" ' + \
-              'end ' + \
-              ',mouseSymbol = m2.symbol, ' + \
-              'humanChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-              'humanSymbol = m1.symbol, ' + \
-              'mouseName = substring(m2.name, 1, 75), ' + \
-              'humanLL = ha.accID, ' + \
-              'mouseLL = ma.accID ' + \
-              'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-              'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-              'MRK_Marker m1, MRK_Marker m2, MRK_Offset o, MRK_Chromosome c, ' + \
-	      'ACC_Accession a, ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Organism_key = 2 ' + \
-              'and m1._Marker_key = h1._Marker_key ' + \
-              'and h1._Homology_key = r1._Homology_key ' + \
-              'and r1._Class_key = r2._Class_key ' + \
-              'and r2._Homology_key = h2._Homology_key ' + \
-              'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Organism_key = 1 ' + \
-              'and m2._Marker_key = o._Marker_key ' + \
-              'and o.source = 0 ' + \
-              'and m2._Organism_key = c._Organism_key ' + \
-              'and m2.chromosome = c.chromosome ' + \
-	      'and m2._Marker_key = a._Object_key ' + \
-	      'and a._MGIType_key = 2 ' + \
-	      'and a.prefixPart = "MGI:" ' + \
-	      'and a._LogicalDB_key = 1 ' + \
-	      'and a.preferred = 1 ' + \
-	      'and m1._Marker_key *= ha._Object_key ' + \
-	      'and ha._MGIType_key = 2 ' + \
-	      'and ha._LogicalDB_key = 24 ' + \
-	      'and m2._Marker_key *= ma._Object_key ' + \
-	      'and ma._MGIType_key = 2 ' + \
-	      'and ma._LogicalDB_key = 24 ' + \
-              'order by c.sequenceNum, o.offset'
-
-	results = db.sql(cmd, 'auto')
 	count = 0
 
 	for r in results:
-		fp.write(string.ljust(r['mouseMGI'], 30))
+		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseChr'], 10))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseCm'], 10))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
+
+		if mouseLL.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
+
+		if humanLL.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['mouseName'], 10))
+		fp.write(string.ljust(r['mouseName'], 80))
 		fp.write(SPACE)
+
+		if r['humanMarkerKey'] in curated:
+		  fp.write(isCurated)
+		if r['humanMarkerKey'] in calculated:
+		  fp.write(isCalculated)
+
 		fp.write(CRT)
 		count = count + 1
 
@@ -380,12 +492,13 @@ def processSort2():
 	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
-def processSort3():
+def processSort3(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Symbol)'
 	reportName = REPORTNAME + '3'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Human LocusLink ID', 30))
 	fp.write(SPACE)
@@ -404,6 +517,8 @@ def processSort3():
 	fp.write(string.ljust('Mouse cM', 10))
 	fp.write(SPACE)
 	fp.write(string.ljust('Mouse Band', 10))
+	fp.write(SPACE)
+	fp.write(string.ljust('Data Attributes', 15))
 	fp.write(SPACE)
 	fp.write(CRT)
 
@@ -425,61 +540,31 @@ def processSort3():
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 10))
 	fp.write(SPACE)
+	fp.write(string.ljust('---------------', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
 
-	cmd = 'select distinct mouseMGI = a.accID, ' + \
-	      'mouseChr = m2.chromosome, ' + \
-              'mouseCm =  ' + \
-              'case ' + \
-              'when o.offset >= 0 then str(o.offset, 10, 2) ' + \
-              'when o.offset = -999.0 then "       N/A" ' + \
-              'when o.offset = -1.0 then "  syntenic" ' + \
-              'end ' + \
-              ',mouseSymbol = m2.symbol, ' + \
-              'humanChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-              'humanSymbol = m1.symbol, ' + \
-              'mouseBand = m2.cytogeneticOffset, ' + \
-              'humanLL = ha.accID, ' + \
-              'mouseLL = ma.accID ' + \
-              'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-              'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-              'MRK_Marker m1, MRK_Marker m2, MRK_Offset o, ' + \
-	      'ACC_Accession a, ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Organism_key = 2 ' + \
-              'and m1._Marker_key = h1._Marker_key ' + \
-              'and h1._Homology_key = r1._Homology_key ' + \
-              'and r1._Class_key = r2._Class_key ' + \
-              'and r2._Homology_key = h2._Homology_key ' + \
-              'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Organism_key = 1 ' + \
-              'and m2._Marker_key = o._Marker_key ' + \
-              'and o.source = 0 ' + \
-	      'and m2._Marker_key = a._Object_key ' + \
-	      'and a._MGIType_key = 2 ' + \
-	      'and a.prefixPart = "MGI:" ' + \
-	      'and a._LogicalDB_key = 1 ' + \
-	      'and a.preferred = 1 ' + \
-	      'and m1._Marker_key *= ha._Object_key ' + \
-	      'and ha._MGIType_key = 2 ' + \
-	      'and ha._LogicalDB_key = 24 ' + \
-	      'and m2._Marker_key *= ma._Object_key ' + \
-	      'and ma._MGIType_key = 2 ' + \
-	      'and ma._LogicalDB_key = 24 ' + \
-              'order by m1.symbol, m1.chromosome, m1.cytogeneticOffset'
-
-	results = db.sql(cmd, 'auto')
 	count = 0
 
 	for r in results:
-		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
+		if humanLL.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['mouseMGI'], 30))
+		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
+
+		if mouseLL.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
@@ -489,6 +574,12 @@ def processSort3():
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseBand']), 10))
 		fp.write(SPACE)
+
+		if r['humanMarkerKey'] in curated:
+		  fp.write(isCurated)
+		if r['humanMarkerKey'] in calculated:
+		  fp.write(isCalculated)
+
 		fp.write(CRT)
 		count = count + 1
 
@@ -496,12 +587,13 @@ def processSort3():
 	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
-def processSort4():
+def processSort4(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Mouse Symbol)'
 	reportName = REPORTNAME + '4'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
 	fp.write(SPACE)
@@ -520,6 +612,8 @@ def processSort4():
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Chr', 15))
+	fp.write(SPACE)
+	fp.write(string.ljust('Data Attributes', 15))
 	fp.write(SPACE)
 	fp.write(CRT)
 
@@ -541,55 +635,21 @@ def processSort4():
 	fp.write(SPACE)
 	fp.write(string.ljust('----------', 15))
 	fp.write(SPACE)
+	fp.write(string.ljust('---------------', 15))
+	fp.write(SPACE)
 	fp.write(CRT)
 
-	cmd = 'select distinct mouseMGI = a.accID, ' + \
-	      'mouseChr = m2.chromosome, ' + \
-              'mouseCm =  ' + \
-              'case ' + \
-              'when o.offset >= 0 then str(o.offset, 10, 2) ' + \
-              'when o.offset = -999.0 then "       N/A" ' + \
-              'when o.offset = -1.0 then "  syntenic" ' + \
-              'end ' + \
-              ',mouseSymbol = m2.symbol, ' + \
-              'humanChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-              'humanSymbol = m1.symbol, ' + \
-              'mouseBand = m2.cytogeneticOffset, ' + \
-              'humanLL = ha.accID, ' + \
-              'mouseLL = ma.accID ' + \
-              'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-              'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-              'MRK_Marker m1, MRK_Marker m2, MRK_Offset o, ' + \
-	      'ACC_Accession a, ACC_Accession ha, ACC_Accession ma ' + \
-              'where m1._Organism_key = 2 ' + \
-              'and m1._Marker_key = h1._Marker_key ' + \
-              'and h1._Homology_key = r1._Homology_key ' + \
-              'and r1._Class_key = r2._Class_key ' + \
-              'and r2._Homology_key = h2._Homology_key ' + \
-              'and h2._Marker_key = m2._Marker_key ' + \
-              'and m2._Organism_key = 1 ' + \
-              'and m2._Marker_key = o._Marker_key ' + \
-              'and o.source = 0 ' + \
-	      'and m2._Marker_key = a._Object_key ' + \
-	      'and a._MGIType_key = 2 ' + \
-	      'and a.prefixPart = "MGI:" ' + \
-	      'and a._LogicalDB_key = 1 ' + \
-	      'and a.preferred = 1 ' + \
-	      'and m1._Marker_key *= ha._Object_key ' + \
-	      'and ha._MGIType_key = 2 ' + \
-	      'and ha._LogicalDB_key = 24 ' + \
-	      'and m2._Marker_key *= ma._Object_key ' + \
-	      'and ma._MGIType_key = 2 ' + \
-	      'and ma._LogicalDB_key = 24 ' + \
-              'order by m2.symbol, m2.chromosome, m2.cytogeneticOffset'
-
-	results = db.sql(cmd, 'auto')
 	count = 0
 
 	for r in results:
-		fp.write(string.ljust(r['mouseMGI'], 30))
+		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['mouseLL']), 30))
+
+		if mouseLL.has_key(r['mouseMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(mouseLL[r['mouseMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
@@ -599,12 +659,23 @@ def processSort4():
 		fp.write(SPACE)
 		fp.write(string.ljust(mgi_utils.prvalue(r['mouseBand']), 10))
 		fp.write(SPACE)
-		fp.write(string.ljust(mgi_utils.prvalue(r['humanLL']), 30))
+
+		if humanLL.has_key(r['humanMarkerKey']):
+			fp.write(string.ljust(mgi_utils.prvalue(humanLL[r['humanMarkerKey']]), 30))
+		else:
+			fp.write(string.ljust('', 30))
+
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanChr'], 15))
 		fp.write(SPACE)
+
+		if r['humanMarkerKey'] in curated:
+		  fp.write(isCurated)
+		if r['humanMarkerKey'] in calculated:
+		  fp.write(isCalculated)
+
 		fp.write(CRT)
 		count = count + 1
 
@@ -621,17 +692,18 @@ sortOption = None
 if len(sys.argv) > 1:
 	sortOption = sys.argv[1]
 
+results = runQueries()
+
 if sortOption == '1':
-	processSort1()
+	processSort1(results[11])
 elif sortOption == '2':
-	processSort2()
+	processSort2(results[12])
 elif sortOption == '3':
-	processSort3()
+	processSort3(results[13])
 elif sortOption == '4':
-	processSort4()
+	processSort4(results[14])
 else:
-	processSort1()
-	processSort2()
-	processSort3()
-	processSort4()
-	
+	processSort1(results[11])
+	processSort2(results[12])
+	processSort3(results[13])
+	processSort4(results[14])
