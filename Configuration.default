@@ -52,7 +52,7 @@ setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
 
 # InParanoid FASTA file
 setenv INPARANOIDFASTA          ${INPARANOIDDIR}/inparanoid.fasta
-setenv INPARANOIDDAT            /data/loads/swissprot/swissload/data/sptr_mouse_filtered.dat
+setenv INPARANOIDDAT            /data/loads/swissprot/swissload/data/sptrmus.dat
 
 # PATH
 set path = ($path $DBUTILITIESPATH/bin $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)
