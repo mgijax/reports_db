@@ -43,7 +43,7 @@
 
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD>
 <A NAME="ftp"><B>FTP Server</B></A><BR><BR>
-<P>All reports described on this page are within subdirectories of <B>/pub</B> on MGI's <A HREF="ftp://devftp.informatics.jax.org">FTP Server</A>.<BR><BR>
+<P>All reports described on this page are within subdirectories of <B>/pub</B> on MGI's <A HREF="ftp://devdevftp.informatics.jax.org">FTP Server</A>.<BR><BR>
 </TD></TR></TABLE>
 
 <!-- -->
@@ -166,10 +166,10 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>6. MGI Marker associations to ENSEMBL sequence information (tab-delimited)</B></TD></TR>
+        <TR><TD><B>6. MGI Marker associations to Ensembl sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
-        <TD>ENSEMBL Accession ID</TD></TR></TABLE>
+        <TD>Ensembl Accession ID</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_ENSEMBL.rpt">MRK_ENSEMBL.rpt</A></TD></TR>
         </TD></TR>
@@ -514,6 +514,7 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="adult_mouse_anatomy.gxd">adult_mouse_anatomy.gxd</A>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="anatomy_defs.gxd">anatomy_defs.gxd</A>
     </TABLE></TD></TR>        
+
 </TABLE><BR>
 
 <!-- -->
@@ -521,21 +522,7 @@
 <A NAME="pheno"></A>
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Phenotypic Data</TH></TR>
 
-<TR><TD>Please note that the MGI accession IDs of the Phenotype Classification
-Terms have been replaced with the new Mammalian Phenotype Ontology
-accession IDs (MP:####) as of January 28, 2003.  The MGI IDs are being retained as
-secondary accession IDs for these terms.</TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>1. PhenoSlim vocabulary</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MP Accession ID</TD><TD>PhenoSlim Term</TD><TD>Definition</TD><TD>Example</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_PhenoSlim.rpt">VOC_PhenoSlim.rpt</A> (tab-delimited, without column headings)</TD></TR>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_PhenoSlim.sql.rpt">VOC_PhenoSlim.sql.rpt</A> (space-delimited; with column headings)</TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
+<TR><TD></TD><TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>2. Mammalian Phenotype Vocabulary in DAG-Edit, OBO and tab-delimited Formats</B></TD></TR>
@@ -548,7 +535,7 @@ secondary accession IDs for these terms.</TD></TR>
     </TABLE></TD></TR>        
                 
     <TR><TD><TABLE>
-        <TR><TD><B>3. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>        
+        <TR><TD><B>2. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>        
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>Mammalian Phenotype ID<BR>(space-separated)</TD></TABLE>
         </TD></TR>
@@ -556,17 +543,17 @@ secondary accession IDs for these terms.</TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>4. MGI Marker associations to Phenotype Annotations and ENSEMBL sequence information (tab-delimited)</B></TD></TR>
+        <TR><TD><B>3. MGI Marker associations to Phenotype Annotations and Ensembl sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>ENSEMBL Accession ID</TD>
-	<TD>Mammalian Phenotype ID</TD><TD>Mammalian Phenotype Term</TD><TD>PubMed ID of Marker/Phenotype Association (comma-delimited)</TR></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>Ensembl Accession ID</TD>
+	<TD>Mammalian Phenotype ID</TD><TD>Mammalian Phenotype Term</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Ensembl_Pheno.rpt">MRK_Ensembl_Pheno.rpt</A></TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
     
     <TR><TD><TABLE>
-        <TR><TD><B>5. List of All Mouse Phenotypic Alleles (tab-delimited)</B></TD></TR>
+        <TR><TD><B>4. List of All Mouse Phenotypic Alleles (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Allele Accession ID</TD><TD>Allele Symbol</TD><TD>Allele Name</TD><TD>Allele Type</TD>
 	<TD>PubMed ID for original reference</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker RefSeq ID</TD>

@@ -1,10 +1,46 @@
+TAG: reports_db-3-2-0-1
+DATE: 04/22/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) MPR merge
+
 TAG: reports_db-3-1-1-10
 DATE: 03/18/2005
 STAFF: lec
 RELEASE: A
 CHANGES: TR 6670, 6671
-
 1) TR 6573/MGI_Coordinate.py
+
+TAG: reports_db-mpr-4
+DATE: 04/21/2005
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) MPR
+2) Configuration.default
+
+TAG: reports_db-mpr-3
+DATE: 03/23/2005
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) MPR
+
+TAG: reports_db-mpr-2
+DATE: 03/22/2005
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) MPR
+
+TAG: reports_db-mpr-1
+DATE: 03/17/2005
+STAFF: lec
+RELEASE: A
+CHANGES: 
+1) MPR
+
 TAG: reports_db-mpr-BP
 DATE: 03/16/2005
 STAFF: lec

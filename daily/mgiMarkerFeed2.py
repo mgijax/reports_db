@@ -576,7 +576,19 @@ def strains():
           'from PRB_Strain s, ACC_Accession a ' + \
           'where s._Strain_key = a._Object_key ' + \
           'and a._MGIType_key = 10 ' + \
-          'and a._LogicalDB_key in (22, 38) ', None)
+          'and a._LogicalDB_key in (22, 38) ' + \
+	  'union ' + \
+          'select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
+          'cdate = convert(char(20), s.creation_date, 100), ' + \
+          'mdate = convert(char(20), s.modification_date, 100) ' + \
+          'from PRB_Strain s, ALL_Allele a ' + \
+          'where s._Strain_key = a._Strain_key ' + \
+	  'union ' + \
+          'select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
+          'cdate = convert(char(20), s.creation_date, 100), ' + \
+          'mdate = convert(char(20), s.modification_date, 100) ' + \
+          'from PRB_Strain s, ALL_CellLine a ' + \
+          'where s._Strain_key = a._Strain_key ', None)
 
     db.sql('create index idx1 on #strains(_Strain_key)', None)
 

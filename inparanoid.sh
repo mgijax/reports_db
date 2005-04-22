@@ -21,7 +21,7 @@ rm -rf ${INPARANOIDDIR}/Mus-musculus_MGI*
 rm -rf ${INPARANOIDFASTA}
 
 # derive a FASTA file from the SwissProt load file
-sp2fasta ${INPARANOIDDAT} > ${INPARANOIDFASTA}
+/usr/local/wu-blast2.0/sp2fasta ${INPARANOIDDAT} > ${INPARANOIDFASTA}
 
 cd inparanoid
 foreach i (`ls *.py`)
