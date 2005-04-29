@@ -162,7 +162,7 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_cellline.bcp', 'w')
     
-    results = db.sql('select _CellLine_key, cellLine, _Strain_key, ' + \
+    results = db.sql('select _CellLine_key, cellLine, _Strain_key, provider, isMutant, ' + \
 	    'cdate = convert(char(20), creation_date, 100), ' + \
 	    'mdate = convert(char(20), modification_date, 100) ' + \
 	    'from ALL_CellLine', 'auto', execute = 1)
@@ -170,6 +170,8 @@ def vocabs():
 	    fp.write(`r['_CellLine_key']` + TAB + \
 		     r['cellLine'] + TAB + \
 		     `r['_Strain_key']` + TAB + \
+		     mgi_utils.prvalue(r['provider']) + TAB + \
+		     `r['isMutant']` + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
     fp.close()
@@ -438,7 +440,7 @@ def alleles():
 
     results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, ' + \
 	'm._ESCellLine_key, m._MutantESCellLine_key, ' + \
-	'm._Strain_key, m.symbol, m.name, status = t.term, ' + \
+	'm._Strain_key, m.isWildType, m.symbol, m.name, status = t.term, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m, VOC_Term t ' + \
@@ -454,6 +456,7 @@ def alleles():
 	             `r['_MutantESCellLine_key']` + TAB + \
 		     mgi_status(r['status']) + TAB + \
 		     `r['_Strain_key']` + TAB + \
+		     `r['isWildType']` + TAB + \
 		     strip_newline(r['symbol']) + TAB + \
 		     strip_newline(r['name']) + TAB + \
 		     r['cdate'] + TAB + \
