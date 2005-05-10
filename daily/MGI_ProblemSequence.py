@@ -118,5 +118,6 @@ for r in results[-1]:
         markers.append(r['markerID'])
 
 fp.write(string.join(markers, ','))
+fp.write(reportlib.CRT)
 reportlib.finish_nonps(fp)
 
