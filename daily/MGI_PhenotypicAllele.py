@@ -116,6 +116,17 @@ refIDs = {}
 for r in results:
 	refIDs[r['_Marker_key']] = r['accID']
 	
+# Retrieve Ensembl Gene Model ID for Gene
+
+results = db.sql('select s._Marker_key, a.accID ' + \
+	'from #alleles s, ACC_Accession a ' + \
+	'where s._Marker_key = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
+	'and a._LogicalDB_key = 60 ', 'auto')
+ensemblIDs = {}
+for r in results:
+	ensemblIDs[r['_Marker_key']] = r['accID']
+	
 # Retrieve MP IDs for MP annotations
 
 results = db.sql('select distinct s._Allele_key, a.accID ' + \
@@ -154,6 +165,10 @@ for r in results:
 
 	if refIDs.has_key(r['_Marker_key']):
 		fp.write(refIDs[r['_Marker_key']])
+	fp.write(reportlib.TAB)
+
+	if ensemblIDs.has_key(r['_Marker_key']):
+		fp.write(ensemblIDs[r['_Marker_key']])
 	fp.write(reportlib.TAB)
 
 	if mpIDs.has_key(r['_Allele_key']):

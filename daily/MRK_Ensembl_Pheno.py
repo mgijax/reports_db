@@ -70,7 +70,7 @@ db.sql('select a1.accID, m._Marker_key, m.symbol, m.name ' + \
        'and a1.preferred = 1 ' + \
        'and exists (select 1 from ACC_Accession a2 where m._Marker_key = a2._Object_key ' + \
        'and a2._MGIType_key = 2 ' + \
-       'and a2._LogicalDB_key = 33 ' + \
+       'and a2._LogicalDB_key = 60 ' + \
        'and a2.preferred = 1)', None)
 
 db.sql('create index idx1 on #markers(_Marker_key)', None)
@@ -83,7 +83,7 @@ db.sql('create index idx3 on #markers(symbol)', None)
 results = db.sql('select m._Marker_key, a.accID from #markers m, ACC_Accession a ' + \
 	'where m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 33', 'auto')
+	'and a._LogicalDB_key = 60', 'auto')
 ensembl = {}
 for r in results:
     key = r['_Marker_key']
