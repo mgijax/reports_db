@@ -1,3 +1,10 @@
+TAG: reports_db-3-2-0-3
+DATE: 06/01/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) mgiMarkerFeed.py; added all markers (not just mouse) per csb.
+
 TAG: reports_db-3-2-0-2
 DATE: 05/10/2005
 STAFF: lec
