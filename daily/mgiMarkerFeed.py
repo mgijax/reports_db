@@ -46,6 +46,9 @@
 #
 # History:
 #
+# lec	06/01/2005
+#	- added all markers (not just mouse) per cjb
+#
 # lec	01/14/2004
 #	- TR 5565; JaxStrain additions
 #
@@ -286,7 +289,8 @@ def markers():
     # the split symbol).
     #
 
-    db.sql('select m._Marker_key, m.symbol, m.name into #markers ' + \
+    db.sql('select m._Marker_key, m._Organism_key, m.symbol, m.name ' + \
+	    'into #markers ' + \
 	    'from MRK_Marker m ' + \
 	    'where m._Organism_key = 1 ' + \
 	    'and exists (select 1 from ACC_Accession a ' + \
@@ -294,7 +298,11 @@ def markers():
 	    'and a._MGIType_key = 2 ' + \
 	    'and a.prefixPart = "MGI:" ' + \
 	    'and a._LogicalDB_key = 1 ' + \
-	    'and a.preferred = 1) ', None)
+	    'and a.preferred = 1) ' + \
+	    'union ' + \
+	    'select m._Marker_key, m._Organism_key, m.symbol, m.name ' + \
+	    'from MRK_Marker m ' + \
+	    'where m._Organism_key != 1', None)
 
     db.sql('create index idx1 on #markers(_Marker_key)', None)
 
@@ -304,7 +312,7 @@ def markers():
 
     fp = open(OUTPUTDIR + 'marker.bcp', 'w')
 
-    results = db.sql('select m._Marker_key, m._Organism_key, m._Marker_Type_key, s.status, ' + \
+    results = db.sql('select k._Marker_key, k._Organism_key, m._Marker_Type_key, s.status, ' + \
 	    'm.symbol, m.name, m.chromosome, m.cytogeneticOffset, o.offset, ' + \
 	    'cdate = convert(char(20), m.creation_date, 100), ' + \
 	    'mdate = convert(char(20), m.modification_date, 100) ' + \
@@ -312,7 +320,16 @@ def markers():
 	    'where k._Marker_key = m._Marker_key ' + \
 	    'and m._Marker_Status_key = s._Marker_Status_key ' + \
 	    'and k._Marker_key = o._Marker_key ' + \
-	    'and o.source = 0', 'auto')
+	    'and o.source = 0 ' + \
+	    'union ' + \
+            'select m._Marker_key, m._Organism_key, m._Marker_Type_key, s.status, ' + \
+	    'm.symbol, m.name, m.chromosome, m.cytogeneticOffset,  null, ' + \
+	    'cdate = convert(char(20), m.creation_date, 100), ' + \
+	    'mdate = convert(char(20), m.modification_date, 100) ' + \
+	    'from #markers k, MRK_Marker m, MRK_Status s ' + \
+	    'where k._Organism_key != 1 ' + \
+	    'and k._Marker_key = m._Marker_key ' + \
+	    'and m._Marker_Status_key = s._Marker_Status_key', 'auto')
 
     for r in results:
 	    fp.write(`r['_Marker_key']` + TAB + \
@@ -323,9 +340,10 @@ def markers():
 		     strip_newline(r['name']) + TAB + \
 		     r['chromosome'] + TAB + \
 		     mgi_utils.prvalue(r['cytogeneticOffset']) + TAB + \
-		     `r['offset']` + TAB + \
+		     mgi_utils.prvalue(r['offset']) + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
+
     fp.close()
 
     #
@@ -401,7 +419,16 @@ def markers():
 	    'and m._MGIType_key = 2 ' + \
 	    'and m.prefixPart = "MGI:" ' + \
 	    'and m._LogicalDB_key = 1 ' + \
-	    'and m._LogicalDB_key = l._LogicalDB_key', 'auto')
+	    'and m._LogicalDB_key = l._LogicalDB_key ' + \
+	    'union ' + \
+            'select m.accID, LogicalDB = l.name, m._Object_key, m.preferred, ' + \
+	    'cdate = convert(char(20), m.creation_date, 100), ' + \
+	    'mdate = convert(char(20), m.modification_date, 100) ' + \
+	    'from #markers k, ACC_Accession m, ACC_LogicalDB l ' + \
+	    'where k._Organism_key != 1 ' + \
+	    'and k._Marker_key = m._Object_key ' + \
+	    'and m._MGIType_key = 2 ' + \
+	    'and m._LogicalDB_key = l._LogicalDB_key ', 'auto')
 
     for r in results:
 	    fp.write(r['accID'] + TAB + \
@@ -1038,8 +1065,8 @@ db.set_sqlLogFunction(db.sqlLogAll)
 vocabs()
 alleles()
 markers()
-strains()
-genotypes()
-references()
+#strains()
+#genotypes()
+#references()
 db.useOneConnection(0)
 
