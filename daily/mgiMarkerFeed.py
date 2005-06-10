@@ -428,7 +428,7 @@ def markers():
 	    'where k._Organism_key != 1 ' + \
 	    'and k._Marker_key = m._Object_key ' + \
 	    'and m._MGIType_key = 2 ' + \
-	    'and m._LogicalDB_key in (55, 64, 15) ' + \
+	    'and m._LogicalDB_key in (55, 64, 15, 47) ' + \
 	    'and m._LogicalDB_key = l._LogicalDB_key ', 'auto')
 
     for r in results:
