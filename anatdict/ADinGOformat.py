@@ -123,12 +123,14 @@ class Structure:
 		# returns: nothing
 		# exceptions: none
 		'''
-		# split printName into a list
-		l = string.split(printName, ';')
-		# reverse the list
-		l.reverse()
-		# put it back together later with '\' delimiter
-		# string.join(l, '\\,')
+
+		if len(printName) > 0:
+		    # split printName into a list
+		    l = string.split(printName, ';')
+		    # reverse the list
+		    l.reverse()
+		    # put it back together later with '\' delimiter
+		    string.join(l, '\\,')
 
 		if self.getParent() == None:
 			goName = 'TS%d\,' % (self.getStageNum())
