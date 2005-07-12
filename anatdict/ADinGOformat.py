@@ -11,7 +11,6 @@
 #		1.  mouse_anatomy_by_time_xproduct
 #		    a list of time-dependent anatomical structures
 #		    format:
-#			< TS11\,
 #			 < TS11\,embryo ; EMAP:147
 #			  < TS11\,cavities and their linings ; EMAP:148
 #			   < TS11\,intraembryonic coelm ; EMAP:149
@@ -132,13 +131,15 @@ class Structure:
 		    # put it back together later with '\' delimiter
 		    string.join(l, '\\,')
 
+		# if parent node, do nothing
 		if self.getParent() == None:
-			goName = 'TS%d\,' % (self.getStageNum())
-		else:
-			goName = '< TS%d\,' % (self.getStageNum()) + string.join(l, '\\,')
+#			goName = 'TS%d\,' % (self.getStageNum())
+			return
 
-			if self.getEBKey() != None:
-				goName = goName + '; EMAP:%s' % (mgi_utils.prvalue(self.getEBKey()))
+		goName = '< TS%d\,' % (self.getStageNum()) + string.join(l, '\\,')
+
+		if self.getEBKey() != None:
+			goName = goName + '; EMAP:%s' % (mgi_utils.prvalue(self.getEBKey()))
 
 		self.GOName = goName
 
@@ -281,9 +282,9 @@ def print_structure_tree(snode, fd, indent):
 	name = snode.getGOName()
 	depth = snode.getDepth()
 
-	# only print structure if it is a root node or has an edinburgh key
-	if snode.getEBKey() != None or snode.getParent() == None:
-		fd.write('%s%s\n' % (depth * indent , name))
+	# only print structure if has an edinburgh key
+	if snode.getEBKey() != None:
+			fd.write('%s%s\n' % (depth * indent , name))
 
 	children = {}
 
@@ -460,6 +461,7 @@ def mouse_anatomy_by_time_xproduct():
 	'''
 
 	fd = reportlib.init('mouse_anatomy_by_time_xproduct', fileExt = '', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+	fd.write('$Mouse_anatomy_by_time_xproduct; EMAP:0\n')
 	getStageDefs()
 	for stageRec in stages:
 		doOneStage(stageRec['_Stage_key'], fd, indent = ' ')
