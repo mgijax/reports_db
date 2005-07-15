@@ -2,17 +2,16 @@
 
 '''
 #
-# GO_GOA.py 
+# GO_nonmouse.py
 #
 # Report:
 #       Tab-delimited file of all ISS MGI GO/Marker associations
 #
 # Usage:
-#       GO_GOA.py
+#       GO_nonmouse.py
 #
 # Used by:
-#	GOA
-#	also made publically available on MGI FTP site
+#	GO_nonmouse.py
 #
 # Output format:
 #
