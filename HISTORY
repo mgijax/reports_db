@@ -1,3 +1,10 @@
+TAG: reports_db-3-2-0-5
+DATE: 97/15/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) HMD_HGNC_Accession.py; added mouse EntrezGene ID
+
 TAG: reports_db-BP-omim
 DATE: 06/28/2005
 STAFF: lec
