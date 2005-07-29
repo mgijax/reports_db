@@ -100,7 +100,7 @@ db.sql('select a._Term_key, t.term, termID = ta.accID, a.isNot, a._Object_key, '
 	'e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, ' + \
 	'm._Marker_Type_key, m.symbol, m.name ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, MRK_Marker m, VOC_Evidence e ' + \
+	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Object_key = m._Marker_key ' + \
