@@ -96,15 +96,19 @@ for r in results:
 #
 # retrieve data set to process
 #
-db.sql('select a._Term_key, a.term, termID = a.accID, a.isNot, a._Object_key, ' + \
+db.sql('select a._Term_key, t.term, termID = ta.accID, a.isNot, a._Object_key, ' + \
 	'e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, ' + \
 	'm._Marker_Type_key, m.symbol, m.name ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot_View a, VOC_Evidence e, MRK_Marker m ' + \
+	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, MRK_Marker m, VOC_Evidence e ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Object_key = m._Marker_key ' + \
-	'and m._Marker_Type_key = 1 ', None)
+	'and m._Marker_Type_key = 1 ' + \
+	'and a._Term_key = t._Term_key ' + \
+	'and a._Term_key = ta._Object_key ' + \
+	'and ta._MGIType_key = 13 ' + \
+	'and ta.preferred = 1', None)
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_EvidenceTerm_key)', None)
 db.sql('create index idx3 on #gomarker(_Refs_key)', None)
