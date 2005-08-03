@@ -5,6 +5,11 @@
 # TR 6973
 #
 # Report:
+#
+#	All Mouse Official/Unofficial Markers
+#	Fields 1-4 are required
+#	All other fields may be blank
+#
 #       Tab-delimited file
 #
 #	1. Mouse MGI Accession ID
@@ -25,7 +30,7 @@
 #	16. Mouse UniGene Ids
 #	17. Mouse RefSeq Ids
 #	18. Mouse SwissProt Ids
-#	19. Mouse InterProt Ids
+#	19. Mouse InterPro Ids
 #	20. Mouse Synonyms
 #	21. Human EG ID
 #	22. Human Symbol
@@ -69,6 +74,7 @@ repGenomicKey = 615419
 sequenceType = 19
 ncbi = 59
 ensembl = 60
+valueDelimiter = ','
 
 #
 # get coordinates
@@ -345,37 +351,37 @@ for r in results:
 #	15. Mouse GenBank Ids
 
 	if gbID.has_key(key):
-		fp.write(string.join(gbID[key], '|'))
+		fp.write(string.join(gbID[key], valueDelimiter))
 	fp.write(TAB)
 
 #	16. Mouse UniGene Ids
 
 	if ugID.has_key(key):
-		fp.write(string.join(ugID[key], '|'))
+		fp.write(string.join(ugID[key], valueDelimiter))
 	fp.write(TAB)
 
 #	17. Mouse RefSeq Ids
 
 	if mrefseqID.has_key(key):
-		fp.write(string.join(mrefseqID[key], '|'))
+		fp.write(string.join(mrefseqID[key], valueDelimiter))
 	fp.write(TAB)
 
 #	18. Mouse SwissProt Ids
 
 	if mspID.has_key(key):
-		fp.write(string.join(mspID[key], '|'))
+		fp.write(string.join(mspID[key], valueDelimiter))
 	fp.write(TAB)
 
 #	19. Mouse InterProt Ids
 
 	if ipID.has_key(key):
-		fp.write(string.join(ipID[key], '|'))
+		fp.write(string.join(ipID[key], valueDelimiter))
 	fp.write(TAB)
 
 #	20. Mouse Synonyms
 
 	if mSyn.has_key(key):
-		fp.write(string.join(mSyn[key], '|'))
+		fp.write(string.join(mSyn[key], valueDelimiter))
 	fp.write(TAB)
 
 #	21. Human EG ID
@@ -396,13 +402,13 @@ for r in results:
 #		25. Human RefSeq Ids
 
 		if hrefseqID.has_key(r['humanKey']):
-			fp.write(string.join(hrefseqID[r['humanKey']], '|'))
+			fp.write(string.join(hrefseqID[r['humanKey']], valueDelimiter))
 		fp.write(TAB)
 
 #		26. Human Synonyms
 
 		if hSyn.has_key(key):
-			fp.write(string.join(hSyn[key], '|'))
+			fp.write(string.join(hSyn[key], valueDelimiter))
 
 	else:
 		fp.write(5*TAB)
