@@ -38,6 +38,7 @@
 #	25. allele_reference.bcp
 #	26. marker_reference.bcp
 #	27. strain_reference.bcp
+#	28. mp_term.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
@@ -275,6 +276,26 @@ def vocabs():
 		     r['mdate'] + CRT)
     fp.close()
 
+    #
+    # mp_closure.bcp
+    #
+    
+    fp = open(OUTPUTDIR + 'mp_closure.bcp', 'w')
+
+    results = db.sql('select c._AncestorObject_key, c._DescendentObject_key, ancLabelKey = n1._Label_key, descLabelKey = n2._Label_key ' + \
+	'from DAG_Closure c, DAG_Node n1, DAG_Node n2 ' + \
+	'where c._Dag_key = 4 ' + \
+	'and c._Ancestor_key = n1._Node_key ' + \
+	'and c._Descendent_key = n2._Node_key', 'auto')
+
+    for r in results:
+	fp.write(`r['_AncestorObject_key']` + TAB + \
+		 `r['_DescendentObject_key']` + TAB + \
+		 `r['ancLabelKey']` + TAB + \
+		 `r['descLabelKey']` + CRT)
+
+    fp.close()
+    
 def markers():
 
     #
