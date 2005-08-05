@@ -38,6 +38,8 @@
 #	25. allele_reference.bcp
 #	26. marker_reference.bcp
 #	27. strain_reference.bcp
+#	28. mp_term.bcp
+#	29. mp_closure.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
@@ -45,6 +47,9 @@
 # Notes:
 #
 # History:
+#
+# lec	08/05/2005
+#	- added mp_closure
 #
 # lec	06/01/2005
 #	- added all markers (not just mouse) per cjb
