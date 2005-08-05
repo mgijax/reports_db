@@ -275,6 +275,24 @@ def vocabs():
 		     r['mdate'] + CRT)
     fp.close()
 
+    #
+    # mp_closure.bcp
+    #
+    
+    fp = open(OUTPUTDIR + 'mp_closure.bcp', 'w')
+
+    results = db.sql('select c._AncestorObject_key, c._DescendentObject_key, c._AncestorLabel_key, c._DescendentLabel_key ' + \
+	'from DAG_Closure c ' + \
+	'where c._Dag_key = 4 ', 'auto')
+
+    for r in results:
+	fp.write(`r['_AncestorObject_key']` + TAB + \
+		 `r['_DescendentObject_key']` + TAB + \
+		 `r['_AncestorLabel_key']` + TAB + \
+		 `r['_DescendentLabel_key']` + CRT)
+
+    fp.close()
+
 def markers():
 
     #
@@ -579,7 +597,7 @@ def alleles():
 	    fp.write(`r['_Allele_key']` + COLDELIM + \
 		     r['noteType'] + COLDELIM + \
 		     `r['sequenceNum']` + COLDELIM + \
-		     r['note'] + COLDELIM + \
+		     mgi_utils.prvalue(r['note']) + COLDELIM + \
 		     r['cdate'] + COLDELIM + \
 		     r['mdate'] + LINEDELIM)
     fp.close()
