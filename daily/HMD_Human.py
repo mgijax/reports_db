@@ -683,6 +683,80 @@ def processSort4(results):
 	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
+def processSort5(results):
+
+	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Chromosome)'
+	reportName = REPORTNAME + '1'
+	
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp.write(reportLegend + CRT + CRT)
+
+	fp.write('Human Chr' + TAB)
+	fp.write('Human EntrezGene ID' + TAB)
+	fp.write('Human Symbol' + TAB)
+	fp.write('Mouse MGI Acc ID' + TAB)
+	fp.write('Mouse Chr' + TAB)
+	fp.write('Mouse cM' + TAB)
+	fp.write('Mouse EntrezGene ID' + TAB)
+	fp.write('Mouse Symbol' + TAB)
+	fp.write('Mouse Name' + TAB)
+	fp.write('Data Attributes' + CRT * 2)
+
+	#
+	# initialize a list to sort the human chromosome & offset values.
+	# the first sort is by chromosome, second is by offset.
+	# that is, sortKeys[0] holds the sequence number of the chromosome order
+	# and sortKeys[1] holds the sort value of the cytogenetic offset
+	#
+	# store the sort key as a tuple in a dictionary (rows) so we can sort 
+	# the dictionary keys
+	#
+	# the dictionary values will be set to the row tuple
+	#
+
+	count = 0
+	sortKeys = [''] * 3	# initialize list to 3 'blanks'
+	rows = {}
+
+	for r in results:
+		sortKeys[0] = r['sequenceNum']
+		sortKeys[1] = getSortableOffset(r['cytogeneticOffset'])
+		sortKeys[2] = r['humanSymbol']
+		rows[tuple(sortKeys)] = r
+		count = count + 1
+
+	#
+	# now sort the "rows" dictionary keys
+	# and print out the dictionary values
+	#
+
+	keys = rows.keys()
+	keys.sort()
+	for key in keys:
+		r = rows[key]
+		fp.write(r['humanChr'] + TAB)
+
+		if humanEG.has_key(r['humanMarkerKey']):
+			fp.write(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]))
+		fp.write(TAB)
+		fp.write(r['humanSymbol'] + TAB)
+		fp.write(mouseMGI[r['mouseMarkerKey']] + TAB)
+		fp.write(r['mouseChr'] + TAB)
+		fp.write(r['mouseCm'] + TAB)
+
+		if mouseEG.has_key(r['mouseMarkerKey']):
+			fp.write(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]) + TAB)
+		fp.write(TAB)
+
+		fp.write(r['mouseSymbol'] + TAB)
+		fp.write(r['mouseName'] + TAB)
+		printDataAttributes(fp, r['humanMarkerKey'])
+		fp.write(CRT)
+
+	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
+	reportlib.trailer(fp)
+	reportlib.finish_nonps(fp)
+
 #
 # Main
 #
@@ -703,10 +777,13 @@ elif sortOption == '3':
 	processSort3(r3)
 elif sortOption == '4':
 	processSort4(r4)
+elif sortOption == '5':
+	processSort5(r1)
 else:
 	processSort1(r1)
 	processSort2(r2)
 	processSort3(r3)
 	processSort4(r4)
+	processSort5(r1)
 
 db.useOneConnection(0)
