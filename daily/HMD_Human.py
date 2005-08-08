@@ -55,6 +55,7 @@ import reportlib
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
+TAB = reportlib.TAB
 REPORTNAME = 'HMD_Human'
 
 reportLegend = 'Data Attributes:  M - MGI curated, C - HomoloGene calculated, B - MGI curated and HomoloGene calculated'
@@ -686,7 +687,7 @@ def processSort4(results):
 def processSort5(results):
 
 	reportTitle = 'Orthology - Human vs. Mouse (Sorted by Human Chromosome)'
-	reportName = REPORTNAME + '1'
+	reportName = REPORTNAME + '5'
 	
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
