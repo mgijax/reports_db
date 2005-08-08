@@ -1,5 +1,12 @@
+TAG: reports_db-3-2-0-6
+DATE: 08/08/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) HMD_Human.py; added HMD_Human5.rpt
+
 TAG: reports_db-3-2-0-5
-DATE: 97/15/2005
+DATE: 07/15/2005
 STAFF: lec
 RELEASE: A
 CHANGES:
