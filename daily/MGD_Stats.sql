@@ -69,7 +69,7 @@ select count(distinct a._Object_key)
 from #markers m, ACC_Accession a
 where m._Marker_key = a._Object_key
 and a._MGIType_key = 2
-and a._LogicalDB_Key = in (13, 41)
+and a._LogicalDB_Key in (13, 41)
 go
 
 print ""
