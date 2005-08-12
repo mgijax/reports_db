@@ -118,19 +118,16 @@ and pb._SegmentType_key != 63473
 go
 
 print ""
-print "Number of Genetic Markers with Molecular Polymorphisms" 
+print "Number of Genes with Molecular Polymorphisms" 
 select count(distinct m._Marker_key)
 from #markers m, PRB_RFLV p
 where m._Marker_key = p._Marker_key
 go
 
 print ""
-print "Number of Genes with Molecular Polymorphisms" 
+print "Number of Genetic Markers with Molecular Polymorphisms" 
 select count(distinct m._Marker_key)
 from MRK_Marker m, PRB_RFLV p
-where m._Organism_key = 1
-and m._Marker_Type_key = 1
-and m._Marker_Status_key in (1,3)
-and m._Marker_key = p._Marker_key
+where m._Marker_key = p._Marker_key
 go
 

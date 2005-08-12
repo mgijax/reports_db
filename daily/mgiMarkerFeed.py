@@ -39,6 +39,7 @@
 #	26. marker_reference.bcp
 #	27. strain_reference.bcp
 #	28. mp_term.bcp
+#	29. mp_closure.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
@@ -47,8 +48,12 @@
 #
 # History:
 #
+# lec	08/2005
+#	- added mp_term, mp_closure per csb
+#	- added header id and header order to genotype_mpt
+#
 # lec	06/01/2005
-#	- added all markers (not just mouse) per cjb
+#	- added all markers (not just mouse) per csb
 #
 # lec	01/14/2004
 #	- TR 5565; JaxStrain additions
@@ -835,17 +840,21 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'genotype_mpt.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, a._Annot_key, a._Term_key, a.isNot, ' + \
+    results = db.sql('select g._Genotype_key, a._Annot_key, a._Term_key, a.isNot, headerTerm = h._Term_key, h.sequenceNum, ' + \
           'cdate = convert(char(20), a.creation_date, 100), ' + \
           'mdate = convert(char(20), a.modification_date, 100) ' + \
-	'from #genotypes g, VOC_Annot a ' + \
+	'from #genotypes g, VOC_Annot a, VOC_AnnotHeader h ' + \
 	'where g._Genotype_key = a._Object_key ' + \
-	'and a._AnnotType_key = 1002 ', 'auto')
+	'and a._AnnotType_key = 1002 ' + \
+	'and a._AnnotType_key = h._AnnotType_key ' + \
+	'and a._Object_key = h._Object_key', 'auto')
 
     for r in results:
 	fp.write(`r['_Annot_key']` + TAB + \
 	         `r['_Term_key']` + TAB + \
 	         `r['_Genotype_key']` + TAB + \
+	         `r['headerTerm']` + TAB + \
+	         `r['sequenceNum']` + TAB + \
 		`r['isNot']` + TAB + \
 		r['cdate'] + TAB + \
 		r['mdate'] + CRT)
