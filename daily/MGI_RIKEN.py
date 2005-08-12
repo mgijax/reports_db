@@ -23,6 +23,9 @@
 #
 # History:
 #
+# lec	08/12/2005
+#	- just select HTC sequences for RIKEN clones
+#
 # lec	10/27/2003
 #	- created per TR 5252
 #
@@ -46,9 +49,11 @@ problemNote = 'MGI curatorial staff have found evidence of artifact in the seque
 
 fp = reportlib.init(sys.argv[0], printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
 
-cmds = []
+#
+# select RIKEN clones
+#
 
-cmds.append('select a1._Object_key, cloneID = a1.accID, mgiID = a2.accID ' + \
+db.sql('select a1._Object_key, cloneID = a1.accID, mgiID = a2.accID ' + \
 	'into #riken ' + \
 	'from ACC_Accession a1, ACC_Accession a2 ' + \
 	'where a1._MGIType_key = 3 ' + \
@@ -57,23 +62,48 @@ cmds.append('select a1._Object_key, cloneID = a1.accID, mgiID = a2.accID ' + \
 	'and a2._MGIType_key = 3 ' + \
 	'and a2._LogicalDB_key = 1 ' + \
 	'and a2.prefixPart = "MGI:" ' + \
-	'and a2.preferred = 1')
+	'and a2.preferred = 1', None)
 
-cmds.append('create nonclustered index idx_key on #riken(_Object_key)')
+db.sql('create nonclustered index idx_key on #riken(_Object_key)', None)
 
-cmds.append('select r._Object_key, a.accID ' + \
-    'from #riken r, ACC_Accession a ' + \
-    'where r._Object_key = a._Object_key ' + \
-    'and a._MGIType_key = 3 ' + \
-    'and a._LogicalDB_key = 9')
+#
+# select GenBank/EMBL/DDBJ:HTC Riken Sequence
+# there should be at most one per RIKEN clone
+#
 
+results = db.sql('select r._Object_key, a.accID ' + \
+    'from #riken r, SEQ_Probe_Cache p, SEQ_Sequence s, ACC_Accession a ' + \
+    'where r._Object_key = p._Probe_key ' + \
+    'and p._Sequence_key = s._Sequence_key ' + \
+    'and s._SequenceProvider_key = 316375 ' + \
+    'and p._Sequence_key = a._Object_key ' + \
+    'and a._MGIType_key = 19 ' + \
+    'and a._LogicalDB_key = 9', 'auto')
+
+seqIDs = {}
+for r in results:
+    key = r['_Object_key']
+    value = r['accID']
+    seqIDs[key] = value
+
+#
 # problem sequences
-cmds.append('select distinct r._Object_key ' + \
+#
+
+results = db.sql('select distinct r._Object_key ' + \
 	'from #riken r, PRB_Notes n ' + \
 	'where r._Object_key = n._Probe_key ' + \
-	'and n.note like "%curatorial staff have found evidence of artifact in the sequence of this molecular%"')
+	'and n.note like "%curatorial staff have found evidence of artifact in the sequence of this molecular%"', 'auto')
 
-cmds.append('select r.*, markerID = ma.accID, m.symbol, m.name ' + \
+problemClones = []
+for r in results:
+    problemClones.append(r['_Object_key'])
+
+#
+# final results
+#
+
+results = db.sql('select r.*, markerID = ma.accID, m.symbol, m.name ' + \
 	'from #riken r, PRB_Marker pm, ACC_Accession ma, MRK_Marker m ' + \
 	'where r._Object_key = pm._Probe_key ' + \
 	'and pm._Marker_key = ma._Object_key ' + \
@@ -87,21 +117,9 @@ cmds.append('select r.*, markerID = ma.accID, m.symbol, m.name ' + \
 	'from #riken r ' + \
 	'where not exists (select 1 from PRB_Marker pm ' + \
 	'where r._Object_key = pm._Probe_key) ' + \
-	'order by r.cloneID')
+	'order by r.cloneID', 'auto')
 
-results = db.sql(cmds, 'auto')
-
-seqIDs = {}
-for r in results[-3]:
-    key = r['_Object_key']
-    value = r['accID']
-    seqIDs[key] = value
-
-problemClones = []
-for r in results[-2]:
-    problemClones.append(r['_Object_key'])
-
-for r in results[-1]:
+for r in results:
 
 	if r['_Object_key'] in problemClones:
 	    isProblem = 'Problem'
