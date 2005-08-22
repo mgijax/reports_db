@@ -1,3 +1,11 @@
+TAG: reports_db-3-2-0-7
+DATE: 08/22/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) HMD_Human.py; fixed HMD_Human5.rpt
+2) MRK_Sequence.py; exclude NP_, NR_ (TR 7033)
+
 TAG: reports_db-3-2-0-6
 DATE: 08/08/2005
 STAFF: lec
