@@ -123,7 +123,8 @@ results = db.sql('select distinct m._Marker_key, a.accID ' + \
       'from #markers m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 27', 'auto')
+      'and a._LogicalDB_key = 27 ' + \
+      'and a.prefixPart not in ("XP_", "NP_")', 'auto')
 rsID = {}
 for r in results:
     key = r['_Marker_key']
