@@ -57,8 +57,63 @@ markerTypes = {1: 'gene'}
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-db.useOneConnection(1)
+def writeRecord(r, refID):
 
+	# if we can't find the DAG for the Term, skip it
+
+	if not dag.has_key(r['_Term_key']):
+		return
+
+	fp.write(DBABBREV + TAB)
+	fp.write(r['markerID'] + TAB)
+	fp.write(r['symbol'] + TAB)
+
+	if r['isNot'] == 1:
+		fp.write('NOT')
+
+	fp.write(TAB)
+	fp.write(r['termID'] + TAB)
+	fp.write(refID + TAB)
+	fp.write(r['eCode'] + TAB)
+
+	# substitute | for ", " in inferredFrom
+
+	if r['inferredFrom'] != None:
+		inferredFrom = regsub.gsub(',', '|', r['inferredFrom'])
+		inferredFrom = regsub.gsub(';', '|', inferredFrom)
+		inferredFrom = regsub.gsub(' ', '', inferredFrom)
+	else:
+		inferredFrom = r['inferredFrom']
+
+	fp.write(mgi_utils.prvalue(inferredFrom) + TAB)
+
+	fp.write(dag[r['_Term_key']] + TAB)
+	fp.write(r['name'] + TAB)
+
+	if syns.has_key(r['_Object_key']):
+		fp.write(string.join(syns[r['_Object_key']], '|'))
+
+	fp.write(TAB)
+
+	if markerTypes.has_key(r['_Marker_Type_key']):
+		fp.write(markerTypes[r['_Marker_Type_key']] + TAB)
+
+	fp.write(SPECIES + TAB)
+
+	fp.write(r['mDate'] + TAB)
+
+	if r['modifiedBy'] == 'swissload':
+		fp.write('SWALL')
+	else:
+		fp.write(DBABBREV)
+
+	fp.write(CRT)
+
+#
+# Main
+#
+
+db.useOneConnection(1)
 fp = reportlib.init('gene_association_nonmouse', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
 #
@@ -181,63 +236,21 @@ for n in allnotes.keys():
 #
 # process results
 #
+
 results = db.sql('select * from #results order by symbol', 'auto')
+
 for r in results:
-	# if we can't find the DAG for the Term, skip it
 
-	if dag.has_key(r['_Term_key']):
-		fp.write(DBABBREV + TAB)
-		fp.write(r['markerID'] + TAB)
-		fp.write(r['symbol'] + TAB)
+	# if the notes have a pub med id, use it
+	if notes.has_key(r['_AnnotEvidence_key']):
+	    tokens = string.split(string.join(notes[r['_AnnotEvidence_key']], ''), ';')
+	    for t in tokens:
+	        writeRecord(r, t)
 
-		if r['isNot'] == 1:
-			fp.write('NOT')
-
-		fp.write(TAB)
-		fp.write(r['termID'] + TAB)
-
-		# if the notes have a pub med id, use it
-		if notes.has_key(r['_AnnotEvidence_key']):
-		    fp.write(string.join(notes[r['_AnnotEvidence_key']], '') + TAB)
-
-		# else use the annotation reference
-		else:
-		    fp.write('PMID:' + mgi_utils.prvalue(r['refID']) + TAB)
-
-		fp.write(r['eCode'] + TAB)
-
-		# substitute | for ", " in inferredFrom
-
-		if r['inferredFrom'] != None:
-			inferredFrom = regsub.gsub(',', '|', r['inferredFrom'])
-			inferredFrom = regsub.gsub(';', '|', inferredFrom)
-			inferredFrom = regsub.gsub(' ', '', inferredFrom)
-		else:
-			inferredFrom = r['inferredFrom']
-
-		fp.write(mgi_utils.prvalue(inferredFrom) + TAB)
-
-		fp.write(dag[r['_Term_key']] + TAB)
-		fp.write(r['name'] + TAB)
-
-		if syns.has_key(r['_Object_key']):
-			fp.write(string.join(syns[r['_Object_key']], '|'))
-
-		fp.write(TAB)
-
-		if markerTypes.has_key(r['_Marker_Type_key']):
-			fp.write(markerTypes[r['_Marker_Type_key']] + TAB)
-
-		fp.write(SPECIES + TAB)
-
-		fp.write(r['mDate'] + TAB)
-
-		if r['modifiedBy'] == 'swissload':
-			fp.write('SWALL')
-		else:
-			fp.write(DBABBREV)
-
-		fp.write(CRT)
+	# else use the annotation reference
+	else:
+	    writeRecord(r, 'PMID:' + mgi_utils.prvalue(r['refID']))
 	
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
+
