@@ -746,7 +746,7 @@ def processSort5(results):
 		fp.write(r['mouseCm'] + TAB)
 
 		if mouseEG.has_key(r['mouseMarkerKey']):
-			fp.write(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]) + TAB)
+			fp.write(mgi_utils.prvalue(mouseEG[r['mouseMarkerKey']]))
 		fp.write(TAB)
 
 		fp.write(r['mouseSymbol'] + TAB)

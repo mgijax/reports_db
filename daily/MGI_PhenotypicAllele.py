@@ -12,10 +12,12 @@
 #		MGI ID of Allele
 #		Allele Symbol
 #		Allele Name
+#		Allele Type
 #		PubMed ID of Original Reference
 #		MGI ID of Gene
 #		Gene Symbol
 #		RefSeq ID of Gene
+#		Ensembl ID
 #		MP IDs of MP annotations
 #
 # Usage:
