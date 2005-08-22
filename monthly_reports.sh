@@ -21,5 +21,5 @@ foreach i (`ls *.py`)
 $i >>& ${LOG}
 end
 
-rcp ${REPORTOUTPUTDIR}/GO_nonmouse.rpt ${FTPCUSTOM}
-rm -rf ${REPORTOUTPUTDIR}/GO_nonmouse.rpt
+rcp ${REPORTOUTPUTDIR}/gene_association_nonmouse.mgi ${FTPCUSTOM}
+rm -rf ${REPORTOUTPUTDIR}/gene_association_nonmouse.mgi

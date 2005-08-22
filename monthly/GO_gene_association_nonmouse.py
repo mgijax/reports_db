@@ -11,6 +11,7 @@
 #       GO_gene_association_nonmouse.py
 #
 # Used by:
+#	GOA
 #
 # Output format:
 #
@@ -195,8 +196,11 @@ for r in results:
 		fp.write(TAB)
 		fp.write(r['termID'] + TAB)
 
+		# if the notes have a pub med id, use it
 		if notes.has_key(r['_AnnotEvidence_key']):
 		    fp.write(string.join(notes[r['_AnnotEvidence_key']], '') + TAB)
+
+		# else use the annotation reference
 		else:
 		    fp.write('PMID:' + mgi_utils.prvalue(r['refID']) + TAB)
 
