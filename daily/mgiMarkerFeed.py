@@ -52,6 +52,9 @@
 #	- added mp_term, mp_closure per csb
 #	- added header id and header order to genotype_mpt
 #
+# lec	08/05/2005
+#	- added mp_closure
+#
 # lec	06/01/2005
 #	- added all markers (not just mouse) per csb
 #
@@ -287,20 +290,18 @@ def vocabs():
     
     fp = open(OUTPUTDIR + 'mp_closure.bcp', 'w')
 
-    results = db.sql('select c._AncestorObject_key, c._DescendentObject_key, ancLabelKey = n1._Label_key, descLabelKey = n2._Label_key ' + \
-	'from DAG_Closure c, DAG_Node n1, DAG_Node n2 ' + \
-	'where c._Dag_key = 4 ' + \
-	'and c._Ancestor_key = n1._Node_key ' + \
-	'and c._Descendent_key = n2._Node_key', 'auto')
+    results = db.sql('select c._AncestorObject_key, c._DescendentObject_key, c._AncestorLabel_key, c._DescendentLabel_key ' + \
+	'from DAG_Closure c ' + \
+	'where c._Dag_key = 4 ', 'auto')
 
     for r in results:
 	fp.write(`r['_AncestorObject_key']` + TAB + \
 		 `r['_DescendentObject_key']` + TAB + \
-		 `r['ancLabelKey']` + TAB + \
-		 `r['descLabelKey']` + CRT)
+		 `r['_AncestorLabel_key']` + TAB + \
+		 `r['_DescendentLabel_key']` + CRT)
 
     fp.close()
-    
+
 def markers():
 
     #
@@ -605,7 +606,7 @@ def alleles():
 	    fp.write(`r['_Allele_key']` + COLDELIM + \
 		     r['noteType'] + COLDELIM + \
 		     `r['sequenceNum']` + COLDELIM + \
-		     r['note'] + COLDELIM + \
+		     mgi_utils.prvalue(r['note']) + COLDELIM + \
 		     r['cdate'] + COLDELIM + \
 		     r['mdate'] + LINEDELIM)
     fp.close()

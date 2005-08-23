@@ -1,3 +1,10 @@
+TAG: reports_db-3-3-0-1
+DATE: 08/23/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) OMIM branch merge
+
 TAG: reports_db-3-2-0-8
 TAG: reports_db-3-2-0-7
 DATE: 08/22/2005
@@ -21,6 +28,20 @@ STAFF: lec
 RELEASE: A
 CHANGES:
 1) HMD_HGNC_Accession.py; added mouse EntrezGene ID
+
+TAG: reports_db-omim-2
+DATE: 08/10/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) OMIM
+
+TAG: reports_db-omim-1
+DATE: 08/09/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) OMIM
 
 TAG: reports_db-BP-omim
 DATE: 06/28/2005
