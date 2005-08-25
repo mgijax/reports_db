@@ -1,3 +1,11 @@
+TAG: reports_db-3-3-0-2
+DATE: 08/25/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) OMIM
+2) MGI_PhenoGenoMP.py fix
+
 TAG: reports_db-3-3-0-1
 DATE: 08/23/2005
 STAFF: lec
