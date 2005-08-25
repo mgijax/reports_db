@@ -11,10 +11,11 @@
 #	represents a Genotype annotation to a MP term
 #	and all of the references (J:) used to annotate that term.
 #
-#	field 1: Allele Combination
-#	field 2: Strain
-#	field 3: MP ID
-#	field 4: comma-delimited set of J:
+#	field 1: MGI Marker ID
+#	field 2: Allele Combination
+#	field 3: Strain
+#	field 4: MP ID
+#	field 5: comma-delimited set of J:
 #
 # Usage:
 #       MGI_PhenoGenoMP.py
@@ -117,6 +118,24 @@ for r in results:
     mpDisplay[key] = value
 
 #
+# resolve Marker ID
+#
+results = db.sql('select distinct m._Object_key, a.accID from #mp m, GXD_AlleleGenotype g, ACC_Accession a ' + \
+	'where m._Object_key = g._Genotype_key ' + \
+	'and g._Marker_key = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
+	'and a._LogicalDB_key = 1 ' + \
+	'and a.prefixPart = "MGI:" ' + \
+	'and a.preferred = 1', 'auto')
+mpMarker = {}
+for r in results:
+    key = r['_Object_key']
+    value = r['accID']
+    if not mpMarker.has_key(key):
+	mpMarker[key] = []
+    mpMarker[key].append(value)
+
+#
 # process results
 #
 results = db.sql('select distinct _Object_key, _Term_key from #mp order by _Object_key, _Term_key', 'auto')
@@ -129,12 +148,13 @@ for r in results:
 
     # we only want to list the Genotypes that have Allele Pairs
     if mpDisplay.has_key(genotype):
+
         fp.write(mpDisplay[genotype] + TAB + \
 	    mpStrain[genotype] + TAB + \
 	    mpID[term] + TAB)
         if mpRef.has_key(refKey):
 	    fp.write(string.join(mpRef[refKey], ','))
-        fp.write(CRT)
+	fp.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
 
