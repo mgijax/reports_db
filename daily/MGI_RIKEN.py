@@ -9,6 +9,7 @@
 #
 #	. RIKEN Clone ID
 #	. MGI Accession ID for Molecular Segment
+#	. Sequence ID
 #	. "Problem" Sequence
 #	. MGI Accession ID for Marker
 #	. Gene Symbol
@@ -48,6 +49,17 @@ problemNote = 'MGI curatorial staff have found evidence of artifact in the seque
 #
 
 fp = reportlib.init(sys.argv[0], printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+
+fp.write('#\n')
+fp.write('#  tab-delimited file of all MGI RIKEN clone/marker associations\n\n')
+fp.write('#  column 1: RIKEN Clone ID\n')
+fp.write('#  column 2: MGI Clone ID\n')
+fp.write('#  column 3: Sequence ID\n')
+fp.write('#  column 4: "Problem" Clone\n')
+fp.write('#  column 5: MGI Marker ID\n')
+fp.write('#  column 6: Gene Symbol\n')
+fp.write('#  column 7: Gene Name\n')
+fp.write('#\n')
 
 #
 # select RIKEN clones
