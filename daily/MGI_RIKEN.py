@@ -68,6 +68,7 @@ db.sql('create nonclustered index idx_key on #riken(_Object_key)', None)
 
 #
 # select GenBank/EMBL/DDBJ:HTC Riken Sequence
+# or GenBank/EMBL/DDBJ (dummy Sequence)
 # there should be at most one per RIKEN clone
 #
 
@@ -75,7 +76,7 @@ results = db.sql('select r._Object_key, a.accID ' + \
     'from #riken r, SEQ_Probe_Cache p, SEQ_Sequence s, ACC_Accession a ' + \
     'where r._Object_key = p._Probe_key ' + \
     'and p._Sequence_key = s._Sequence_key ' + \
-    'and s._SequenceProvider_key = 316375 ' + \
+    'and s._SequenceProvider_key in (316375, 316380) ' + \
     'and p._Sequence_key = a._Object_key ' + \
     'and a._MGIType_key = 19 ' + \
     'and a._LogicalDB_key = 9', 'auto')

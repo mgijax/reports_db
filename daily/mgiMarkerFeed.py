@@ -841,26 +841,45 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'genotype_mpt.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, a._Annot_key, a._Term_key, a.isNot, headerTerm = h._Term_key, h.sequenceNum, ' + \
+    results = db.sql('select g._Genotype_key, a._Annot_key, a._Term_key, a.isNot, ' + \
           'cdate = convert(char(20), a.creation_date, 100), ' + \
           'mdate = convert(char(20), a.modification_date, 100) ' + \
-	'from #genotypes g, VOC_Annot a, VOC_AnnotHeader h ' + \
+	'from #genotypes g, VOC_Annot a ' + \
 	'where g._Genotype_key = a._Object_key ' + \
-	'and a._AnnotType_key = 1002 ' + \
-	'and a._AnnotType_key = h._AnnotType_key ' + \
-	'and a._Object_key = h._Object_key', 'auto')
+	'and a._AnnotType_key = 1002 ', 'auto')
 
     for r in results:
 	fp.write(`r['_Annot_key']` + TAB + \
 	         `r['_Term_key']` + TAB + \
 	         `r['_Genotype_key']` + TAB + \
-	         `r['headerTerm']` + TAB + \
-	         `r['sequenceNum']` + TAB + \
 		`r['isNot']` + TAB + \
 		r['cdate'] + TAB + \
 		r['mdate'] + CRT)
 
     fp.close()
+
+    #
+    # genotype_header.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'genotype_header.bcp', 'w')
+
+    results = db.sql('select g._Genotype_key, headerTerm = h._Term_key, h.sequenceNum, ' + \
+          'cdate = convert(char(20), h.creation_date, 100), ' + \
+          'mdate = convert(char(20), h.modification_date, 100) ' + \
+	'from #genotypes g, VOC_AnnotHeader h ' + \
+	'where g._Genotype_key = h._Object_key ' + \
+	'and h._AnnotType_key = 1002 ', 'auto')
+
+    for r in results:
+	fp.write(`r['_Genotype_key']` + TAB + \
+	         `r['headerTerm']` + TAB + \
+	         `r['sequenceNum']` + TAB + \
+		r['cdate'] + TAB + \
+		r['mdate'] + CRT)
+
+    fp.close()
+
 
     #
     # strain_genotype.bcp
