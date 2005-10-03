@@ -42,8 +42,6 @@ import reportlib
 CRT = reportlib.CRT
 TAB = reportlib.TAB
 
-problemNote = 'MGI curatorial staff have found evidence of artifact in the sequence of this molecular segment.'
-
 #
 # Main
 #

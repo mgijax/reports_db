@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	10/03/2005
+#	- replace SWALL with UniProt
+#
 # lec	03/10/2004
 #       - only include Markers of type Gene
 #
@@ -204,7 +207,7 @@ for r in results:
 		fp.write(r['mDate'] + TAB)
 
 		if r['modifiedBy'] == 'swissload':
-			fp.write('SWALL')
+			fp.write('UniProt')
 		else:
 			fp.write(DBABBREV)
 
