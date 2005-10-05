@@ -48,6 +48,9 @@
 #
 # History:
 #
+# lec	10/04/2005
+#	- TR 5188; GO Qualifier
+#
 # lec	08/2005
 #	- added mp_term, mp_closure per csb
 #	- added header id and header order to genotype_mpt
@@ -841,18 +844,19 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'genotype_mpt.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, a._Annot_key, a._Term_key, a.isNot, ' + \
+    results = db.sql('select g._Genotype_key, a._Annot_key, a._Term_key, qualifier = q.term, ' + \
           'cdate = convert(char(20), a.creation_date, 100), ' + \
           'mdate = convert(char(20), a.modification_date, 100) ' + \
-	'from #genotypes g, VOC_Annot a ' + \
+	'from #genotypes g, VOC_Annot a, VOC_Term q ' + \
 	'where g._Genotype_key = a._Object_key ' + \
-	'and a._AnnotType_key = 1002 ', 'auto')
+	'and a._AnnotType_key = 1002 ' + \
+	'and a._Qualifier_key = q._Term_key', 'auto')
 
     for r in results:
 	fp.write(`r['_Annot_key']` + TAB + \
 	         `r['_Term_key']` + TAB + \
 	         `r['_Genotype_key']` + TAB + \
-		`r['isNot']` + TAB + \
+		string.strip(r['qualifier']) + TAB + \
 		r['cdate'] + TAB + \
 		r['mdate'] + CRT)
 

@@ -35,6 +35,9 @@
 #
 # History:
 #
+# lec	10/04/2005
+#	- TR 5188; GO Qualifier
+#
 # lec	08/22/2005
 #       - converted to standard GO format per request (David Hill)
 #
@@ -67,10 +70,7 @@ def writeRecord(r, refID):
 	fp.write(DBABBREV + TAB)
 	fp.write(r['markerID'] + TAB)
 	fp.write(r['symbol'] + TAB)
-
-	if r['isNot'] == 1:
-		fp.write('NOT')
-
+	fp.write(string.strip(r['qualifier']) + TAB)
 	fp.write(TAB)
 	fp.write(r['termID'] + TAB)
 	fp.write(refID + TAB)
@@ -127,12 +127,14 @@ for r in results:
 #
 # retrieve data set to process
 #
-db.sql('select a._Term_key, t.term, termID = ta.accID, a.isNot, a._Object_key, ' + \
+db.sql('select a._Term_key, t.term, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
 	'e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, ' + \
 	'm._Marker_Type_key, m.symbol, m.name ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et,  MRK_Marker m ' + \
+	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et,  MRK_Marker m, MGI_Synonym q ' + \
 	'where a._AnnotType_key = 1000 ' + \
+	'and a._Qualifier_key = q._Synonymm_key ' + \
+	'and q._SynonymType_key = 1023 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Object_key = m._Marker_key ' + \
 	'and m._Marker_Type_key = 1 ' + \
@@ -170,7 +172,7 @@ for r in results:
 #
 # resolve foreign keys
 #
-db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.isNot, g.inferredFrom, ' + \
+db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, ' + \
 	'g._Object_key, g._Marker_Type_key, g.symbol, g.name, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
 	'markerID = ma.accID, ' + \
