@@ -54,7 +54,6 @@ TAB = reportlib.TAB
 coordDisplay = '(%s:%s-%s (%s))'
 noneDisplay = 'null' + TAB
 repGenomicKey = 615419
-sequenceType = 19
 ncbi = 59
 ensembl = 60
 
@@ -63,16 +62,14 @@ def getCoords(logicalDBkey):
 
     tempCoords = {}
 
-    results = db.sql('select m._Marker_key, mc._Qualifier_key, a.accID, ' + \
+    results = db.sql('select m._Marker_key, mc._Qualifier_key, mc.accID, ' + \
 	    'c.chromosome, c.strand, ' + \
 	    'startC = convert(int, c.startCoordinate), ' + \
 	    'endC = convert(int, c.endCoordinate) ' + \
-	        'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
+	        'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c ' + \
 	        'where m._Marker_key = mc._Marker_key ' + \
 	        'and mc._Sequence_key = c._Sequence_key ' + \
-	        'and mc._Sequence_key = a._Object_key ' + \
-	        'and a._MGIType_key = %d ' % (sequenceType) + \
-	        'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
+		'and mc._LogicalDB_key = %s ' % (logicalDBkey), 'auto')
 
     for r in results:
         key = r['_Marker_key']

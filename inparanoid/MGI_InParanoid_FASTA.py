@@ -48,13 +48,10 @@ fp = reportlib.init(reportName, outputdir = os.environ['INPARANOIDDIR'], printHe
 # select all representative polypeptide sequences
 #
 
-db.sql('select a.accID, s._Marker_key into #allsequences ' + \
-	'from SEQ_Marker_Cache s, ACC_Accession a ' + \
+db.sql('select s.accID, s._Marker_key into #allsequences ' + \
+	'from SEQ_Marker_Cache s ' + \
         'where s._Qualifier_key = 615421 ' + \
-        'and s._Sequence_key = a._Object_key ' + \
-        'and a._MGIType_key = 19 ' + \
-        'and a.preferred = 1 ' + \
-        'and a._LogicalDB_key in (13, 41)', None)
+        'and s._LogicalDB_key in (13, 41)', None)
 db.sql('create index idx1 on #allsequences(accID)', None)
 
 #
