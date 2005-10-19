@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	10/19/2005
+#	- added PMID, TR 7173
+#
 # lec	10/03/2005
 #	- replace SWALL with UniProt
 #
