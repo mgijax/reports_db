@@ -142,7 +142,7 @@ db.sql('select g._Term_key, g.termID, g.isNot, g.inferredFrom, ' + \
 	'g._Object_key, g._Marker_Type_key, g.symbol, g.name, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
 	'markerID = ma.accID, ' + \
-	'refID = b.accID, ' + \
+	'g._Refs_key, refID = b.accID, ' + \
 	'eCode = rtrim(t.abbreviation), ' + \
 	'modifiedBy = u.login ' + \
 	'into #results ' + \
@@ -159,6 +159,20 @@ db.sql('select g._Term_key, g.termID, g.isNot, g.inferredFrom, ' + \
 	'and g._EvidenceTerm_key = t._Term_key ' + \
 	'and g._ModifiedBy_key = u._User_key', None)
 db.sql('create index idx1 on #results(symbol)', None)
+db.sql('create index idx2 on #results(_Refs_key)', None)
+
+#
+# resolve PubMed IDs for References
+#
+pubMed = {}
+results = db.sql('select r._Refs_key, a.accID from #results r, ACC_Accession a ' + \
+	'where r._Refs_key = a._Object_key ' + \
+	'and a._MGIType_key = 1 ' + \
+	'and a._LogicalDB_key = 29 ', 'auto')
+for r in results:
+    key = r['_Refs_key']
+    value = r['accID']
+    pubMed[key] = value
 
 #
 # process results
@@ -177,7 +191,13 @@ for r in results:
 
 		fp.write(TAB)
 		fp.write(r['termID'] + TAB)
-		fp.write(DBABBREV + ':' + r['refID'] + TAB)
+
+		# reference
+		referenceID = DBABBREV + ':' + r['refID']
+		if pubMed.has_key(r['_Refs_key']):
+		    referenceID = referenceID + '|PMID:' + pubMed[r['_Refs_key']]
+		fp.write(referenceID + TAB)
+
 		fp.write(r['eCode'] + TAB)
 
 		# substitute | for ", " in inferredFrom
