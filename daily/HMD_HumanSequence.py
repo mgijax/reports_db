@@ -128,7 +128,7 @@ results = db.sql('select distinct a._Object_key, a.accID ' + \
 	'and a.prefixPart in ("NM_", "XM_")', 'auto')
 mrefseqID = {}
 for r in results:
-	if not mrefseqID.has_key([r['_Object_key']):
+	if not mrefseqID.has_key([r['_Object_key']]):
 		mrefseqID[r['_Object_key']] = []
 	mrefseqID[r['_Object_key']].append(r['accID'])
 
@@ -141,7 +141,7 @@ results = db.sql('select distinct _Object_key = h.humanKey, a.accID ' + \
 	'and a.prefixPart in ("NM_", "XM_")', 'auto')
 hrefseqID = {}
 for r in results:
-	if not hrefseqID.has_key([r['_Object_key']):
+	if not hrefseqID.has_key([r['_Object_key']]):
 		hrefseqID[r['_Object_key']] = []
 	hrefseqID[r['_Object_key']].append(r['accID'])
 
