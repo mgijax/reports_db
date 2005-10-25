@@ -125,7 +125,7 @@ results = db.sql('select distinct a._Object_key, a.accID ' + \
 	'where h.mouseKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 27 ' + \
-	'and a.prefixPart in ("NM_", "XM_"), 'auto')
+	'and a.prefixPart in ("NM_", "XM_")', 'auto')
 mrefseqID = {}
 for r in results:
 	if not mrefseqID.has_key([r['_Object_key']):
@@ -138,7 +138,7 @@ results = db.sql('select distinct _Object_key = h.humanKey, a.accID ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 27 ' + \
-	'and a.prefixPart in ("NM_", "XM_"), 'auto')
+	'and a.prefixPart in ("NM_", "XM_")', 'auto')
 hrefseqID = {}
 for r in results:
 	if not hrefseqID.has_key([r['_Object_key']):
