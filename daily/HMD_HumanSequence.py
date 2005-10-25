@@ -31,6 +31,9 @@
 #
 # History:
 #
+# lec	10/25/2005
+#	- MGI 3.5; now loading Human RefSeqs directly into MGI
+#
 # lec	01/04/2004
 #	- TR 5939; EntrezGene->EntrezGene
 #
@@ -158,19 +161,16 @@ for r in results:
 	mspID[r['_Object_key']].append(r['accID'])
 
 # SWISSPROT for Human
-results = db.sql('select distinct _Object_key = h.humanKey, accID = r.protein ' + \
-	'from #homology h, ACC_Accession a, radar..DP_EntrezGene_RefSeq r ' + \
+results = db.sql('select distinct a._Object_key, a.accID ' + \
+	'from #homology h, ACC_Accession a ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 55 ' + \
-	'and a.accID = r.geneID ' \
-	'and r.protein != "-"', 'auto')
+	'and a._LogicalDB_key = 13', 'auto')
 hspID = {}
 for r in results:
-	if r['accID'] != None:
-		if not hspID.has_key(r['_Object_key']):
-			hspID[r['_Object_key']] = []
-		hspID[r['_Object_key']].append(r['accID'])
+	if not hspID.has_key(r['_Object_key']):
+		hspID[r['_Object_key']] = []
+	hspID[r['_Object_key']].append(r['accID'])
 
 # GenBank for Mouse
 results = db.sql('select distinct a._Object_key, a.accID ' + \
