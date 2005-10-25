@@ -31,6 +31,9 @@
 #
 # History:
 #
+# lec	10/25/2005
+#	- MGI 3.5; now loading Human RefSeqs directly into MGI
+#
 # lec	01/04/2004
 #	- TR 5939; EntrezGene->EntrezGene
 #
@@ -119,25 +122,31 @@ for r in results:
 	hegID[r['_Object_key']] = r['accID']
 
 
-# RefSeq for Mouse
+# DNA RefSeqs for Mouse
 results = db.sql('select distinct a._Object_key, a.accID ' + \
 	'from #homology h, ACC_Accession a ' + \
 	'where h.mouseKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 27 ', 'auto')
+	'and a._LogicalDB_key = 27 ' + \
+	'and a.prefixPart in ("NM_", "XM_")', 'auto')
 mrefseqID = {}
 for r in results:
-	mrefseqID[r['_Object_key']] = r['accID']
+	if not mrefseqID.has_key(r['_Object_key']):
+		mrefseqID[r['_Object_key']] = []
+	mrefseqID[r['_Object_key']].append(r['accID'])
 
-# RefSeq for Human
+# RefSeqs for Human
 results = db.sql('select distinct _Object_key = h.humanKey, a.accID ' + \
 	'from #homology h, ACC_Accession a ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 27', 'auto')
+	'and a._LogicalDB_key = 27 ' + \
+	'and a.prefixPart in ("NM_", "XM_")', 'auto')
 hrefseqID = {}
 for r in results:
-	hrefseqID[r['_Object_key']] = r['accID']
+	if not hrefseqID.has_key(r['_Object_key']):
+		hrefseqID[r['_Object_key']] = []
+	hrefseqID[r['_Object_key']].append(r['accID'])
 
 # SWISSPROT for Mouse
 results = db.sql('select distinct a._Object_key, a.accID ' + \
@@ -152,17 +161,16 @@ for r in results:
 	mspID[r['_Object_key']].append(r['accID'])
 
 # SWISSPROT for Human
-results = db.sql('select distinct _Object_key = h.humanKey, accID = r.protein ' + \
-	'from #homology h, ACC_Accession a, radar..DP_EntrezGene_RefSeq r ' + \
+results = db.sql('select distinct a._Object_key, a.accID ' + \
+	'from #homology h, ACC_Accession a ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 55 ' + \
-	'and a.accID = r.geneID ' \
-	'and r.protein != "-"', 'auto')
+	'and a._LogicalDB_key = 13', 'auto')
 hspID = {}
 for r in results:
-	if r['accID'] != None:
-		hspID[r['_Object_key']] = r['accID']
+	if not hspID.has_key(r['_Object_key']):
+		hspID[r['_Object_key']] = []
+	hspID[r['_Object_key']].append(r['accID'])
 
 # GenBank for Mouse
 results = db.sql('select distinct a._Object_key, a.accID ' + \
@@ -201,11 +209,11 @@ for r in results:
 	fp.write(TAB)
 
 	if mrefseqID.has_key(r['mouseKey']):
-		fp.write(mrefseqID[r['mouseKey']])
+		fp.write(string.join(mrefseqID[r['mouseKey']], ','))
 	fp.write(TAB)
 
 	if hrefseqID.has_key(r['humanKey']):
-		fp.write(hrefseqID[r['humanKey']])
+		fp.write(string.join(hrefseqID[r['humanKey']], ','))
 	fp.write(TAB)
 
 	if mspID.has_key(r['mouseKey']):
@@ -213,7 +221,7 @@ for r in results:
 	fp.write(TAB)
 
 	if hspID.has_key(r['humanKey']):
-		fp.write(hspID[r['humanKey']])
+		fp.write(string.join(hspID[r['humanKey']], ','))
 	fp.write(TAB)
 
 	if not mrefseqID.has_key(r['mouseKey']) and not mspID.has_key(r['mouseKey']) and gbID.has_key(r['mouseKey']):

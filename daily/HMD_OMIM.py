@@ -19,6 +19,9 @@
 #
 # History:
 #
+# lec	10/25/2005
+#	- MGI 3.5; now loading Human RefSeqs directly into MGI
+#
 # lec	01/04/2004
 #	- TR 5939; LocusLink->EntrezGene
 #
@@ -99,17 +102,15 @@ for r in results:
     value = r['accID']
     mgiIDs[key] = value
 
-results = db.sql('select h.humanKey, mim = r.dbXrefID ' + \
-	'from #homology h, ACC_Accession a, radar..DP_EntrezGene_DBXRef r ' + \
+results = db.sql('select h.humanKey, accID ' + \
+	'from #homology h, ACC_Accession a ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 55 ' + \
-	'and a.accID = r.geneID ' + \
-	'and r.dbXrefID like "MIM:%"', 'auto')
+	'and a._LogicalDB_key = 15 ', 'auto')
 mimIDs = {}
 for r in results:
     key = r['humanKey']
-    value = str(r['mim'])
+    value = r['accID']
     if not mimIDs.has_key(key):
 	mimIDs[key] = []
     mimIDs[key].append(value)
