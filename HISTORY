@@ -1,3 +1,10 @@
+TAG: reports_db-3-3-0-6
+DATE: 10/25/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) TR 7173, GO_association.py; added PMID
+
 TAG: reports_db-3-3-0-5
 DATE: 10/19/2005
 STAFF: lec
