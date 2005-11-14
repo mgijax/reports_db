@@ -135,6 +135,7 @@ db.sql('select a._Term_key, t.term, termID = ta.accID, a.isNot, a._Object_key, '
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Object_key = m._Marker_key ' + \
+	'and a._Object_key = 605 ' + \
 	'and m._Marker_Type_key = 1 ' + \
 	'and a._Term_key = t._Term_key ' + \
 	'and a._Term_key = ta._Object_key ' + \
@@ -204,7 +205,7 @@ results = db.sql('select g._AnnotEvidence_key, c.note, c.sequenceNum ' + \
 allnotes = {}
 for r in results:
     key = r['_AnnotEvidence_key']
-    value = r['note']
+    value = string.strip(r['note'])
     value = regsub.gsub('PMID: ', 'PMID:', value)
     value = regsub.gsub('\n', '', value)
     if not allnotes.has_key(key):
@@ -213,9 +214,10 @@ for r in results:
 
 notes = {}
 for n in allnotes.keys():
-    value = string.join(allnotes[n])
+    value = string.join(allnotes[n], '')
     pmids = []
 
+    print value
     i = string.find(value, 'PMID:')
     while i >= 0:
 	t = value[i:]
