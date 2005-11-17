@@ -33,7 +33,6 @@
 import sys
 import os
 import string
-import regex
 import db
 import mgi_utils
 import reportlib
