@@ -1,3 +1,10 @@
+TAG: reports_db-3-4-0-3
+DATE: 11/18/2005
+STAFF: lec
+RELEASE: A
+CHANGES:
+1) PRB_CloneLibrarycDNA.py ; added clone ids
+
 TAG: reports_db-3-4-0-2
 DATE: 10/26/2005
 STAFF: lec
