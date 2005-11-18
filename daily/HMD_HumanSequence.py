@@ -11,12 +11,14 @@
 #	2. mgi acc id
 #	3. gene symbol for human ortholog
 #	4. entrezgene acc id for human gene
-#	5. refseq acc id for mouse gene
-#	6. refseq acc id for human gene
-#	7. sp acc id for mouse gene
-#	8. sp acc id for human gene
-#	9. if no ref seq or sp id, then GB acc ids for mouse gene
-#	10. evidence used to support mouse0human homology
+#	5. nucleotide refseq acc id for mouse gene
+#	6. nucleotide refseq acc id for human gene
+#	7. protein refseq acc id for mouse gene
+#	8. protein refseq acc id for human gene
+#	9. sp acc id for mouse gene
+#	10. sp acc id for human gene
+#	11. if no ref seq or sp id, then GB acc ids for mouse gene
+#	12. evidence used to support mouse0human homology
 #
 # Usage:
 #       HMD_HumanSequence.py
@@ -121,32 +123,57 @@ hegID = {}
 for r in results:
 	hegID[r['_Object_key']] = r['accID']
 
-
-# DNA RefSeqs for Mouse
+# nucleotide RefSeqs for Mouse
 results = db.sql('select distinct a._Object_key, a.accID ' + \
 	'from #homology h, ACC_Accession a ' + \
 	'where h.mouseKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 27 ' + \
 	'and a.prefixPart in ("NM_", "XM_")', 'auto')
-mrefseqID = {}
+mNrefseqID = {}
 for r in results:
-	if not mrefseqID.has_key(r['_Object_key']):
-		mrefseqID[r['_Object_key']] = []
-	mrefseqID[r['_Object_key']].append(r['accID'])
+	if not mNrefseqID.has_key(r['_Object_key']):
+		mNrefseqID[r['_Object_key']] = []
+	mNrefseqID[r['_Object_key']].append(r['accID'])
 
-# RefSeqs for Human
+# nucleotide RefSeqs for Human
 results = db.sql('select distinct _Object_key = h.humanKey, a.accID ' + \
 	'from #homology h, ACC_Accession a ' + \
 	'where h.humanKey = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a._LogicalDB_key = 27 ' + \
 	'and a.prefixPart in ("NM_", "XM_")', 'auto')
-hrefseqID = {}
+hNrefseqID = {}
 for r in results:
-	if not hrefseqID.has_key(r['_Object_key']):
-		hrefseqID[r['_Object_key']] = []
-	hrefseqID[r['_Object_key']].append(r['accID'])
+	if not hNrefseqID.has_key(r['_Object_key']):
+		hNrefseqID[r['_Object_key']] = []
+	hNrefseqID[r['_Object_key']].append(r['accID'])
+
+# protein RefSeqs for Mouse
+results = db.sql('select distinct a._Object_key, a.accID ' + \
+	'from #homology h, ACC_Accession a ' + \
+	'where h.mouseKey = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
+	'and a._LogicalDB_key = 27 ' + \
+	'and a.prefixPart in ("NP_", "XP_")', 'auto')
+mPrefseqID = {}
+for r in results:
+	if not mPrefseqID.has_key(r['_Object_key']):
+		mPrefseqID[r['_Object_key']] = []
+	mPrefseqID[r['_Object_key']].append(r['accID'])
+
+# protein RefSeqs for Human
+results = db.sql('select distinct _Object_key = h.humanKey, a.accID ' + \
+	'from #homology h, ACC_Accession a ' + \
+	'where h.humanKey = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
+	'and a._LogicalDB_key = 27 ' + \
+	'and a.prefixPart in ("NP_", "XP_")', 'auto')
+hPrefseqID = {}
+for r in results:
+	if not hPrefseqID.has_key(r['_Object_key']):
+		hPrefseqID[r['_Object_key']] = []
+	hPrefseqID[r['_Object_key']].append(r['accID'])
 
 # SWISSPROT for Mouse
 results = db.sql('select distinct a._Object_key, a.accID ' + \
@@ -208,12 +235,20 @@ for r in results:
 		fp.write(hegID[r['humanKey']])
 	fp.write(TAB)
 
-	if mrefseqID.has_key(r['mouseKey']):
-		fp.write(string.join(mrefseqID[r['mouseKey']], ','))
+	if mNrefseqID.has_key(r['mouseKey']):
+		fp.write(string.join(mNrefseqID[r['mouseKey']], ','))
 	fp.write(TAB)
 
-	if hrefseqID.has_key(r['humanKey']):
-		fp.write(string.join(hrefseqID[r['humanKey']], ','))
+	if hNrefseqID.has_key(r['humanKey']):
+		fp.write(string.join(hNrefseqID[r['humanKey']], ','))
+	fp.write(TAB)
+
+	if mPrefseqID.has_key(r['mouseKey']):
+		fp.write(string.join(mPrefseqID[r['mouseKey']], ','))
+	fp.write(TAB)
+
+	if hPrefseqID.has_key(r['humanKey']):
+		fp.write(string.join(hPrefseqID[r['humanKey']], ','))
 	fp.write(TAB)
 
 	if mspID.has_key(r['mouseKey']):
@@ -224,7 +259,10 @@ for r in results:
 		fp.write(string.join(hspID[r['humanKey']], ','))
 	fp.write(TAB)
 
-	if not mrefseqID.has_key(r['mouseKey']) and not mspID.has_key(r['mouseKey']) and gbID.has_key(r['mouseKey']):
+	if not mNrefseqID.has_key(r['mouseKey']) \
+	   and not mPrefseqID.has_key(r['mouseKey']) \
+	   and not mspID.has_key(r['mouseKey']) \
+	   and gbID.has_key(r['mouseKey']):
 		fp.write(string.join(gbID[r['mouseKey']], ','))
 	fp.write(TAB)
 
