@@ -27,10 +27,25 @@ sed "s/radar/$RADARDB/g" $i > $i.new
 mv -f $i.new $i
 end
 
-mkdir ${REPORTDIR}
-mkdir ${REPORTOUTPUTDIR}
-mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed
-mkdir ${REPORTLOGSDIR}
+if ( ! -d ${REPORTDIR} ) then
+	mkdir ${REPORTDIR}
+endif
+
+if ( ! -d ${REPORTOUTPUTDIR} ) then
+	mkdir ${REPORTOUTPUTDIR}
+endif
+
+if ( ! -d ${REPORTOUTPUTDIR}/mgimarkerfeed ) then
+	mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed
+endif
+
+if ( ! -d ${REPORTLOGSDIR} ) then
+	mkdir ${REPORTLOGSDIR}
+endif
+
+if ( ! -d ${INPARANOIDDIR} ) then
+	mkdir ${INPARANOIDDIR}
+endif
 
 # provide a link to the Mammalian Phenotype vocabulary
 cd ${REPORTOUTPUTDIR}
@@ -50,11 +65,4 @@ cd ${REPORTINSTALLDIR}
 chmod 644 Configuration* HISTORY *.html
 chmod 755 *.sh */*.py */*.sql Install
 chmod 755 daily monthly weekly
-
-mkdir ${REPORTDIR}
-mkdir ${REPORTOUTPUTDIR}
-mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed
-mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed2
-mkdir ${REPORTLOGSDIR}
-mkdir ${INPARANOIDDIR}
 
