@@ -40,18 +40,19 @@ import reportlib
 newHeader = '>%s source=MGI; version=%s; symbol=%s, uniprot=%s\n'
 inFileName = os.environ['INPARANOIDFASTA']
 
-reportName = 'Mus-musculus_MGI_' + mgi_utils.date('%m%d%Y') + '_protein-reps'
+reportNameA = 'Mus-musculus_MGI_' + mgi_utils.date('%m%d%Y') + '_protein-reps'
+reportNameB = 'Mus-musculus_MGI_' + mgi_utils.date('%m%d%Y') + '_protein-all'
 fileExtension = '.fa'
-fp = reportlib.init(reportName, outputdir = os.environ['INPARANOIDDIR'], printHeading = 0, fileExt = fileExtension)
+fpA = reportlib.init(reportNameA, outputdir = os.environ['INPARANOIDDIR'], printHeading = 0, fileExt = fileExtension)
+fpB = reportlib.init(reportNameB, outputdir = os.environ['INPARANOIDDIR'], printHeading = 0, fileExt = fileExtension)
 
 #
 # select all representative polypeptide sequences
 #
 
-db.sql('select a.accID, s._Marker_key into #allsequences ' + \
+db.sql('select a.accID, s._Marker_key, s._Qualifier_key into #allsequences ' + \
 	'from SEQ_Marker_Cache s, ACC_Accession a ' + \
-        'where s._Qualifier_key = 615421 ' + \
-        'and s._Sequence_key = a._Object_key ' + \
+        'where s._Sequence_key = a._Object_key ' + \
         'and a._MGIType_key = 19 ' + \
         'and a.preferred = 1 ' + \
         'and a._LogicalDB_key in (13, 41)', None)
@@ -61,8 +62,19 @@ db.sql('create index idx1 on #allsequences(accID)', None)
 # eliminate those sequences annotated to > 1 marker
 #
 
-db.sql('select accID, _Marker_key into #sequences from #allsequences group by accID having count(*) = 1', None)
+db.sql('select accID, _Marker_key, _Qualifier_key into #sequences from #allsequences group by accID having count(*) = 1', None)
 db.sql('create index idx1 on #sequences(_Marker_key)', None)
+
+#
+# cache the representative polypeptide
+#
+
+rep = {}
+results = db.sql('select accID, _Marker_key from #sequences where _Qualifier_key = 615421', 'auto')
+for r in results:
+    key = r['accID']
+    value = r['_Marker_key']
+    rep[key] = value
 
 #
 # cache the seq id:marker key
@@ -123,7 +135,9 @@ for line in inFile.readlines():
 	    symbol = markers[markerKey]
 	    mgiID = mgiIDs[markerKey]
             newLine = newHeader % (mgiID, mgi_utils.date('%m/%d/%Y'), symbol, seqID)
-	    fp.write(newLine)
+	    if rep.has_key(seqID):
+		fpA.write(newLine)
+	    fpB.write(newLine)
 	    skipRecord = 0	# re-set skip with every new header
 
 	# else, skip until we find the next header record
@@ -135,9 +149,12 @@ for line in inFile.readlines():
 
     else:
 	if not skipRecord:
-            fp.write(line)
+	    if rep.has_key(seqID):
+                fpA.write(line)
+            fpB.write(line)
 
 inFile.close()
 
-reportlib.finish_nonps(fp)
+reportlib.finish_nonps(fpA)
+reportlib.finish_nonps(fpB)
 
