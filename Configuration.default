@@ -65,6 +65,7 @@ setenv DSQUERY ${DBSERVER}
 setenv DBNAME mgd
 setenv MGD ${DBNAME}
 setenv RADARDB radar
+setenv RADAR_DBNAME ${RADARDB}
 
 # Databse User
 setenv DBUSER			mgd_public
