@@ -48,9 +48,6 @@
 #
 # History:
 #
-# lec	01/23/2006
-#	- dump all references to reference.bcp
-#
 # lec	08/2005
 #	- added mp_term, mp_closure per csb
 #	- added header id and header order to genotype_mpt
@@ -972,14 +969,21 @@ def references():
     db.sql('create index idx1 on #strainreferences(_Refs_key)', None)
     db.sql('create index idx1 on #mrkreferences(_Refs_key)', None)
 
+    db.sql('select distinct _Refs_key into #references from #genoreferences ' + \
+	    'union select distinct _Refs_key from #allreferences ' + \
+	    'union select distinct _Refs_key from #strainreferences ' + \
+	    'union select distinct _Refs_key from #mrkreferences', None)
+    db.sql('create index idx1 on #references(_Refs_key)', None)
+
     results = db.sql('select r._Refs_key, b.refType, b.authors, b.authors2, ' + \
 	    'b.title, b.title2, b.journal, b.vol, b.issue, b.pgs, b.year, ' + \
 	    'b.isReviewArticle, ' + \
 	    'k.book_au, k.book_title, k.publisher, k.place, k.series_ed, ' + \
 	    'cdate = convert(char(20), b.creation_date, 100), ' + \
 	    'mdate = convert(char(20), b.modification_date, 100) ' + \
-	    'from BIB_Refs b, BIB_Books k ' + \
-	    'where b._Refs_key *= k._Refs_key', 'auto')
+	    'from #references r, BIB_Refs b, BIB_Books k ' + \
+	    'where r._Refs_key = b._Refs_key ' + \
+	    'and b._Refs_key *= k._Refs_key', 'auto')
 
     for r in results:
 	    fp.write(`r['_Refs_key']` + TAB + \
@@ -1009,8 +1013,9 @@ def references():
     results = db.sql('select a.accID, LogicalDB = l.name, a._Object_key, a.preferred, ' + \
 	    'cdate = convert(char(20), a.creation_date, 100), ' + \
 	    'mdate = convert(char(20), a.modification_date, 100) ' + \
-	    'from ACC_Accession a, ACC_LogicalDB l ' + \
-	    'where a._MGIType_key = 1 ' + \
+	    'from #references r, ACC_Accession a, ACC_LogicalDB l ' + \
+	    'where r._Refs_key = a._Object_key ' + \
+	    'and a._MGIType_key = 1 ' + \
 	    'and a._LogicalDB_key = l._LogicalDB_key', 'auto')
 
     for r in results:
