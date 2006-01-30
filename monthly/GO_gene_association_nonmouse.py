@@ -15,16 +15,16 @@
 #
 # Output format:
 #
-# The GO format has the following columns:
+# Special format for this report:
 #
 #   1.  Database designation (UniProt)
-#   2.  Inferred From (minus the UniProt prefix)
+#   2.  Inferred From (id minus the UniProt prefix)
 #   3.  NOT
 #   4.  null
 #   5.  GO id
 #   6.  PubMed ID of Reference from GO notes (external ref:)
-#   7.  Evidence abbreviation
-#   8.  DBXRef
+#   7.  Evidence abbreviation (external ref:)
+#   8.  DBXRef (external ref:)
 #   9.  GO DAG Abbreviation (F, P, C)
 #   10. null
 #   11. null
@@ -54,8 +54,8 @@ import reportlib
 import mgi_utils
 
 FIELD1 = 'UniProt'
-FIELD15 = 'MGI'
 FIELD12 = 'protein'
+FIELD15 = 'MGI'
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -71,8 +71,6 @@ def writeRecord(i, r, e):
 	fp.write(FIELD1 + TAB)
 
 	# field 2
-	# we're assuming that this field contains at most one UniProt ID
-	# don't print the UniProt prefix
 	fp.write(i + TAB)
 
 	# field 3
@@ -155,7 +153,7 @@ db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_Refs_key)', None)
 
 #
-# resolve foreign keys
+# resolve foreign keys (reference ID)
 #
 db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.isNot, g.uniprotIDs, g._ModifiedBy_key, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
