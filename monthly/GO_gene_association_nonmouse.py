@@ -5,7 +5,7 @@
 # GO_gene_association_nonmouse.py
 #
 # Report:
-#       Tab-delimited file of all ISS MGI GO/Marker associations
+#       Tab-delimited file of all ISS/UniProt MGI GO/Marker associations
 #
 # Usage:
 #       GO_gene_association_nonmouse.py
@@ -17,25 +17,30 @@
 #
 # The GO format has the following columns:
 #
-#   1.  Database designation (MGI)
-#   2.  MGI Marker ID
-#   3.  Symbol
-#   4.  NOT
+#   1.  Database designation (UniProt)
+#   2.  Inferred From (minus the UniProt prefix)
+#   3.  NOT
+#   4.  null
 #   5.  GO id
-#   6.  MGI ID of Reference (in format MGI:MGI:####) (double MGI: necessary)
+#   6.  PubMed ID of Reference from GO notes (external ref:)
 #   7.  Evidence abbreviation
-#   8.  Inferred From
+#   8.  DBXRef
 #   9.  GO DAG Abbreviation (F, P, C)
-#   10. Gene name
-#   11. Gene synonym(s) - list of |-delimited synonyms
-#   12. Marker Type (gene)
-#   13. Species (taxon:10090)
+#   10. null
+#   11. null
+#   12. protein
+#   13. null
 #   14. Modification Date (YYYYMMDD)
-#   15. Assigned By
+#   15. Assigned By (MGI)
+#
+# exclude J:88213 (olfactory load)
 #
 # History:
 #
-# lec	08/22/2005
+# 01/30/2006	lec
+#	- TR 7424; modified to new format
+#
+# 08/22/2005	lec
 #       - converted to standard GO format per request (David Hill)
 #
 '''
@@ -48,65 +53,68 @@ import db
 import reportlib
 import mgi_utils
 
-DBABBREV = 'MGI'
-SPECIES = 'taxon:10090'
-
-# mapping between MGI Marker Type and what gets printed in the gene association file
-markerTypes = {1: 'gene'}
+FIELD1 = 'UniProt'
+FIELD15 = 'MGI'
+FIELD12 = 'protein'
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-def writeRecord(r, refID):
+def writeRecord(i, r, e):
 
 	# if we can't find the DAG for the Term, skip it
 
 	if not dag.has_key(r['_Term_key']):
 		return
 
-	fp.write(DBABBREV + TAB)
-	fp.write(r['markerID'] + TAB)
-	fp.write(r['symbol'] + TAB)
+	# field 1
+	fp.write(FIELD1 + TAB)
 
+	# field 2
+	# we're assuming that this field contains at most one UniProt ID
+	# don't print the UniProt prefix
+	fp.write(i + TAB)
+
+	# field 3
 	if r['isNot'] == 1:
 		fp.write('NOT')
-
 	fp.write(TAB)
+
+	# field 4
+	fp.write(TAB)
+
+	# field 5
 	fp.write(r['termID'] + TAB)
-	fp.write(refID + TAB)
-	fp.write(r['eCode'] + TAB)
 
-	# substitute | for ", " in inferredFrom
+	# field 6
+	fp.write(mgi_utils.prvalue(e[0]) + TAB)
 
-	if r['inferredFrom'] != None:
-		inferredFrom = regsub.gsub(',', '|', r['inferredFrom'])
-		inferredFrom = regsub.gsub(';', '|', inferredFrom)
-		inferredFrom = regsub.gsub(' ', '', inferredFrom)
-	else:
-		inferredFrom = r['inferredFrom']
+	# field 7
+	fp.write(mgi_utils.prvalue(e[1]) + TAB)
 
-	fp.write(mgi_utils.prvalue(inferredFrom) + TAB)
+	# field 8 
+	fp.write(mgi_utils.prvalue(e[2]) + TAB)
 
+	# field 9
 	fp.write(dag[r['_Term_key']] + TAB)
-	fp.write(r['name'] + TAB)
 
-	if syns.has_key(r['_Object_key']):
-		fp.write(string.join(syns[r['_Object_key']], '|'))
-
+	# field 10
 	fp.write(TAB)
 
-	if markerTypes.has_key(r['_Marker_Type_key']):
-		fp.write(markerTypes[r['_Marker_Type_key']] + TAB)
+	# field 11
+	fp.write(TAB)
 
-	fp.write(SPECIES + TAB)
+	# field 12
+	fp.write(FIELD12 + TAB)
 
+	# field 13
+	fp.write(TAB)
+
+	# field 14
 	fp.write(r['mDate'] + TAB)
 
-	if r['modifiedBy'] == 'swissload':
-		fp.write('SWALL')
-	else:
-		fp.write(DBABBREV)
-
+	# field 15
+	fp.write(FIELD15)
 	fp.write(CRT)
 
 #
@@ -127,70 +135,37 @@ for r in results:
 #
 # retrieve data set to process
 #
-db.sql('select a._Term_key, t.term, termID = ta.accID, a.isNot, a._Object_key, ' + \
-	'e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, ' + \
-	'm._Marker_Type_key, m.symbol, m.name ' + \
+# retrieve all ISS annotations that have a "with" value that begins "UniProt"
+#
+db.sql('select a._Term_key, termID = ta.accID, a.isNot, a._Object_key, ' + \
+	'e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, e.modification_date, e._Refs_key, e._ModifiedBy_key ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et,  MRK_Marker m ' + \
+	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
-	'and a._Object_key = m._Marker_key ' + \
-	'and m._Marker_Type_key = 1 ' + \
 	'and a._Term_key = t._Term_key ' + \
 	'and a._Term_key = ta._Object_key ' + \
 	'and ta._MGIType_key = 13 ' + \
 	'and ta.preferred = 1 ' + \
 	'and e._EvidenceTerm_key = et._Term_key ' + \
 	'and et.abbreviation = "ISS" ' + \
-	'and e.inferredFrom like "%UniProt%" ' + \
-	'and e._Refs_key not in (80961, 89196)' , None)
+	'and e.inferredFrom like "UniProt:%" ' + \
+	'and e._Refs_key not in (89196)' , None)
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
-db.sql('create index idx2 on #gomarker(_EvidenceTerm_key)', None)
-db.sql('create index idx3 on #gomarker(_Refs_key)', None)
-db.sql('create index idx4 on #gomarker(_ModifiedBy_key)', None)
-
-#
-# retrieve synonyms for markers in data set
-#
-results = db.sql('select distinct g._Object_key, s.synonym ' + \
-	'from #gomarker g, MGI_Synonym s, MGI_SynonymType st ' + \
-	'where g._Object_key = s._Object_key ' + \
-	'and s._MGIType_key = 2 ' + \
-	'and s._SynonymType_key = st._SynonymType_key ' + \
-	'and st.synonymType = "exact" ' + \
-	'order by g._Object_key', 'auto')
-syns = {}
-for r in results:
-	key = r['_Object_key']
-	value = r['synonym']
-	if not syns.has_key(key):
-		syns[key] = []
-	syns[key].append(value)
+db.sql('create index idx2 on #gomarker(_Refs_key)', None)
 
 #
 # resolve foreign keys
 #
-db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.isNot, g.inferredFrom, ' + \
-	'g._Object_key, g._Marker_Type_key, g.symbol, g.name, ' + \
+db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.isNot, g.uniprotIDs, g._ModifiedBy_key, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
-	'markerID = ma.accID, ' + \
-	'refID = b.accID, ' + \
-	'eCode = rtrim(t.abbreviation), ' + \
-	'modifiedBy = u.login ' + \
+	'refID = b.accID ' + \
 	'into #results ' + \
-	'from #gomarker g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u ' + \
-	'where g._Object_key = ma._Object_key ' + \
-	'and ma._MGIType_key = 2 ' + \
-	'and ma.prefixPart = "MGI:" ' + \
-	'and ma._LogicalDB_key = 1 ' + \
-	'and ma.preferred = 1 ' + \
-	'and g._Refs_key *= b._Object_key ' + \
+	'from #gomarker g, ACC_Accession b ' + \
+	'where g._Refs_key *= b._Object_key ' + \
 	'and b._MGIType_key = 1 ' + \
-	'and b._LogicalDB_key = 29 ' + \
-	'and g._EvidenceTerm_key = t._Term_key ' + \
-	'and g._ModifiedBy_key = u._User_key', None)
-db.sql('create index idx1 on #results(symbol)', None)
-db.sql('create index idx2 on #results(_AnnotEvidence_key)', None)
+	'and b._LogicalDB_key = 29', None)
+db.sql('create index idx1 on #results(_AnnotEvidence_key)', None)
 
 #
 # notes
@@ -204,54 +179,82 @@ results = db.sql('select g._AnnotEvidence_key, c.note, c.sequenceNum ' + \
 allnotes = {}
 for r in results:
     key = r['_AnnotEvidence_key']
-    value = string.strip(r['note'])
-    value = regsub.gsub('PMID: ', 'PMID:', value)
-    value = regsub.gsub('\n', '', value)
+    value = string.strip(regsub.gsub('\n', '', r['note']))
     if not allnotes.has_key(key):
 	     allnotes[key] = []
     allnotes[key].append(value)
 
-notes = {}
+evidence = {}
 for n in allnotes.keys():
     value = string.join(allnotes[n], '')
-    pmids = []
 
-    print value
-    i = string.find(value, 'PMID:')
-    while i >= 0:
-	t = value[i:]
-	j = 5
-	while j < len(t) and t[j] in string.digits:
-	    j = j + 1
-	pmid = t[:j]
-	value = t[j:]
-        i = string.find(value, 'PMID:')
-	if pmid not in pmids:
-	    pmids.append(pmid)
+    # grab all text between "external ref:" and "text:"
 
-    if len(pmids) > 0:
-        if not notes.has_key(n):
-	     notes[n] = []
-        notes[n].append(string.join(pmids, ';'))
+    i = string.find(value, 'external ref:')
+    j = string.find(value, 'text:')
+
+    # parse it for pmid, evidence code, and cross-reference
+
+    if j > i and i >= 0 and len(value) > 0:
+
+	s1 = value[i + 13:j]
+
+	# split by 'external ref:' (may be more than one)
+
+	s1tokens = string.split(s1, 'external ref:')
+
+	for s in s1tokens:
+	    s2tokens = string.split(s, '|')
+
+            pmid = ''
+            ecode = ''
+            dbxref = ''
+
+	    pmid = s2tokens[0]
+	    if len(s2tokens) > 1:
+	        ecode = s2tokens[1]
+	    if len(s2tokens) > 2:
+	        dbxref = s2tokens[2]
+
+	    dictvalue = (pmid, ecode, dbxref)
+
+	    if not evidence.has_key(n):
+	        evidence[n] = []
+	    evidence[n].append(dictvalue)
 
 #
 # process results
 #
 
-results = db.sql('select * from #results order by symbol', 'auto')
+results = db.sql('select * from #results order by uniprotIDs', 'auto')
 
 for r in results:
 
-	# if the notes have a pub med id, use it
-	if notes.has_key(r['_AnnotEvidence_key']):
-	    tokens = string.split(string.join(notes[r['_AnnotEvidence_key']], ''), ';')
-	    for t in tokens:
-	        writeRecord(r, t)
+    ids = string.split(r['uniprotIDs'], 'UniProt:')
 
-	# else use the annotation reference
-	else:
-	    writeRecord(r, 'PMID:' + mgi_utils.prvalue(r['refID']))
-	
+    for i in ids:
+
+	if len(i) == 0:
+	    continue
+
+        eKey = r['_AnnotEvidence_key']
+
+	# if no evidence (no pub med it) and "tbreddy", skip it
+        if not evidence.has_key(eKey) and r['_ModifiedBy_key'] == 1095:
+	    continue
+
+        # make up a bogus evidence record if there isn't one
+        if not evidence.has_key(eKey):
+	    evidence[eKey] = []
+	    if r['refID'] == None:
+	        value = ('', '', '')
+	    else:
+	        value = ('PMID:' + r['refID'], '', '')
+	    evidence[eKey].append(value)
+
+        for e in evidence[eKey]:
+            writeRecord(i, r, e)
+
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
 
