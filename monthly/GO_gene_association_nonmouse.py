@@ -131,8 +131,6 @@ for r in results:
 	dag[r['_Object_key']] = r['dagAbbrev']
 
 #
-# retrieve data set to process
-#
 # retrieve all ISS annotations that have a "with" value that begins "UniProt"
 #
 db.sql('select a._Term_key, termID = ta.accID, a.isNot, a._Object_key, ' + \
@@ -153,7 +151,7 @@ db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_Refs_key)', None)
 
 #
-# resolve foreign keys (reference ID)
+# resolve pub med id
 #
 db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.isNot, g.uniprotIDs, g._ModifiedBy_key, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
@@ -187,6 +185,7 @@ for n in allnotes.keys():
     value = string.join(allnotes[n], '')
 
     # grab all text between "external ref:" and "text:"
+    # there may be multiple instances of "external ref:"
 
     i = string.find(value, 'external ref:')
     j = string.find(value, 'text:')
@@ -197,7 +196,7 @@ for n in allnotes.keys():
 
 	s1 = value[i + 13:j]
 
-	# split by 'external ref:' (may be more than one)
+	# split by 'external ref:'
 
 	s1tokens = string.split(s1, 'external ref:')
 
@@ -228,6 +227,9 @@ results = db.sql('select * from #results order by uniprotIDs', 'auto')
 
 for r in results:
 
+    # there may be multiple instances of UniProt ids
+    # write out one record per UniProt id
+
     ids = string.split(r['uniprotIDs'], 'UniProt:')
 
     for i in ids:
@@ -235,20 +237,27 @@ for r in results:
 	if len(i) == 0:
 	    continue
 
+	# get rid of any dangling delimiters
+
+        i = regsub.gsub('|', '', i)
+
         eKey = r['_AnnotEvidence_key']
 
-	# if no evidence (no pub med it) and "tbreddy", skip it
+	# if no evidence (no pub med id) and "tbreddy", skip it
         if not evidence.has_key(eKey) and r['_ModifiedBy_key'] == 1095:
 	    continue
 
         # make up a bogus evidence record if there isn't one
+
         if not evidence.has_key(eKey):
 	    evidence[eKey] = []
 	    if r['refID'] == None:
 	        value = ('', '', '')
 	    else:
-	        value = ('PMID:' + r['refID'], '', '')
+	        value = ('PMID:' + r['refID'], 'IDA', '')
 	    evidence[eKey].append(value)
+
+	# write out one record per External Reference
 
         for e in evidence[eKey]:
             writeRecord(i, r, e)
