@@ -213,11 +213,12 @@ for n in allnotes.keys():
 	    if len(s2tokens) > 2:
 	        dbxref = s2tokens[2]
 
-	    dictvalue = (pmid, ecode, dbxref)
+	    if len(pmid) > 0:
+	        dictvalue = (pmid, ecode, dbxref)
 
-	    if not evidence.has_key(n):
-	        evidence[n] = []
-	    evidence[n].append(dictvalue)
+	        if not evidence.has_key(n):
+	            evidence[n] = []
+	        evidence[n].append(dictvalue)
 
 #
 # process results
