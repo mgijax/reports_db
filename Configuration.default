@@ -66,6 +66,7 @@ setenv DBNAME mgd
 setenv MGD ${DBNAME}
 setenv RADARDB radar
 setenv RADAR_DBNAME ${RADARDB}
+setenv IMSR_DBNAME imsr
 
 # Databse User
 setenv DBUSER			mgd_public

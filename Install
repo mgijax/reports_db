@@ -23,7 +23,7 @@ end
 cd daily
 set toEdit=`grep -l radar *`
 foreach i ($toEdit)
-sed "s/radar/$RADARDB/g" $i > $i.new
+sed "s/radar/$RADAR_DBNAME/g" $i > $i.new
 mv -f $i.new $i
 end
 
