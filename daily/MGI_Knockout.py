@@ -212,15 +212,13 @@ for r in results:
     if geno.has_key(key):
 	for g in geno[key]:
 	    printRecord = printAllele() + g + TAB + printIMSR + CRT
+            fp1.write(printRecord)
 
     # record w/out genotype
 
     if key in noGeno:
 	printRecord = printAllele() + TAB + printIMSR + CRT
-
-    # print record
-
-    fp1.write(printRecord)
+        fp1.write(printRecord)
 
     if imsr.has_key(imsrKey):
 	fp2.write(printRecord)
