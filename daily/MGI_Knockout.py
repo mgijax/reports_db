@@ -10,19 +10,20 @@
 #
 #	1.  Tab-delimited report where a row in the report represents:
 #
-#		a targeted (knockout) allele's genotype that is homozygous for the mutation
-#		OR
-#		a targeted (knockout) allele with no genotypes
+#		Allele Types: targeted (knockout), targeted (reporter), targeted (other)
 #
-#		field 1: MGI Marker ID
-#		field 2: Marker symbol
-#		field 3: Marker name
-#		field 4: MGI Allele ID
-#		field 5: Allele symbol
-#		field 6: Allele name
-#		field 7: ES cell line where KO was made
-#		field 8: ES cell line strain
-#		field 9: IMSR strain names (|-delimited)
+#		the allele's genotype that is homozygous for the mutation
+#		OR
+#		the allele has no genotypes
+#
+#		field 1: MGI Gene ID
+#		field 2: Gene symbol
+#		field 3: Gene name
+#		field 4: Allele Types
+#		field 5: Allele Symbols
+#		field 6: Representative Transcript
+#		field 7: Representative Gene Model
+#		field 8: IMSR strain names (|-delimited)
 #
 #	2.  Tab-delimited report where a row in the report represents:
 #
@@ -73,33 +74,32 @@ TAB = reportlib.TAB
 PAGE = reportlib.PAGE
 IMSR = os.environ['IMSR_DBNAME']
 
-heading = ['MGI Marker ID', 'Marker Symbol', 'Marker Name', 
-	   'MGI Allele ID', 'Allele Symbol', 'Allele Name',
-	   'ES Cell Line', 'ES Cell Line Strain', 'IMSR Strain']
-
-def printAllele():
-
-    alleleSymbol = regsub.gsub('<', '&lt;', r['alleleSym'])
-    alleleSymbol = regsub.gsub('>', '&gt;', alleleSymbol)
+def printMarker(r):
 
     s = '<tr>' + \
-        '<td>%s%s%s</td>\n' % (reportlib.create_accession_anchor(r['markerID']), r['markerID'], reportlib.close_accession_anchor()) + \
-	'<td>' + r['markerSym'] + '</td>\n' + \
-	'<td>' + r['markerName'] + '</td>\n' + \
-        '<td>%s%s%s</td>' % (reportlib.create_accession_anchor(r['alleleID']), r['alleleID'], reportlib.close_accession_anchor()) + \
-	'<td>' + alleleSymbol + '</td>\n' + \
-	'<td>' + r['alleleName'] + '</td>\n' + \
-	'<td>' + r['cellLine'] + '</td>\n'
+	'<td>' + r['accID'] + '</td>\n' + \
+        '<td>%s%s%s</td>\n' % (reportlib.create_accession_anchor(r['accID']), r['symbol'], reportlib.close_accession_anchor()) + \
+	'<td>' + r['name'] + '</td>\n'
 
+    if repgen.has_key(r['_Marker_key']):
+	s = s + '<td>%s</td>' % (repgen[r['_Marker_key']])
+    else:
+	s = s + '<td>&nbsp;</td>'
+
+    if reptran.has_key(r['_Marker_key']):
+	s = s + '<td>%s</td>' % (reptran[r['_Marker_key']])
+    else:
+	s = s + '<td>&nbsp;</td>'
+
+    s = s + '<td>%s</td>' % (string.join(alleleTypes[r['_Marker_key']], '<br>'))
     return s
 
-    s = '%s%-30s%s ' % (reportlib.create_accession_anchor(r['markerID']), r['markerID'], reportlib.close_accession_anchor()) + \
-	'%-30s ' % (r['markerSym']) + \
-	'%-50s ' % (r['markerName']) + \
-        '%s%-30s%s ' % (reportlib.create_accession_anchor(r['alleleID']), r['alleleID'], reportlib.close_accession_anchor()) + \
-	'%-40s ' % (alleleSymbol) + \
-	'%-50s ' % (r['alleleName']) + \
-	'%-30s ' % (r['cellLine'])
+def printAllele(a):
+
+    symbol = regsub.gsub('<', '<sup>', a['symbol'])
+    symbol = regsub.gsub('>', '</sup>', symbol)
+
+    s = '%s%s%s<br>' % (reportlib.create_accession_anchor(a['accID']), symbol, reportlib.close_accession_anchor())
 
     return s
 
@@ -108,27 +108,15 @@ def printHeader(fp, title):
     fp.write('</pre>\n')
     fp.write('<H2>%s</H2>' % (title))
     fp.write('<TABLE BORDER=3 WIDTH=100%>')
-    fp.write('<th align = left valign=top>MGI Marker ID</th>')
-    fp.write('<th align = left valign=top>Marker Symbol</th>')
-    fp.write('<th align = left valign=top>Marker Name</th>')
-    fp.write('<th align = left valign=to valign=topp>MGI Allele ID</th>')
-    fp.write('<th align = left valign=top>Allele Symbol</th>')
-    fp.write('<th align = left valign=top>Allele Name</th>')
-    fp.write('<th align = left valign=top>ES Cell Line</th>')
-    fp.write('<th align = left valign=top>ES Cell Line Strain</th>')
+    fp.write('<th align = left valign=top>MGI Gene ID</th>')
+    fp.write('<th align = left valign=top>Gene Symbol</th>')
+    fp.write('<th align = left valign=top>Gene Name</th>')
+    fp.write('<th align = left valign=top>Ensembl ID</th>')
+    fp.write('<th align = left valign=top>RefSeq/Transcript</th>')
+    fp.write('<th align = left valign=top width = 10%>Allele Types</th>')
+    fp.write('<th align = left valign=top>Alleles/Phenotype/Disease</th>')
     fp.write('<th align = left valign=top>IMSR Strain</th>')
     return
-
-    fp.write('%-30s ' % ('MGI Marker ID'))
-    fp.write('%-30s ' % ('Marker Symbol'))
-    fp.write('%-50s ' % ('Marker Name'))
-    fp.write('%-30s ' % ('MGI Allele ID'))
-    fp.write('%-34s ' % ('Allele Symbol'))
-    fp.write('%-50s ' % ('Allele Name'))
-    fp.write('%-30s ' % ('ES Cell Line'))
-    fp.write('%-50s ' % ('ES Cell Line Strain'))
-    fp.write('%-30s ' % ('IMSR Strain'))
-    fp.write(CRT*2)
 
 #
 # Main
@@ -147,16 +135,14 @@ printHeader(fp2, 'MGI Public KnockOut Report')
 printHeader(fp3, 'MGI Non-Public KnockOut Report')
 
 #
-# select all targeted (knockout) alleles
+# select alleles
 #
 
-db.sql('select a._Allele_key, alleleSym = a.symbol, alleleName = substring(a.name,1,50), alleleID = aa.accID, ' + \
-	'markerSym = m.symbol, markerName = substring(m.name,1,50), markerID = ma.accID, ' + \
-	'cl.cellLine ' + \
+db.sql('select a._Marker_key, a._Allele_key, a.symbol, t.term, aa.accID ' + \
 	'into #knockouts ' + \
-	'from ALL_Allele a, ACC_Accession aa, MRK_Marker m, ACC_Accession ma, ALL_CellLine cl ' + \
+	'from ALL_Allele a, ACC_Accession aa, VOC_Term t ' + \
 	'where a._Allele_Status_key = 847114 ' + \
-	'and a._Allele_Type_key = 847116 ' + \
+	'and a._Allele_Type_key in (847116, 847119, 847120) ' + \
 	'and a.name not like "%Lexicon%" ' + \
 	'and a.name not like "%Deltagen%" ' + \
 	'and a._Allele_key = aa._Object_key ' + \
@@ -164,23 +150,35 @@ db.sql('select a._Allele_key, alleleSym = a.symbol, alleleName = substring(a.nam
 	'and aa._LogicalDB_key = 1 ' + \
 	'and aa.prefixPart = "MGI:" ' + \
 	'and aa.preferred = 1 ' + \
-	'and a._Marker_key = m._Marker_key ' + \
+	'and a._Allele_Type_key = t._Term_key ', None)
+
+db.sql('create index idx1 on #knockouts(_Marker_key)', None)
+db.sql('create index idx2 on #knockouts(_Allele_key)', None)
+
+#
+# select unique set of markers
+#
+
+db.sql('select distinct m._Marker_key, m.symbol, name = substring(m.name,1,75), ma.accID ' + \
+	'into #markers ' + \
+	'from #knockouts k, MRK_Marker m, ACC_Accession ma ' + \
+	'where k._Marker_key = m._Marker_key ' + \
 	'and m._Marker_key = ma._Object_key ' + \
 	'and ma._MGIType_key = 2 ' + \
 	'and ma._LogicalDB_key = 1 ' + \
 	'and ma.prefixPart = "MGI:" ' + \
-	'and ma.preferred = 1 ' + \
-	'and a._ESCellLine_key = cl._CellLine_key ', None)
+	'and ma.preferred = 1 ', None)
 
-db.sql('create index idx1 on #knockouts(_Allele_key)', None)
-db.sql('create index idx2 on #knockouts(markerSym)', None)
+db.sql('create index idx1 on #markers(symbol)', None)
 
 #
 # select those alleles that are in IMSR and that occur "alone" in a strain
 #
-results = db.sql('select distinct ac.accID, ls.label ' + \
-	'from %s..Accession ac, %s..Label ls, %s..SGAAssoc sga ' % (IMSR, IMSR, IMSR) + \
-	'where sga._Strain_key = ls._Object_key ' + \
+results = db.sql('select distinct m._Marker_key, ac.accID, ls.label ' + \
+	'from #markers m, #knockouts k, %s..Accession ac, %s..Label ls, %s..SGAAssoc sga ' % (IMSR, IMSR, IMSR) + \
+	'where m._Marker_key = k._Marker_key ' + \
+	'and k.accID = ac.accID ' + \
+	'and sga._Strain_key = ls._Object_key ' + \
 	'and ls._IMSRType_key = 1 ' + \
 	'and ls.labelType = "N" ' + \
 	'and sga._Allele_key = ac._Object_key ' + \
@@ -190,9 +188,9 @@ results = db.sql('select distinct ac.accID, ls.label ' + \
 	'where sga._Strain_key = _Strain_key)', 'auto')
 imsr = {}
 for r in results:
-    key = r['accID']
-    value = regsub.gsub('<', '&lt;', r['label'])
-    value = regsub.gsub('>', '&gt;', value)
+    key = r['_Marker_key']
+    value = regsub.gsub('<', '<sup>', r['label'])
+    value = regsub.gsub('>', '</sup>', value)
     value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(r['label']), value, reportlib.close_accession_anchor())
     if not imsr.has_key(key):
 	imsr[key] = []
@@ -200,30 +198,94 @@ for r in results:
         imsr[key].append(value)
 
 #
+# cache gene/allele data
+#
+
+alleles = {}
+results = db.sql('select * from #knockouts', 'auto')
+for r in results:
+    key = r['_Marker_key']
+    value = r
+    if not alleles.has_key(key):
+	alleles[key] = []
+    alleles[key].append(value)
+
+#
+# unique set of Allele Types per Gene
+#
+
+alleleTypes = {}
+results = db.sql('select distinct m._Marker_key, a.term from #markers m, #knockouts a ' + 
+	'where m._Marker_key = a._Marker_key', 'auto')
+for r in results:
+    key = r['_Marker_key']
+    value = r['term']
+    if not alleleTypes.has_key(key):
+	alleleTypes[key] = []
+    alleleTypes[key].append(value)
+
+#
+# representative genomic for genes
+#
+repgen = {}
+results = db.sql('select m._Marker_key, a.accID ' + \
+	'from #markers m, SEQ_Marker_Cache smc, ACC_Accession a ' + \
+	'where m._Marker_key = smc._Marker_key ' + \
+	'and smc._LogicalDB_key = 60 ' + \
+	'and smc._Sequence_key = a._Object_key ' + \
+	'and a._MGIType_key = 19 ' + \
+	'and a.preferred = 1', 'auto')
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    repgen[key] = value
+
+#
+# representative transcript for genes
+#
+reptran = {}
+results = db.sql('select m._Marker_key, a.accID ' + \
+	'from #markers m, SEQ_Marker_Cache smc, ACC_Accession a ' + \
+	'where m._Marker_key = smc._Marker_key ' + \
+	'and smc._Qualifier_key = 615420 ' + \
+	'and smc._Sequence_key = a._Object_key ' + \
+	'and a._MGIType_key = 19 ' + \
+	'and a.preferred = 1', 'auto')
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    reptran[key] = value
+
+#
 # process results
 #
-results = db.sql('select * from #knockouts order by markerSym', 'auto')
-
-tbody = []
+results = db.sql('select * from #markers order by symbol', 'auto')
 
 for r in results:
 
-    printRecord = ''
-    key = r['_Allele_key']
-    imsrKey = r['alleleID']
+    mstr = ''
+    astr = ''
+    key = r['_Marker_key']
+    mstr = printMarker(r)
 
-    if imsr.has_key(imsrKey):
-	printIMSR = '<td>%s</td>' % (string.join(imsr[imsrKey], '<BR>'))
+    # for each allele....
+
+    for a in alleles[key]:
+	astr = astr + printAllele(a)
+
+    if imsr.has_key(key):
+	istr = '<td>%s</td>' % (string.join(imsr[key], '<br>'))
     else:
-	printIMSR = '<td>&nbsp;</td>'
+	istr = '<td>&nbsp;</td>'
 
-    printRecord = printAllele() + '<td>&nbsp;</td>\n' + printIMSR + '</tr>\n'
-    fp1.write(printRecord)
+    toPrint = '%s<td>%s</td>%s' % (mstr, astr, istr)
 
-    if imsr.has_key(imsrKey):
-	fp2.write(printRecord)
+    fp1.write(toPrint)
+
+    if imsr.has_key(key):
+	fp2.write(toPrint)
     else:
-	fp3.write(printRecord)
+	fp3.write(toPrint)
 
 fp1.write('</TABLE>')
 fp1.write('<pre>')
