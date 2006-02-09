@@ -22,8 +22,7 @@
 #		field 6: Allele name
 #		field 7: ES cell line where KO was made
 #		field 8: ES cell line strain
-# 		field 9: genetic background (genotype strain)
-#		field 10: IMSR strain names (|-delimited)
+#		field 9: IMSR strain names (|-delimited)
 #
 #	2.  Tab-delimited report where a row in the report represents:
 #
@@ -76,15 +75,12 @@ IMSR = os.environ['IMSR_DBNAME']
 
 heading = ['MGI Marker ID', 'Marker Symbol', 'Marker Name', 
 	   'MGI Allele ID', 'Allele Symbol', 'Allele Name',
-	   'ES Cell Line', 'ES Cell Line Strain', 'Genetic Background', 'IMSR Strain']
+	   'ES Cell Line', 'ES Cell Line Strain', 'IMSR Strain']
 
 def printAllele():
 
     alleleSymbol = regsub.gsub('<', '&lt;', r['alleleSym'])
     alleleSymbol = regsub.gsub('>', '&gt;', alleleSymbol)
-
-    strain = regsub.gsub('<', '&lt;', r['strain'])
-    strain = regsub.gsub('>', '&gt;', strain)
 
     s = '<tr>' + \
         '<td>%s%s%s</td>\n' % (reportlib.create_accession_anchor(r['markerID']), r['markerID'], reportlib.close_accession_anchor()) + \
@@ -93,8 +89,7 @@ def printAllele():
         '<td>%s%s%s</td>' % (reportlib.create_accession_anchor(r['alleleID']), r['alleleID'], reportlib.close_accession_anchor()) + \
 	'<td>' + alleleSymbol + '</td>\n' + \
 	'<td>' + r['alleleName'] + '</td>\n' + \
-	'<td>' + r['cellLine'] + '</td>\n' + \
-	'<td>' + strain + '</td>\n'
+	'<td>' + r['cellLine'] + '</td>\n'
 
     return s
 
@@ -104,8 +99,7 @@ def printAllele():
         '%s%-30s%s ' % (reportlib.create_accession_anchor(r['alleleID']), r['alleleID'], reportlib.close_accession_anchor()) + \
 	'%-40s ' % (alleleSymbol) + \
 	'%-50s ' % (r['alleleName']) + \
-	'%-30s ' % (r['cellLine']) + \
-	'%-50s ' % (strain)
+	'%-30s ' % (r['cellLine'])
 
     return s
 
@@ -122,7 +116,6 @@ def printHeader(fp, title):
     fp.write('<th align = left valign=top>Allele Name</th>')
     fp.write('<th align = left valign=top>ES Cell Line</th>')
     fp.write('<th align = left valign=top>ES Cell Line Strain</th>')
-    fp.write('<th align = left valign=top>Genetic Background</th>')
     fp.write('<th align = left valign=top>IMSR Strain</th>')
     return
 
@@ -134,7 +127,6 @@ def printHeader(fp, title):
     fp.write('%-50s ' % ('Allele Name'))
     fp.write('%-30s ' % ('ES Cell Line'))
     fp.write('%-50s ' % ('ES Cell Line Strain'))
-    fp.write('%-50s ' % ('Genetic Background'))
     fp.write('%-30s ' % ('IMSR Strain'))
     fp.write(CRT*2)
 
@@ -150,9 +142,9 @@ fp1 = reportlib.init(fullreport, printHeading = 0, outputdir = os.environ['REPOR
 fp2 = reportlib.init(publicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 fp3 = reportlib.init(notpublicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 
-printHeader(fp1, 'Full KnockOut Report')
-printHeader(fp2, 'Public KnockOut Report')
-printHeader(fp3, 'Non-Public KnockOut Report')
+printHeader(fp1, 'MGI Full KnockOut Report')
+printHeader(fp2, 'MGI Public KnockOut Report')
+printHeader(fp3, 'MGI Non-Public KnockOut Report')
 
 #
 # select all targeted (knockout) alleles
@@ -160,10 +152,13 @@ printHeader(fp3, 'Non-Public KnockOut Report')
 
 db.sql('select a._Allele_key, alleleSym = a.symbol, alleleName = substring(a.name,1,50), alleleID = aa.accID, ' + \
 	'markerSym = m.symbol, markerName = substring(m.name,1,50), markerID = ma.accID, ' + \
-	'cl.cellLine, s.strain ' + \
+	'cl.cellLine ' + \
 	'into #knockouts ' + \
-	'from ALL_Allele a, ACC_Accession aa, MRK_Marker m, ACC_Accession ma, ALL_CellLine cl, PRB_Strain s ' + \
-	'where a._Allele_Type_key = 847116 ' + \
+	'from ALL_Allele a, ACC_Accession aa, MRK_Marker m, ACC_Accession ma, ALL_CellLine cl ' + \
+	'where a._Allele_Status_key = 847114 ' + \
+	'and a._Allele_Type_key = 847116 ' + \
+	'and a.name not like "%Lexicon%" ' + \
+	'and a.name not like "%Deltagen%" ' + \
 	'and a._Allele_key = aa._Object_key ' + \
 	'and aa._MGIType_key = 11 ' + \
 	'and aa._LogicalDB_key = 1 ' + \
@@ -175,39 +170,11 @@ db.sql('select a._Allele_key, alleleSym = a.symbol, alleleName = substring(a.nam
 	'and ma._LogicalDB_key = 1 ' + \
 	'and ma.prefixPart = "MGI:" ' + \
 	'and ma.preferred = 1 ' + \
-	'and a._ESCellLine_key = cl._CellLine_key ' + \
-	'and a._Strain_key = s._Strain_key', None)
+	'and a._ESCellLine_key = cl._CellLine_key ', None)
 
 db.sql('create index idx1 on #knockouts(_Allele_key)', None)
 db.sql('create index idx2 on #knockouts(markerSym)', None)
 
-#
-# select those that have no genotypes
-#
-results = db.sql('select k._Allele_key from #knockouts k ' + \
-	'where not exists (select 1 from GXD_AlleleGenotype g where k._Allele_key = g._Allele_key)', 'auto')
-noGeno = []
-for r in results:
-    key = r['_Allele_key']
-    noGeno.append(key)
-    
-#
-# select genotypes that are homozygous for the mutation
-#
-results = db.sql('select distinct k._Allele_key, s.strain ' + \
-	'from #knockouts k, GXD_Genotype g, GXD_AllelePair p, PRB_Strain s ' + \
-	'where k._Allele_key = p._Allele_key_1 ' + \
-	'and k._Allele_key = p._Allele_key_2 ' + \
-	'and p._Genotype_key = g._Genotype_key ' + \
-	'and g._Strain_key = s._Strain_key', 'auto')
-geno = {}
-for r in results:
-    key = r['_Allele_key']
-    value = r['strain']
-    if not geno.has_key(key):
-        geno[key] = []
-    geno[key].append(value)
-    
 #
 # select those alleles that are in IMSR and that occur "alone" in a strain
 #
@@ -229,7 +196,8 @@ for r in results:
     value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(r['label']), value, reportlib.close_accession_anchor())
     if not imsr.has_key(key):
 	imsr[key] = []
-    imsr[key].append(value)
+    if value not in imsr[key]:
+        imsr[key].append(value)
 
 #
 # process results
@@ -245,22 +213,12 @@ for r in results:
     imsrKey = r['alleleID']
 
     if imsr.has_key(imsrKey):
-	printIMSR = '<td>%s</td>' % (string.join(imsr[imsrKey], ','))
+	printIMSR = '<td>%s</td>' % (string.join(imsr[imsrKey], '<BR>'))
     else:
 	printIMSR = '<td>&nbsp;</td>'
 
-    # record w/ genotype
-
-    if geno.has_key(key):
-	for g in geno[key]:
-	    printRecord = printAllele() + '<td>%s</td>\n' % (g) + printIMSR + '</tr>\n'
-            fp1.write(printRecord)
-
-    # record w/out genotype
-
-    if key in noGeno:
-	printRecord = printAllele() + '<td>&nbsp;</td>\n' + printIMSR + '</tr>\n'
-        fp1.write(printRecord)
+    printRecord = printAllele() + '<td>&nbsp;</td>\n' + printIMSR + '</tr>\n'
+    fp1.write(printRecord)
 
     if imsr.has_key(imsrKey):
 	fp2.write(printRecord)
