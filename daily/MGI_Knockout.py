@@ -91,7 +91,7 @@ def printMarker(r):
     else:
 	s = s + '<td>&nbsp;</td>'
 
-    s = s + '<td>%s</td>' % (string.join(alleleTypes[r['_Marker_key']], '<br>'))
+    s = s + '<td nowrap>%s</td>' % (string.join(alleleTypes[r['_Marker_key']], '<br>'))
     return s
 
 def printAllele(a):
@@ -108,14 +108,14 @@ def printHeader(fp, title):
     fp.write('</pre>\n')
     fp.write('<H2>%s</H2>' % (title))
     fp.write('<TABLE BORDER=3 WIDTH=100%>')
-    fp.write('<th align = left valign=top>MGI Gene ID</th>')
-    fp.write('<th align = left valign=top>Gene Symbol</th>')
-    fp.write('<th align = left valign=top>Gene Name</th>')
-    fp.write('<th align = left valign=top>Ensembl ID</th>')
-    fp.write('<th align = left valign=top>RefSeq/Transcript</th>')
-    fp.write('<th align = left valign=top width = 10%>Allele Types</th>')
-    fp.write('<th align = left valign=top>Alleles/Phenotype/Disease</th>')
-    fp.write('<th align = left valign=top>IMSR Strain</th>')
+    fp.write('<th align=left valign=top>MGI Gene ID</th>')
+    fp.write('<th align=left valign=top>Gene Symbol</th>')
+    fp.write('<th align=left valign=top>Gene Name</th>')
+    fp.write('<th align=left valign=top>Ensembl ID</th>')
+    fp.write('<th align=left valign=top>RefSeq/Transcript</th>')
+    fp.write('<th align=left valign=top>Allele Types</th>')
+    fp.write('<th align=left valign=top>Alleles/Phenotype/Disease</th>')
+    fp.write('<th align=left valign=top>IMSR Strain</th>')
     return
 
 #
