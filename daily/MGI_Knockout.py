@@ -335,8 +335,11 @@ results = db.sql('select * from #markers order by symbol', 'auto')
 for r in results:
 
     mstr = ''
-    astr1 = ''
-    astr2 = ''
+    astr = ''
+
+    isLexicon = 0
+    isDeltagen = 0
+
     key = r['_Marker_key']
     mstr = printMarker(r)
 
@@ -344,25 +347,29 @@ for r in results:
 
     for a in alleles[key]:
 
-	astr1 = astr1 + printAllele(a)
+	if string.find(a['name'], 'Lexicon') >= 0:
+	    isLexicon = 1
 
-	if string.find(a['name'], 'Lexicon') <= 0:
-	    astr2 = astr2 + printAllele(a)
+	if string.find(a['name'], 'lexicon') >= 0:
+	    isLexicon = 1
 
-	if string.find(a['name'], 'Deltagen') <= 0:
-	    astr2 = astr2 + printAllele(a)
+	if string.find(a['name'], 'Deltagen') >= 0:
+	    isDeltagen = 1
+
+	astr = astr + printAllele(a)
 
     if imsr.has_key(key):
 	istr = '<td>%s</td>' % (string.join(imsr[key], '<br>'))
     else:
 	istr = '<td>&nbsp;</td>'
 
-    fp1.write('%s<td>%s</td>%s' % (mstr, astr1, istr))
+    fp1.write('%s<td>%s</td>%s' % (mstr, astr, istr))
 
     if imsr.has_key(key):
-        fp2.write('%s<td>%s</td>%s' % (mstr, astr1, istr))
+        fp2.write('%s<td>%s</td>%s' % (mstr, astr, istr))
     else:
-        fp3.write('%s<td>%s</td>%s' % (mstr, astr2, istr))
+	if not isLexicon and not isDeltagen:
+          fp3.write('%s<td>%s</td>%s' % (mstr, astr, istr))
 
 fp1.write('</TABLE>')
 fp1.write('<pre>')
