@@ -91,7 +91,6 @@ spectrum of phenotypes or alleles in MGI, use the
 To search repositories for specific strains carrying mutations of all 
 types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
 <P>
-This list contains: %d knockout alleles representing %d genes'''
 '''
 
 publicBLOG = '''
