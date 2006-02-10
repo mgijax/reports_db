@@ -74,6 +74,75 @@ TAB = reportlib.TAB
 PAGE = reportlib.PAGE
 IMSR = os.environ['IMSR_DBNAME']
 
+allBLOG = '''
+This report provides a list of all genes which have one or more 
+published knockout or conditional knockout alleles. Each gene symbol is 
+linked to its respective MGI Gene Detail page; each allele is linked to 
+its MGI Phenotype and Allele Detail page; and a link is provided to the 
+International Mouse Strain Resource (IMSR) strain if a repository holds 
+mice carrying one or more of the listed knockout alleles.
+<P>
+Note that this list is a subset of phenotypic alleles for which there is 
+data in MGI. It does not include gene-trapped alleles, targeted 
+(Floxed/Frt) or targeted (knock-in) alleles, or those arising 
+spontaneously or induced by chemicals or radiation.  To search the full 
+spectrum of phenotypes or alleles in MGI, use the 
+<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phentoype and Allele Query Form</a>.
+To search repositories for specific strains carrying mutations of all 
+types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
+<P>
+This list contains: %d knockout alleles representing %d genes'''
+'''
+
+publicBLOG = '''
+Genes with Knockouts available through Public Respositories
+<P>
+This report provides a list of genes which have one or more published 
+knockout or conditional knockout alleles and at least one knockout 
+allele is available through a public repository. Each gene symbol is 
+linked to its respective MGI Gene Detail page; each allele is linked to 
+its MGI Phenotype and Allele Detail page; and a link is provided to the 
+International Mouse Strain Resource (IMSR) strains for mice carrying 
+these knockout alleles.
+<P> 
+Note that this list is a subset of phenotypic alleles for which there is 
+data in MGI and a subset of strains available from IMSR-participating 
+repositories. It does not include gene-trapped alleles, targeted 
+(Floxed/Frt) or targeted (knock-in) alleles, or those arising 
+spontaneously or induced by chemicals or radiation.  To search the full 
+spectrum of phenotypes or alleles in MGI, use the
+<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phentoype and Allele Query Form</a>.
+To search repositories for specific strains carrying mutations of all 
+types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
+<http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp>.
+<P> 
+'''
+
+nonpublicBLOG = '''
+Genes with Knockouts that are not yet available through Public Repositories.
+<P>
+Use this list to nominate genes that are known to have been 
+knocked-out, but where mice carrying these knockouts are not available 
+in public repositories.
+<P>
+This report provides a list of all genes which have one or more 
+published knockout or conditional knockout alleles, but mice carrying 
+these knockouts are not widely available. Each gene symbol is linked to 
+its respective MGI Gene Detail page; each allele is linked to its MGI 
+Phenotype and Allele Detail page.
+<P>
+Note that this list is a subset of phenotypic alleles for which there is 
+data in MGI. It does not include gene-trapped alleles, targeted 
+(Floxed/Frt) or targeted (knock-in) alleles, or those arising 
+spontaneously or induced by chemicals or radiation.  To search the full 
+spectrum of phenotypes or alleles in MGI, use the
+<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phentoype and Allele Query Form</a>.
+To search repositories for specific strains carrying mutations of all 
+types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
+<http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp>.
+<P>
+'''
+
 def printMarker(r):
 
     s = '<tr>' + \
@@ -96,17 +165,20 @@ def printMarker(r):
 
 def printAllele(a):
 
-    symbol = regsub.gsub('<', '<sup>', a['symbol'])
-    symbol = regsub.gsub('>', '</sup>', symbol)
+    symbol = regsub.gsub('<', 'beginss', a['symbol'])
+    symbol = regsub.gsub('>', 'endss', symbol)
+    symbol = regsub.gsub('beginss', '<sup>', symbol)
+    symbol = regsub.gsub('endss', '</sup>', symbol)
 
     s = '%s%s%s<br>' % (reportlib.create_accession_anchor(a['accID']), symbol, reportlib.close_accession_anchor())
 
     return s
 
-def printHeader(fp, title):
+def printHeader(fp, title, blog):
 
     fp.write('</pre>\n')
     fp.write('<H2>%s</H2>' % (title))
+    fp.write(blog)
     fp.write('<TABLE BORDER=3 WIDTH=100%>')
     fp.write('<th align=left valign=top>MGI Gene ID</th>')
     fp.write('<th align=left valign=top>Gene Symbol</th>')
@@ -130,21 +202,19 @@ fp1 = reportlib.init(fullreport, printHeading = 0, outputdir = os.environ['REPOR
 fp2 = reportlib.init(publicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 fp3 = reportlib.init(notpublicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 
-printHeader(fp1, 'MGI Full KnockOut Report')
-printHeader(fp2, 'MGI Public KnockOut Report')
-printHeader(fp3, 'MGI Non-Public KnockOut Report')
+printHeader(fp1, 'MGI All Knockouts Report', allBLOG)
+printHeader(fp2, 'MGI Public Knockouts Report', publicBLOG)
+printHeader(fp3, 'MGI Non-Public Knockouts Report', nonpublicBLOG)
 
 #
 # select alleles
 #
 
-db.sql('select a._Marker_key, a._Allele_key, a.symbol, t.term, aa.accID ' + \
+db.sql('select a._Marker_key, a._Allele_key, a.symbol, a.name, t.term, aa.accID ' + \
 	'into #knockouts ' + \
 	'from ALL_Allele a, ACC_Accession aa, VOC_Term t ' + \
 	'where a._Allele_Status_key = 847114 ' + \
 	'and a._Allele_Type_key in (847116, 847119, 847120) ' + \
-	'and a.name not like "%Lexicon%" ' + \
-	'and a.name not like "%Deltagen%" ' + \
 	'and a._Allele_key = aa._Object_key ' + \
 	'and aa._MGIType_key = 11 ' + \
 	'and aa._LogicalDB_key = 1 ' + \
@@ -189,8 +259,10 @@ results = db.sql('select distinct m._Marker_key, ac.accID, ls.label ' + \
 imsr = {}
 for r in results:
     key = r['_Marker_key']
-    value = regsub.gsub('<', '<sup>', r['label'])
-    value = regsub.gsub('>', '</sup>', value)
+    value = regsub.gsub('<', 'beginss', r['label'])
+    value = regsub.gsub('>', 'endss', value)
+    value = regsub.gsub('beginss', '<sup>', value)
+    value = regsub.gsub('endss', '</sup>', value)
     value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(r['label']), value, reportlib.close_accession_anchor())
     if not imsr.has_key(key):
 	imsr[key] = []
@@ -264,31 +336,41 @@ results = db.sql('select * from #markers order by symbol', 'auto')
 for r in results:
 
     mstr = ''
-    astr = ''
+    astr1 = ''
+    astr2 = ''
     key = r['_Marker_key']
     mstr = printMarker(r)
 
     # for each allele....
 
     for a in alleles[key]:
-	astr = astr + printAllele(a)
+
+	astr1 = astr1 + printAllele(a)
+
+	if string.find(a['name'], 'Lexicon') <= 0:
+	    astr2 = astr2 + printAllele(a)
+
+	if string.find(a['name'], 'Deltagen') <= 0:
+	    astr2 = astr2 + printAllele(a)
 
     if imsr.has_key(key):
 	istr = '<td>%s</td>' % (string.join(imsr[key], '<br>'))
     else:
 	istr = '<td>&nbsp;</td>'
 
-    toPrint = '%s<td>%s</td>%s' % (mstr, astr, istr)
-
-    fp1.write(toPrint)
+    fp1.write('%s<td>%s</td>%s' % (mstr, astr1, istr))
 
     if imsr.has_key(key):
-	fp2.write(toPrint)
+        fp2.write('%s<td>%s</td>%s' % (mstr, astr1, istr))
     else:
-	fp3.write(toPrint)
+        fp3.write('%s<td>%s</td>%s' % (mstr, astr2, istr))
 
 fp1.write('</TABLE>')
 fp1.write('<pre>')
+fp2.write('</TABLE>')
+fp2.write('<pre>')
+fp3.write('</TABLE>')
+fp3.write('<pre>')
 
 reportlib.finish_nonps(fp1, isHTML = 1)	# non-postscript file
 reportlib.finish_nonps(fp2, isHTML = 1)	# non-postscript file
