@@ -94,8 +94,6 @@ types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">
 '''
 
 publicBLOG = '''
-Genes with Knockouts available through Public Respositories
-<P>
 This report provides a list of genes which have one or more published 
 knockout or conditional knockout alleles and at least one knockout 
 allele is available through a public repository. Each gene symbol is 
@@ -113,13 +111,10 @@ spectrum of phenotypes or alleles in MGI, use the
 <a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phentoype and Allele Query Form</a>.
 To search repositories for specific strains carrying mutations of all 
 types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
-<http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp>.
 <P> 
 '''
 
 nonpublicBLOG = '''
-Genes with Knockouts that are not yet available through Public Repositories.
-<P>
 Use this list to nominate genes that are known to have been 
 knocked-out, but where mice carrying these knockouts are not available 
 in public repositories.
@@ -138,7 +133,6 @@ spectrum of phenotypes or alleles in MGI, use the
 <a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phentoype and Allele Query Form</a>.
 To search repositories for specific strains carrying mutations of all 
 types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
-<http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp>.
 <P>
 '''
 
@@ -201,9 +195,9 @@ fp1 = reportlib.init(fullreport, printHeading = 0, outputdir = os.environ['REPOR
 fp2 = reportlib.init(publicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 fp3 = reportlib.init(notpublicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 
-printHeader(fp1, 'MGI All Knockouts Report', allBLOG)
-printHeader(fp2, 'MGI Public Knockouts Report', publicBLOG)
-printHeader(fp3, 'MGI Non-Public Knockouts Report', nonpublicBLOG)
+printHeader(fp1, 'MGI All Knockouts Report.', allBLOG)
+printHeader(fp2, 'Genes with Knockouts available through Public Respositories.', publicBLOG)
+printHeader(fp3, 'Genes with Knockouts that are not yet available through Public Respositories.', nonpublicBLOG)
 
 #
 # select alleles
