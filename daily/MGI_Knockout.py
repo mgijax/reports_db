@@ -196,8 +196,8 @@ fp2 = reportlib.init(publicreport, printHeading = 0, outputdir = os.environ['REP
 fp3 = reportlib.init(notpublicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 
 printHeader(fp1, 'MGI All Knockouts Report.', allBLOG)
-printHeader(fp2, 'Genes with Knockouts available through Public Respositories.', publicBLOG)
-printHeader(fp3, 'Genes with Knockouts that are not yet available through Public Respositories.', nonpublicBLOG)
+printHeader(fp2, 'Genes with Knockouts available through Public Repositories.', publicBLOG)
+printHeader(fp3, 'Genes with Knockouts that are not yet available through Public Repositories.', nonpublicBLOG)
 
 #
 # select alleles
