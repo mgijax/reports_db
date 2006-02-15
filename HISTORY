@@ -1,8 +1,10 @@
+TAG: reports_db-3-4-0-12
 TAG: reports_db-3-4-0-11
 DATE: 02/15/2006
 STAFF: lec
 CHANGES:
 1) TR 7418; daily/MGI_Knockout.py
+2) GO_gene_association_nonmouse; changed file name
 
 TAG: reports_db-3-4-0-10
 TAG: reports_db-3-4-0-9
