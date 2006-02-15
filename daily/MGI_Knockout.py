@@ -12,10 +12,6 @@
 #
 #		Allele Types: targeted (knockout), targeted (reporter), targeted (other)
 #
-#		the allele's genotype that is homozygous for the mutation
-#		OR
-#		the allele has no genotypes
-#
 #		field 1: MGI Gene ID
 #		field 2: Gene symbol
 #		field 3: Gene name
@@ -27,17 +23,11 @@
 #
 #	2.  Tab-delimited report where a row in the report represents:
 #
-#		(a targeted (knockout) allele's genotype is homozygous for the mutation
-#		OR
-#		a targeted (knockout) allele with no genotypes)
 #		AND
 #		at least one of the gene's knockout alleles is in IMSR
 #
 #	3.  Tab-delimited report where a row in the report represents:
 #
-#		(a targeted (knockout) allele's genotype is homozygous for the mutation
-#		OR
-#		a targeted (knockout) allele with no genotypes)
 #		AND
 #		none of the gene's knockout alleles is in IMSR
 #
@@ -136,7 +126,7 @@ types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">
 <P>
 '''
 
-def printMarker(r):
+def printMarkerHTML(r):
 
     s = '<tr>' + \
 	'<td>' + r['accID'] + '</td>\n' + \
@@ -156,7 +146,24 @@ def printMarker(r):
     s = s + '<td nowrap>%s</td>' % (string.join(alleleTypes[r['_Marker_key']], '<br>'))
     return s
 
-def printAllele(a):
+def printMarkerTAB(r):
+
+    s = r['accID'] + TAB + \
+        r['symbol'] + TAB + \
+	r['name'] + TAB
+
+    if repgen.has_key(r['_Marker_key']):
+	s = s + repgen[r['_Marker_key']]
+    s = s + TAB
+
+    if reptran.has_key(r['_Marker_key']):
+	s = s + reptran[r['_Marker_key']]
+    s = s + TAB
+
+    s = s + string.join(alleleTypes[r['_Marker_key']], '|') + TAB
+    return s
+
+def printAlleleHTML(a):
 
     symbol = regsub.gsub('<', 'beginss', a['symbol'])
     symbol = regsub.gsub('>', 'endss', symbol)
@@ -167,7 +174,13 @@ def printAllele(a):
 
     return s
 
-def printHeader(fp, title, blog):
+def printAlleleTAB(a):
+
+    s = a['accID'] + '|'
+
+    return s
+
+def printHeaderHTML(fp, title, blog):
 
     fp.write('</pre>\n')
     fp.write('<H2>%s</H2>' % (title))
@@ -195,9 +208,13 @@ fp1 = reportlib.init(fullreport, printHeading = 0, outputdir = os.environ['REPOR
 fp2 = reportlib.init(publicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 fp3 = reportlib.init(notpublicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 
-printHeader(fp1, 'MGI All Knockouts Report.', allBLOG)
-printHeader(fp2, 'Genes with Knockouts available through Public Repositories.', publicBLOG)
-printHeader(fp3, 'Genes with Knockouts that are not yet available through Public Repositories.', nonpublicBLOG)
+fp4 = reportlib.init(fullreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp5 = reportlib.init(publicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp6 = reportlib.init(notpublicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+
+printHeaderHTML(fp1, 'MGI All Knockouts Report.', allBLOG)
+printHeaderHTML(fp2, 'Genes with Knockouts available through Public Repositories.', publicBLOG)
+printHeaderHTML(fp3, 'Genes with Knockouts that are not yet available through Public Repositories.', nonpublicBLOG)
 
 #
 # select alleles
@@ -249,18 +266,27 @@ results = db.sql('select distinct m._Marker_key, ac.accID, ls.label ' + \
 	'and 1 = (select count(distinct _Allele_key) ' + \
 	'from %s..SGAAssoc ' % (IMSR) + \
 	'where sga._Strain_key = _Strain_key)', 'auto')
-imsr = {}
+imsrHTML = {}
+imsrTAB = {}
 for r in results:
+
     key = r['_Marker_key']
     value = regsub.gsub('<', 'beginss', r['label'])
     value = regsub.gsub('>', 'endss', value)
     value = regsub.gsub('beginss', '<sup>', value)
     value = regsub.gsub('endss', '</sup>', value)
     value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(r['label']), value, reportlib.close_accession_anchor())
-    if not imsr.has_key(key):
-	imsr[key] = []
-    if value not in imsr[key]:
-        imsr[key].append(value)
+
+    if not imsrHTML.has_key(key):
+	imsrHTML[key] = []
+    if value not in imsrHTML[key]:
+        imsrHTML[key].append(value)
+
+    value = r['label']
+    if not imsrTAB.has_key(key):
+	imsrTAB[key] = []
+    if value not in imsrTAB[key]:
+        imsrTAB[key].append(value)
 
 #
 # cache gene/allele data
@@ -328,14 +354,17 @@ results = db.sql('select * from #markers order by symbol', 'auto')
 
 for r in results:
 
-    mstr = ''
-    astr = ''
+    mstrHTML = ''
+    astrHTML = ''
+    mstrTAB = ''
+    astrTAB = ''
 
     isLexicon = 0
     isDeltagen = 0
 
     key = r['_Marker_key']
-    mstr = printMarker(r)
+    mstrHTML = printMarkerHTML(r)
+    mstrTAB = printMarkerTAB(r)
 
     # for each allele....
 
@@ -350,20 +379,26 @@ for r in results:
 	if string.find(a['name'], 'Deltagen') >= 0:
 	    isDeltagen = 1
 
-	astr = astr + printAllele(a)
+	astrHTML = astrHTML + printAlleleHTML(a)
+	astrTAB = astrTAB + printAlleleTAB(a)
 
-    if imsr.has_key(key):
-	istr = '<td>%s</td>' % (string.join(imsr[key], '<br>'))
+    if imsrHTML.has_key(key):
+	istrHTML = '<td>%s</td>' % (string.join(imsrHTML[key], '<br>'))
+	istrTAB = string.join(imsrTAB[key], '|') + CRT
     else:
-	istr = '<td>&nbsp;</td>'
+	istrHTML = '<td>&nbsp;</td>'
+	istrTAB = CRT
 
-    fp1.write('%s<td>%s</td>%s' % (mstr, astr, istr))
+    fp1.write('%s<td>%s</td>%s' % (mstrHTML, astrHTML, istrHTML))
+    fp4.write('%s%s\t%s' % (mstrTAB, astrTAB, istrTAB))
 
-    if imsr.has_key(key):
-        fp2.write('%s<td>%s</td>%s' % (mstr, astr, istr))
+    if imsrHTML.has_key(key):
+        fp2.write('%s<td>%s</td>%s' % (mstrHTML, astrHTML, istrHTML))
+        fp5.write('%s%s\t%s' % (mstrTAB, astrTAB, istrTAB))
     else:
 	if not isLexicon and not isDeltagen:
-          fp3.write('%s<td>%s</td>%s' % (mstr, astr, istr))
+          fp3.write('%s<td>%s</td>%s' % (mstrHTML, astrHTML, istrHTML))
+          fp6.write('%s%s%s' % (mstrTAB, astrTAB, istrTAB))
 
 fp1.write('</TABLE>')
 fp1.write('<pre>')
@@ -375,4 +410,8 @@ fp3.write('<pre>')
 reportlib.finish_nonps(fp1, isHTML = 1)	# non-postscript file
 reportlib.finish_nonps(fp2, isHTML = 1)	# non-postscript file
 reportlib.finish_nonps(fp3, isHTML = 1)	# non-postscript file
+
+reportlib.finish_nonps(fp4)	# non-postscript file
+reportlib.finish_nonps(fp5)	# non-postscript file
+reportlib.finish_nonps(fp6)	# non-postscript file
 
