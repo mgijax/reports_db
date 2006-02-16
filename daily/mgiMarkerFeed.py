@@ -704,8 +704,7 @@ def strains():
           'cdate = convert(char(20), m.creation_date, 100), ' + \
           'mdate = convert(char(20), m.modification_date, 100) ' + \
           'from #strains s, PRB_Strain_Marker m ' + \
-          'where s._Strain_key = m._Strain_key ' + \
-	  'and exists (select 1 from #alleles a where m._Allele_key = a._Allele_key)', 'auto')
+          'where s._Strain_key = m._Strain_key ', 'auto')
 
     for r in results:
 	    fp.write(`r['_Strain_key']` + TAB + \

@@ -1,3 +1,9 @@
+TAG: reports_db-3-4-0-14
+DATE: 02/15/2006
+STAFF: lec
+CHANGES:
+1) mgimarkerfeed.py; include all strain/marker associations 
+
 TAG: reports_db-3-4-0-13
 TAG: reports_db-3-4-0-12
 TAG: reports_db-3-4-0-11
