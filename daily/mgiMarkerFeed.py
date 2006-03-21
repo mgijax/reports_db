@@ -49,7 +49,7 @@
 # History:
 #
 # lec	03/21/2006	TR 7582
-#	- exclude strains with 'nm####' nomenclature
+#	- exclude strains & strain synonyms with 'nm####' nomenclature
 #
 # lec	08/2005
 #	- added mp_term, mp_closure per csb
