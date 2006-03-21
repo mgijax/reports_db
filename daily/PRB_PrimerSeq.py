@@ -36,7 +36,7 @@ import os
 import db
 import reportlib
 import string
-import regsub
+import mgi_utils
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -47,23 +47,31 @@ TAB = reportlib.TAB
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
-cmd = 'select m.symbol, m.name "mname", p.name "pname", ' + \
-             'a.accID, p.mgiID, ' + \
-             'p.primer1sequence, p.primer2sequence, ' + \
-             'p.productSize, m.chromosome, o.offset ' + \
-      'from PRB_Probe p, PRB_Marker pm, MRK_Marker m, ' + \
-           'ACC_Accession a, MRK_Offset o ' + \
+db.sql('select p._Probe_key, pname = p.name, p.primer1sequence, p.primer2sequence, p.productSize, pm._Marker_key, ' + \
+      'm.symbol, mname = m.name, m.chromosome ' + \
+      'into #primers ' + \
+      'from PRB_Probe p, PRB_Marker pm, MRK_Marker m ' + \
       'where p._SegmentType_key = 63473 and ' + \
-	    'p._Probe_key = pm._Probe_key and ' + \
-            'pm._Marker_key = m._Marker_key and ' + \
-            'm._Marker_key = a._Object_key and ' + \
-	    'a._MGIType_key = 2 and ' + \
-            'a.prefixPart = "MGI:" and ' + \
-            'a.preferred = 1 and ' + \
-            'a._LogicalDB_key = 1 and ' + \
-            'm._Marker_key = o._Marker_key and ' + \
+      'p._Probe_key = pm._Probe_key and ' + \
+      'pm._Marker_key = m._Marker_key', None)
+db.sql('create index idx1 on #primers(_Probe_key)', None)
+db.sql('create index idx2 on #primers(_Marker_key)', None)
+
+cmd = 'select p.*, probeID = a1.accID, markerID = a2.accID, o.offset ' + \
+      'from #primers p, ACC_Accession a1, ACC_Accession a2, MRK_Offset o ' + \
+      'where p._Probe_key = a1._Object_key and ' + \
+	    'a1._MGIType_key = 3 and ' + \
+            'a1._LogicalDB_key = 1 and ' + \
+            'a1.prefixPart = "MGI:" and ' + \
+            'a1.preferred = 1 and ' + \
+            'p._Marker_key = a2._Object_key and ' + \
+	    'a2._MGIType_key = 2 and ' + \
+            'a2._LogicalDB_key = 1 and ' + \
+            'a2.prefixPart = "MGI:" and ' + \
+            'a2.preferred = 1 and ' + \
+            'p._Marker_key = o._Marker_key and ' + \
             'o.source = 0 ' + \
-      'order by m.symbol'
+      'order by p.symbol'
 
 results = db.sql(cmd, 'auto')
 
@@ -74,28 +82,15 @@ for r in results:
     p2seq = r['primer2sequence']
     prodSize = r['productSize']
 
-    if (mname == None):
-        mname = ""
-    else:
-        mname = string.strip(regsub.gsub('\n', '', mname))
-    if (pname == None):
-        pname = ""
-    else:
-        pname = string.strip(regsub.gsub('\n', '', pname))
-    if (p1seq == None):
-        p1seq = ""
-    else:
-        p1seq = string.strip(regsub.gsub('\n', '', p1seq))
-    if (p2seq == None):
-        p2seq = ""
-    else:
-        p2seq = string.strip(regsub.gsub('\n', '', p2seq))
-    if (prodSize == None):
-        prodSize = ""
-
-    fp.write(r['symbol'] + TAB + mname + TAB + pname + TAB +
-             r['accID'] + TAB + r['mgiID'] + TAB +
-             p1seq + TAB + p2seq + TAB + prodSize + TAB +
-             r['chromosome'] + TAB + str(r['offset']) + CRT)
+    fp.write(r['symbol'] + TAB +
+	mname + TAB +
+	pname + TAB +
+        r['markerID'] + TAB + 
+	r['probeID'] + TAB +
+        mgi_utils.prvalue(p1seq) + TAB + 
+	mgi_utils.prvalue(p2seq) + TAB + 
+	mgi_utils.prvalue(prodSize) + TAB +
+        r['chromosome'] + TAB + 
+	str(r['offset']) + CRT)
 
 reportlib.finish_nonps(fp)
