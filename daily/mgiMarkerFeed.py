@@ -49,7 +49,7 @@
 # History:
 #
 # lec	03/21/2006	TR 7582
-#	- exclude strains & strain synonyms with 'nm####' nomenclature
+#	- exclude strain synonyms with 'nm####' nomenclature
 #
 # lec	08/2005
 #	- added mp_term, mp_closure per csb
@@ -656,16 +656,13 @@ def strains():
     # plus all strains which are cross-referenced by Allele or Allele CellLine
     # strain.bcp
     #
-    # exclude strains that have 'nm###' nomenclature
-    #
 
     db.sql('select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
           'cdate = convert(char(20), s.creation_date, 100), ' + \
           'mdate = convert(char(20), s.modification_date, 100) ' + \
           'into #strains ' + \
           'from PRB_Strain s, ACC_Accession a ' + \
-          'where s.strain not like "nm[0-9]%" ' + \
-	  'and s._Strain_key = a._Object_key ' + \
+          'where s._Strain_key = a._Object_key ' + \
           'and a._MGIType_key = 10 ' + \
           'and a._LogicalDB_key in (22, 38) ' + \
           'union ' + \
@@ -673,15 +670,13 @@ def strains():
           'cdate = convert(char(20), s.creation_date, 100), ' + \
           'mdate = convert(char(20), s.modification_date, 100) ' + \
           'from PRB_Strain s, ALL_Allele a ' + \
-          'where s.strain not like "nm[0-9]%" ' + \
-	  'and s._Strain_key = a._Strain_key ' + \
+	  'where s._Strain_key = a._Strain_key ' + \
           'union ' + \
           'select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
           'cdate = convert(char(20), s.creation_date, 100), ' + \
           'mdate = convert(char(20), s.modification_date, 100) ' + \
           'from PRB_Strain s, ALL_CellLine a ' + \
-          'where s.strain not like "nm[0-9]%" ' + \
-	  'and s._Strain_key = a._Strain_key ', None)
+	  'where s._Strain_key = a._Strain_key ', None)
 
     db.sql('create index idx1 on #strains(_Strain_key)', None)
 

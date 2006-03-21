@@ -51,9 +51,10 @@ cmd = 'select m.symbol, m.name "mname", p.name "pname", ' + \
              'a.accID, p.mgiID, ' + \
              'p.primer1sequence, p.primer2sequence, ' + \
              'p.productSize, m.chromosome, o.offset ' + \
-      'from PRB_Primer_View p, PRB_Marker pm, MRK_Marker m, ' + \
+      'from PRB_Probe p, PRB_Marker pm, MRK_Marker m, ' + \
            'ACC_Accession a, MRK_Offset o ' + \
-      'where p._Probe_key = pm._Probe_key and ' + \
+      'where p._SegmentType_key = 63473 and ' + \
+	    'p._Probe_key = pm._Probe_key and ' + \
             'pm._Marker_key = m._Marker_key and ' + \
             'm._Marker_key = a._Object_key and ' + \
 	    'a._MGIType_key = 2 and ' + \
