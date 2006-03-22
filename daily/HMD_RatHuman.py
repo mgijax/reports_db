@@ -283,7 +283,7 @@ def processSort1(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Chr', 15))
+	fp.write(string.ljust('Human Chr', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
@@ -299,7 +299,7 @@ def processSort1(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('---------', 15))
+	fp.write(string.ljust('---------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
@@ -352,7 +352,7 @@ def processSort1(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 15))
+		fp.write(string.ljust(r['humanChr'], 25))
 		fp.write(SPACE)
 
 		if humanEG.has_key(r['humanMarkerKey']):
@@ -378,7 +378,7 @@ def processSort2(results):
 	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
 	fp.write(reportLegend + CRT + CRT)
 	
-	fp.write(string.ljust('Human Chr', 15))
+	fp.write(string.ljust('Human Chr', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Human EntrezGene ID', 30))
 	fp.write(SPACE)
@@ -394,7 +394,7 @@ def processSort2(results):
 	fp.write(SPACE)
 	fp.write(CRT)
 
-	fp.write(string.ljust('----------', 15))
+	fp.write(string.ljust('----------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
@@ -442,7 +442,7 @@ def processSort2(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(string.ljust(r['humanChr'], 15))
+		fp.write(string.ljust(r['humanChr'], 25))
 		fp.write(SPACE)
 
 		if humanEG.has_key(r['humanMarkerKey']):
@@ -489,7 +489,7 @@ def processSort3(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Chr', 15))
+	fp.write(string.ljust('Human Chr', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Data Attributes', 15))
 	fp.write(SPACE)
@@ -505,7 +505,7 @@ def processSort3(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('----------', 15))
+	fp.write(string.ljust('----------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('---------------', 15))
 	fp.write(SPACE)
@@ -533,7 +533,7 @@ def processSort3(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 15))
+		fp.write(string.ljust(r['humanChr'], 25))
 		fp.write(SPACE)
 		printDataAttributes(fp, r['ratMarkerKey'])
 		fp.write(CRT)
@@ -555,7 +555,7 @@ def processSort4(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('Human Symbol', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('Human Chr', 15))
+	fp.write(string.ljust('Human Chr', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('Rat EntrezGene ID', 30))
 	fp.write(SPACE)
@@ -571,7 +571,7 @@ def processSort4(results):
 	fp.write(SPACE)
 	fp.write(string.ljust('------------', 25))
 	fp.write(SPACE)
-	fp.write(string.ljust('----------', 15))
+	fp.write(string.ljust('----------', 25))
 	fp.write(SPACE)
 	fp.write(string.ljust('------------------', 30))
 	fp.write(SPACE)
@@ -594,7 +594,7 @@ def processSort4(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 15))
+		fp.write(string.ljust(r['humanChr'], 25))
 		fp.write(SPACE)
 
 		if ratEG.has_key(r['ratMarkerKey']):

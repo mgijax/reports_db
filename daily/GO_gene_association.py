@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec   10/19/2005
+#       - added PMID, TR 7173
+#
 # lec	10/04/2005
 #	- TR 5188; GO Qualifier
 #
@@ -166,6 +169,19 @@ db.sql('select g._Term_key, g.termID, g.qualifier, g.inferredFrom, ' + \
 db.sql('create index idx1 on #results(symbol)', None)
 
 #
+# resolve PubMed IDs for References
+#
+pubMed = {}
+results = db.sql('select r._Refs_key, a.accID from #results r, ACC_Accession a ' + \
+        'where r._Refs_key = a._Object_key ' + \
+        'and a._MGIType_key = 1 ' + \
+        'and a._LogicalDB_key = 29 ', 'auto')
+for r in results:
+    key = r['_Refs_key']
+    value = r['accID']
+    pubMed[key] = value
+
+#
 # process results
 #
 results = db.sql('select * from #results order by symbol', 'auto')
@@ -179,7 +195,13 @@ for r in results:
 		fp.write(string.strip(r['qualifier']) + TAB)
 		fp.write(TAB)
 		fp.write(r['termID'] + TAB)
-		fp.write(DBABBREV + ':' + r['refID'] + TAB)
+
+                # reference
+                referenceID = DBABBREV + ':' + r['refID']
+                if pubMed.has_key(r['_Refs_key']):
+                    referenceID = referenceID + '|PMID:' + pubMed[r['_Refs_key']]
+                fp.write(referenceID + TAB)
+
 		fp.write(r['eCode'] + TAB)
 
 		# substitute | for ", " in inferredFrom

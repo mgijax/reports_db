@@ -63,18 +63,28 @@ db.sql('select a.accID, m._Marker_key, m.symbol, m.name ' + \
 db.sql('create nonclustered index idx_marker on #markers(_Marker_key)', None)
 
 #
+# references
+#
+db.sql('select distinct m._Marker_key, r._Refs_key ' + \
+	'into #references ' + \
+	'from #markers m, MRK_Reference r ' + \
+	'where m._Marker_key = r._Marker_key', None)
+db.sql('create nonclustered index idx_refs on #references(_Refs_key)', None)
+
+#
 # pub med ids
 #
-results = db.sql('select m._Marker_key, r.pubmedID ' + \
-	'from #markers m, MRK_Reference r ' + \
-	'where m._Marker_key = r._Marker_key ' + \
-	'and r.pubmedID is not null', 'auto')
+results = db.sql('select r._Marker_key, a.accID ' + \
+	'from #references r, ACC_Accession a ' + \
+	'where a._MGIType_key = 1 ' + \
+	'and r._Refs_key = a._Object_key ' + \
+	'and a._LogicalDB_key = 29', 'auto')
 pubmed = {}
 for r in results:
 	key = r['_Marker_key']
 	if not pubmed.has_key(key):
 		pubmed[key] = []
-	pubmed[key].append(r['pubmedID'])
+	pubmed[key].append(r['accID'])
 
 #
 # synonyms
