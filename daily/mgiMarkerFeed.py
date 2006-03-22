@@ -50,6 +50,7 @@
 #
 # lec	03/21/2006	TR 7582
 #	- exclude strain synonyms with 'nm####' nomenclature
+#	- backed out per Carolyn Blake
 #
 # lec	08/2005
 #	- added mp_term, mp_closure per csb
@@ -728,8 +729,8 @@ def strains():
           'cdate = convert(char(20), m.creation_date, 100), ' + \
           'mdate = convert(char(20), m.modification_date, 100) ' + \
           'from #strains s, MGI_Synonym_Strain_View m ' + \
-          'where s._Strain_key = m._Object_key ' + \
-	  'and m.synonym not like "nm[0-9]%" ', 'auto')
+          'where s._Strain_key = m._Object_key', 'auto')
+#	  'and m.synonym not like "nm[0-9]%" ', 'auto')
 
     for r in results:
 	    fp.write(`r['_Synonym_key']` + TAB + \
