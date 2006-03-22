@@ -116,17 +116,12 @@ cmd.append('select distinct m._Marker_key, a.accID ' + \
 'and a._LogicalDB_key = 9')
 
 # get human ortholog (5)
-cmd.append('select distinct m._Marker_key, n.humanSymbol ' + \
-'from #markers m, ACC_Accession ma, ACC_Accession na, NOM_Marker n ' + \
-'where m._Marker_key = ma._Object_key ' + \
-'and ma._MGIType_key = 2 ' + \
-'and ma.prefixPart = "MGI:" ' + \
-'and ma._LogicalDB_key = 1 ' + \
-'and ma.preferred = 1 ' + \
-'and ma.accID = na.accID ' + \
-'and na._MGIType_key = 21 ' + \
-'and na._Object_key = n._Nomen_key ' + \
-'and n.humanSymbol is not null')
+cmd.append('select distinct m._Marker_key, humanSymbol = h.symbol ' + \
+'from #markers m, MRK_Marker h, HMD_Homology_Marker hm1, HMD_Homology_Marker hm2 ' + \
+'where m._Marker_key = hm1._Marker_key ' + \
+'and hm1._Homology_key = hm2._Homology_key ' + \
+'and hm2._Marker_key = h._Marker_key ' + \
+'and h._Organism_key = 1')
 
 # retrieve markers, sort (6)
 cmd.append('select distinct * from #markers order by sequenceNum, symbol')
