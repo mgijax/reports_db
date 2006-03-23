@@ -856,7 +856,7 @@ def genotypes():
 	fp.write(`r['_Annot_key']` + TAB + \
 	         `r['_Term_key']` + TAB + \
 	         `r['_Genotype_key']` + TAB + \
-		string.strip(r['qualifier']) + TAB + \
+		string.strip(mgi_utils.prvalue(r['qualifier'])) + TAB + \
 		r['cdate'] + TAB + \
 		r['mdate'] + CRT)
 
