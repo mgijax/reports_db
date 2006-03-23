@@ -62,8 +62,11 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 db.sql('select distinct a._Object_key, a._Term_key, e._Refs_key ' + 
 	'into #mp ' + \
-	'from VOC_Annot a, VOC_Evidence e ' + \
-	'where a._AnnotType_key = 1002 and a._Qualifier_key = 1096831 and a._Annot_key = e._Annot_key', None)
+	'from VOC_Annot a, VOC_Evidence e, VOC_Term t ' + \
+	'where a._AnnotType_key = 1002 ' + \
+	'and a._Qualifier_key = t._Term_key ' + \
+	'and t.term is null ' + \
+	'and a._Annot_key = e._Annot_key', None)
 db.sql('create index idx1 on #mp(_Object_key)', None)
 db.sql('create index idx2 on #mp(_Term_key)', None)
 db.sql('create index idx3 on #mp(_Refs_key)', None)
