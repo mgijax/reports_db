@@ -41,7 +41,7 @@
 import sys 
 import os
 import db
-import regsub
+import re
 import string
 import reportlib
 
@@ -120,7 +120,7 @@ results = db.sql('select distinct m._Object_key, nc.note from #mp m, MGI_Note n,
 mpDisplay = {}
 for r in results:
     key = r['_Object_key']
-    value = regsub.gsub('\n', ',', string.strip(r['note']))
+    value = re.sub('\n', ',', string.strip(r['note']))
     mpDisplay[key] = value
 
 #

@@ -63,7 +63,7 @@
 import sys
 import os
 import string
-import regsub
+import re
 import db
 import reportlib
 import mgi_utils
@@ -146,7 +146,7 @@ for r in results:
 #
 # resolve foreign keys
 #
-db.sql('select g._Term_key, g.termID, g.qualifier, g.inferredFrom, ' + \
+db.sql('select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, ' + \
 	'g._Object_key, g._Marker_Type_key, g.symbol, g.name, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
 	'markerID = ma.accID, ' + \
@@ -207,9 +207,9 @@ for r in results:
 		# substitute | for ", " in inferredFrom
 
 		if r['inferredFrom'] != None:
-			inferredFrom = regsub.gsub(',', '|', r['inferredFrom'])
-			inferredFrom = regsub.gsub(';', '|', inferredFrom)
-			inferredFrom = regsub.gsub(' ', '', inferredFrom)
+			inferredFrom = re.sub(',', '|', r['inferredFrom'])
+			inferredFrom = re.sub(';', '|', inferredFrom)
+			inferredFrom = re.sub(' ', '', inferredFrom)
 		else:
 			inferredFrom = r['inferredFrom']
 
