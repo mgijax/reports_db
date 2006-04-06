@@ -54,4 +54,9 @@ foreach i (${REPORTOUTPUTDIR}/*)
 rcp $i ${FTPREPORTDIR}
 end
 
-./mgimarkerfeed_reports.sh
+# this is now being run as a separate task from mgidbutilities/bin/prod/dailytasks.csh
+# so that it runs earlier in the evening (per Carolyn Blake)
+#
+#./mgimarkerfeed_reports.sh
+#
+

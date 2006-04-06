@@ -48,7 +48,7 @@
 import sys
 import os
 import string
-import regsub
+import re
 import db
 import reportlib
 import mgi_utils
@@ -176,7 +176,7 @@ results = db.sql('select g._AnnotEvidence_key, c.note, c.sequenceNum ' + \
 allnotes = {}
 for r in results:
     key = r['_AnnotEvidence_key']
-    value = string.strip(regsub.gsub('\n', '', r['note']))
+    value = string.strip(re.sub('\n', '', r['note']))
     if not allnotes.has_key(key):
 	     allnotes[key] = []
     allnotes[key].append(value)
@@ -241,7 +241,7 @@ for r in results:
 
 	# get rid of any dangling delimiters
 
-        i = regsub.gsub('|', '', i)
+        i = re.sub('|', '', i)
 
         eKey = r['_AnnotEvidence_key']
 
