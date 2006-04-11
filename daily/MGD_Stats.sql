@@ -131,3 +131,10 @@ from MRK_Marker m, PRB_RFLV p
 where m._Marker_key = p._Marker_key
 go
 
+print ""
+print "Number of Genes w/ Gene Ontology Annotations" 
+select count(distinct a._Object_key)
+from VOC_Annot a
+where a._AnnotType_key = 1000
+go
+
