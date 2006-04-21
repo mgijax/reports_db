@@ -20,11 +20,13 @@
 #  12. NCBI gene start
 #  13. NCBI gene end
 #  14. NCBI gene strand
-#  15. ensembl gene id
-#  16. ensembl gene chromosome
-#  17. ensembl gene start
-#  18. ensembl gene end
-#  19. ensembl gene strand
+#  15. Ensembl gene id
+#  16. Ensembl gene chromosome
+#  17. Ensembl gene start
+#  18. Ensembl gene end
+#  19. Ensembl gene strand
+#  20. UniSTS gene start
+#  21. UniSTS gene end
 #
 # Usage:
 #       MGI_Coordinate.py
@@ -36,7 +38,10 @@
 #
 # History:
 #
-# lec	02/17/2005
+# 04/21/2006 lec
+#	- added UniSTS coordinates
+#
+# 02/17/2005 lec
 #	- created
 #
 '''
@@ -56,34 +61,69 @@ noneDisplay = 'null' + TAB
 repGenomicKey = 615419
 sequenceType = 19
 ncbi = 59
+ncbiprovider = 'NCBI Gene Model'
 ensembl = 60
+ensemblprovider = 'Ensembl Gene Model'
+unists = 80
+unistsprovider = 'NCBI UniSTS'
 
-def getCoords(logicalDBkey):
+def getCoords(logicalDBkey, provider):
+
     global repCoords
 
     tempCoords = {}
 
-    results = db.sql('select m._Marker_key, mc._Qualifier_key, a.accID, ' + \
-	    'c.chromosome, c.strand, ' + \
-	    'startC = convert(int, c.startCoordinate), ' + \
-	    'endC = convert(int, c.endCoordinate) ' + \
-	        'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
-	        'where m._Marker_key = mc._Marker_key ' + \
-	        'and mc._Sequence_key = c._Sequence_key ' + \
-	        'and mc._Sequence_key = a._Object_key ' + \
-	        'and a._MGIType_key = %d ' % (sequenceType) + \
-	        'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
+    # we're assuming that markers may have a NCBI and/or Ensembl coordinate
+    # OR a UniSTS coordinate
+
+    if logicalDBkey == ncbi or logicalDBkey == ensembl:
+        results = db.sql('select m._Marker_key, a.accID, ' + \
+	        'c.chromosome, c.strand, ' + \
+	        'startC = convert(int, c.startCoordinate), ' + \
+	        'endC = convert(int, c.endCoordinate) ' + \
+	            'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
+	            'where m._Marker_key = mc._Marker_key ' + \
+	            'and mc._Sequence_key = c._Sequence_key ' + \
+	            'and mc._Sequence_key = a._Object_key ' + \
+	            'and a._MGIType_key = %d ' % (sequenceType) + \
+	            'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
+
+        for r in results:
+            key = r['_Marker_key']
+            value = r
+            tempCoords[key] = value
+ 
+    # UniSTS
+
+    else:
+        results = db.sql('select m._Marker_key, ' + \
+	        'c.chromosome, c.strand, ' + \
+	        'startC = convert(int, c.startCoordinate), ' + \
+	        'endC = convert(int, c.endCoordinate) ' + \
+	            'from #markers m, MRK_Location_Cache c ' + \
+	            'where m._Marker_key = c._Marker_key ' + \
+	            'and c.provider = "%s" ' % (provider), 'auto')
+
+        for r in results:
+            key = r['_Marker_key']
+            value = r
+            tempCoords[key] = value
+
+    # Get the representative coordinates; this data is cached
+
+    results = db.sql('select m._Marker_key, ' + \
+	        'c.chromosome, c.strand, ' + \
+	        'startC = convert(int, c.startCoordinate), ' + \
+	        'endC = convert(int, c.endCoordinate), genomeBuild = c.version ' + \
+	            'from #markers m, MRK_Location_Cache c ' + \
+	            'where m._Marker_key = c._Marker_key ' + \
+	            'and c.provider = "%s" ' % (provider), 'auto')
 
     for r in results:
         key = r['_Marker_key']
         value = r
-        qualifier = r['_Qualifier_key']
+        repCoords[key] = value
 
-	if qualifier == repGenomicKey:
-	    repCoords[key] = value
-
-        tempCoords[key] = value
- 
     return tempCoords
     
 #
@@ -111,18 +151,9 @@ fp.write('ensembl gene id' + TAB)
 fp.write('ensembl gene chromosome' + TAB)
 fp.write('ensembl gene start' + TAB)
 fp.write('ensembl gene end' + TAB)
-fp.write('ensembl gene strand' + CRT)
-
-# markers that have coordinates
-# (representative genomic)
-
-db.sql('select m._Marker_key, m._Sequence_key, c.version into #repmarkers ' + \
-	'from SEQ_Marker_Cache m, SEQ_Coord_Cache c ' + \
-	'where m._Qualifier_key = %d ' % (repGenomicKey) + \
-	'and m._Sequence_key = c._Sequence_key', None)
-
-db.sql('create index idx1 on #repmarkers(_Marker_key)', None)
-db.sql('create index idx2 on #repmarkers(_Sequence_key)', None)
+fp.write('ensembl gene strand' + TAB)
+fp.write('unists gene start' + TAB)
+fp.write('unists gene end' + CRT)
 
 # all active markers
 
@@ -140,18 +171,15 @@ db.sql('select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, markerTy
 
 db.sql('create index idx1 on #markers(_Marker_key)', None)
 
-# get genome build version
-
-results = db.sql('select distinct version from #repmarkers', 'auto')
-genomeBuild = results[0]['version']
-
 # get coordinates
 
 ncbiCoords = {}
 ensemblCoords = {}
+unistsCoords =  {}
 repCoords = {}
-ncbiCoords = getCoords(ncbi)
-ensemblCoords = getCoords(ensembl)
+ncbiCoords = getCoords(ncbi, ncbiprovider)
+ensemblCoords = getCoords(ensembl, ensemblprovider)
+unistsCoords = getCoords(unists, unistsprovider)
 
 # process results
 
@@ -172,8 +200,8 @@ for r in results:
         fp.write(c['chromosome'] + TAB)
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
-        fp.write(c['strand'] + TAB)
-        fp.write(genomeBuild + TAB)
+        fp.write(mgi_utils.prvalue(c['strand']) + TAB)
+        fp.write(c['genomeBuild'] + TAB)
     else:
 	fp.write(5*noneDisplay)
 
@@ -201,6 +229,15 @@ for r in results:
 #        fp.write(coordDisplay % (c['chromosome'], c['startC'], c['endC'], c['strand']) + TAB)
     else:
 	fp.write(5*noneDisplay)
+
+    # UniSTS coordinate
+
+    if unistsCoords.has_key(key):
+	c = unistsCoords[key]
+        fp.write(str(c['startC']) + TAB)
+        fp.write(str(c['endC']) + TAB)
+    else:
+	fp.write(2*noneDisplay)
 
     fp.write(CRT)
 

@@ -134,7 +134,9 @@ go
 print ""
 print "Number of Genes w/ Gene Ontology Annotations" 
 select count(distinct a._Object_key)
-from VOC_Annot a
+from VOC_Annot a, MRK_Marker m
 where a._AnnotType_key = 1000
+and a._Object_key = m._Marker_key
+and m._Marker_Type_key = 1 
 go
 
