@@ -1,3 +1,9 @@
+TAG: reports_db-3-4-4-15
+DATE: 04/24/2006
+STAFF: lec
+CHANGES:
+1) TR 7617; added GO stats to MGD_Stats.sql
+
 TAG: reports_db-3-4-0-15
 DATE: 03/24/2006
 STAFF: lec
