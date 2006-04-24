@@ -39,6 +39,9 @@
 # lec	10/19/2005
 #	- added PMID, TR 7173
 #
+# lec	10/04/2005
+#	- TR 5188; GO Qualifier
+#
 # lec	10/03/2005
 #	- replace SWALL with UniProt
 #
@@ -60,7 +63,7 @@
 import sys
 import os
 import string
-import regsub
+import re
 import db
 import reportlib
 import mgi_utils
@@ -102,11 +105,11 @@ for r in results:
 #
 # retrieve data set to process
 #
-db.sql('select a._Term_key, t.term, termID = ta.accID, a.isNot, a._Object_key, ' + \
+db.sql('select a._Term_key, t.term, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
 	'e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, ' + \
 	'm._Marker_Type_key, m.symbol, m.name ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m ' + \
+	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m, MGI_Synonym q ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Object_key = m._Marker_key ' + \
@@ -114,7 +117,9 @@ db.sql('select a._Term_key, t.term, termID = ta.accID, a.isNot, a._Object_key, '
 	'and a._Term_key = t._Term_key ' + \
 	'and a._Term_key = ta._Object_key ' + \
 	'and ta._MGIType_key = 13 ' + \
-	'and ta.preferred = 1', None)
+	'and ta.preferred = 1 ' + \
+	'and a._Qualifier_key = q._Object_key ' + \
+	'and q._SynonymType_key = 1023', None)
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_EvidenceTerm_key)', None)
 db.sql('create index idx3 on #gomarker(_Refs_key)', None)
@@ -141,7 +146,7 @@ for r in results:
 #
 # resolve foreign keys
 #
-db.sql('select g._Term_key, g.termID, g.isNot, g.inferredFrom, ' + \
+db.sql('select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, ' + \
 	'g._Object_key, g._Marker_Type_key, g.symbol, g.name, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
 	'markerID = ma.accID, ' + \
@@ -178,6 +183,19 @@ for r in results:
     pubMed[key] = value
 
 #
+# resolve PubMed IDs for References
+#
+pubMed = {}
+results = db.sql('select r._Refs_key, a.accID from #results r, ACC_Accession a ' + \
+        'where r._Refs_key = a._Object_key ' + \
+        'and a._MGIType_key = 1 ' + \
+        'and a._LogicalDB_key = 29 ', 'auto')
+for r in results:
+    key = r['_Refs_key']
+    value = r['accID']
+    pubMed[key] = value
+
+#
 # process results
 #
 results = db.sql('select * from #results order by symbol', 'auto')
@@ -188,27 +206,23 @@ for r in results:
 		fp.write(DBABBREV + TAB)
 		fp.write(r['markerID'] + TAB)
 		fp.write(r['symbol'] + TAB)
-
-		if r['isNot'] == 1:
-			fp.write('NOT')
-
+		fp.write(string.strip(r['qualifier']) + TAB)
 		fp.write(TAB)
 		fp.write(r['termID'] + TAB)
 
-		# reference
-		referenceID = DBABBREV + ':' + r['refID']
-		if pubMed.has_key(r['_Refs_key']):
-		    referenceID = referenceID + '|PMID:' + pubMed[r['_Refs_key']]
-		fp.write(referenceID + TAB)
-
+                # reference
+                referenceID = DBABBREV + ':' + r['refID']
+                if pubMed.has_key(r['_Refs_key']):
+                    referenceID = referenceID + '|PMID:' + pubMed[r['_Refs_key']]
+                fp.write(referenceID + TAB)
 		fp.write(r['eCode'] + TAB)
 
 		# substitute | for ", " in inferredFrom
 
 		if r['inferredFrom'] != None:
-			inferredFrom = regsub.gsub(',', '|', r['inferredFrom'])
-			inferredFrom = regsub.gsub(';', '|', inferredFrom)
-			inferredFrom = regsub.gsub(' ', '', inferredFrom)
+			inferredFrom = re.sub(',', '|', r['inferredFrom'])
+			inferredFrom = re.sub(';', '|', inferredFrom)
+			inferredFrom = re.sub(' ', '', inferredFrom)
 		else:
 			inferredFrom = r['inferredFrom']
 

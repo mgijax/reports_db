@@ -30,7 +30,6 @@ import os
 import db
 import reportlib
 import string
-import regsub
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB

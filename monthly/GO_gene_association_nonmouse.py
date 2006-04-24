@@ -48,7 +48,7 @@
 import sys
 import os
 import string
-import regsub
+import re
 import db
 import reportlib
 import mgi_utils
@@ -74,9 +74,7 @@ def writeRecord(i, r, e):
 	fp.write(i + TAB)
 
 	# field 3
-	if r['isNot'] == 1:
-		fp.write('NOT')
-	fp.write(TAB)
+	fp.write(string.strip(r['qualifier']) + TAB)
 
 	# field 4
 	fp.write(TAB)
@@ -133,10 +131,10 @@ for r in results:
 #
 # retrieve all ISS annotations that have a "with" value that begins "UniProt"
 #
-db.sql('select a._Term_key, termID = ta.accID, a.isNot, a._Object_key, ' + \
+db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
 	'e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, e.modification_date, e._Refs_key, e._ModifiedBy_key ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et ' + \
+	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et, MGI_Synonym q ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Term_key = t._Term_key ' + \
@@ -146,14 +144,17 @@ db.sql('select a._Term_key, termID = ta.accID, a.isNot, a._Object_key, ' + \
 	'and e._EvidenceTerm_key = et._Term_key ' + \
 	'and et.abbreviation = "ISS" ' + \
 	'and e.inferredFrom like "UniProt:%" ' + \
-	'and e._Refs_key not in (89196)' , None)
+	'and e._Refs_key not in (89196) ' + \
+        'and a._Qualifier_key = q._Object_key ' + \
+	'and q._SynonymType_key = 1023', None)
+
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_Refs_key)', None)
 
 #
 # resolve pub med id
 #
-db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.isNot, g.uniprotIDs, g._ModifiedBy_key, ' + \
+db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uniprotIDs, g._ModifiedBy_key, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
 	'refID = b.accID ' + \
 	'into #results ' + \
@@ -175,7 +176,7 @@ results = db.sql('select g._AnnotEvidence_key, c.note, c.sequenceNum ' + \
 allnotes = {}
 for r in results:
     key = r['_AnnotEvidence_key']
-    value = string.strip(regsub.gsub('\n', '', r['note']))
+    value = string.strip(re.sub('\n', '', r['note']))
     if not allnotes.has_key(key):
 	     allnotes[key] = []
     allnotes[key].append(value)
@@ -263,6 +264,43 @@ for r in results:
         for e in evidence[eKey]:
             writeRecord(i, r, e)
 
+=======
+    # there may be multiple instances of UniProt ids
+    # write out one record per UniProt id
+
+    ids = string.split(r['uniprotIDs'], 'UniProt:')
+
+    for i in ids:
+
+	if len(i) == 0:
+	    continue
+
+	# get rid of any dangling delimiters
+
+        i = re.sub('|', '', i)
+
+        eKey = r['_AnnotEvidence_key']
+
+	# if no evidence (no pub med id) and "tbreddy", skip it
+        if not evidence.has_key(eKey) and r['_ModifiedBy_key'] == 1095:
+	    continue
+
+        # make up a bogus evidence record if there isn't one
+
+        if not evidence.has_key(eKey):
+	    evidence[eKey] = []
+	    if r['refID'] == None:
+	        value = ('', '', '')
+	    else:
+	        value = ('PMID:' + r['refID'], 'IDA', '')
+	    evidence[eKey].append(value)
+
+	# write out one record per External Reference
+
+        for e in evidence[eKey]:
+            writeRecord(i, r, e)
+
+>>>>>>> 1.3.2.4
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
 
