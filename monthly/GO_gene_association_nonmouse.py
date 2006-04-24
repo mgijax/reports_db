@@ -300,7 +300,6 @@ for r in results:
         for e in evidence[eKey]:
             writeRecord(i, r, e)
 
->>>>>>> 1.3.2.4
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
 
