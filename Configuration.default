@@ -8,7 +8,7 @@
 #
 
 # install directory
-setenv REPORTINSTALLDIR		/usr/local/mgi/live/reports_db
+setenv REPORTINSTALLDIR		${USRLOCALMGI}/reports_db
 
 # report directory
 setenv REPORTDIR		/data/reports/reports_db
@@ -34,10 +34,10 @@ setenv MGIFEEDFTPDIR		gondor:/export/gondor/ftp/private/mgifeed
 setenv SYBASE			/opt/sybase/12.5
 
 # PYTHON
-setenv PYTHONPATH       	/usr/local/mgi/live/lib/python
+setenv PYTHONPATH       	${USRLOCALMGI}/lib/python
 
 # DB UTILITIES
-setenv DBUTILITIESPATH		/usr/local/mgi/live/dbutils/mgidbutilities
+setenv DBUTILITIESPATH		${USRLOCALMGI}/dbutils/mgidbutilities
 
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		/data/loads/mgi/vocload/runTimeMP
