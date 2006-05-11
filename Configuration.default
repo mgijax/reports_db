@@ -7,8 +7,17 @@
 # env variables
 #
 
+if ( ${?MGICONFIG} == 0 ) then
+	setenv MGICONFIG /usr/local/mgi/live/mgiconfig
+endif
+
+source ${MGICONFIG}/master.config.csh
+# this can be removed once PYTHONPATH is in mgiconfig
+source ${MGD_DBSCHEMA}/Configuration
+setenv IMSR_DBNAME imsr
+
 # install directory
-setenv REPORTINSTALLDIR		/usr/local/mgi/live/reports_db
+setenv REPORTINSTALLDIR		${USRLOCALMGI}/reports_db
 
 # report directory
 setenv REPORTDIR		/data/reports/reports_db
@@ -30,15 +39,6 @@ setenv FTPCUSTOM                gondor:/export/gondor/ftp/pub/custom
 # MGI Feed FTP report directory
 setenv MGIFEEDFTPDIR		gondor:/export/gondor/ftp/private/mgifeed
 
-# SYBASE
-setenv SYBASE			/opt/sybase/12.5
-
-# PYTHON
-setenv PYTHONPATH       	/usr/local/mgi/live/lib/python
-
-# DB UTILITIES
-setenv DBUTILITIESPATH		/usr/local/mgi/live/dbutils/mgidbutilities
-
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		/data/loads/mgi/vocload/runTimeMP
 setenv MPFILES                  "MPheno.ontology MP.defs MPheno_OBO.ontology"
@@ -53,24 +53,4 @@ setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
 # InParanoid FASTA file
 setenv INPARANOIDFASTA          ${INPARANOIDDIR}/inparanoid.fasta
 setenv INPARANOIDDAT            /data/loads/swissprot/swissload/data/uniprotmus.dat
-
-# PATH
-set path = ($path $DBUTILITIESPATH/bin $SYBASE/ASE-12_5/bin $SYBASE/OCS-12_5/bin)
-
-# Database Server
-setenv DBSERVER PROD_MGI
-setenv DSQUERY ${DBSERVER}
-
-# MGD Database
-setenv DBNAME mgd
-setenv MGD ${DBNAME}
-setenv RADARDB radar
-setenv RADAR_DBNAME ${RADARDB}
-setenv IMSR_DBNAME imsr
-
-# Databse User
-setenv DBUSER			mgd_public
-
-# Password File
-setenv DBPASSWORDFILE           ${DBUTILITIESPATH}/.mgd_public_password
 
