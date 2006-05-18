@@ -77,7 +77,7 @@ data in MGI. It does not include gene-trapped alleles, targeted
 (Floxed/Frt) or targeted (knock-in) alleles, or those arising 
 spontaneously or induced by chemicals or radiation.  To search the full 
 spectrum of phenotypes or alleles in MGI, use the 
-<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phentoype and Allele Query Form</a>.
+<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phenotype and Allele Query Form</a>.
 To search repositories for specific strains carrying mutations of all 
 types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
 <P>
@@ -98,7 +98,7 @@ repositories. It does not include gene-trapped alleles, targeted
 (Floxed/Frt) or targeted (knock-in) alleles, or those arising 
 spontaneously or induced by chemicals or radiation.  To search the full 
 spectrum of phenotypes or alleles in MGI, use the
-<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phentoype and Allele Query Form</a>.
+<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phenotype and Allele Query Form</a>.
 To search repositories for specific strains carrying mutations of all 
 types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
 <P> 
@@ -120,7 +120,7 @@ data in MGI. It does not include gene-trapped alleles, targeted
 (Floxed/Frt) or targeted (knock-in) alleles, or those arising 
 spontaneously or induced by chemicals or radiation.  To search the full 
 spectrum of phenotypes or alleles in MGI, use the
-<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phentoype and Allele Query Form</a>.
+<a href="http://www.informatics.jax.org/searches/allele_form.shtml">Phenotype and Allele Query Form</a>.
 To search repositories for specific strains carrying mutations of all 
 types, use the <a href="http://www.informatics.jax.org/imsr/IMSRSearchForm.jsp">IMSR Search Form</a>.
 <P>
