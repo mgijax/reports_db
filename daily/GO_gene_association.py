@@ -150,7 +150,7 @@ db.sql('select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
 	'g._Object_key, g._Marker_Type_key, g.symbol, g.name, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
 	'markerID = ma.accID, ' + \
-	'g._Refs_key, refID = b.accID, ' + \
+	'refID = b.accID, ' + \
 	'eCode = rtrim(t.abbreviation), ' + \
 	'modifiedBy = u.login ' + \
 	'into #results ' + \
