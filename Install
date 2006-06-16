@@ -1,17 +1,10 @@
 #!/bin/csh
 
 #
-# To install this product in the appropriate directory
-#
-# 1. cd to the parent of the installation directory (i.e. /usr/local/mgi)
-# 2. cvs export -r reports_db-#-# reports_db
-# 3. cd to the installation directory
-# 4. cp Configuration.default Configuration
-# 5. edit Configuration file
-# 6. run Install
+# Install
 #
 
-source ./Configuration
+cd `dirname $0` && source ./Configuration
 
 sed "s/ftp.informatics.jax.org/$FTPURL/" index.html > index.html.new
 mv -f index.html.new index.html
@@ -26,6 +19,10 @@ foreach i ($toEdit)
 sed "s/radar/$RADAR_DBNAME/g" $i > $i.new
 mv -f $i.new $i
 end
+
+#
+# directories
+#
 
 if ( ! -d ${REPORTDIR} ) then
 	mkdir ${REPORTDIR}
@@ -61,8 +58,12 @@ rm -rf $f
 ln -s ${MAVOCSOURCE}/$f .
 end
 
-cd ${REPORTINSTALLDIR}
-chmod 644 Configuration* HISTORY *.html
-chmod 755 *.sh */*.py */*.sql Install
-chmod 755 daily monthly weekly
+#
+# permissions
+#
+
+cd ${PUBRPTS}
+chmod 664 Configuration* HISTORY *.html
+chmod 775 *.sh */*.py */*.sql Install
+chmod 775 daily monthly weekly
 
