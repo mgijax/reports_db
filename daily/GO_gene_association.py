@@ -207,7 +207,6 @@ for r in results:
 		fp.write(r['markerID'] + TAB)
 		fp.write(r['symbol'] + TAB)
 		fp.write(string.strip(r['qualifier']) + TAB)
-		fp.write(TAB)
 		fp.write(r['termID'] + TAB)
 
                 # reference
