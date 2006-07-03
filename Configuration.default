@@ -27,17 +27,6 @@ setenv REPORTOUTPUTDIR		${REPORTDIR}/output
 # report logs directory
 setenv REPORTLOGSDIR		${REPORTDIR}/logs
 
-# FTP 
-setenv FTPURL                   ftp.informatics.jax.org
-
-# FTP report directory
-setenv FTPREPORTDIR		gondor:/export/gondor/ftp/pub/reports
-setenv FTPREPORTDIR2		/net/orodruin/vol/gondor/exportgondor/ftp/pub/reports
-setenv FTPCUSTOM                gondor:/export/gondor/ftp/pub/custom
-
-# MGI Feed FTP report directory
-setenv MGIFEEDFTPDIR		gondor:/export/gondor/ftp/private/mgifeed
-
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		/data/loads/mgi/vocload/runTimeMP
 setenv MPFILES                  "MPheno.ontology MP.defs MPheno_OBO.ontology"

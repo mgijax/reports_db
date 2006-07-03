@@ -14,8 +14,8 @@ cd `dirname $0` && source ./Configuration
 
 umask 002
 
-cd daily
-mgiMarkerFeed.py
+#cd daily
+#mgiMarkerFeed.py
 
 cd ${REPORTOUTPUTDIR}/mgimarkerfeed
 tar cvf ${TARFILE} *.bcp
