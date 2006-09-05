@@ -935,15 +935,25 @@ def references():
 
     #
     # references annotated to an Allele via the Genotype
+    # references annotated to an Allele via the Strain
     #
 
-    db.sql('select r._Refs_key, ag._Allele_key, rt.assocType, ' + \
+    db.sql('select distinct r._Refs_key, ag._Allele_key, rt.assocType, ' + \
 	    'cdate = convert(char(20), r.creation_date, 100), ' + \
 	    'mdate = convert(char(20), r.modification_date, 100) ' + \
 	    'into #allreferences ' + \
 	    'from #genotypes g, GXD_AlleleGenotype ag, MGI_Reference_Assoc r, MGI_RefAssocType rt ' + \
 	    'where g._Genotype_key = ag._Genotype_key ' + \
 	    'and ag._Allele_key = r._Object_key ' + \
+	    'and r._MGIType_key = 11 ' + \
+	    'and r._RefAssocType_key = rt._RefAssocType_key ' + \
+	    'union ' + \
+            'select distinct r._Refs_key, sm._Allele_key, rt.assocType, ' + \
+	    'cdate = convert(char(20), r.creation_date, 100), ' + \
+	    'mdate = convert(char(20), r.modification_date, 100) ' + \
+	    'from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r, MGI_RefAssocType rt ' + \
+	    'where s._Strain_key = sm._Strain_key ' + \
+	    'and sm._Allele_key = r._Object_key ' + \
 	    'and r._MGIType_key = 11 ' + \
 	    'and r._RefAssocType_key = rt._RefAssocType_key', None)
 
@@ -962,15 +972,22 @@ def references():
 
     #
     # references annotated to a Marker via the Genotype
+    # references annotated to a Marker via the Strain
     #
 
-    db.sql('select r._Refs_key, r._Marker_key, ' + \
-	    'cdate = convert(char(20), r.creation_date, 100), ' + \
-	    'mdate = convert(char(20), r.modification_date, 100) ' + \
+    db.sql('select distinct r._Refs_key, r._Marker_key, ' + \
+            'cdate = convert(char(20), r.creation_date, 100), ' + \
+            'mdate = convert(char(20), r.modification_date, 100) ' + \
 	    'into #mrkreferences ' + \
 	    'from #genotypes g, GXD_AlleleGenotype ag, MRK_Reference r ' + \
 	    'where g._Genotype_key = ag._Genotype_key ' + \
-	    'and ag._Marker_key = r._Marker_key', None)
+	    'and ag._Marker_key = r._Marker_key ' + \
+	    'union ' + \
+            'select distinct r._Refs_key, sm._Marker_key ' + \
+	    'from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r ' + \
+	    'where s._Strain_key = sm._Strain_key ' + \
+	    'and sm._Marker_key = r._Object_key ' + \
+	    'and r._MGIType_key = 2 ', None)
 
     db.sql('create index idx1 on #genoreferences(_Refs_key)', None)
     db.sql('create index idx1 on #allreferences(_Refs_key)', None)
@@ -1112,8 +1129,8 @@ def references():
     for r in results:
 	    fp.write(`r['_Marker_key']` + TAB + \
 		     `r['_Refs_key']` + TAB + \
-		     r['cdate'] + TAB + \
-		     r['mdate'] + CRT)
+		      r['cdate'] + TAB +
+                      r['mdate'] + CRT)
     fp.close()
 
 #
