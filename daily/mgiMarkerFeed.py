@@ -983,7 +983,9 @@ def references():
 	    'where g._Genotype_key = ag._Genotype_key ' + \
 	    'and ag._Marker_key = r._Marker_key ' + \
 	    'union ' + \
-            'select distinct r._Refs_key, sm._Marker_key ' + \
+            'select distinct r._Refs_key, sm._Marker_key, ' + \
+            'cdate = convert(char(20), r.creation_date, 100), ' + \
+            'mdate = convert(char(20), r.modification_date, 100) ' + \
 	    'from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r ' + \
 	    'where s._Strain_key = sm._Strain_key ' + \
 	    'and sm._Marker_key = r._Object_key ' + \
@@ -1125,12 +1127,17 @@ def references():
 
     fp = open(OUTPUTDIR + 'marker_reference.bcp', 'w')
 
+    refs = {}
     results = db.sql('select * from #mrkreferences', 'auto')
     for r in results:
-	    fp.write(`r['_Marker_key']` + TAB + \
-		     `r['_Refs_key']` + TAB + \
-		      r['cdate'] + TAB +
-                      r['mdate'] + CRT)
+	    key = (r['_Marker_key'], r['_Refs_key'])
+	    value = r
+	    if not refs.has_key(key):
+	        fp.write(`r['_Marker_key']` + TAB + \
+		         `r['_Refs_key']` + TAB + \
+		          r['cdate'] + TAB +
+                          r['mdate'] + CRT)
+		refs[key] = value
     fp.close()
 
 #
