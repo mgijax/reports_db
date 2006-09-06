@@ -12,11 +12,7 @@ if ( ${?MGICONFIG} == 0 ) then
 endif
 
 source ${MGICONFIG}/master.config.csh
-source ${MGD_DBSCHEMADIR}/Configuration
 setenv IMSR_DBNAME imsr
-
-# install directory
-setenv REPORTINSTALLDIR		${USRLOCALMGI}/reports_db
 
 # report directory
 setenv REPORTDIR		/data/reports/reports_db
