@@ -44,6 +44,10 @@ if ( ! -d ${INPARANOIDDIR} ) then
 	mkdir ${INPARANOIDDIR}
 endif
 
+if ( ! -d ${GOADIR} ) then
+	mkdir ${GOADIR}
+endif
+
 # provide a link to the Mammalian Phenotype vocabulary
 cd ${REPORTOUTPUTDIR}
 foreach f (${MPFILES})

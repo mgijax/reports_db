@@ -38,3 +38,10 @@ setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
 setenv INPARANOIDFASTA          ${INPARANOIDDIR}/inparanoid.fasta
 setenv INPARANOIDDAT            /data/loads/swissprot/swissload/data/uniprotmus.dat
 
+# GOA file
+
+setenv GOADIR			${REPORTOUTPUTDIR}/goa
+setenv GOAWORKDIR               ${PUBRPTS}/goa
+setenv GOAINPUTFILEGZ		/data/downloads/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/gene_association.goa_mouse.gz
+setenv GOAINPUTFILE		${GOADIR}/gene_association.goa_mouse
+
