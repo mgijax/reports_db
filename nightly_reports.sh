@@ -16,6 +16,9 @@ setenv LOG	${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
+# GOA processing
+./goa.sh
+
 foreach i (daily/*.sql)
 echo $i, `date`
 reportisql.csh $i ${REPORTOUTPUTDIR}/`basename $i`.rpt ${MGD_DBSERVER} ${MGD_DBNAME} >> ${LOG}
