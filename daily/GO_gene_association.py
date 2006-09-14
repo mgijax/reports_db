@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	09/14/2006
+#	- TR 7904; append GOA annotations
+#
 # lec	10/19/2005
 #	- added PMID, TR 7173
 #
@@ -249,5 +252,21 @@ for r in results:
 
 		fp.write(CRT)
 	
+#
+# append GOA annotations
+#
+
+try:
+
+    goaFile = open(os.environ['GOAMGI'], 'r')
+
+    for line in goaFile.readlines():
+        fp.write(line)
+    goaFile.close()
+
+except:
+
+    pass
+
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
