@@ -10,7 +10,9 @@
 #	Takes the GOA file ${GOAINPUTFILE1} and generates
 #
 #		1. goa.error
-#			file of UniProtIDS that are not found in MGI
+#
+#			file of UniProtIDS that don't resolve to a MGI Marker
+#			file of UniProtIDs that resolve to more than one MGI Marker
 #	
 #		2. goa.duplicates
 #
