@@ -253,7 +253,7 @@ for r in results:
 		fp.write(CRT)
 	
 #
-# append GOA annotations
+# append GOA annotations, if they exist
 #
 
 try:

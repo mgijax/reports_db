@@ -7,7 +7,7 @@
 # Report:
 #	TR 7904
 #
-#	Takes the GOA file ${GOAINPUTFILE} and generates
+#	Takes the GOA file ${GOAINPUTFILE1} and generates
 #
 #		1. goa.error
 #			file of UniProtIDS that are not found in MGI
@@ -16,7 +16,7 @@
 #
 #		   	file of GOA annotations that are duplicates to those in MGI
 #
-#		3. goa.forMGI
+#		3. goa.mgi
 #
 #			file of GOA annotations that are to be appended to the
 #			GO_gene_association.py output file
@@ -44,7 +44,7 @@
 #
 # History:
 #
-# lec   09/14/2005
+# lec   09/14/2006
 #       - created
 #
 '''
@@ -56,20 +56,42 @@ import db
 import mgi_utils
 import reportlib
 
-inFileName = os.environ['GOAINPUTFILE']
+inFileName1 = os.environ['GOAINPUTFILE1']
 
 errorFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = 0, fileExt = '.error')
 dupFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = 0, fileExt = '.duplicates')
 mgiFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = 0, fileExt = '.mgi')
 
-assoc = {}	# dictionary of ID:Marker key associations
-marker = {}	# dictionary of Marker key:MGI ID
-annot = []	# list of existing Marker key, GO ID, Evidence Code, Pub Med ID annotations
+assoc = {}	# dictionary of GOA ID:Marker MGI ID
+marker = {}	# dictionary of MGI Marker ID:Marker data
+annot = {}	# list of existing Marker key, GO ID, Evidence Code, Pub Med ID annotations
 annotByGOID = []
 annotByRef = []
 
 mgiLine = '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n'
 
+#
+# Mouse Markers
+#
+
+db.sql('select mgiID = a.accID, m._Marker_key, m.symbol, m.name, markerType = t.name ' + \
+	'into #markers ' + \
+	'from ACC_Accession a, MRK_Marker m, MRK_Types t ' + \
+	'where m._Organism_key = 1 ' + \
+	'and m._Marker_key = a._Object_key ' + \
+	'and a._MGIType_key = 2 ' + \
+	'and a._LogicalDB_key = 1 ' + \
+	'and a.prefixPart = "MGI:" ' + \
+	'and a.preferred = 1 ' + \
+	'and m._Marker_Type_key = t._Marker_Type_key', None)
+db.sql('create index idx1 on #markers(_Marker_key)', None)
+
+results = db.sql('select * from #markers', 'auto')
+for r in results:
+    marker[r['mgiID']] = r
+
+#
+# Mouse Markers annotated to...
 #
 # SwissProt (13)
 # TrEMBL (41)
@@ -78,40 +100,24 @@ mgiLine = '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n'
 # VEGA (85)
 #
 
-db.sql('select a._Object_key, a.accID into #assoc ' + \
-	'from ACC_Accession a ' + \
-	'where a._LogicalDB_key in (13, 41, 27, 60, 85) ' + \
-	'and a._MGIType_key = 2', None)
-db.sql('create index idx1 on #assoc(_Object_key)', None)
-
-results = db.sql('select _Object_key, accID from #assoc', 'auto')
+results = db.sql('select m._Marker_key, m.mgiID, goaID = a.accID ' + \
+	'from #markers m, ACC_Accession a ' + \
+	'where m._Marker_key = a._Object_key ' + \
+	'and a._LogicalDB_key in (13, 41, 27, 60, 85) ' + \
+	'and a._MGIType_key = 2 ', 'auto')
 for r in results:
-    key = r['accID']
-    value = r['_Object_key']
-
+    key = r['goaID']
+    value = r['mgiID']
     if not assoc.has_key(key):
 	assoc[key] = []
-
     assoc[key].append(value)
-
-results = db.sql('select distinct a._Object_key, a.accID, m.symbol, m.name, markerType = t.name ' + \
-	'from #assoc u, ACC_Accession a, MRK_Marker m, MRK_Types t ' + \
-	'where a._MGIType_key = 2 ' + \
-	'and u._Object_key = a._Object_key ' + \
-	'and a._LogicalDB_key = 1 ' + \
-	'and a.prefixPart = "MGI:" ' + \
-	'and a.preferred = 1 ' + \
-	'and a._Object_key = m._Marker_key ' + \
-	'and m._Marker_Type_key = t._Marker_Type_key', 'auto')
-for r in results:
-    marker[r['_Object_key']] = r
 
 #
 # existing GO annotations that have pub med ids
 # to detect duplicate annotations
 #
 
-results = db.sql('select goID = a.accID, t._Object_key, ec.term, refID = r.accID ' + \
+results = db.sql('select goID = a.accID, t._Object_key, ec.abbreviation, refID = "PMID:" + r.accID ' + \
 	'from VOC_Annot t, ACC_Accession a, VOC_Evidence e, VOC_Term ec, ACC_Accession r ' + \
 	'where t._AnnotType_key = 1000 ' + \
 	'and t._Term_key = a._Object_key ' + \
@@ -123,7 +129,12 @@ results = db.sql('select goID = a.accID, t._Object_key, ec.term, refID = r.accID
 	'and r._MGIType_key = 1 ' + \
 	'and r._LogicalDB_key = 29', 'auto')
 for r in results:
-    annot.append((r['goID'], r['_Object_key'], r['term'], r['refID']))
+
+    key = r['_Object_key']
+
+    if key not in annot:
+	annot[key] = []
+    annot[key].append((r['goID'], r['abbreviation'], r['refID']))
 
     if r['goID'] not in annotByGOID:
         annotByGOID.append(r['goID'])
@@ -131,23 +142,60 @@ for r in results:
     if r['refID'] not in annotByRef:
         annotByRef.append(r['refID'])
 
-inFile = open(inFileName, 'r')
+#
+# existing IEA GO annotations
+# J:72247 interpro
+# J:60000 swissprot
+# J:72245
+#
 
-for line in inFile.readlines():
+results = db.sql('select goID = a.accID, t._Object_key, ec.abbreviation, refID = r.accID ' + \
+	'from VOC_Annot t, ACC_Accession a, VOC_Evidence e, VOC_Term ec, ACC_Accession r ' + \
+	'where t._AnnotType_key = 1000 ' + \
+	'and t._Term_key = a._Object_key ' + \
+	'and a._MGIType_key = 13 ' + \
+	'and a.preferred = 1 ' + \
+	'and t._Annot_key = e._Annot_key ' + \
+	'and e._EvidenceTerm_key = ec._Term_key ' + \
+	'and e._Refs_key in (61933,73197,73199) ' + \
+	'and e._Refs_key = r._Object_key ' + \
+	'and r._MGIType_key = 1 ' + \
+	'and r._LogicalDB_key = 1 ' + \
+	'and r.prefixPart= "J:"', 'auto')
+for r in results:
 
+    key = r['_Object_key']
+
+    if key not in annot:
+	annot[key] = []
+    annot[key].append((r['goID'], r['abbreviation'], r['refID']))
+
+    if r['goID'] not in annotByGOID:
+        annotByGOID.append(r['goID'])
+
+    if r['refID'] not in annotByRef:
+        annotByRef.append(r['refID'])
+
+#
+# GOA annotations
+#
+
+inFile1 = open(inFileName1, 'r')
+for line in inFile1.readlines():
     tokens = string.split(line[:-1], '\t')
     databaseID = tokens[0]
-    goaID = tokens[1]	# translate
-    goaSymbol = tokens[2]	# translate
+    goaID = tokens[1]		# translate to MGI value
+    goaSymbol = tokens[2]	# translate to MGI value
     notValue = tokens[3]
     goID = tokens[4]
     refID = tokens[5]
+    checkrefID = refID
     evidence = tokens[6]
     inferredFrom = tokens[7]
     dag = tokens[8]
-    goaName = tokens[9]	# translate
+    goaName = tokens[9]		# translate to MGI value
     synonyms = tokens[10]
-    markerType = tokens[11]	# translate
+    markerType = tokens[11]	# translate to MGI value
     taxID = tokens[12]
     modDate = tokens[13]
     assignedBy = tokens[14]
@@ -157,33 +205,48 @@ for line in inFile.readlines():
     if assignedBy == 'MGI':
 	continue
 
-    # error if GOA id is not found
+    #
+    # translate GOA "Refs" to MGI J: so we can check for duplicates
+    #
+
+    if refID == 'GOA:interpro':
+	checkrefID = 'J:72247'
+
+    if refID == 'GOA:spkw':
+	checkrefID = 'J:60000'
+
+    if refID == 'GOA:spec':
+	checkrefID = 'J:72245'
+
+    # error if GOA id is not found in MGI
 
     if not assoc.has_key(goaID):
 	errorFile.write(line + '\n')
 	continue
+    else:
+        # error if GOA id maps to more than one MGI Marker
 
-    # error if GOA id maps to more than one MGI Marker
+        if len(assoc[goaID]) > 1:
+	    errorFile.write(line + '\n')
+	    continue
 
-    if len(assoc[goaID]) > 1:
-	errorFile.write(line + '\n')
-	continue
+        mgiID = assoc[goaID][0]
 
-    objectKey = assoc[goaID][0]
-    m = marker[objectKey]
+    m = marker[mgiID]
+    markerKey = m['_Marker_key']
 
     # duplicate error if the annotation already exists in MGI
 
-    if refID in annotByRef and goID in annotByGOID:
-        goaAnnot = (goID, objectKey, evidence, refID)
-        if goaAnnot in annot:
+    if annot.has_key(markerKey) and goID in annotByGOID and checkrefID in annotByRef:
+        goaAnnot = (goID, evidence, checkrefID)
+        if goaAnnot in annot[markerKey]:
 	    dupFile.write(line + '\n')
 	    continue
 
-    mgiFile.write(mgiLine % (databaseID, m['accID'], m['symbol'], notValue, goID, refID, evidence, inferredFrom,\
+    mgiFile.write(mgiLine % (databaseID, m['mgiID'], m['symbol'], notValue, goID, refID, evidence, inferredFrom,\
 	dag, m['name'], synonyms, m['markerType'], taxID, modDate, assignedBy))
 
-inFile.close()
+inFile1.close()
 
 reportlib.finish_nonps(errorFile)
 reportlib.finish_nonps(dupFile)
