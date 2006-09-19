@@ -20,6 +20,9 @@
 #
 # History:
 #
+# lec	09/19/2006
+#	- make sure there are no deleted sequences in the report
+#
 # lec	01/27/2005
 #	- TR 6529
 #
@@ -53,10 +56,20 @@ import reportlib
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
 
+# deleted sequences
+
+db.sql('select s._Sequence_key into #deleted from SEQ_Sequence s where s._SequenceStatus_key = 316343', None)
+db.sql('create index idx1 on #deleted(_Sequence_key)', None)
+
+db.sql('select a.accID, a._LogicalDB_key into #deletedIDs from #deleted d, ACC_Accession a ' + \
+    'where d._Sequence_key = a._Object_key ' + \
+    'and a._MGIType_key = 19', None)
+db.sql('create index idx1 on #deletedIDs(accID)', None)
+db.sql('create index idx2 on #deletedIDs(_LogicalDB_key)', None)
+
 # all official/interim mouse markers that have at least one Sequence ID
 
-cmds = []
-cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
+db.sql('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
 	'o.offset, markerStatus = upper(substring(s.status, 1, 1)), markerType = t.name ' + \
 	'into #markers ' + \
 	'from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t ' + \
@@ -67,10 +80,9 @@ cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
 	'and m._Marker_Status_key = s._Marker_Status_key ' + \
 	'and m._Marker_Type_key = t._Marker_Type_key ' + \
 	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27) and a.prefixPart not in ("XP_", "NP_"))')
-cmds.append('create index idx1 on #markers(_Marker_key)')
-cmds.append('create index idx2 on #markers(symbol)')
-db.sql(cmds, None)
+	'and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27) and a.prefixPart not in ("XP_", "NP_"))', None)
+db.sql('create index idx1 on #markers(_Marker_key)', None)
+db.sql('create index idx2 on #markers(symbol)', None)
 
 # MGI ids
 
@@ -93,7 +105,8 @@ results = db.sql('select distinct m._Marker_key, a.accID ' + \
       'from #markers m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 9', 'auto')
+      'and a._LogicalDB_key = 9 ' + \
+      'and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
 gbID = {}
 for r in results:
     key = r['_Marker_key']
@@ -108,7 +121,8 @@ results = db.sql('select distinct m._Marker_key, a.accID ' + \
       'from #markers m, ACC_Accession a ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 23', 'auto')
+      'and a._LogicalDB_key = 23 ' + \
+      'and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
 ugID = {}
 for r in results:
     key = r['_Marker_key']
@@ -124,7 +138,8 @@ results = db.sql('select distinct m._Marker_key, a.accID ' + \
       'where m._Marker_key = a._Object_key ' + \
       'and a._MGIType_key = 2 ' + \
       'and a._LogicalDB_key = 27 ' + \
-      'and a.prefixPart not in ("XP_", "NP_")', 'auto')
+      'and a.prefixPart not in ("XP_", "NP_") ' + \
+      'and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
 rsID = {}
 for r in results:
     key = r['_Marker_key']
