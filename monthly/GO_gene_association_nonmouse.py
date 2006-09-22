@@ -241,7 +241,7 @@ for r in results:
 
 	# get rid of any dangling delimiters
 
-        i = regsub.gsub('|', '', i)
+        i = re.sub('|', '', i)
 
         eKey = r['_AnnotEvidence_key']
 
@@ -264,7 +264,6 @@ for r in results:
         for e in evidence[eKey]:
             writeRecord(i, r, e)
 
-=======
     # there may be multiple instances of UniProt ids
     # write out one record per UniProt id
 
