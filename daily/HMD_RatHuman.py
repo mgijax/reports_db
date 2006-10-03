@@ -48,7 +48,7 @@
 import sys
 import os
 import string
-import regex
+import re
 import db
 import mgi_utils
 import reportlib
@@ -78,7 +78,7 @@ humanEG = {}
 # outside the function to yield a small speed benefit (we only create them
 # once).
 
-offset_cre = regex.compile ('\([pq]\)\([0-9\.]+\)')     # eg- q23.2
+offset_cre = re.compile ('([pq])([0-9\.]+)')     # eg- q23.2
 offset_special = {
         'pter'  : -10000.0,     # p terminus
         'p'     :     -1.0,     # p arm
@@ -118,8 +118,9 @@ def getSortableOffset (cytogeneticOffset):
 	if offset_special.has_key (cyto):       # just match first band
                 return offset_special [cyto]
 
-        if offset_cre.match (cyto) != -1:
-                pq, value = offset_cre.group (1,2)
+        offset_cre_result = offset_cre.match (cyto)
+        if offset_cre_result is not None:
+                pq, value = offset_cre_result.group (1,2)
                 if pq == 'p':
                         factor = -1
                 else:

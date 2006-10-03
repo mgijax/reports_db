@@ -48,7 +48,6 @@
 import sys
 import os
 import string
-import regex
 import re
 import db
 import mgi_utils
@@ -80,8 +79,7 @@ mouseMGI = {}
 # outside the function to yield a small speed benefit (we only create them
 # once).
 
-offset_cre = regex.compile ('\([pq]\)\([0-9\.]+\)')    # eg- q23.2
-offset_cre2 = re.compile('\([pq]\)\([0-9\.]+\)')     	# eg- q23.2
+offset_cre = re.compile ('([pq])([0-9\.]+)')    # eg- q23.2
 
 offset_special = {
         'pter'  : -10000.0,     # p terminus
@@ -122,21 +120,9 @@ def getSortableOffset (cytogeneticOffset):
 	if offset_special.has_key (cyto):       # just match first band
                 return offset_special [cyto]
 
-	# while trying to convert this to re, i found that
-	# when offset_cre.match (cyto) returns > -1
-	# offset_cre2.match(cyto) will return None
-	# why is this?
-	# maybe the regular expression has an error?
-
-	#m = offset_cre2.match(cyto)
-	#if offset_cre.match (cyto) != -1 and m == None:
-	#	print 'old match: ', str(offset_cre.match (cyto))
-	#	print 'new different: ' + cyto
-        #if m != None:
-
-	if offset_cre.match (cyto) != -1:
-#                pq, value = m.group (1,2)
-                pq, value = offset_cre.group (1,2)
+        offset_cre_result = offset_cre.match (cyto)
+        if offset_cre_result is not None:
+                pq, value = offset_cre_result.group (1,2)
                 if pq == 'p':
                         factor = -1
                 else:
