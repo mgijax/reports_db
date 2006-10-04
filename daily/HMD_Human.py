@@ -139,64 +139,38 @@ def runQueries():
 	global curated, calculated, humanEG, mouseEG, mouseMGI
 
 	cmd = 'select distinct h1._Marker_key ' + \
-		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-		'MRK_Marker m1, MRK_Marker m2 ' + \
-		'where r1._Refs_key = 91485 ' + \
-		'and m1._Organism_key = 2 ' + \
-		'and m1._Marker_key = h1._Marker_key ' + \
-		'and h1._Homology_key = r1._Homology_key ' + \
-		'and r1._Class_key = r2._Class_key ' + \
-		'and r2._Homology_key = h2._Homology_key ' + \
-		'and h2._Marker_key = m2._Marker_key ' + \
-		'and m2._Organism_key = 1'
+		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
+		'where h1._Refs_key = 91485 ' + \
+		'and h1._Organism_key = 2 ' + \
+		'and h1._Class_key = h2._Class_key ' + \
+		'and h2._Organism_key = 1'
 
 	results = db.sql(cmd, 'auto')
 	for r in results:
 		calculated.append(r['_Marker_key'])
 
 	cmd = 'select distinct h1._Marker_key ' + \
-		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-		'MRK_Marker m1, MRK_Marker m2 ' + \
-		'where r1._Refs_key != 91485 ' + \
-		'and m1._Organism_key = 2 ' + \
-		'and m1._Marker_key = h1._Marker_key ' + \
-		'and h1._Homology_key = r1._Homology_key ' + \
-		'and r1._Class_key = r2._Class_key ' + \
-		'and r2._Homology_key = h2._Homology_key ' + \
-		'and h2._Marker_key = m2._Marker_key ' + \
-		'and m2._Organism_key = 1'
+		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
+		'where h1._Refs_key != 91485 ' + \
+		'and h1._Organism_key = 2 ' + \
+		'and h1._Class_key = h2._Class_key ' + \
+		'and h2._Organism_key = 1'
 
 	results = db.sql(cmd, 'auto')
 	for r in results:
     		curated.append(r['_Marker_key'])
 
-	##
+	db.sql('select distinct humanMarkerKey = h1._Marker_key, mouseMarkerKey = h2._Marker_key ' + \
+	       'into #allhomologies ' + \
+	       'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
+	       'where h1._Organism_key = 2 ' + \
+	       'and h1._Class_key = h2._Class_key ' + \
+	       'and h2._Organism_key = 1', None)
 
-	cmds = []
-	cmds.append('select distinct humanMarkerKey = h1._Marker_key, mouseMarkerKey = h2._Marker_key ' + \
-	'into #allhomologies ' + \
-      	'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-      	'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-      	'MRK_Marker m1, MRK_Marker m2 ' + \
-      	'where m1._Organism_key = 2 ' + \
-      	'and m1._Marker_key = h1._Marker_key ' + \
-      	'and h1._Homology_key = r1._Homology_key ' + \
-      	'and r1._Class_key = r2._Class_key ' + \
-      	'and r2._Homology_key = h2._Homology_key ' + \
-      	'and h2._Marker_key = m2._Marker_key ' + \
-      	'and m2._Organism_key = 1')
+	db.sql('create nonclustered index idx_hkey on #allhomologies(humanMarkerKey)', None)
+	db.sql('create nonclustered index idx_mkey on #allhomologies(mouseMarkerKey)', None)
 
-	cmds.append('create nonclustered index idx_hkey on #allhomologies(humanMarkerKey)')
-	cmds.append('create nonclustered index idx_mkey on #allhomologies(mouseMarkerKey)')
-
-	db.sql(cmds, None)
-
-	##
-
-	cmds = []
-	cmds.append('select h.humanMarkerKey, h.mouseMarkerKey, ' + \
+	db.sql('select h.humanMarkerKey, h.mouseMarkerKey, ' + \
 		'humanOrganism = m1._Organism_key, ' + \
 		'humanSymbol = m1.symbol, ' + \
 		'humanChr = m1.chromosome + m1.cytogeneticOffset, ' + \
@@ -219,14 +193,12 @@ def runQueries():
 		'where h.humanMarkerKey = m1._Marker_key ' + \
 		'and h.mouseMarkerKey = m2._Marker_key ' + \
 		'and h.mouseMarkerKey = o._Marker_key ' + \
-		'and o.source = 0 ')
+		'and o.source = 0 ', None)
 
-	cmds.append('create nonclustered index idx_hkey1 on #homologies(humanOrganism)')
-	cmds.append('create nonclustered index idx_mkey1 on #homologies(mouseOrganism)')
-	cmds.append('create nonclustered index idx_hkey2 on #homologies(humanSymbol)')
-	cmds.append('create nonclustered index idx_mkey2 on #homologies(mouseSymbol)')
-
-	db.sql(cmds, None)
+	db.sql('create nonclustered index idx_hkey1 on #homologies(humanOrganism)', None)
+	db.sql('create nonclustered index idx_mkey1 on #homologies(mouseOrganism)', None)
+	db.sql('create nonclustered index idx_hkey2 on #homologies(humanSymbol)', None)
+	db.sql('create nonclustered index idx_mkey2 on #homologies(mouseSymbol)', None)
 
 	##
 

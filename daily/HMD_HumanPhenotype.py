@@ -75,16 +75,13 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 db.sql('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' + \
 		'humanKey = h2._Marker_key, humanSym = m2.symbol ' + \
 		'into #homology ' + \
-		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
+		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2, ' + \
 		'MRK_Marker m1, MRK_Marker m2 ' + \
-		'where m1._Organism_key = 1 ' + \
-		'and m1._Marker_key = h1._Marker_key ' + \
-		'and h1._Homology_key = r1._Homology_key ' + \
-		'and r1._Class_key = r2._Class_key ' + \
-		'and r2._Homology_key = h2._Homology_key ' + \
-		'and h2._Marker_key = m2._Marker_key ' + \
-		'and m2._Organism_key = 2', None)
+		'where h1._Organism_key = 1 ' + \
+		'and h1._Class_key = h2._Class_key ' + \
+		'and h2._Organism_key = 2 ' + \
+		'and h1._Marker_key = m1._Marker_key ' + \
+		'and h2._Marker_key = m2._Marker_key ', None)
 
 db.sql('create nonclustered index index_mouseKey on #homology(mouseKey)', None)
 db.sql('create nonclustered index index_humanKey on #homology(humanKey)', None)

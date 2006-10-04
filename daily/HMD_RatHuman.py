@@ -137,64 +137,38 @@ def runQueries():
 	global curated, calculated, ratEG, humanEG
 
 	cmd = 'select distinct h1._Marker_key ' + \
-		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-		'MRK_Marker m1, MRK_Marker m2 ' + \
-		'where r1._Refs_key = 91485 ' + \
-		'and m1._Organism_key = 40 ' + \
-		'and m1._Marker_key = h1._Marker_key ' + \
-		'and h1._Homology_key = r1._Homology_key ' + \
-		'and r1._Class_key = r2._Class_key ' + \
-		'and r2._Homology_key = h2._Homology_key ' + \
-		'and h2._Marker_key = m2._Marker_key ' + \
-		'and m2._Organism_key = 2'
+		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
+		'where h1._Refs_key = 91485 ' + \
+		'and h1._Organism_key = 40 ' + \
+		'and h1._Class_key = h2._Class_key ' + \
+		'and h2._Organism_key = 2'
 
 	results = db.sql(cmd, 'auto')
 	for r in results:
 		calculated.append(r['_Marker_key'])
 
 	cmd = 'select distinct h1._Marker_key ' + \
-		'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-		'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-		'MRK_Marker m1, MRK_Marker m2 ' + \
-		'where r1._Refs_key != 91485 ' + \
-		'and m1._Organism_key = 40 ' + \
-		'and m1._Marker_key = h1._Marker_key ' + \
-		'and h1._Homology_key = r1._Homology_key ' + \
-		'and r1._Class_key = r2._Class_key ' + \
-		'and r2._Homology_key = h2._Homology_key ' + \
-		'and h2._Marker_key = m2._Marker_key ' + \
-		'and m2._Organism_key = 2'
+		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
+		'where h1._Refs_key != 91485 ' + \
+		'and h1._Organism_key = 40 ' + \
+		'and h1._Class_key = h2._Class_key ' + \
+		'and h2._Organism_key = 2'
 
 	results = db.sql(cmd, 'auto')
 	for r in results:
     		curated.append(r['_Marker_key'])
 
-	cmds = []
+	db.sql('select distinct ratMarkerKey = h1._Marker_key, humanMarkerKey = h2._Marker_key ' + \
+	       'into #allhomologies ' + \
+	       'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
+	       'where h1._Organism_key = 40 ' + \
+	       'and h1._Class_key = h2._Class_key ' + \
+	       'and h2._Organism_key = 2', None)
 
-	cmds.append('select distinct ratMarkerKey = h1._Marker_key, humanMarkerKey = h2._Marker_key ' + \
-	'into #allhomologies ' + \
-      	'from HMD_Homology r1, HMD_Homology_Marker h1, ' + \
-      	'HMD_Homology r2, HMD_Homology_Marker h2, ' + \
-      	'MRK_Marker m1, MRK_Marker m2 ' + \
-      	'where m1._Organism_key = 40 ' + \
-      	'and m1._Marker_key = h1._Marker_key ' + \
-      	'and h1._Homology_key = r1._Homology_key ' + \
-      	'and r1._Class_key = r2._Class_key ' + \
-      	'and r2._Homology_key = h2._Homology_key ' + \
-      	'and h2._Marker_key = m2._Marker_key ' + \
-      	'and m2._Organism_key = 2')
+	db.sql('create nonclustered index idx_hkey on #allhomologies(ratMarkerKey)', None)
+	db.sql('create nonclustered index idx_mkey on #allhomologies(humanMarkerKey)', None)
 
-	cmds.append('create nonclustered index idx_hkey on #allhomologies(ratMarkerKey)')
-	cmds.append('create nonclustered index idx_mkey on #allhomologies(humanMarkerKey)')
-
-	db.sql(cmds, None)
-
-	##
-
-	cmds = []
-
-	cmds.append('select h.ratMarkerKey, h.humanMarkerKey, ' + \
+	db.sql('select h.ratMarkerKey, h.humanMarkerKey, ' + \
 		'ratOrganism = m1._Organism_key, ' + \
 		'ratSymbol = m1.symbol, ' + \
 		'ratChr = m1.chromosome + m1.cytogeneticOffset, ' + \
@@ -208,14 +182,12 @@ def runQueries():
 		'into #homologies ' + \
 		'from #allhomologies h, MRK_Marker m1, MRK_Marker m2 ' + \
 		'where h.ratMarkerKey = m1._Marker_key ' + \
-		'and h.humanMarkerKey = m2._Marker_key ')
+		'and h.humanMarkerKey = m2._Marker_key ', None)
 
-	cmds.append('create nonclustered index idx_hkey1 on #homologies(ratOrganism)')
-	cmds.append('create nonclustered index idx_mkey1 on #homologies(humanOrganism)')
-	cmds.append('create nonclustered index idx_hkey2 on #homologies(ratSymbol)')
-	cmds.append('create nonclustered index idx_mkey2 on #homologies(humanSymbol)')
-
-	db.sql(cmds, None)
+	db.sql('create nonclustered index idx_hkey1 on #homologies(ratOrganism)', None)
+	db.sql('create nonclustered index idx_mkey1 on #homologies(humanOrganism)', None)
+	db.sql('create nonclustered index idx_hkey2 on #homologies(ratSymbol)', None)
+	db.sql('create nonclustered index idx_mkey2 on #homologies(humanSymbol)', None)
 
 	# rat entrezgene ids
 

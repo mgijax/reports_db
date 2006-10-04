@@ -48,16 +48,13 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 db.sql('select distinct hgncSymbol = m1.symbol, hgncKey = m1._Marker_key, ' + \
             'mgiSymbol = m2.symbol, mgiName = m2.name, mgiKey = m2._Marker_key ' + \
             'into #homology ' + \
-            'from HMD_Homology h1, HMD_Homology h2, ' + \
-            'HMD_Homology_Marker hm1, HMD_Homology_Marker hm2, ' + \
+            'from MRK_Homology_Cache h1, MRK_Homology_Cache h2, ' + \
             'MRK_Marker m1, MRK_Marker m2 ' + \
-            'where m1._Organism_key = 2 ' + \
-            'and m1._Marker_key = hm1._Marker_key ' + \
-            'and hm1._Homology_key = h1._Homology_key ' + \
+            'where h1._Organism_key = 2 ' + \
             'and h1._Class_key = h2._Class_key ' + \
-            'and h2._Homology_key = hm2._Homology_key ' + \
-            'and hm2._Marker_key = m2._Marker_key ' + \
-            'and m2._Organism_key = 1', None)
+            'and h2._Organism_key = 1 ' + \
+	    'and h1._Marker_key = m1._Marker_key ' + \
+	    'and h2._Marker_key = m2._Marker_key', None)
 
 db.sql('create index idx1 on #homology(hgncKey)', None)
 db.sql('create index idx2 on #homology(mgiKey)', None)
