@@ -11,7 +11,7 @@
 #               where the 'GO' association is not IEA
 #               where the reference exludes J:60000 (61933), J:72447 (73199)
 #		where the marker has a human ortholog
-#		where the GO ID is not in (GO:0000004,GO:0008372,GO:0005554)
+#		where the GO ID is not in (GO:0008150,GO:0003674,GO:0005575)
 #		(these are the "unknown" terms within each DAG)
 #
 #       Report in a tab delimited file with the following columns:
@@ -63,22 +63,16 @@ fp = reportlib.init("MRK_GOHuman.rpt", printHeading = 0, outputdir = os.environ[
 
 # all mouse genes with a human ortholog
 
-cmds = []
-cmds.append('select distinct m._Marker_key, humanMarker = m2._Marker_key ' + \
+db.sql('select distinct h1._Marker_key, humanMarker = h2._Marker_key ' + \
 	'into #ortholog ' + \
-	'from MRK_Marker  m, HMD_Homology h1, HMD_Homology_Marker hm1, ' + \
-	'HMD_Homology h2, HMD_Homology_Marker hm2, MRK_Marker m2 ' + \
-	'where m._Organism_key = 1 ' + \
+	'from MRK_Homology_Cache h1, MRK_Homology_Cache h2, MRK_Marker m ' + \
+	'where h1._Organism_key = 1 ' + \
+	'and h1._Marker_key = m._Marker_key ' + \
 	'and m._Marker_Type_key = 1 ' + \
 	'and m._Marker_Status_key in (1,3) ' + \
-	'and m._Marker_key = hm1._Marker_key ' + \
-	'and hm1._Homology_key = h1._Homology_key ' + \
 	'and h1._Class_key = h2._Class_key ' + \
-	'and h2._Homology_key = hm2._Homology_key ' + \
-	'and hm2._Marker_key = m2._Marker_key ' + \
-	'and m2._Organism_key = 2 ')
-cmds.append('create index idx1 on #ortholog(_Marker_key)')
-db.sql(cmds, None)
+	'and h2._Organism_key = 2 ', None)
+db.sql('create index idx1 on #ortholog(_Marker_key)', None)
 print 'query 1 end...%s' % (mgi_utils.date())
 
 #
@@ -86,8 +80,7 @@ print 'query 1 end...%s' % (mgi_utils.date())
 # and the reference exludes J:60000 (61933), J:72447 (73199)
 #
 
-cmds = []
-cmds.append('select o._Marker_key, o.humanMarker, a._Annot_key, e._Refs_key, ' + \
+db.sql('select o._Marker_key, o.humanMarker, a._Annot_key, e._Refs_key, ' + \
 	'e._EvidenceTerm_key, evidenceCode = t.abbreviation ' + \
 	'into #temp1 ' + \
 	'from #ortholog o, VOC_Annot a, VOC_Evidence e, VOC_Term t ' + \
@@ -96,35 +89,30 @@ cmds.append('select o._Marker_key, o.humanMarker, a._Annot_key, e._Refs_key, ' +
 	'and a._Annot_key = e._Annot_key ' + \
 	'and e._EvidenceTerm_key != 115 ' + \
 	'and e._Refs_key not in (61933, 73199) ' + \
-	'and e._EvidenceTerm_key = t._Term_key')
-cmds.append('create index idx1 on #temp1(_Marker_key)')
-cmds.append('create index idx2 on #temp1(_Annot_key)')
-db.sql(cmds, None)
+	'and e._EvidenceTerm_key = t._Term_key', None)
+db.sql('create index idx1 on #temp1(_Marker_key)', None)
+db.sql('create index idx2 on #temp1(_Annot_key)', None)
 print 'query 2 end...%s' % (mgi_utils.date())
 
-# and the GO ID is not in (GO:0000004,GO:0008372,GO:0005554)
+# and the GO ID is not in (GO:0008150,GO:0003674,GO:0005575)
 
-cmds = []
-cmds.append('select t.*, a.term, goID = a.accID ' + \
+db.sql('select t.*, a.term, goID = a.accID ' + \
 	'into #temp2 ' + \
 	'from #temp1 t, VOC_Annot_View a ' + \
 	'where t._Annot_key = a._Annot_key ' + \
-	'and a.accID not in ("GO:0000004", "GO:0008372", "GO:0005554")')
-cmds.append('create index idx1 on #temp2(_Marker_key)')
-db.sql(cmds, None)
+	'and a.accID not in ("GO:0008150", "GO:0003674", "GO:0005575")', None)
+db.sql('create index idx1 on #temp2(_Marker_key)', None)
 print 'query 3 end...%s' % (mgi_utils.date())
 
 # marker attributes
 
-cmds = []
-cmds.append('select t.*, m.symbol, m.name ' + \
+db.sql('select t.*, m.symbol, m.name ' + \
 	'into #temp3 ' + \
 	'from #temp2 t, MRK_Marker m ' + \
-	'where t._Marker_key = m._Marker_key')
-cmds.append('create index idx1 on #temp3(_Marker_key)')
-cmds.append('create index idx2 on #temp3(_Refs_key)')
-cmds.append('create index idx3 on #temp3(humanMarker)')
-db.sql(cmds, None)
+	'where t._Marker_key = m._Marker_key', None)
+db.sql('create index idx1 on #temp3(_Marker_key)', None)
+db.sql('create index idx2 on #temp3(_Refs_key)', None)
+db.sql('create index idx3 on #temp3(humanMarker)', None)
 print 'query 4 end...%s' % (mgi_utils.date())
 
 # marker accession ids
