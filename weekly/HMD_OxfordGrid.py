@@ -47,46 +47,40 @@ TAB = reportlib.TAB
 
 def processOrganism(organismKey):
 
-    cmds = []
-
     # select all markers of given organism which have a homology
 
-    cmds.append('select distinct m._Marker_key, m.chromosome, m._Organism_key, h._Class_key, s.commonName, c.sequenceNum ' + \
+    db.sql('select distinct m._Marker_key, m.chromosome, m._Organism_key, hm._Class_key, s.commonName, c.sequenceNum ' + \
         'into #markers ' + \
-	'from MRK_Marker m, HMD_Homology_Marker hm, HMD_Homology h, MGI_Organism s, MRK_Chromosome c ' + \
+	'from MRK_Marker m, MRK_Homology_Cache hm, MGI_Organism s, MRK_Chromosome c ' + \
 	'where m._Organism_key = %s' % (organismKey) + \
 	'and m._Marker_key = hm._Marker_key ' + \
-	'and hm._Homology_key = h._Homology_key ' + \
 	'and m._Organism_key = s._Organism_key ' + \
 	'and m._Organism_key = c._Organism_key ' + \
-	'and m.chromosome = c.chromosome')
+	'and m.chromosome = c.chromosome', None)
 
-    cmds.append('create nonclustered index idx_key on #markers(_Class_key)')
+    db.sql('create nonclustered index idx_key on #markers(_Class_key)', None)
 
     # select all distinct homology occurences for primary organism
     # verify numbers by checking Oxford Grid
     # sort by secondary organism, chromosome of primary organism, chromosome of secondary organism
 
-    cmds.append('select distinct m._Class_key, ' + \
+    results = db.sql('select distinct m._Class_key, ' + \
 	'organismA = m.commonName, chrA = m.chromosome, organismAKey = m._Organism_key, ' + \
 	'organismB = s2.commonName, chrB = m2.chromosome, organismBKey = m2._Organism_key  ' + \
 	'from #markers m, ' + \
-	'HMD_Homology h, HMD_Homology_Marker hm, MRK_Marker m2, MGI_Organism s2, MRK_Chromosome c2 ' + \
-	'where m._Class_key = h._Class_key ' + \
-	'and h._Homology_key = hm._Homology_key ' + \
+	'MRK_Homology_Cache hm, MRK_Marker m2, MGI_Organism s2, MRK_Chromosome c2 ' + \
+	'where m._Class_key = hm._Class_key ' + \
 	'and hm._Marker_key = m2._Marker_key ' + \
 	'and m2._Organism_key != %s ' % (organismKey) + \
 	'and m2._Organism_key = s2._Organism_key ' + \
 	'and m2._Organism_key = c2._Organism_key ' + \
 	'and m2.chromosome = c2.chromosome ' + \
-	'order by m2._Organism_key, m.sequenceNum, c2.sequenceNum')
-
-    results = db.sql(cmds, 'auto')
+	'order by m2._Organism_key, m.sequenceNum, c2.sequenceNum', 'auto')
 
     count = 0
     prevKey = ''
 
-    for r in results[-1]:
+    for r in results:
 
 	key = str(r['organismAKey']) + ':' + r['chrA'] + ':' + r['chrB']
 
@@ -106,8 +100,6 @@ def processOrganism(organismKey):
 	count = count + 1
 
     fp.write(str(count) + CRT)
-
-    db.sql('drop table #markers', None)
 
 #
 # Main

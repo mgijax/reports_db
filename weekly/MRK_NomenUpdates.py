@@ -117,11 +117,11 @@ cmd.append('select distinct m._Marker_key, a.accID ' + \
 
 # get human ortholog (5)
 cmd.append('select distinct m._Marker_key, humanSymbol = h.symbol ' + \
-'from #markers m, MRK_Marker h, HMD_Homology_Marker hm1, HMD_Homology_Marker hm2 ' + \
+'from #markers m, MRK_Marker h, MRK_Homology_Cache hm1, MRK_Homology_Cache hm2 ' + \
 'where m._Marker_key = hm1._Marker_key ' + \
 'and hm1._Homology_key = hm2._Homology_key ' + \
 'and hm2._Marker_key = h._Marker_key ' + \
-'and h._Organism_key = 1')
+'and hm2._Organism_key = 1')
 
 # retrieve markers, sort (6)
 cmd.append('select distinct * from #markers order by sequenceNum, symbol')
