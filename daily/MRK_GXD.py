@@ -35,7 +35,7 @@ CRT = reportlib.CRT
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 db.sql('select _Marker_key, _Refs_key into #gxd from GXD_Index', None)
 db.sql('create index idx1 on #gxd(_Marker_key)', None)

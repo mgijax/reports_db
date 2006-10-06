@@ -34,7 +34,7 @@ import reportlib
 CRT = reportlib.CRT
 TAB = reportlib.TAB
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 results = db.sql('select t._Term_key, t.note, t.sequenceNum ' + \
 	'from VOC_Text t, VOC_Term m ' + \

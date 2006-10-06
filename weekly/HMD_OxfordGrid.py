@@ -105,7 +105,7 @@ def processOrganism(organismKey):
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 for organismKey in ['1', '2', '40']:
     processOrganism(organismKey)

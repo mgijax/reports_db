@@ -106,7 +106,7 @@ def getCoords(logicalDBkey):
 #
 
 db.useOneConnection(1)
-fp = reportlib.init(sys.argv[0], printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp = reportlib.init(sys.argv[0], printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 #
 # select all mouse markers

@@ -118,7 +118,7 @@ def writeRecord(i, r, e):
 #
 
 db.useOneConnection(1)
-fp = reportlib.init('gene_association', fileExt = '.mgi_nonmouse', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init('gene_association', fileExt = '.mgi_nonmouse', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
 # retrieve all dag abbrevations for each term

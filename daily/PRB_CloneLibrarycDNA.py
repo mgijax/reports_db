@@ -38,7 +38,7 @@ TAB = reportlib.TAB
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], fileExt = '.sql.rpt', title = 'MGI cDNA Clone Libraries', outputdir = os.environ['REPORTOUTPUTDIR'])
+fp = reportlib.init(sys.argv[0], fileExt = '.sql.rpt', title = 'MGI cDNA Clone Libraries', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
 fp.write(string.ljust('library name', 95))
 fp.write(string.ljust('clone collection', 50))
 fp.write('clone ids' + CRT)

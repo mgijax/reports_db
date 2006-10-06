@@ -46,7 +46,7 @@ TAB = reportlib.TAB
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp = reportlib.init(sys.argv[0], printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 fp.write('#\n')
 fp.write('#  tab-delimited file of all MGI RIKEN clone/marker associations\n\n')

@@ -39,7 +39,7 @@ import reportlib
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-fp = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 # Retrieve Markers with GO Annotations that have SP IDs
 

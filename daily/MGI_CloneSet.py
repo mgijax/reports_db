@@ -53,7 +53,7 @@ for l in l1:
         lKeys.append(r['_LogicalDB_key'])
 
 reportName = string.split(l1[0], ' ')
-fp = reportlib.init('MGI_CloneSet_' + reportName[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init('MGI_CloneSet_' + reportName[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 # get all clones
 

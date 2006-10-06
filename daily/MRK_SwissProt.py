@@ -38,7 +38,7 @@ import reportlib
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 # Retrieve MGI Accession number, Marker symbol, name, etc.
 

@@ -34,7 +34,7 @@ PAGE = reportlib.PAGE
 #
 
 db.useOneConnection(1)
-fp = reportlib.init(sys.argv[0], printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp = reportlib.init(sys.argv[0], printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 results = db.sql('select s.strain, t.badName ' + \
 	'from MGI_Translation t, PRB_Strain s ' + \

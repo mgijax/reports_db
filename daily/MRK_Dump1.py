@@ -28,7 +28,7 @@ import os
 import db
 import reportlib
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 cmds = []
 cmds.append('select _Marker_key, symbol ' + \

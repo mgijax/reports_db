@@ -38,7 +38,7 @@ PAGE = reportlib.PAGE
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp = reportlib.init(sys.argv[0], printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 cmds = []
 

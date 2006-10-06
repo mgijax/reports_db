@@ -204,13 +204,13 @@ fullreport = 'MGI_Knockout_Full'
 publicreport = 'MGI_Knockout_Public'
 notpublicreport = 'MGI_Knockout_NotPublic'
 
-fp1 = reportlib.init(fullreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
-fp2 = reportlib.init(publicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
-fp3 = reportlib.init(notpublicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
+fp1 = reportlib.init(fullreport, printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
+fp2 = reportlib.init(publicreport, printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
+fp3 = reportlib.init(notpublicreport, printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'], isHTML = 1)
 
-fp4 = reportlib.init(fullreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
-fp5 = reportlib.init(publicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
-fp6 = reportlib.init(notpublicreport, printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp4 = reportlib.init(fullreport, printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp5 = reportlib.init(publicreport, printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp6 = reportlib.init(notpublicreport, printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 printHeaderHTML(fp1, 'MGI All Knockouts Report.', allBLOG)
 printHeaderHTML(fp2, 'Genes with Knockouts available through Public Repositories.', publicBLOG)

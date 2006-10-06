@@ -43,7 +43,7 @@ SPACE = reportlib.SPACE
 reportTitle = 'Human and Mouse Orthology with Human OMIM IDs'
 	
 db.useOneConnection(1)
-fp = reportlib.init(sys.argv[0], reportTitle, os.environ['REPORTOUTPUTDIR'])
+fp = reportlib.init(sys.argv[0], reportTitle, os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
 	
 fp.write(string.ljust('Mouse MGI Acc ID', 30))
 fp.write(SPACE)

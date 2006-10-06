@@ -270,7 +270,7 @@ def processSort1(results):
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Rat Chromosome)'
 	reportName = REPORTNAME + '1'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write(string.ljust('Rat Chr', 15))
@@ -388,7 +388,7 @@ def processSort2(results):
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Mouse Chromosome)'
 	reportName = REPORTNAME + '2'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
@@ -479,7 +479,7 @@ def processSort3(results):
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Rat Symbol)'
 	reportName = REPORTNAME + '3'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Rat EntrezGene ID', 30))
@@ -569,7 +569,7 @@ def processSort4(results):
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Mouse Symbol)'
 	reportName = REPORTNAME + '4'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
 	fp.write(reportLegend + CRT + CRT)
 	
 	fp.write(string.ljust('Mouse MGI Acc ID', 30))
@@ -662,7 +662,7 @@ def processSort5(results):
 	reportTitle = 'Orthology - Rat vs. Mouse (Sorted by Rat Chromosome), tab-delimited'
 	reportName = REPORTNAME + '5'
 	
-	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'])
+	fp = reportlib.init(reportName, reportTitle, os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
 	fp.write(reportLegend + CRT + CRT)
 
 	fp.write('Rat Chr' + TAB)

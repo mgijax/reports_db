@@ -30,7 +30,7 @@ import os
 import db
 import reportlib
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 cmds = []
 cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, markerType = t.name, offset_str = str(o.offset,10,2) ' + \

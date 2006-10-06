@@ -45,7 +45,7 @@ TAB = reportlib.TAB
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 db.sql('select p._Probe_key, pname = p.name, p.primer1sequence, p.primer2sequence, p.productSize, pm._Marker_key, ' + \
       'm.symbol, mname = m.name, m.chromosome ' + \

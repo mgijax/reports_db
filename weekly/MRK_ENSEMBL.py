@@ -46,7 +46,7 @@ PAGE = reportlib.PAGE
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 cmd = 'select a1.accID "MGI", m.symbol, m.name, m.chromosome, o.offset, a2.accID "Ensembl" ' + \
       'from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Offset o ' + \

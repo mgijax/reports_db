@@ -59,7 +59,7 @@ PAGE = reportlib.PAGE
 # Main
 #
 
-fp = reportlib.init("MRK_GOHuman.rpt", printHeading = 0, outputdir = os.environ['REPORTOUTPUTDIR'])
+fp = reportlib.init("MRK_GOHuman.rpt", printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 # all mouse genes with a human ortholog
 

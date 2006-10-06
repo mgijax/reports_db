@@ -82,7 +82,7 @@ CRT = reportlib.CRT
 
 db.useOneConnection(1)
 
-fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
 # Header information

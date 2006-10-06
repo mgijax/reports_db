@@ -39,7 +39,7 @@ CRT = reportlib.CRT
 TAB = reportlib.TAB
 
 db.useOneConnection(1)
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
 # 1. all Approved Marker records

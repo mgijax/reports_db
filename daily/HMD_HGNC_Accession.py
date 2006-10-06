@@ -43,7 +43,7 @@ import reportlib
 #
 
 db.useOneConnection(1)
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 db.sql('select distinct hgncSymbol = m1.symbol, hgncKey = m1._Marker_key, ' + \
             'mgiSymbol = m2.symbol, mgiName = m2.name, mgiKey = m2._Marker_key ' + \

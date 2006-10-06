@@ -66,7 +66,7 @@ def createDict(results, keyField, valueField):
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
 # Get mouse to human orthologous marker pair's symbols and keys
