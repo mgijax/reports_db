@@ -91,5 +91,4 @@ for r in results:
     fp.write(CRT)
 
 fp.write(CRT + '(%d rows affected)' % (len(results)) + CRT)
-reportlib.trailer(fp)
 reportlib.finish_nonps(fp)

@@ -124,7 +124,6 @@ for r in results:
     count = count + 1
 
 fp.write(CRT + '(%d rows affected)' % (count) + CRT)
-reportlib.trailer(fp)
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
 

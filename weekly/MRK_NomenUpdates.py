@@ -182,7 +182,6 @@ for r in results[6]:
 	rows = rows + 1
 
 fp.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
-reportlib.trailer(fp)
 reportlib.finish_nonps(fp, isHTML = 1)	# non-postscript file
 
 # re-create a symbolic link between the new file and the current file

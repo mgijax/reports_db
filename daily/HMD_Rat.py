@@ -381,7 +381,6 @@ def processSort1(results):
 		fp.write(CRT)
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
-	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
 def processSort2(results):
