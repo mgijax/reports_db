@@ -20,6 +20,9 @@
 #
 # History:
 #
+# lec	10/10/2006
+#	- only include Markers that have at least one sequence.
+#
 # lec	09/19/2006
 #	- make sure there are no deleted sequences in the report
 #
@@ -154,6 +157,9 @@ results = db.sql('select * from #markers order by symbol', 'auto')
 
 for r in results:
 	key = r['_Marker_key']
+
+	if not gbID.has_key(key) and not ugID.has_key(key) and not rsID.has_key(key):
+	    continue
 
 	if r['offset'] == -1.0:
 		offset = 'syntenic'
