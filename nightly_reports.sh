@@ -21,7 +21,7 @@ touch ${LOG}
 
 foreach i (daily/*.sql)
 echo $i, `date`
-reportisql.csh $i ${REPORTOUTPUTDIR}/`basename $i`.rpt ${MGD_DBSERVER} ${MGD_DBNAME} >> ${LOG}
+reportisql.csh $i ${REPORTOUTPUTDIR}/`basename $i`.rpt ${MGD_DBSERVER} ${MGD_DBNAME} MGI >> ${LOG}
 echo $i, `date`
 end
 
