@@ -60,9 +60,9 @@ import reportlib
 
 inFileName1 = os.environ['GOAINPUTFILE1']
 
-errorFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = 0, fileExt = '.error')
-dupFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = 0, fileExt = '.duplicates')
-mgiFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = 0, fileExt = '.mgi')
+errorFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = None, fileExt = '.error')
+dupFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = None, fileExt = '.duplicates')
+mgiFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading = None, fileExt = '.mgi')
 
 assoc = {}	# dictionary of GOA ID:Marker MGI ID
 marker = {}	# dictionary of MGI Marker ID:Marker data
@@ -70,7 +70,7 @@ annot = {}	# list of existing Marker key, GO ID, Evidence Code, Pub Med ID annot
 annotByGOID = []
 annotByRef = []
 
-mgiLine = '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n'
+mgiLine = 'MGI\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n'
 
 #
 # Mouse Markers
@@ -207,6 +207,9 @@ for line in inFile1.readlines():
     if assignedBy == 'MGI':
 	continue
 
+    if assignedBy == 'UniProt':
+	assignedBy = 'GOA'
+
     #
     # translate GOA "Refs" to MGI J: so we can check for duplicates
     #
@@ -245,7 +248,7 @@ for line in inFile1.readlines():
 	    dupFile.write(line + '\n')
 	    continue
 
-    mgiFile.write(mgiLine % (databaseID, m['mgiID'], m['symbol'], notValue, goID, refID, evidence, inferredFrom,\
+    mgiFile.write(mgiLine % (m['mgiID'], m['symbol'], notValue, goID, refID, evidence, inferredFrom,\
 	dag, m['name'], synonyms, m['markerType'], taxID, modDate, assignedBy))
 
 inFile1.close()
