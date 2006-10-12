@@ -60,12 +60,18 @@ coordDisplay = '(%s:%s-%s (%s))'
 noneDisplay = 'null' + TAB
 repGenomicKey = 615419
 sequenceType = 19
+vega = 85
+vegaprovider = 'VEGA Gene Model'
 ncbi = 59
 ncbiprovider = 'NCBI Gene Model'
 ensembl = 60
 ensemblprovider = 'Ensembl Gene Model'
 unists = 80
 unistsprovider = 'NCBI UniSTS'
+qtl = 1
+qtlprovider = 'MGI QTL'
+mirbase = 83
+mirbaseprovider = 'miRBase'
 
 def getCoords(logicalDBkey, provider):
 
@@ -73,10 +79,10 @@ def getCoords(logicalDBkey, provider):
 
     tempCoords = {}
 
-    # we're assuming that markers may have a NCBI and/or Ensembl coordinate
-    # OR a UniSTS coordinate
+    # we're assuming that markers may have a VEGA, NCBI and/or Ensembl coordinate
+    # OR a UniSTS coordinate but not both
 
-    if logicalDBkey == ncbi or logicalDBkey == ensembl:
+    if logicalDBkey in [vega, ncbi, ensembl]:
         results = db.sql('select m._Marker_key, a.accID, ' + \
 	        'c.chromosome, c.strand, ' + \
 	        'startC = convert(int, c.startCoordinate), ' + \
@@ -93,7 +99,7 @@ def getCoords(logicalDBkey, provider):
             value = r
             tempCoords[key] = value
  
-    # UniSTS
+    # UniSTS, QTL, mirBASE
 
     else:
         results = db.sql('select m._Marker_key, ' + \
@@ -173,13 +179,20 @@ db.sql('create index idx1 on #markers(_Marker_key)', None)
 
 # get coordinates
 
+vegaCoords = {}
 ncbiCoords = {}
 ensemblCoords = {}
 unistsCoords =  {}
+qtlCoords = {}
+mirbaseCoords = {}
 repCoords = {}
+
+vegaCoords = getCoords(vega, vegaprovider)
 ncbiCoords = getCoords(ncbi, ncbiprovider)
 ensemblCoords = getCoords(ensembl, ensemblprovider)
 unistsCoords = getCoords(unists, unistsprovider)
+qtlCoords = getCoords(qtl, qtlprovider)
+mirbaseCoords = getCoords(mirbase, mirbaseprovider)
 
 # process results
 
