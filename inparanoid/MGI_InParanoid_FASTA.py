@@ -42,8 +42,8 @@ inFileName = os.environ['INPARANOIDFASTA']
 reportNameA = 'Mus-musculus_MGI_' + mgi_utils.date('%m%d%Y') + '_protein-reps'
 reportNameB = 'Mus-musculus_MGI_' + mgi_utils.date('%m%d%Y') + '_protein-all'
 fileExtension = '.fa'
-fpA = reportlib.init(reportNameA, outputdir = os.environ['INPARANOIDDIR'], printHeading = 0, fileExt = fileExtension)
-fpB = reportlib.init(reportNameB, outputdir = os.environ['INPARANOIDDIR'], printHeading = 0, fileExt = fileExtension)
+fpA = reportlib.init(reportNameA, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = fileExtension)
+fpB = reportlib.init(reportNameB, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = fileExtension)
 
 #
 # select all representative polypeptide sequences
