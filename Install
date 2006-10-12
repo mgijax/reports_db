@@ -25,27 +25,27 @@ end
 #
 
 if ( ! -d ${REPORTDIR} ) then
-	mkdir ${REPORTDIR}
+	mkdir -p ${REPORTDIR}
 endif
 
 if ( ! -d ${REPORTOUTPUTDIR} ) then
-	mkdir ${REPORTOUTPUTDIR}
+	mkdir -p ${REPORTOUTPUTDIR}
 endif
 
 if ( ! -d ${REPORTOUTPUTDIR}/mgimarkerfeed ) then
-	mkdir ${REPORTOUTPUTDIR}/mgimarkerfeed
+	mkdir -p ${REPORTOUTPUTDIR}/mgimarkerfeed
 endif
 
 if ( ! -d ${REPORTLOGSDIR} ) then
-	mkdir ${REPORTLOGSDIR}
+	mkdir -p ${REPORTLOGSDIR}
 endif
 
 if ( ! -d ${INPARANOIDDIR} ) then
-	mkdir ${INPARANOIDDIR}
+	mkdir -p ${INPARANOIDDIR}
 endif
 
 if ( ! -d ${GOADIR} ) then
-	mkdir ${GOADIR}
+	mkdir -p ${GOADIR}
 endif
 
 # provide a link to the Mammalian Phenotype vocabulary
