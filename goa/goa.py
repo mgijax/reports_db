@@ -207,9 +207,6 @@ for line in inFile1.readlines():
     if assignedBy == 'MGI':
 	continue
 
-    if assignedBy == 'UniProt':
-	assignedBy = 'GOA'
-
     #
     # translate GOA "Refs" to MGI J: so we can check for duplicates
     #
