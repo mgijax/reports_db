@@ -460,7 +460,7 @@ def mouse_anatomy_by_time_xproduct():
 	#
 	'''
 
-	fd = reportlib.init('mouse_anatomy_by_time_xproduct', fileExt = '', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 0)
+	fd = reportlib.init('mouse_anatomy_by_time_xproduct', fileExt = '', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 	fd.write('$Mouse_anatomy_by_time_xproduct; EMAP:0\n')
 	getStageDefs()
 	for stageRec in stages:

@@ -33,7 +33,7 @@ import reportlib
 #
 
 reportName = 'Mus-musculus_MGI_' + mgi_utils.date('%m%d%Y') + '_protein'
-fp = reportlib.init(reportName, outputdir = os.environ['INPARANOIDDIR'], printHeading = 0, fileExt = '-URL')
+fp = reportlib.init(reportName, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = '-URL')
 fp.write('http://www.informatics.jax.org/searches/accession_report.cgi?id=\n')
 reportlib.finish_nonps(fp)
 
