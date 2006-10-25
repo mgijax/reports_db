@@ -67,6 +67,7 @@ mgiFile = reportlib.init('goa', outputdir = os.environ['GOADIR'], printHeading =
 assoc = {}	# dictionary of GOA ID:Marker MGI ID
 marker = {}	# dictionary of MGI Marker ID:Marker data
 annot = {}	# list of existing Marker key, GO ID, Evidence Code, Pub Med ID annotations
+goids = {}	# dictionary of secondary GO ID:primary GO ID
 annotByGOID = []
 annotByRef = []
 
@@ -92,6 +93,23 @@ results = db.sql('select * from #markers', 'auto')
 for r in results:
     marker[r['mgiID']] = r
 
+#
+# Secondary GO Ids mapped to Primary GO Ids
+#
+
+results = db.sql('select paccid = a1.accID, saccid = a2.accID ' + \
+	'from ACC_Accession a1, ACC_Accession a2 ' + \
+	'where a1._MGIType_key = 13 ' + \
+	'and a1.prefixPart = "GO:" ' + \
+	'and a1.preferred = 1 ' + \
+	'and a1._Object_key = a2._Object_key ' + \
+	'and a1._MGIType_key = 13 ' + \
+	'and a1.prefixPart = "GO:" ' + \
+	'and a1.preferred = 0 ', 'auto')
+for r in results:
+    goids[r['saccid']] = r['paccid']
+
+#
 #
 # Mouse Markers annotated to...
 #
@@ -236,6 +254,10 @@ for line in inFile1.readlines():
 
     m = marker[mgiID]
     markerKey = m['_Marker_key']
+
+    # translate secondary GO ids to primary
+    if goids.has_key(goID):
+	goID = goids[goID]
 
     # duplicate error if the annotation already exists in MGI
 
