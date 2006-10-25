@@ -471,7 +471,6 @@ def processSort2(results):
 		count = count + 1
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
-	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
 def processSort3(results):
@@ -561,7 +560,6 @@ def processSort3(results):
 		count = count + 1
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
-	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
 def processSort4(results):
@@ -652,7 +650,6 @@ def processSort4(results):
 		count = count + 1
 
 	fp.write(CRT + '(%d rows affected)' % (count) + CRT)
-	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
 def processSort5(results):
@@ -726,7 +723,6 @@ def processSort5(results):
 		printDataAttributes(fp, r['ratMarkerKey'])
 		fp.write(CRT)
 
-	reportlib.trailer(fp)
 	reportlib.finish_nonps(fp)
 
 #
