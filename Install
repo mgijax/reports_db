@@ -44,6 +44,11 @@ if ( ! -d ${INPARANOIDDIR} ) then
 	mkdir -p ${INPARANOIDDIR}
 endif
 
+# link the GO gene association file into weekly so that it runs from there as well
+
+cd ${PUBRPTS}/weekly
+ln -s ${PUBRPTS}/daily/GO_gene_association.py .
+
 # provide a link to the Mammalian Phenotype vocabulary
 cd ${REPORTOUTPUTDIR}
 foreach f (${MPFILES})
