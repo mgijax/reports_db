@@ -247,6 +247,9 @@ for r in results:
 
 		if r['modifiedBy'] == 'swissload':
 			fp.write('UniProt')
+		elif string.find(r['modifiedBy'], 'GOA_') >= 0:
+			modifiedBy = re.sub('GOA_', '', r['modifiedBy'])
+			fp.write(modifiedBy)
 		else:
 			fp.write(DBABBREV)
 
