@@ -25,7 +25,7 @@ setenv REPORTLOGSDIR		${REPORTDIR}/logs
 
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		/data/loads/mgi/vocload/runTimeMP
-setenv MPFILES                  "MPheno.ontology MP.defs MPheno_OBO.ontology"
+setenv MPFILES                  "MPheno_OBO.ontology"
 
 # Adult Mouse Anatomy Source
 setenv MAVOCSOURCE              /data/loads/mgi/vocload/runTimeMA
