@@ -39,5 +39,5 @@ setenv INPARANOIDFASTA          ${INPARANOIDDIR}/inparanoid.fasta
 setenv INPARANOIDDAT            /data/loads/swissprot/swissload/data/uniprotmus.dat
 
 # GOA file
-setenv GOAMGI			/data/loads/goa/output/goa.mgi
+setenv GOAMGI			/data/loads/goa/goaload/output/goa.mgi
 

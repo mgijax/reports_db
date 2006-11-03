@@ -1,8 +1,10 @@
+TAG: reports_db-3-5-1-24
 TAG: reports_db-3-5-1-23
 DATE: 11/3/2006
 STAFF: lec
 CHANGES:
 1) fix rcp in nightly script
+2) fix Configuration.default: goa
 
 TAG: reports_db-3-5-1-22
 DATE: 11/1/2006
