@@ -51,7 +51,9 @@ end
 cd ..
 
 foreach i (${REPORTOUTPUTDIR}/*)
+if ( ! -d $i ) then
 rcp $i ${FTPREPORTDIR}
+endif
 end
 
 # this is now being run as a separate task from mgidbutilities/bin/prod/dailytasks.csh
