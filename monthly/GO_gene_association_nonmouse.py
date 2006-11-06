@@ -264,41 +264,6 @@ for r in results:
         for e in evidence[eKey]:
             writeRecord(i, r, e)
 
-    # there may be multiple instances of UniProt ids
-    # write out one record per UniProt id
-
-    ids = string.split(r['uniprotIDs'], 'UniProt:')
-
-    for i in ids:
-
-	if len(i) == 0:
-	    continue
-
-	# get rid of any dangling delimiters
-
-        i = re.sub('|', '', i)
-
-        eKey = r['_AnnotEvidence_key']
-
-	# if no evidence (no pub med id) and "tbreddy", skip it
-        if not evidence.has_key(eKey) and r['_ModifiedBy_key'] == 1095:
-	    continue
-
-        # make up a bogus evidence record if there isn't one
-
-        if not evidence.has_key(eKey):
-	    evidence[eKey] = []
-	    if r['refID'] == None:
-	        value = ('', '', '')
-	    else:
-	        value = ('PMID:' + r['refID'], 'IDA', '')
-	    evidence[eKey].append(value)
-
-	# write out one record per External Reference
-
-        for e in evidence[eKey]:
-            writeRecord(i, r, e)
-
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
 
