@@ -52,7 +52,7 @@ cd ..
 
 foreach i (${REPORTOUTPUTDIR}/*)
 if ( ! -d $i ) then
-rcp $i ${FTPREPORTDIR}
+cp $i ${FTPREPORTDIR}
 endif
 end
 

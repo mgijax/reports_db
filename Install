@@ -10,7 +10,7 @@ sed "s/ftp.informatics.jax.org/$FTPURL/" index.html > index.html.new
 mv -f index.html.new index.html
 
 foreach i (index.html)
-	rcp -r $i ${FTPREPORTDIR}
+	cp -r $i ${FTPREPORTDIR}
 end
 
 cd daily
