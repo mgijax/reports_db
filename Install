@@ -6,7 +6,7 @@
 
 cd `dirname $0` && source ./Configuration
 
-sed "s/ftp.informatics.jax.org/$FTPURL/" index.html > index.html.new
+sed "s/FTPHERE/$FTPURL/" index.html > index.html.new
 mv -f index.html.new index.html
 
 foreach i (index.html)
