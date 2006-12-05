@@ -34,9 +34,11 @@ setenv MAFILES                  "adult_mouse_anatomy.gxd anatomy_defs.gxd adult_
 # InParanoid directory
 setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
 
-# InParanoid FASTA file
-setenv INPARANOIDFASTA          ${INPARANOIDDIR}/inparanoid.fasta
-setenv INPARANOIDDAT            /data/loads/swissprot/swissload/data/uniprotmus.dat
+# InParanoid files
+setenv REFSEQFASTAGZ            /data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa.gz
+setenv REFSEQFASTA              /data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa
+setenv UNIPROTDAT               /data/seqdbs/blast/uniprot.build/uniprotmus.dat
+setenv UNIPROTFASTA             ${INPARANOIDDIR}/uniprot.fasta
 
 # GOA file
 setenv GOAMGI			/data/loads/goa/goaload/output/goa.mgi
