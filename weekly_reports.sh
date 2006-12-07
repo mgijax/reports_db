@@ -16,11 +16,11 @@ setenv LOG	${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
-cd weekly
-foreach i (`ls *.py`)
-$i >>& ${LOG}
-end
+#cd weekly
+#foreach i (`ls *.py`)
+#$i >>& ${LOG}
+#end
 
-cd ..
-./inparanoid/inparanoid.sh
+cd ${PUBRPTS}
+${PUBRPTS}/inparanoid/inparanoid.sh
 

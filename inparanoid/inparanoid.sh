@@ -20,6 +20,7 @@ touch ${LOG}
 rm -rf ${INPARANOIDDIR}/*
 
 # unzip refseq protein fasta file
+rm -rf ${REFSEQFASTA}
 /usr/bin/gunzip ${REFSEQFASTAGZ}
 
 # derive a FASTA file from the UniProt file
