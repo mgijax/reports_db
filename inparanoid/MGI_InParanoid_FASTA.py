@@ -75,7 +75,7 @@ def initialize():
     db.sql('create index idx1 on #deletedsequences(_Sequence_key)', None)
 
     # markers with deleted sequences
-    db.sql('select m._Marker_key into #excludemarkers ' + \
+    db.sql('select distinct m._Marker_key into #excludemarkers ' + \
 	    'from #deletedsequences d, SEQ_Marker_Cache m ' + \
 	    'where d._Sequence_key = m._Sequence_key ' + \
 	    'and m._Organism_key = 1 ', None)
@@ -114,7 +114,9 @@ def initialize():
     for r in results:
         key = r['accID']
         value = r['_Marker_key']
-        seqs[key] = value
+	if not seqs.has_key(key):
+	    seqs[key] = []
+        seqs[key].append(value)
 
     #
     # cache the marker key:symbol
@@ -163,13 +165,13 @@ def process(inFileName, column, header):
 	    # if the seq ID in the FASTA file is a representative polypeptide, then process id
 
 	    if seqs.has_key(seqID):
-	        markerKey = seqs[seqID]
-	        symbol = markers[markerKey]
-	        mgiID = mgiIDs[markerKey]
-                newLine = header % (mgiID, mgi_utils.date('%m/%d/%Y'), symbol, seqID)
-	        if rep.has_key(seqID):
-		    fpA.write(newLine)
-	        fpB.write(newLine)
+		for markerKey in seqs[seqID]:
+	            symbol = markers[markerKey]
+	            mgiID = mgiIDs[markerKey]
+                    newLine = header % (mgiID, mgi_utils.date('%m/%d/%Y'), symbol, seqID)
+	            if rep.has_key(seqID):
+		        fpA.write(newLine)
+	            fpB.write(newLine)
 
 	    # else, skip until we find the next header record
 
