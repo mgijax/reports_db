@@ -25,6 +25,10 @@
 #
 # History:
 #
+# 12/12/2006	lec
+#	- exclude markers annotated to "deleted" sequences
+#	- don't exclude sequences annotated to > 1 marker
+#
 # 12/05/2006	lec
 #	- added refseq proteins
 #
@@ -64,25 +68,33 @@ def initialize():
     fpA = reportlib.init(reportNameA, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = fileExtension)
     fpB = reportlib.init(reportNameB, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = fileExtension)
 
-    #
-    # select all polypeptide sequences
-    # genes only
-    #
+    # deleted sequences
+    db.sql('select s._Sequence_key into #deletedsequences ' + \
+	    'from SEQ_Sequence s ' + \
+	    'where s._SequenceStatus_key = 316343', None)
+    db.sql('create index idx1 on #deletedsequences(_Sequence_key)', None)
 
-    db.sql('select s.accID, s._Marker_key, s._Qualifier_key into #allsequences ' + \
+    # markers with deleted sequences
+    db.sql('select m._Marker_key into #excludemarkers ' + \
+	    'from #deletedsequences d, SEQ_Marker_Cache m ' + \
+	    'where d._Sequence_key = m._Sequence_key ' + \
+	    'and m._Organism_key = 1 ', None)
+    db.sql('create index idx1 on #excludemarkers(_Marker_key)', None)
+
+    #
+    # marker/polypeptide sequences that are not excluded
+    # markers of type gene only
+    #
+    db.sql('select s.accID, s._Marker_key, s._Qualifier_key into #sequences ' + \
 	    'from SEQ_Marker_Cache s, MRK_Marker m ' + \
             'where s._SequenceType_key = 316348 ' + \
 	    'and s._Organism_key = 1 ' + \
 	    'and s._Marker_key = m._Marker_key ' + \
-	    'and m._Marker_Type_key = 1', None)
-    db.sql('create index idx1 on #allsequences(accID)', None)
-
-    #
-    # eliminate those sequences annotated to > 1 marker
-    #
-    
-    db.sql('select accID, _Marker_key, _Qualifier_key into #sequences from #allsequences group by accID having count(*) = 1', None)
-    db.sql('create index idx1 on #sequences(_Marker_key)', None)
+	    'and m._Marker_Type_key = 1 '+ \
+	    'and not exists (select 1 from #excludemarkers x where ' + \
+		's._Marker_key = x._Marker_key)', None)
+    db.sql('create index idx1 on #sequences(accID)', None)
+    db.sql('create index idx2 on #sequences(_Marker_key)', None)
 
     #
     # cache the representative polypeptide
@@ -142,6 +154,8 @@ def process(inFileName, column, header):
         # a header line is one the starts with ">"
 
         if line[0] == '>':
+
+            skipRecord = 0
 	    tokens1 = string.split(line[:-1], '|')
 	    tokens2 = string.split(tokens1[column], '.')
 	    seqID = tokens2[0]
@@ -156,7 +170,6 @@ def process(inFileName, column, header):
 	        if rep.has_key(seqID):
 		    fpA.write(newLine)
 	        fpB.write(newLine)
-	        skipRecord = 0	# re-set skip with every new header
 
 	    # else, skip until we find the next header record
 
