@@ -98,12 +98,14 @@ def strip_newline(s):
 
 	if string.find (s, '\\n') > -1:
 		s = string.join(string.split(s, '\\n'), '')
-		return s
-	elif string.find(s, '\012') > -1:
+
+	if string.find(s, '\012') > -1:
 		s = string.join(string.split(s, '\012'), '')
-		return s
-	else:
-		return s
+
+	if string.find (s, '\\t') > -1:
+		s = string.join(string.split(s, '\\t'), '')
+
+	return s
 
 def mgi_status(status):
 
