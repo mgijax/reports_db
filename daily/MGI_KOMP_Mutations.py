@@ -62,7 +62,7 @@ fpTAB = None
 # key = marker key, value = dictionary of allele categories & counts
 markers = {}	
 
-# key = allele type key, value = dictionary of categoryKey, term
+# key = allele type key, value = dictionary of categoryKey that contains 'term' and 'count'
 alleleCategories = {}
 
 def init():
@@ -175,6 +175,23 @@ def process():
 	key = r['_Marker_key']
         ctermkey = alleleCategories[r['_Allele_Type_key']]['categoryKey']
 	cterm = alleleCategories[r['_Allele_Type_key']]['term']
+
+	#
+	# marker "value" = dictionary where key = term key 
+	# and values = dictionary of 'term' and 'count'
+	#
+	# for example:
+	#
+	# markers[48132] = 
+	#
+	# {847156: {'count': 2, 'term': 'Targeted, knock-out'}, 
+	#  847157: {'count': 1, 'term': 'Targeted, other'}, 
+	#  847158: {'count': 3, 'term': 'Gene trapped'}
+	# }
+	#
+	# where 847156 is the term key, 'term' = 'Targeted, knock-out' 
+	# and 'count' = the number of alleles of this type
+	#
 
 	if not markers.has_key(key):
 	    c = {}
