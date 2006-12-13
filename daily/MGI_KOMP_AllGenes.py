@@ -137,7 +137,7 @@ def init():
 	kompTargetList.append(mgiID)
     kompfile.close()
 
-def formatMarkerHTML(r):
+def writeHTML(r):
 
     # print marker records in HTML format
 
@@ -215,7 +215,7 @@ def formatMarkerHTML(r):
 
     return s
 
-def formatMarkerTAB(r):
+def writeTAB(r):
 
     # print marker records in tab-delimited format
 
@@ -390,8 +390,8 @@ def process():
     results = db.sql('select * from #location order by sequenceNum, symbol', 'auto')
 
     for r in results:
-        fpHTML.write('<td>%s</td>' % (formatMarkerHTML(r)))
-	fpTAB.write(formatMarkerTAB(r))
+        fpHTML.write('<td>%s</td>' % (writeHTML(r)))
+	fpTAB.write(writeTAB(r))
 
     fpHTML.write('</TABLE>')
     fpHTML.write('<pre>')
