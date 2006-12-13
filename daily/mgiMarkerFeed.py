@@ -94,8 +94,6 @@ LINEDELIM = "\n#=#"
 
 OUTPUTDIR = os.environ['REPORTOUTPUTDIR'] + '/mgimarkerfeed/'
 
-currentDate = mgi_utils.date()
-
 def strip_newline(s):
 
 	if string.find (s, '\\n') > -1:
@@ -392,7 +390,8 @@ def markers():
 
     fp = open(OUTPUTDIR + 'marker_label.bcp', 'w')
 
-    results = db.sql('select distinct m._Marker_key, m.label, m.labelType, status = 1 ' + \
+    results = db.sql('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' + \
+	    'cdate = convert(char(20), getdate(), 100) ' + \
 	    'from #markers k, MRK_Label m ' + \
 	    'where k._Marker_key = m._Marker_key ' + \
 	    'and m.labelType = "MS" ' + \
@@ -403,10 +402,11 @@ def markers():
 		     strip_newline(r['label']) + TAB + \
 		     r['labelType'] + TAB + \
 		     `r['status']` + TAB + \
-		     currentDate + TAB + \
-		     currentDate + CRT)
+		     r['cdate'] + TAB + \
+		     r['cdate'] + CRT)
 
-    results = db.sql('select distinct m._Marker_key, m.label, m.labelType, status = 1 ' + \
+    results = db.sql('select distinct m._Marker_key, m.label, m.labelType, status = 1, ' + \
+	    'cdate = convert(char(20), getdate(), 100) ' + \
 	    'from #markers k, MRK_Label m ' + \
 	    'where k._Marker_key = m._Marker_key ' + \
 	    'and m.labelType = "MN" ' + \
@@ -417,10 +417,11 @@ def markers():
 		     strip_newline(r['label']) + TAB + \
 		     r['labelType'] + TAB + \
 		     `r['status']` + TAB + \
-		     currentDate + TAB + \
-		     currentDate + CRT)
+		     r['cdate'] + TAB + \
+		     r['cdate'] + CRT)
 
-    results = db.sql('select distinct m._Marker_key, m.label, m.labelType, status = 0 ' + \
+    results = db.sql('select distinct m._Marker_key, m.label, m.labelType, status = 0, ' + \
+	    'cdate = convert(char(20), getdate(), 100) ' + \
 	    'from #markers k, MRK_Label m ' + \
 	    'where k._Marker_key = m._Marker_key ' + \
 	    'and m.labelType in ("MS", "MN", "MY") ' + \
@@ -431,8 +432,8 @@ def markers():
 		     strip_newline(r['label']) + TAB + \
 		     r['labelType'] + TAB + \
 		     `r['status']` + TAB + \
-		     currentDate + TAB + \
-		     currentDate + CRT)
+		     r['cdate'] + TAB + \
+		     r['cdate'] + CRT)
 
     fp.close()
 
