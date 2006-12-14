@@ -43,3 +43,6 @@ setenv UNIPROTFASTA             ${INPARANOIDDIR}/uniprot.fasta
 # GOA file
 setenv GOAMGI			/data/loads/goa/goaload/output/goa.mgi
 
+# KOMP files
+setenv KOMP_GENELIST		/mgi/all/wts_projects/7900/7934/genelist/v0.2/data/output/geneList.txt
+setenv KOMP_TARGETLIST		/mgi/all/wts_projects/7900/7934/genelist/v0.2/data/output/geneListNoKo.txt

@@ -107,9 +107,9 @@ def writeTAB(r):
     s = r['accID'] + TAB + r['symbol'] + TAB + r['name'] + TAB
 
     for ctermkey in markers[key]:
-        s = s + '%s(%d),' % (markers[key][ctermkey]['term'], markers[key][ctermkey]['count'])
+        s = s + '%s(%d)|' % (markers[key][ctermkey]['term'], markers[key][ctermkey]['count'])
 
-    # drop trailing comma
+    # drop trailing pipe
     s = s[:-1] + CRT
 
     return s
