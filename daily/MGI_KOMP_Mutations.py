@@ -53,7 +53,8 @@ BEGTD = '<td><font size="-1">'
 ENDTD = '</font></td>'
 BLANKFIELD = '%s&nbsp;%s' % (BEGTD, ENDTD)
 
-ALLELE_ANCHOR = '<A HREF="http://www.informatics.jax.org/searches/allele_report.cgi?_Marker_key=%s&int:_Set_key=%s">'
+ALLELE_ANCHOR1 = '<A HREF="http://www.informatics.jax.org/searches/allele_report.cgi?_Marker_key=%s&int:_Set_key=%s">'
+ALLELE_ANCHOR2 = '<A HREF="http://www.informatics.jax.org/searches/allele_report.cgi?_Marker_key=%s">'
 CLOSE_ALLELE_ANCHOR = '</A>'
 
 fpHTML = None
@@ -88,13 +89,16 @@ def writeHTML(r):
 
     s = s + BEGTD
 
+    allAlleles = 0
     for ctermkey in markers[key]:
-        s = s + ALLELE_ANCHOR % (key, ctermkey) + \
-		'%s(%d)' % (markers[key][ctermkey]['term'], markers[key][ctermkey]['count']) + \
-		CLOSE_ALLELE_ANCHOR + ','
+	allAlleles = allAlleles + markers[key][ctermkey]['count']
+    s = s + 'All phenotypic alleles (' + ALLELE_ANCHOR2 % (key) + '%d' % (allAlleles) + CLOSE_ALLELE_ANCHOR + '):'
 
-    # drop trailing comma
-    s = s[:-1] + ENDTD + CRT
+    for ctermkey in markers[key]:
+        s = s + '%s(' % (markers[key][ctermkey]['term']) + \
+	    ALLELE_ANCHOR1 % (key, ctermkey) + '%d' % (markers[key][ctermkey]['count']) + CLOSE_ALLELE_ANCHOR + ') '
+
+    s = s + ENDTD + CRT
 
     return s
 
@@ -151,24 +155,49 @@ def process():
 	alleleCategories[r['alleleTypeKey']] = r
 
     #
-    # select all genes with mutations
-    # exclude wild type (+)
-    # exclude QTLs
+    # same query as MGI_KOMP_AllGenes
+    #
+    # genes where MGI gene is associated with at least one of the following:
+    #
+    #  NCBI EntrezGene
+    #  Ensembl
+    #  VEGA
     #
 
-    db.sql('select m._Marker_key, a._Allele_Type_key ' + \
-	    'into #markers ' + \
-	    'from MRK_Marker m, ALL_Allele a ' + \
+    db.sql('select m._Marker_key, m.symbol, name = substring(m.name,1,75), ma.accID ' + \
+	    'into #markers1 ' + \
+	    'from MRK_Marker m, ACC_Accession ma ' + \
 	    'where m._Organism_key = 1 ' + \
 	    'and m._Marker_Type_key = 1 ' + \
 	    'and m._Marker_Status_key in (1,3) ' + \
-	    'and m._Marker_key = a._Marker_key ' + \
+	    'and m.chromosome != "MT" ' + \
+	    'and m._Marker_key = ma._Object_key ' + \
+	    'and ma._MGIType_key = 2 ' + \
+	    'and ma._LogicalDB_key = 1 ' + \
+	    'and ma.prefixPart = "MGI:" ' + \
+	    'and ma.preferred = 1 ' + \
+	    'and exists (select 1 from SEQ_Marker_Cache c where m._Marker_key = c._Marker_key ' + \
+	    'and c._LogicalDB_key in (59, 60, 85))', None)
+    db.sql('create index idx1 on #markers1(_Marker_key)', None)
+
+    #
+    # select all genes with mutations
+    # exclude wild type (+)
+    # exclude QTLs
+    # include Approved (public) Alleles only
+    #
+
+    db.sql('select m.*, a._Allele_Type_key ' + \
+	    'into #markers2 ' + \
+	    'from #markers1 m, ALL_Allele a ' + \
+	    'where m._Marker_key = a._Marker_key ' + \
 	    'and a.isWildType = 0 ' + \
 	    'and a._Allele_Type_key != 847130 ' + \
+	    'and a._Allele_Status_key = 847114 ' + \
 	    'order by m.symbol', None)
-    db.sql('create index idx1 on #markers(_Marker_key)', None)
+    db.sql('create index idx1 on #markers2(_Marker_key)', None)
 
-    results = db.sql('select * from #markers', 'auto')
+    results = db.sql('select * from #markers2', 'auto')
 
     for r in results:
 
@@ -207,16 +236,7 @@ def process():
 
 	markers[key] = c
 
-    results = db.sql('select distinct m._Marker_key, mm.symbol, name = substring(mm.name,1,75), ma.accID ' + \
-	    'from #markers m, MRK_Marker mm, ACC_Accession ma ' + \
-	    'where m._Marker_key = mm._Marker_key ' + \
-	    'and m._Marker_key = ma._Object_key ' + \
-	    'and ma._MGIType_key = 2 ' + \
-	    'and ma._LogicalDB_key = 1 ' + \
-	    'and ma.prefixPart = "MGI:" ' + \
-	    'and ma.preferred = 1 ' + \
-	    'order by mm.symbol', 'auto')
-
+    results = db.sql('select distinct m._Marker_key, m.symbol, m.name, m.accID from #markers2 m order by m.symbol', 'auto')
     for r in results:
         fpHTML.write('<td>%s</td>' % (writeHTML(r)))
 	fpTAB.write(writeTAB(r))

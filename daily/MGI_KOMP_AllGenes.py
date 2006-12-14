@@ -42,23 +42,24 @@ TAB = reportlib.TAB
 PAGE = reportlib.PAGE
 
 introBLOG = '''
-This report provides a list of all genes that may be considered potential candidates for being knocked out through the NIH KOMP project.
+This report provides a list of all genes that may be considered potential candidates for being knocked out through the NIH KOMP project. Genes are sorted by chromosome, and alphabetically by gene symbol within a chromosome.
+<P>
 
 <UL>
 <LI>Each gene symbol is linked to its respective MGI Gene Detail page for additional information.
 <P>
 
-<LI>Genes with "KOMP" in the KOMP Target column are in the current list of 4,400+ genes in the target KOMP gene list. The target KOMP gene list consists of those genes in the mouse cCDS uniquely identified as having a consistent one-to-one relationship among genes assigned by MGI, EntrezGene, ENSEMBL, and VEGA and have never been reported as knocked out or gene trapped in the public domain (see Other Knockout Source column description below).
+<LI>Genes with "KOMP" in the KOMP Target column are in the current list of 4,400+ genes in the KOMP target gene list. The KOMP target gene list consists of those genes in the mouse cCDS uniquely identified as having a consistent one-to-one relationship among genes assigned by MGI, EntrezGene, ENSEMBL, and VEGA and have never been reported as knocked out or gene trapped in the public domain (see 4th bullet point, below).
 <P>
 
 <LI>Genes with "Regeneron" or "CSD" in their respective columns indicate genes that currently are in the KOMP pipeline at the Regeneron or CHORI/Sanger/UCDavis KOMP project sites.
 <P>
 
-<LI>Genes with "+" in the Other Knockout Source" column are those genes that have been reported as knocked out or gene trapped in the public domain (i.e., these genes are listed by the IGTC as having one or more gene traps or are recorded in MGI as having one or more knockouts or gene traps; or are in the pipeline of EUCOMM or the Sanger Institute towards being knocked out).
+<LI>Genes with "+" in the Other Knockout Source column are those genes that have been reported as knocked out or gene trapped in the public domain (i.e., these genes are listed by the IGTC as having one or more gene traps or are recorded in MGI as having one or more knockouts or gene traps; or are in the pipeline of EUCOMM or the Sanger Institute towards being knocked out).
 <P>
 </UL>
 
-This All Genes List was created as follows. All genetic markers assigned type GENE in MGI were screened for those that also have at least one of the following types of IDS associated with them: NCBI EntrezGene or ENSEMBL or Vega. Only nuclear encoded genes are included (no mitochondrial encoded genes) and each gene has been placed on the genome (i.e., has a chromosomal location and genome coordinates in NCBI Build 36).
+This All Genes List was created as follows. All genetic markers assigned type GENE in MGI were screened for those that also have at least one of the following types of IDs associated with them: NCBI EntrezGene or ENSEMBL or Vega. Only nuclear encoded genes are included (no mitochondrial encoded genes) and each gene has been placed on the genome (i.e., has a chromosomal location and genome coordinates in NCBI Build 36). 
 <P>
 '''
 
@@ -181,8 +182,8 @@ def writeHTML(r):
 	s = s + BLANKFIELD + BLANKFIELD + BLANKFIELD
 
     s = s + BEGTD + r['chromosome'] + ENDTD + \
-	BEGTD + str(r['startCoordinate']) + ENDTD + \
-	BEGTD + str(r['endCoordinate']) + ENDTD + \
+	BEGTD + str(r['startC']) + ENDTD + \
+	BEGTD + str(r['endC']) + ENDTD + \
 	BEGTD + str(r['strand']) + ENDTD
 
     # if NCBI gene model exists
@@ -248,8 +249,8 @@ def writeTAB(r):
 	s = s + TAB + TAB + TAB
 
     s = s + r['chromosome'] + TAB + \
-	str(r['startCoordinate']) + TAB + \
-	str(r['endCoordinate']) + TAB + \
+	str(r['startC']) + TAB + \
+	str(r['endC']) + TAB + \
 	str(r['strand']) + TAB
 
     # if NCBI gene model exists
@@ -347,7 +348,9 @@ def process():
     # retrieve location information
     #
 
-    db.sql('select m.*, l.chromosome, l.startCoordinate, l.endCoordinate, l.strand, c.sequenceNum ' + \
+    db.sql('select m.*, l.chromosome, l.strand, c.sequenceNum, ' + \
+	    'startC = convert(int, l.startCoordinate), ' + \
+	    'endC = convert(int, l.endCoordinate) ' + \
 	    'into #location ' + \
 	    'from #markers m, MRK_Location_Cache l, MRK_Chromosome c ' + \
 	    'where m._Marker_key = l._Marker_key ' + \
