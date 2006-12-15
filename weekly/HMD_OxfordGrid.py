@@ -21,13 +21,6 @@
 # Usage:
 #       HMD_OxfordGrid.py
 #
-# Notes:
-#       - all reports use db default of public login
-#       - all reports use server/database default of environment
-#       - use lowercase for all SQL commands (i.e. select not SELECT)
-#       - all public SQL reports require the header and footer
-#       - all private SQL reports require the header
-#
 # History:
 #
 # lec   05/14/2003

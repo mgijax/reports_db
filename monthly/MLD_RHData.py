@@ -5,14 +5,6 @@
 # TR 1683 - RH Data for Mary Barter (meb@jax.org)
 #	  this report is expected to run the first of every month
 #
-# Notes:
-#	- all reports use mgireport directory for output file
-#	- all reports use db default of public login
-#	- all reports use server/database default of environment
-#	- use lowercase for all SQL commands (i.e. select not SELECT)
-#	- all public SQL reports require the header and footer
-#	- all private SQL reports require the header
-#
 # History:
 #
 # lec	06/27/2000

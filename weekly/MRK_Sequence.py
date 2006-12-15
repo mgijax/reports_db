@@ -16,8 +16,6 @@
 #       Those establishing relationships between MGI Markers
 #	and Nucleotide Sequences.
 #
-# Notes:
-#
 # History:
 #
 # lec	01/27/2005
