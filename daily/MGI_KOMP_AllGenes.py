@@ -37,9 +37,7 @@ import string
 import reportlib
 
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
 TAB = reportlib.TAB
-PAGE = reportlib.PAGE
 
 introBLOG = '''
 This report provides a list of all genes that may be considered potential candidates for being knocked out through the NIH KOMP project. Genes are sorted by chromosome, and alphabetically by gene symbol within a chromosome.
@@ -78,6 +76,9 @@ KOMPTAG = 'KOMP'
 
 kompGeneDict = {}		# dictionary; key = MGI ID, values = dictionary of komp fields
 kompTargetList = []		# a list of MGI IDs that appear in the KOMP Target list
+
+MARKER_ANCHOR = '<A HREF="http://www.informatics.jax.org/searches/accession_report.cgi?id=%s" target="_blank">'
+CLOSE_ANCHOR = '</A'
 
 ncbimodel = {}		# dictionary of MGI marker key:ncbi gene model ids
 ensemblmodel = {}	# dictionary of MGI marker key:ensembl gene model ids
@@ -146,7 +147,7 @@ def writeHTML(r):
 
     s = '<tr>' + \
 	BEGTD + r['accID'] + '</td>\n' + \
-        '%s%s%s%s%s\n' % (BEGTD, reportlib.create_accession_anchor(r['accID']), r['symbol'], reportlib.close_accession_anchor(), ENDTD) + \
+        BEGTD + MARKER_ANCHOR % (r['accID']) + r['symbol'] + CLOSE_ANCHOR + ENDTD + \
 	'<td width="25%"><font size="-1">' + r['name'] + ENDTD
 
     # if MGI ID found in KOMP target file...

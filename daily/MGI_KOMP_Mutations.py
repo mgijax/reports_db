@@ -33,9 +33,7 @@ import string
 import reportlib
 
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
 TAB = reportlib.TAB
-PAGE = reportlib.PAGE
 
 introBLOG = '''
 This report provides a list of those genes considered to be potential candidates for being knocked out through the NIH KOMP project and have one or more phenotypic mutations recorded in MGI. Note that this list does not include genes that are defined only through their phenotypic mutation (e.g., cub, curly bare) or those that are not assigned genome coordinates in NCBI Build 36.
