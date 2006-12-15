@@ -23,10 +23,6 @@
 # Usage:
 #       MGI_PhenotypicAllele.py
 #
-# Used by:
-#
-# Notes:
-#
 # History:
 #
 # lec	05/04/2004

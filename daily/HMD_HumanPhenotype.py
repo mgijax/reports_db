@@ -22,10 +22,6 @@
 # Usage:
 #       HMD_HumanPhenotype.py
 #
-# Used by:
-#
-# Notes:
-#
 # History:
 #
 # lec	01/04/2004

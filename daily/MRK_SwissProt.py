@@ -15,8 +15,6 @@
 #       Those establishing relationships between MGI Markers
 #	and Protein Sequences in SWISS-PROT.
 #
-# Notes:
-#
 # History:
 #
 # lec	03/02/1999

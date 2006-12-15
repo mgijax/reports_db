@@ -22,8 +22,6 @@
 #	ex. "NIA 15K,NIA 7.4K,NIA"
 #	ex. "RIKEN (FANTOM),RIKEN"
 #
-# Notes:
-#
 # History:
 #
 # lec	11/01/2004

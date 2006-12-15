@@ -17,8 +17,6 @@
 # Usage:
 #       MRK_VEGA.py
 #
-# Notes:
-#
 # History:
 #
 # lec   12/13/2006

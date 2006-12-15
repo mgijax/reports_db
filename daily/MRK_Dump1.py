@@ -14,8 +14,6 @@
 # Used by:
 #	Those who want to create WWW links to MGI Marker details.
 #
-# Notes:
-#
 # History:
 #
 # lec	01/13/98

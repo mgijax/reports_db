@@ -9,9 +9,6 @@
 # Usage:
 #       MRK_InterPro.py
 #
-#
-# Notes:
-#
 # History:
 #
 # lec	04/22/2003

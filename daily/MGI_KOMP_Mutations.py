@@ -8,16 +8,14 @@
 #
 #       TR 8028
 #
-#	Markers for which there is one or more allele 
-#	(excluding wild-type (+) alleles and alleles of type=QTL)
-#
-# Notes:
-#	- all reports use mgireport directory for output file
-#	- all reports use db default of public login
-#	- all reports use server/database default of environment
-#	- use lowercase for all SQL commands (i.e. select not SELECT)
-#	- all public SQL reports require the header and footer
-#	- all private SQL reports require the header
+#       MGI Mouse Markers:
+#       . of type "Gene"
+#       . associated with at least one:  
+#         NCBI Gene Model
+#         Ensembl Gene Model
+#         VEGA Gene Model
+#	. for which there is one or more public allele
+#	  (excluding wild-type (+) alleles and alleles of type=QTL)
 #
 # History:
 #

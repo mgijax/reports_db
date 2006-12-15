@@ -15,8 +15,6 @@
 # Used by:
 #       Swiss-Prot - Amos Bairoch - TR 444
 #
-# Notes:
-#
 # History:
 #
 # lec	02/15/2000

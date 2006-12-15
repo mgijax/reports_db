@@ -11,10 +11,6 @@
 # Usage:
 #       MGI_Strain.py
 #
-# Used by:
-#
-# Notes:
-#
 # History:
 #
 # lec	02/03/2003

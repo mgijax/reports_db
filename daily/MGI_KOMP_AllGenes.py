@@ -15,14 +15,6 @@
 #	  Ensembl Gene Model
 #	  VEGA Gene Model
 #
-# Notes:
-#	- all reports use mgireport directory for output file
-#	- all reports use db default of public login
-#	- all reports use server/database default of environment
-#	- use lowercase for all SQL commands (i.e. select not SELECT)
-#	- all public SQL reports require the header and footer
-#	- all private SQL reports require the header
-#
 # History:
 #
 # lec	12/08/2006

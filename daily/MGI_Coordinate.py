@@ -31,11 +31,6 @@
 # Usage:
 #       MGI_Coordinate.py
 #
-# Used by:
-# 	
-#
-# Notes:
-#
 # History:
 #
 # 04/21/2006 lec

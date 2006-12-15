@@ -17,8 +17,6 @@
 # Usage:
 #       MRK_ENSEMBL.py
 #
-# Notes:
-#
 # History:
 #
 # lec	08/26/2003

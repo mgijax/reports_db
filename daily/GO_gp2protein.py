@@ -17,8 +17,6 @@
 #	field 2: SWP:#####;SWP:#####;...
 # Used by:
 #
-# Notes:
-#
 # History:
 #	Created for TR3659.  
 #	Report the MGI ID, SwissProt ID(s), and GO ID(s) for all mouse

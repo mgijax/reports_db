@@ -11,10 +11,6 @@
 # Usage:
 #       MGI_StrainAllInbred.py
 #
-# Used by:
-#
-# Notes:
-#
 # History:
 #
 # lec	04/01/2004

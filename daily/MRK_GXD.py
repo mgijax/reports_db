@@ -13,8 +13,6 @@
 # Used by:
 #	Deanna Church of NCBI
 #
-# Notes:
-#
 # History:
 #
 # lec	06/20/2002

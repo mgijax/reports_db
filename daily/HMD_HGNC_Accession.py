@@ -11,10 +11,6 @@
 # Usage:
 #       HMD_HGNC_Accession.py
 #
-# Used by:
-#
-# Notes:
-#
 # History:
 #
 # lec	07/15/2005

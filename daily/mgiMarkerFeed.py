@@ -44,8 +44,6 @@
 # Usage:
 #       mgiMarkerFeed.py
 #
-# Notes:
-#
 # History:
 #
 # lec	03/21/2006	TR 7582

@@ -11,10 +11,6 @@
 # Usage:
 #       MRK_Dump2.py
 #
-# Used by:
-#
-# Notes:
-#
 # History:
 #
 # 05/30/2002	lec

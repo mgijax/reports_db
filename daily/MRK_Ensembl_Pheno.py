@@ -25,8 +25,6 @@
 # Usage:
 #       MRK_Ensembl_Pheno.py
 #
-# Notes:
-#
 # History:
 #
 # lec	01/20/2004
