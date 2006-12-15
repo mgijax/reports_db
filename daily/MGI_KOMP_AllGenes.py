@@ -70,13 +70,16 @@ kompGeneDict = {}		# dictionary; key = MGI ID, values = dictionary of komp field
 kompTargetList = []		# a list of MGI IDs that appear in the KOMP Target list
 
 MARKER_ANCHOR = '<A HREF="http://www.informatics.jax.org/searches/accession_report.cgi?id=%s" target="_blank">'
-CLOSE_ANCHOR = '</A'
+CLOSE_ANCHOR = '</A>'
 
 ncbimodel = {}		# dictionary of MGI marker key:ncbi gene model ids
 ensemblmodel = {}	# dictionary of MGI marker key:ensembl gene model ids
 vegamodel = {}		# dictionary of MGI marker key:vega gene model ids
 
 def init():
+    #
+    # initialize files, dictionaries
+    #
 
     global fpHTML, fpTAB, kompGeneDict, kompTargetList
 
@@ -132,8 +135,9 @@ def init():
     kompfile.close()
 
 def writeHTML(r):
-
-    # print marker records in HTML format
+    #
+    # write record to HTML file
+    #
 
     key = r['_Marker_key']
 
@@ -210,8 +214,9 @@ def writeHTML(r):
     return s
 
 def writeTAB(r):
-
-    # print marker records in tab-delimited format
+    #
+    # write record to tab-delimited file
+    #
 
     key = r['_Marker_key']
 
@@ -269,6 +274,9 @@ def writeTAB(r):
     return s
 
 def printHeaderHTML():
+    #
+    # write header to HTML file
+    #
 
     fpHTML.write('</pre>\n')
     fpHTML.write('<H2>MGI - All Genes List (for candidates to be knocked out by KOMP)</H2>')
@@ -291,6 +299,9 @@ def printHeaderHTML():
     fpHTML.write('<th align=left valign=top>cCDS</th>')
 
 def printHeaderTAB():
+    #
+    # write header to tab-delimited file
+    #
 
     fpTAB.write('# MGI - All Genes List (for candidates to be knocked out by KOMP)' + CRT)
     fpTAB.write('# MGI Gene ID' + TAB)
@@ -310,6 +321,9 @@ def printHeaderTAB():
     fpTAB.write('cCDS' + CRT)
 
 def process():
+    #
+    # process records
+    #
 
     global ncbimodel, ensemblmodel, vegamodel
 
@@ -362,7 +376,6 @@ def process():
     for r in results:
         key = r['_Marker_key']
         value = r['accID']
-
         provider = r['_LogicalDB_key']
 
         if provider == 59:
@@ -380,9 +393,6 @@ def process():
 	      vegamodel[key] = []
           vegamodel[key].append(value)
 
-    #
-    # process results
-    #
     results = db.sql('select * from #location order by sequenceNum, symbol', 'auto')
 
     for r in results:

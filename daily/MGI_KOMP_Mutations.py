@@ -47,11 +47,14 @@ This report provides a list of those genes considered to be potential candidates
 
 BEGTD = '<td><font size="-1">'
 ENDTD = '</font></td>'
+BEGTD2 = '<td width="25%"><font size="-1">'
 BLANKFIELD = '%s&nbsp;%s' % (BEGTD, ENDTD)
+
+MARKER_ANCHOR = '<A HREF="http://www.informatics.jax.org/searches/accession_report.cgi?id=%s" target="_blank">'
+CLOSE_ANCHOR = '</A>'
 
 ALLELE_ANCHOR1 = '<A HREF="http://www.informatics.jax.org/searches/allele_report.cgi?_Marker_key=%s&int:_Set_key=%s">'
 ALLELE_ANCHOR2 = '<A HREF="http://www.informatics.jax.org/searches/allele_report.cgi?_Marker_key=%s">'
-CLOSE_ALLELE_ANCHOR = '</A>'
 
 fpHTML = None
 fpTAB = None
@@ -63,6 +66,9 @@ markers = {}
 alleleCategories = {}
 
 def init():
+    #
+    # initialize files
+    #
 
     global fpHTML, fpTAB
 
@@ -73,6 +79,9 @@ def init():
     printHeaderTAB()
 
 def writeHTML(r):
+    #
+    # write record to HTML file
+    #
 
     # print marker records in HTML format
 
@@ -80,25 +89,28 @@ def writeHTML(r):
 
     s = '<tr>' + \
 	BEGTD + r['accID'] + '</td>\n' + \
-        '%s%s%s%s%s\n' % (BEGTD, reportlib.create_accession_anchor(r['accID']), r['symbol'], reportlib.close_accession_anchor(), ENDTD) + \
-	'<td width="25%"><font size="-1">' + r['name'] + ENDTD
+	BEGTD + MARKER_ANCHOR % (r['accID']) + r['symbol'] + CLOSE_ANCHOR + ENDTD + \
+	BEGTD2 + r['name'] + ENDTD
 
     s = s + BEGTD
 
     allAlleles = 0
     for ctermkey in markers[key]:
 	allAlleles = allAlleles + markers[key][ctermkey]['count']
-    s = s + 'All phenotypic alleles (' + ALLELE_ANCHOR2 % (key) + '%d' % (allAlleles) + CLOSE_ALLELE_ANCHOR + '):'
+    s = s + 'All phenotypic alleles (' + ALLELE_ANCHOR2 % (key) + '%d' % (allAlleles) + CLOSE_ANCHOR + '):'
 
     for ctermkey in markers[key]:
         s = s + '%s(' % (markers[key][ctermkey]['term']) + \
-	    ALLELE_ANCHOR1 % (key, ctermkey) + '%d' % (markers[key][ctermkey]['count']) + CLOSE_ALLELE_ANCHOR + ') '
+	    ALLELE_ANCHOR1 % (key, ctermkey) + '%d' % (markers[key][ctermkey]['count']) + CLOSE_ANCHOR + ') '
 
     s = s + ENDTD + CRT
 
     return s
 
 def writeTAB(r):
+    #
+    # write record to tab-delimited file
+    #
 
     # print marker records in tab-delimited format
 
@@ -109,12 +121,14 @@ def writeTAB(r):
     for ctermkey in markers[key]:
         s = s + '%s(%d)|' % (markers[key][ctermkey]['term'], markers[key][ctermkey]['count'])
 
-    # drop trailing pipe
-    s = s[:-1] + CRT
+    s = s + CRT
 
     return s
 
 def printHeaderHTML():
+    #
+    # write header to HTML file
+    #
 
     fpHTML.write('</pre>\n')
     fpHTML.write('<H2>MGI - Genes with phenotypic mutations</H2>')
@@ -126,6 +140,9 @@ def printHeaderHTML():
     fpHTML.write('<th align=left valign=top>Allele Types(#)</th>')
 
 def printHeaderTAB():
+    #
+    # write record to tab-delimited file
+    #
 
     fpTAB.write('# MGI - Genes with phenotypic mutations' + CRT)
     fpTAB.write('# MGI Gene ID' + TAB)
@@ -134,6 +151,9 @@ def printHeaderTAB():
     fpTAB.write('Allele Types(#)' + CRT)
 
 def process():
+    #
+    # process data
+    #
 
     global markers, alleleCategories
 
