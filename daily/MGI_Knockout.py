@@ -48,7 +48,6 @@ import regsub
 import string
 import reportlib
 import mgi_html
-import table
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
