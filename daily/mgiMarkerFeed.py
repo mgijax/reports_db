@@ -20,7 +20,7 @@
 #	7. allele_cellline.bcp
 #	8. allele_inheritance_mode.bcp
 #	9. allele_pairstate.bcp
-#	10.allele.bcp
+#	10. allele.bcp
 #	11. allele_label.bcp
 #	12. allele_pair.bcp
 #	13. allele_note.bcp
@@ -39,12 +39,17 @@
 #	26. marker_reference.bcp
 #	27. strain_reference.bcp
 #	28. mp_term.bcp
-#	29. mp_closure.bcp
+#	29. mp_synonym.bcp
+#	30. mp_closure.bcp
+#	31. marker_omim.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
 #
 # History:
+#
+# lec	07/07/2006
+#	- add OMIM annotations
 #
 # lec	03/21/2006	TR 7582
 #	- exclude strain synonyms with 'nm####' nomenclature
@@ -79,6 +84,7 @@
  
 import sys
 import os
+import re
 import string
 import db
 import reportlib
@@ -90,7 +96,7 @@ CRT = reportlib.CRT
 COLDELIM = "&=&"
 LINEDELIM = "\n#=#"
 
-OUTPUTDIR = os.environ['REPORTOUTPUTDIR'] + '/mgimarkerfeed/'
+OUTPUTDIR = os.environ['REPORTOUTPUTDIR'] + '/mgimarkerfeed2/'
 
 def strip_newline(s):
 
@@ -267,11 +273,16 @@ def vocabs():
 	    notes[key] = []
 	notes[key].append(value)
 
-    results = db.sql('select a.accID, t.term, t._Term_key, ' +
+    #
+    # MP (5) and OMIM (44) terms
+    #
+
+    results = db.sql('select a.accID, t.term, t._Term_key, v.name, ' +
           'cdate = convert(char(20), t.creation_date, 100), ' + \
           'mdate = convert(char(20), t.modification_date, 100) ' + \
-          'from VOC_Term t, ACC_Accession a ' + \
-	  'where t._Vocab_key = 5 ' + \
+          'from VOC_Vocab v, VOC_Term t, ACC_Accession a ' + \
+	  'where t._Vocab_key in (5, 44) ' + \
+	  'and t._Vocab_key = v._Vocab_key ' + \
 	  'and t._Term_key = a._Object_key ' + \
 	  'and a._MGIType_key = 13 ' + \
 	  'and a.preferred = 1', 'auto')
@@ -281,13 +292,38 @@ def vocabs():
 
 	    fp.write(`key` + TAB + \
 		     r['accID'] + TAB + \
-	             r['term'] + TAB)
+	             r['term'] + TAB + \
+		     r['name'] + TAB)
 
             if notes.has_key(key):
 		fp.write(string.join(notes[key], ''))
             fp.write(TAB)
 
 	    fp.write(r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # mp_synonym.bcp
+    # Synonyms for MP and OMIM terms
+    #
+
+    fp = open(OUTPUTDIR + 'mp_synonym.bcp', 'w')
+    
+    results = db.sql('select t._Term_key, s.synonym, ' +
+          'cdate = convert(char(20), s.creation_date, 100), ' + \
+          'mdate = convert(char(20), s.modification_date, 100) ' + \
+          'from VOC_Term t, MGI_Synonym s ' + \
+	  'where t._Vocab_key in (5, 44) ' + \
+	  'and t._Term_key = s._Object_key ' + \
+	  'and s._MGIType_key = 13 ', 'auto')
+
+    for r in results:
+	    key = r['_Term_key']
+
+	    fp.write(`key` + TAB + \
+		     r['synonym'] + TAB + \
+	             r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
     fp.close()
 
@@ -561,37 +597,6 @@ def alleles():
     fp.close()
 
     #
-    # select data fields for allele_pair.bcp
-    #
-
-    fp = open(OUTPUTDIR + 'allele_pair.bcp', 'w')
-
-    results = db.sql('select p.*, ' + 
-	    'cdate = convert(char(20), p.creation_date, 100), ' + \
-	    'mdate = convert(char(20), p.modification_date, 100) ' + \
-	    'from #alleles a, GXD_AllelePair p ' +  \
-	    'where a._Allele_key = p._Allele_key_1 ' + \
-	    'union ' + \
-            'select p.*, ' + 
-	    'cdate = convert(char(20), p.creation_date, 100), ' + \
-	    'mdate = convert(char(20), p.modification_date, 100) ' + \
-	    'from #alleles a, GXD_AllelePair p ' +  \
-	    'where a._Allele_key = p._Allele_key_2 ' + \
-	    'order by _Genotype_key, sequenceNum', 'auto')
-
-    for r in results:
-	    fp.write(`r['_AllelePair_key']` + TAB + \
-		     `r['_Allele_key_1']` + TAB + \
-		     mgi_utils.prvalue(r['_Allele_key_2']) + TAB + \
-		     `r['_Marker_key']` + TAB + \
-		     `r['_Genotype_key']` + TAB + \
-		     `r['_PairState_key']` + TAB + \
-		     `r['sequenceNum']` + TAB + \
-		     r['cdate'] + TAB + \
-		     r['mdate'] + CRT)
-    fp.close()
-
-    #
     # select data fields for allele_note.bcp
     #
 
@@ -704,17 +709,19 @@ def strains():
 
     fp = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
 
-    results = db.sql('select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.private, ' + \
+    results = db.sql('select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.private, qualifier = t.term, ' + \
           'cdate = convert(char(20), m.creation_date, 100), ' + \
           'mdate = convert(char(20), m.modification_date, 100) ' + \
-          'from #strains s, PRB_Strain_Marker m ' + \
-          'where s._Strain_key = m._Strain_key ', 'auto')
+          'from #strains s, PRB_Strain_Marker m, VOC_Term t ' + \
+          'where s._Strain_key = m._Strain_key ' + \
+	  'and m._Qualifier_key = t._Term_key', 'auto')
 
     for r in results:
 	    fp.write(`r['_Strain_key']` + TAB + \
 	             `r['_Marker_key']` + TAB + \
 	             mgi_utils.prvalue(r['_Allele_key']) + TAB + \
 	             `r['private']` + TAB + \
+		     r['qualifier'] + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
     fp.close()
@@ -806,12 +813,17 @@ def strains():
 
 def genotypes():
 
+    #
+    # MP/Genotype annotations (1002)
+    # OMIM/Genotype annotations (1005)
+    #
+
     db.sql('select distinct g._Genotype_key ' + \
 	    'into #genotypes ' + \
 	    'from #strains s, GXD_Genotype g, VOC_Annot a ' + \
 	    'where s._Strain_key = g._Strain_key ' + \
 	    'and g._Genotype_key = a._Object_key ' + \
-	    'and a._AnnotType_key = 1002 ' + \
+	    'and a._AnnotType_key in (1002, 1005) ' + \
 	    'union ' + \
 	    'select distinct g._Genotype_key ' + \
 	    'from #strains s, PRB_Strain_Genotype g ' + \
@@ -825,17 +837,24 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'genotype.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, s.strain, p.isConditional, ' + \
+    results = db.sql('select g._Genotype_key, s.strain, p.isConditional, c.note, ' + \
           'cdate = convert(char(20), p.creation_date, 100), ' + \
           'mdate = convert(char(20), p.modification_date, 100) ' + \
-	  'from #genotypes g, GXD_Genotype p, PRB_Strain s ' + \
+	  'from #genotypes g, GXD_Genotype p, PRB_Strain s, MGI_Note n, MGI_NoteChunk c ' + \
 	  'where g._Genotype_key = p._Genotype_key ' + \
-	  'and p._Strain_key = s._Strain_key', 'auto')
+	  'and p._Strain_key = s._Strain_key ' + \
+	  'and g._Genotype_key = n._Object_key ' + \
+	  'and n._NoteType_key = 1016 ' + \
+	  'and n._Note_key = c._Note_key', 'auto')
 
     for r in results:
+
+	note = re.sub('\n', ' ', string.strip(r['note']))
+
 	fp.write(`r['_Genotype_key']` + TAB + \
 		r['strain'] + TAB + \
 		`r['isConditional']` + TAB + \
+		note + TAB + \
 		r['cdate'] + TAB + \
 		r['mdate'] + CRT)
     fp.close()
@@ -844,28 +863,51 @@ def genotypes():
     # genotype_mpt.bcp
     #
 
+    #
+    # cache genotype/omimcategory3 values
+    #
+
+    omimCat = {}
+
+    results = db.sql('select _Genotype_key, category = min(omimCategory3) ' + \
+	'from MRK_OMIM_Cache where omimCategory3 != -1 ' + \
+	'group by _Genotype_key', 'auto')
+
+    for r in results:
+	key = r['_Genotype_key']
+	value = r['category']
+	omimCat[key] = value
+
     fp = open(OUTPUTDIR + 'genotype_mpt.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, a._Annot_key, a._Term_key, qualifier = q.term, ' + \
+    results = db.sql('select g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, qualifier = q.term, ' + \
           'cdate = convert(char(20), a.creation_date, 100), ' + \
           'mdate = convert(char(20), a.modification_date, 100) ' + \
 	'from #genotypes g, VOC_Annot a, VOC_Term q ' + \
 	'where g._Genotype_key = a._Object_key ' + \
-	'and a._AnnotType_key = 1002 ' + \
+	'and a._AnnotType_key in (1002, 1005) ' + \
 	'and a._Qualifier_key = q._Term_key', 'auto')
 
     for r in results:
+
+	if omimCat.has_key(r['_Genotype_key']):
+	    ovalue = omimCat[r['_Genotype_key']]
+        else:
+	    ovalue = -1
+
 	fp.write(`r['_Annot_key']` + TAB + \
+		 `r['_AnnotType_key']` + TAB + \
 	         `r['_Term_key']` + TAB + \
 	         `r['_Genotype_key']` + TAB + \
 		string.strip(mgi_utils.prvalue(r['qualifier'])) + TAB + \
+		`ovalue` + TAB + \
 		r['cdate'] + TAB + \
 		r['mdate'] + CRT)
 
     fp.close()
 
     #
-    # genotype_header.bcp
+    # genotype_header.bcp (MP only)
     #
 
     fp = open(OUTPUTDIR + 'genotype_header.bcp', 'w')
@@ -909,6 +951,39 @@ def genotypes():
                      r['mdate'] + CRT)
     fp.close()
 
+    #
+    # allele_pair.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_pair.bcp', 'w')
+
+    results = db.sql('select p.*, ' + 
+	    'cdate = convert(char(20), p.creation_date, 100), ' + \
+	    'mdate = convert(char(20), p.modification_date, 100) ' + \
+	    'from #alleles a, #genotypes g, GXD_AllelePair p ' +  \
+	    'where a._Allele_key = p._Allele_key_1 ' + \
+	    'and g._Genotype_key = p._Genotype_key ' + \
+	    'union ' + \
+            'select p.*, ' + 
+	    'cdate = convert(char(20), p.creation_date, 100), ' + \
+	    'mdate = convert(char(20), p.modification_date, 100) ' + \
+	    'from #alleles a, #genotypes g, GXD_AllelePair p ' +  \
+	    'where a._Allele_key = p._Allele_key_2 ' + \
+	    'and g._Genotype_key = p._Genotype_key ' + \
+	    'order by p._Genotype_key, p.sequenceNum', 'auto')
+
+    for r in results:
+	    fp.write(`r['_AllelePair_key']` + TAB + \
+		     `r['_Allele_key_1']` + TAB + \
+		     mgi_utils.prvalue(r['_Allele_key_2']) + TAB + \
+		     `r['_Marker_key']` + TAB + \
+		     `r['_Genotype_key']` + TAB + \
+		     `r['_PairState_key']` + TAB + \
+		     `r['sequenceNum']` + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
 def references():
 
     #
@@ -927,7 +1002,7 @@ def references():
 	    'into #genoreferences ' + \
 	    'from #genotypes g, VOC_Annot a, VOC_Evidence e ' + \
 	    'where g._Genotype_key = a._Object_key ' + \
-	    'and a._AnnotType_key = 1002 ' + \
+	    'and a._AnnotType_key in (1002, 1005) ' + \
 	    'and a._Annot_key = e._Annot_key', None)
 
     #
@@ -972,31 +1047,41 @@ def references():
     # references annotated to a Marker via the Strain
     #
 
-    db.sql('select distinct r._Refs_key, r._Marker_key, ' + \
-            'cdate = convert(char(20), r.creation_date, 100), ' + \
-            'mdate = convert(char(20), r.modification_date, 100) ' + \
+    db.sql('select distinct r._Refs_key, r._Marker_key ' + \
 	    'into #mrkreferences ' + \
 	    'from #genotypes g, GXD_AlleleGenotype ag, MRK_Reference r ' + \
 	    'where g._Genotype_key = ag._Genotype_key ' + \
 	    'and ag._Marker_key = r._Marker_key ' + \
 	    'union ' + \
-            'select distinct r._Refs_key, sm._Marker_key, ' + \
-            'cdate = convert(char(20), r.creation_date, 100), ' + \
-            'mdate = convert(char(20), r.modification_date, 100) ' + \
+            'select distinct r._Refs_key, sm._Marker_key ' + \
 	    'from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r ' + \
 	    'where s._Strain_key = sm._Strain_key ' + \
 	    'and sm._Marker_key = r._Object_key ' + \
 	    'and r._MGIType_key = 2 ', None)
 
+    #
+    # references used in Human/OMIM annotations
+    #
+
+    db.sql('select distinct e._Refs_key, ' + \
+	    'cdate = convert(char(20), e.creation_date, 100), ' + \
+	    'mdate = convert(char(20), e.modification_date, 100) ' + \
+	    'into #omimreferences ' + \
+	    'from VOC_Annot a, VOC_Evidence e ' + \
+	    'where a._AnnotType_key = 1006 ' + \
+	    'and a._Annot_key = e._Annot_key', None)
+
     db.sql('create index idx1 on #genoreferences(_Refs_key)', None)
     db.sql('create index idx1 on #allreferences(_Refs_key)', None)
     db.sql('create index idx1 on #strainreferences(_Refs_key)', None)
     db.sql('create index idx1 on #mrkreferences(_Refs_key)', None)
+    db.sql('create index idx1 on #omimreferences(_Refs_key)', None)
 
     db.sql('select distinct _Refs_key into #references from #genoreferences ' + \
 	    'union select distinct _Refs_key from #allreferences ' + \
 	    'union select distinct _Refs_key from #strainreferences ' + \
-	    'union select distinct _Refs_key from #mrkreferences', None)
+	    'union select distinct _Refs_key from #mrkreferences ' + \
+	    'union select distinct _Refs_key from #omimreferences', None)
     db.sql('create index idx1 on #references(_Refs_key)', None)
 
     results = db.sql('select r._Refs_key, b.refType, b.authors, b.authors2, ' + \
@@ -1124,17 +1209,36 @@ def references():
 
     fp = open(OUTPUTDIR + 'marker_reference.bcp', 'w')
 
-    refs = {}
     results = db.sql('select * from #mrkreferences', 'auto')
     for r in results:
-	    key = (r['_Marker_key'], r['_Refs_key'])
-	    value = r
-	    if not refs.has_key(key):
-	        fp.write(`r['_Marker_key']` + TAB + \
-		         `r['_Refs_key']` + TAB + \
-		          r['cdate'] + TAB +
-                          r['mdate'] + CRT)
-		refs[key] = value
+	    fp.write(`r['_Marker_key']` + TAB + \
+		     `r['_Refs_key']` + CRT)
+    fp.close()
+
+def omim():
+
+    #
+    # Human Marker/OMIM annotations (1006)
+    #
+    # marker_omim.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'marker_omim.bcp', 'w')
+
+    results = db.sql('select a._Term_key, a._Object_key, e._Refs_key, ' + \
+          'cdate = convert(char(20), a.creation_date, 100), ' + \
+          'mdate = convert(char(20), a.modification_date, 100) ' + \
+	'from VOC_Annot a, VOC_Evidence e ' + \
+	'where a._AnnotType_key = 1006 ' + \
+	'and a._Annot_key = e._Annot_key', 'auto')
+
+    for r in results:
+	fp.write(`r['_Term_key']` + TAB + \
+	         `r['_Object_key']` + TAB + \
+	         `r['_Refs_key']` + TAB + \
+		 r['cdate'] + TAB + \
+		 r['mdate'] + CRT)
+
     fp.close()
 
 #
@@ -1149,5 +1253,6 @@ markers()
 strains()
 genotypes()
 references()
+omim()
 db.useOneConnection(0)
 
