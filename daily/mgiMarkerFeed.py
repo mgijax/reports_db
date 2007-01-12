@@ -96,7 +96,7 @@ CRT = reportlib.CRT
 COLDELIM = "&=&"
 LINEDELIM = "\n#=#"
 
-OUTPUTDIR = os.environ['REPORTOUTPUTDIR'] + '/mgimarkerfeed2/'
+OUTPUTDIR = os.environ['REPORTOUTPUTDIR'] + '/mgimarkerfeed/'
 
 def strip_newline(s):
 
