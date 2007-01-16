@@ -51,7 +51,6 @@ cmd = 'select mgiID = a1.accID, m.symbol, m.name, m.chromosome, o.offset, vegaID
             'a1.preferred = 1 and ' + \
             'a2._LogicalDB_key = 85 and ' + \
             'a2._MGIType_key = 2 and ' + \
-            'm._Marker_Type_key = 1 and ' + \
             'o.source = 0 ' + \
       'order by m.chromosome, m.symbol'
 
