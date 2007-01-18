@@ -29,7 +29,7 @@ setenv MPFILES                  "MPheno_OBO.ontology"
 
 # Adult Mouse Anatomy Source
 setenv MAVOCSOURCE              /data/loads/mgi/vocload/runTimeMA
-setenv MAFILES                  "adult_mouse_anatomy.gxd anatomy_defs.gxd adult_mouse_anatomy.obo"
+setenv MAFILES                  "adult_mouse_anatomy.obo"
 
 # InParanoid directory
 setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
