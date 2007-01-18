@@ -10,23 +10,24 @@
 #   2. marker type
 #   3. symbol
 #   4. name
-#   5. representative genome chromosome
-#   6. representative genome start
-#   7. representative genome end
-#   8. representative genome strand
-#   9. represenative genome build
-#  10. entrez gene id
-#  11. NCBI gene chromosome
-#  12. NCBI gene start
-#  13. NCBI gene end
-#  14. NCBI gene strand
-#  15. Ensembl gene id
-#  16. Ensembl gene chromosome
-#  17. Ensembl gene start
-#  18. Ensembl gene end
-#  19. Ensembl gene strand
-#  20. UniSTS gene start
-#  21. UniSTS gene end
+#   5. representative genome id
+#   6. representative genome chromosome
+#   7. representative genome start
+#   8. representative genome end
+#   9. representative genome strand
+#  10. represenative genome build
+#  11. entrez gene id
+#  12. NCBI gene chromosome
+#  13. NCBI gene start
+#  14. NCBI gene end
+#  15. NCBI gene strand
+#  16. Ensembl gene id
+#  17. Ensembl gene chromosome
+#  18. Ensembl gene start
+#  19. Ensembl gene end
+#  20. Ensembl gene strand
+#  21. UniSTS gene start
+#  22. UniSTS gene end
 #
 # Usage:
 #       MGI_Coordinate.py
@@ -110,15 +111,19 @@ def getCoords(logicalDBkey, provider):
             value = r
             tempCoords[key] = value
 
-    # Get the representative coordinates; this data is cached
+    # get the representative coordinates
 
-    results = db.sql('select m._Marker_key, ' + \
+    results = db.sql('select m._Marker_key, a.accID, ' + \
 	        'c.chromosome, c.strand, ' + \
 	        'startC = convert(int, c.startCoordinate), ' + \
 	        'endC = convert(int, c.endCoordinate), genomeBuild = c.version ' + \
-	            'from #markers m, MRK_Location_Cache c ' + \
-	            'where m._Marker_key = c._Marker_key ' + \
-	            'and c.provider = "%s" ' % (provider), 'auto')
+	            'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
+	            'where m._Marker_key = mc._Marker_key ' + \
+		    'and mc._Qualifier_key = 615419 ' + \
+		    'and mc._Sequence_key = c._Sequence_key ' + \
+	            'and mc._Sequence_key = a._Object_key ' + \
+	            'and a._MGIType_key = %d ' % (sequenceType) + \
+	            'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
 
     for r in results:
         key = r['_Marker_key']
@@ -138,6 +143,7 @@ fp.write('MGI accession id' + TAB)
 fp.write('marker type' + TAB)
 fp.write('marker symbol' + TAB)
 fp.write('marker name' + TAB)
+fp.write('representative genome id' + TAB)
 fp.write('representative genome chromosome' + TAB)
 fp.write('representative genome start' + TAB)
 fp.write('representative genome end' + TAB)
@@ -210,6 +216,7 @@ for r in results:
 
     if repCoords.has_key(key):
         c = repCoords[key]
+        fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
