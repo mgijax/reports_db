@@ -91,6 +91,7 @@ def initialize():
 	    'and s._Organism_key = 1 ' + \
 	    'and s._Marker_key = m._Marker_key ' + \
 	    'and m._Marker_Type_key = 1 '+ \
+	    'and m._Marker_Status_key in (1,3) '+ \
 	    'and not exists (select 1 from #excludemarkers x where ' + \
 		's._Marker_key = x._Marker_key)', None)
     db.sql('create index idx1 on #sequences(accID)', None)
