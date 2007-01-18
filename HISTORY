@@ -1,3 +1,9 @@
+TAG: reports_db-3-5-1-39
+DATE: 01/18/2007
+STAFF: lec
+CHANGES:
+1) added VEGA columns to MGI_Coordinate.rpt
+
 TAG: reports_db-3-5-1-38
 TAG: reports_db-3-5-1-37
 DATE: 01/10/2007

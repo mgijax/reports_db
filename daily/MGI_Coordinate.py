@@ -143,18 +143,23 @@ fp.write('representative genome start' + TAB)
 fp.write('representative genome end' + TAB)
 fp.write('representative genome strand' + TAB)
 fp.write('representative genome build' + TAB)
-fp.write('entrez gene id' + TAB)
+fp.write('Entrez gene id' + TAB)
 fp.write('NCBI gene chromosome' + TAB)
 fp.write('NCBI gene start' + TAB)
 fp.write('NCBI gene end' + TAB)
 fp.write('NCBI gene strand' + TAB)
-fp.write('ensembl gene id' + TAB)
-fp.write('ensembl gene chromosome' + TAB)
-fp.write('ensembl gene start' + TAB)
-fp.write('ensembl gene end' + TAB)
-fp.write('ensembl gene strand' + TAB)
-fp.write('unists gene start' + TAB)
-fp.write('unists gene end' + CRT)
+fp.write('Ensembl gene id' + TAB)
+fp.write('Ensembl gene chromosome' + TAB)
+fp.write('Ensembl gene start' + TAB)
+fp.write('Ensembl gene end' + TAB)
+fp.write('Ensembl gene strand' + TAB)
+fp.write('VEGA gene id' + TAB)
+fp.write('VEGA gene chromosome' + TAB)
+fp.write('VEGA gene start' + TAB)
+fp.write('VEGA gene end' + TAB)
+fp.write('VEGA gene strand' + TAB)
+fp.write('UniSTS gene start' + TAB)
+fp.write('UniSTS gene end' + CRT)
 
 # all active markers
 
@@ -235,6 +240,18 @@ for r in results:
         fp.write(str(c['endC']) + TAB)
         fp.write(c['strand'] + TAB)
 #        fp.write(coordDisplay % (c['chromosome'], c['startC'], c['endC'], c['strand']) + TAB)
+    else:
+	fp.write(5*noneDisplay)
+
+    # VEGA coordinate
+
+    if vegaCoords.has_key(key):
+	c = vegaCoords[key]
+	fp.write(c['accID'] + TAB)
+        fp.write(c['chromosome'] + TAB)
+        fp.write(str(c['startC']) + TAB)
+        fp.write(str(c['endC']) + TAB)
+        fp.write(c['strand'] + TAB)
     else:
 	fp.write(5*noneDisplay)
 
