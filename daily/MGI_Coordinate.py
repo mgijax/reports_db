@@ -25,9 +25,14 @@
 #  17. Ensembl gene chromosome
 #  18. Ensembl gene start
 #  19. Ensembl gene end
-#  20. Ensembl gene strand
-#  21. UniSTS gene start
-#  22. UniSTS gene end
+#  20. VEGA gene id
+#  21. VEGA gene chromosome
+#  22. VEGA gene start
+#  23. VEGA gene end
+#  24. VEGA gene strand
+#  25. VEGA gene strand
+#  26. UniSTS gene start
+#  27. UniSTS gene end
 #
 # Usage:
 #       MGI_Coordinate.py
