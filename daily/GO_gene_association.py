@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	01/25/2007
+#	- TR 8122; don't convert inferredFrom delimiters; use as is in the database
+#
 # lec	09/14/2006
 #	- TR 7904; append GOA annotations
 #
