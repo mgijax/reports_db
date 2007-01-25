@@ -218,17 +218,7 @@ for r in results:
                     referenceID = referenceID + '|PMID:' + pubMed[r['_Refs_key']]
                 fp.write(referenceID + TAB)
 		fp.write(r['eCode'] + TAB)
-
-		# substitute | for ", " in inferredFrom
-
-		if r['inferredFrom'] != None:
-			inferredFrom = re.sub(',', '|', r['inferredFrom'])
-			inferredFrom = re.sub(';', '|', inferredFrom)
-			inferredFrom = re.sub(' ', '', inferredFrom)
-		else:
-			inferredFrom = r['inferredFrom']
-
-		fp.write(mgi_utils.prvalue(inferredFrom) + TAB)
+		fp.write(mgi_utils.prvalue(r['inferredFrom']) + TAB)
 
 		fp.write(dag[r['_Term_key']] + TAB)
 		fp.write(r['name'] + TAB)
