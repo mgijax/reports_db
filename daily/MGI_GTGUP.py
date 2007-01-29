@@ -48,7 +48,7 @@ field9 = '%s;%s'
 #
 
 db.useOneConnection(1)
-fp = reportlib.init(sys.argv[0], fileExt = '.gff', outputdir = os.environ['QCOUTPUTDIR'], printHeading = None)
+fp = reportlib.init(sys.argv[0], fileExt = '.gff', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 # mapped features that have marker associations
 # exclude DNA Segments and QTLs
