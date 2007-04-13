@@ -1,7 +1,11 @@
+TAG: reports_db-3-5-3-2
 TAG: reports_db-3-5-3-1
 DATE: 04/13/2007
 STAFF: sc
-CHANGES: Gene trap lite
+CHANGES: Gene trap lite 
+1) Added MGI_GeneTrap.rpt to monthly and index.html
+2) Added MGI_UnassociatedGeneTraps.rpt to index.html
+   (This is created and placed on ftp site by gtpipeline)
 
 TAG: reports_db-3-5-1-46
 DATE: 02/02/2007
