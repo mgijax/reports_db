@@ -23,3 +23,5 @@ end
 
 cp ${REPORTOUTPUTDIR}/gene_association.mgi_nonmouse ${FTPCUSTOM}
 rm -rf ${REPORTOUTPUTDIR}/gene_association.mgi_nonmouse
+
+cp ${REPORTOUTPUTDIR}/MRK_GeneTrap.rpt ${FTPREPORTDIR}
