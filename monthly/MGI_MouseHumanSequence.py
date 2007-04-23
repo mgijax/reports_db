@@ -26,18 +26,23 @@
 #	12. Ensembl Start Coord
 #	13. Ensembl End Coord
 #	14. Ensembl Strand
-#	15. Mouse GenBank Ids
-#	16. Mouse UniGene Ids
-#	17. Mouse RefSeq Ids
-#	18. Mouse SwissProt Ids
-#	19. Mouse InterPro Ids
-#	20. Mouse Synonyms
-#	21. Human EG ID
-#	22. Human Symbol
-#	23. Human Name
-#	24. Human Chr
-#	25. Human RefSeq Ids
-#	26. Human Synonyms
+#	15. VEGA ID
+#	16. VEGA Chr
+#	17. VEGA Start Coord
+#	18. VEGA End Coord
+#	19. VEGA Strand
+#	20. Mouse GenBank Ids
+#	21. Mouse UniGene Ids
+#	22. Mouse RefSeq Ids
+#	23. Mouse SwissProt Ids
+#	24. Mouse InterPro Ids
+#	25. Mouse Synonyms
+#	26. Human EG ID
+#	27. Human Symbol
+#	28. Human Name
+#	29. Human Chr
+#	30. Human RefSeq Ids
+#	31. Human Synonyms
 #
 # Usage:
 #       MGI_MouseHumanSequence.py
@@ -66,6 +71,7 @@ repGenomicKey = 615419
 sequenceType = 19
 ncbi = 59
 ensembl = 60
+vega = 85
 valueDelimiter = ','
 
 #
@@ -123,10 +129,11 @@ db.sql('select m._Marker_key, m._Sequence_key, c.version into #repmarkers ' + \
 db.sql('create index idx1 on #repmarkers(_Marker_key)', None)
 db.sql('create index idx2 on #repmarkers(_Sequence_key)', None)
 
-# NCBI and Ensembl coordinates
+# NCBI, Ensembl and VEGA coordinates
 
 ncbiCoords = getCoords(ncbi)
 ensemblCoords = getCoords(ensembl)
+vegaCoords = getCoords(vega)
 
 #
 # select markers that have human orthologs
@@ -334,64 +341,80 @@ for r in results:
         else:
 	    fp.write(5*noneDisplay)
 
-#	15. Mouse GenBank Ids
+#	15. VEGA ID
+#	16. VEGA Chr
+#	17. VEGA Start Coord
+#	18. VEGA End Coord
+#	19. VEGA Strand
+
+        if vegaCoords.has_key(key):
+	    c = vegaCoords[key]
+	    fp.write(c['accID'] + TAB)
+            fp.write(c['chromosome'] + TAB)
+            fp.write(str(c['startC']) + TAB)
+            fp.write(str(c['endC']) + TAB)
+            fp.write(c['strand'] + TAB)
+        else:
+	    fp.write(5*noneDisplay)
+
+#	20. Mouse GenBank Ids
 
 	if gbID.has_key(key):
 		fp.write(string.join(gbID[key], valueDelimiter))
 	fp.write(TAB)
 
-#	16. Mouse UniGene Ids
+#	21. Mouse UniGene Ids
 
 	if ugID.has_key(key):
 		fp.write(string.join(ugID[key], valueDelimiter))
 	fp.write(TAB)
 
-#	17. Mouse RefSeq Ids
+#	22. Mouse RefSeq Ids
 
 	if mrefseqID.has_key(key):
 		fp.write(string.join(mrefseqID[key], valueDelimiter))
 	fp.write(TAB)
 
-#	18. Mouse SwissProt Ids
+#	23. Mouse SwissProt Ids
 
 	if mspID.has_key(key):
 		fp.write(string.join(mspID[key], valueDelimiter))
 	fp.write(TAB)
 
-#	19. Mouse InterProt Ids
+#	24. Mouse InterProt Ids
 
 	if ipID.has_key(key):
 		fp.write(string.join(ipID[key], valueDelimiter))
 	fp.write(TAB)
 
-#	20. Mouse Synonyms
+#	25. Mouse Synonyms
 
 	if mSyn.has_key(key):
 		fp.write(string.join(mSyn[key], valueDelimiter))
 	fp.write(TAB)
 
-#	21. Human EG ID
+#	26. Human EG ID
 
 	if r['humanKey'] != None:
 		if hegID.has_key(r['humanKey']):
 			fp.write(hegID[r['humanKey']])
 		fp.write(TAB)
 
-#		22. Human Symbol
-#		23. Human Name
-#		24. Human Chr
+#		27. Human Symbol
+#		28. Human Name
+#		29. Human Chr
 
 		fp.write(r['humanSym'] + TAB)
 		fp.write(r['humanName'] + TAB)
 		fp.write(r['humanChr'] + TAB)
 
-#		25. Human RefSeq Ids
+#		30. Human RefSeq Ids
 
 		if hrefseqID.has_key(r['humanKey']):
 			fp.write(string.join(hrefseqID[r['humanKey']], valueDelimiter))
 		fp.write(TAB)
 
-#		26. Human Synonyms
+#		31. Human Synonyms
 
 		if hSyn.has_key(key):
 			fp.write(string.join(hSyn[key], valueDelimiter))
