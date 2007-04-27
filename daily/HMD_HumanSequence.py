@@ -9,21 +9,27 @@
 #
 #	1. mouse gene symbol
 #	2. mgi acc id
-#	3. gene symbol for human ortholog
-#	4. entrezgene acc id for human gene
-#	5. nucleotide refseq acc id for mouse gene
-#	6. nucleotide refseq acc id for human gene
-#	7. protein refseq acc id for mouse gene
-#	8. protein refseq acc id for human gene
-#	9. sp acc id for mouse gene
-#	10. sp acc id for human gene
-#	11. if no ref seq or sp id, then GB acc ids for mouse gene
-#	12. evidence used to support mouse0human homology
+#	3. entrezgene acc id for mouse gene
+#	4. gene symbol for human ortholog
+#	5. entrezgene acc id for human gene
+#	6. nucleotide refseq acc id for mouse gene
+#	7. nucleotide refseq acc id for human gene
+#	8. protein refseq acc id for mouse gene
+#	9. protein refseq acc id for human gene
+#	10. sp acc id for mouse gene
+#	11. sp acc id for human gene
+#	12. if no ref seq or sp id, then GB acc ids for mouse gene
+#	13. evidence used to support mouse0human homology
+#	14. J-Number(s) for references supporting the orthology
+#	15. PubMed ID(s) for references supporting the orthology
 #
 # Usage:
 #       HMD_HumanSequence.py
 #
 # History:
+#
+# dbm	04/26/2007
+#	- TR 8277; add J-Numbers and PubMed IDs
 #
 # lec	10/25/2005
 #	- MGI 3.5; now loading Human RefSeqs directly into MGI
@@ -76,6 +82,16 @@ cmds.append('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' 
 cmds.append('create nonclustered index index_mouseKey on #homology(mouseKey)')
 cmds.append('create nonclustered index index_humanKey on #homology(humanKey)')
 cmds.append('create nonclustered index index_humanSym on #homology(humanSym)')
+
+cmds.append('select distinct h.mouseKey, mr.jnumID, mr.pubMedID ' + \
+	'into #homologyRef ' + \
+	'from #homology h, MRK_Homology_Cache hc, MRK_Reference mr ' + \
+	'where h.mouseKey = hc._Marker_key and ' + \
+      	'hc._Organism_key = 1 and ' + \
+      	'hc._Marker_key = mr._Marker_key and ' + \
+      	'hc._Refs_key = mr._Refs_key')
+
+cmds.append('create nonclustered index index_mouseKey on #homologyRef(mouseKey)')
 
 db.sql(cmds, None)
 
@@ -208,6 +224,24 @@ for r in results:
 		habbrev[r['mouseKey']] = []
 	habbrev[r['mouseKey']].append(r['abbrev'])
 
+# J-Numbers
+jnumID = {}
+results = db.sql('select distinct mouseKey, jnumID from #homologyRef', 'auto')
+for r in results:
+	if not jnumID.has_key(r['mouseKey']):
+		jnumID[r['mouseKey']] = []
+	jnumID[r['mouseKey']].append(r['jnumID'])
+
+# Pubmed IDs
+pubMedID = {}
+results = db.sql('select distinct mouseKey, pubMedID ' + \
+	'from #homologyRef ' + \
+	'where pubMedID is not null', 'auto')
+for r in results:
+	if not pubMedID.has_key(r['mouseKey']):
+		pubMedID[r['mouseKey']] = []
+	pubMedID[r['mouseKey']].append(r['pubMedID'])
+
 results = db.sql('select distinct mouseKey, mouseSym, humanKey, humanSym from #homology', 'auto')
 
 for r in results:
@@ -258,6 +292,14 @@ for r in results:
 
 	if habbrev.has_key(r['mouseKey']):
 		fp.write(string.join(habbrev[r['mouseKey']], ','))
+	fp.write(TAB)
+
+	if jnumID.has_key(r['mouseKey']):
+		fp.write(string.join(jnumID[r['mouseKey']], ','))
+	fp.write(TAB)
+
+	if pubMedID.has_key(r['mouseKey']):
+		fp.write(string.join(pubMedID[r['mouseKey']], ','))
 	fp.write(CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
