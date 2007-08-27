@@ -2,7 +2,7 @@
 
 '''
 #
-# MGI_KOMP_Mutations.py
+# MGI_Mutations.py
 #
 # Reports:
 #
@@ -22,6 +22,10 @@
 # lec	12/13/2006
 #	- created, TR 8028
 #
+# jmason 27/08/2007
+#   - changed name from MGI_KOMP_Mutations to MGI_Mutations
+#   - Updated header text
+#
 '''
  
 import sys 
@@ -34,7 +38,7 @@ CRT = reportlib.CRT
 TAB = reportlib.TAB
 
 introBLOG = '''
-This report provides a list of those genes considered to be potential candidates for being knocked out through the NIH KOMP project and have one or more phenotypic mutations recorded in MGI. Note that this list does not include genes that are defined only through their phenotypic mutation (e.g., cub, curly bare) or those that are not assigned genome coordinates in NCBI Build 36.
+This report lists those genes that have one or more phenotypic mutations recorded in MGI. Note that this list does not include genes that are defined only through their phenotypic mutation (e.g., cub, curly bare) or those that are not assigned genome coordinates in NCBI Build 36.
 <P>
 
 <UL>

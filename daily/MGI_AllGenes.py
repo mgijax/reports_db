@@ -2,7 +2,7 @@
 
 '''
 #
-# MGI_KOMP_AllGenes.py
+# MGI_AllGenes.py
 #
 # Reports:
 #
@@ -20,6 +20,10 @@
 # lec	12/08/2006
 #	- created, TR 8028
 #
+# jmason 27 August, 2007
+#   - changed name from MGI_KOMP_AllGenes to MGI_AllGenes
+#   - Updated header text
+#
 '''
  
 import sys 
@@ -32,25 +36,18 @@ CRT = reportlib.CRT
 TAB = reportlib.TAB
 
 introBLOG = '''
-This report provides a list of all genes that may be considered potential candidates for being knocked out through the NIH KOMP project. Genes are sorted by chromosome, and alphabetically by gene symbol within a chromosome.
-<P>
+<p>
+The All Genes List was created as follows: All genetic markers assigned type GENE in MGI were screened for those that also have at least one of the following types of IDs associated with them: NCBI EntrezGene or ENSEMBL or Vega. Only nuclear encoded genes are included (no mitochondrial encoded genes) and each gene has been placed on the genome (i.e., has a chromosomal location and genome coordinates in NCBI Build 36).
+</p>
 
-<UL>
-<LI>Each gene symbol is linked to its respective MGI Gene Detail page for additional information.
-<P>
-
-<LI>Genes with "KOMP" in the KOMP Target column are in the current list of 4,400+ genes in the KOMP target gene list. The KOMP target gene list consists of those genes in the mouse cCDS uniquely identified as having a consistent one-to-one relationship among genes assigned by MGI, EntrezGene, ENSEMBL, and VEGA and have never been reported as knocked out or gene trapped in the public domain (see 4th bullet point, below).
-<P>
-
-<LI>Genes with "Regeneron" or "CSD" in their respective columns indicate genes that currently are in the KOMP pipeline at the Regeneron or CHORI/Sanger/UCDavis KOMP project sites.
-<P>
-
-<LI>Genes with "+" in the Other Knockout Source column are those genes that have been reported as knocked out or gene trapped in the public domain (i.e., these genes are listed by the IGTC as having one or more gene traps or are recorded in MGI as having one or more knockouts or gene traps; or are in the pipeline of EUCOMM or the Sanger Institute towards being knocked out).
-<P>
-</UL>
-
-This All Genes List was created as follows. All genetic markers assigned type GENE in MGI were screened for those that also have at least one of the following types of IDs associated with them: NCBI EntrezGene or ENSEMBL or Vega. Only nuclear encoded genes are included (no mitochondrial encoded genes) and each gene has been placed on the genome (i.e., has a chromosomal location and genome coordinates in NCBI Build 36). 
-<P>
+<ul>
+<li>Genes are sorted by chromosome, and alphabetically by gene symbol within a chromosome.</li>
+<li>Each gene symbol is linked to its respective MGI Gene Detail page for additional information.</li>
+<li>Genes with "KOMP" in the KOMP Target column are genes that KOMP is currently targeting or plans to target.</li>
+<li>Genes with an entry in the "Regeneron" or "CSD" column indicate genes that currently are in the KOMP pipeline at the Regeneron or CHORI/Sanger/UCDavis KOMP project sites.</li>
+<li>Genes with "+" in the Other Knockout Source column are those genes that have been reported as knocked out or gene trapped in the public domain (i.e., these genes are listed by the IGTC as having one or more gene traps or are recorded in MGI as having one or more knockouts or gene traps; or are in the pipeline of EUCOMM or the Sanger Institute towards being knocked out).</li>
+</ul>
+<br />
 '''
 
 BEGTD = '<td><font size="-1">'
@@ -279,7 +276,7 @@ def printHeaderHTML():
     #
 
     fpHTML.write('</pre>\n')
-    fpHTML.write('<H2>MGI - All Genes List (for candidates to be knocked out by KOMP)</H2>')
+    fpHTML.write('<H2>MGI - All Genes List</H2>')
     fpHTML.write(introBLOG)
     fpHTML.write('<TABLE BORDER=3 WIDTH=100%>')
     fpHTML.write('<th align=left valign=top>MGI Gene ID</th>')
@@ -303,7 +300,7 @@ def printHeaderTAB():
     # write header to tab-delimited file
     #
 
-    fpTAB.write('# MGI - All Genes List (for candidates to be knocked out by KOMP)' + CRT)
+    fpTAB.write('# MGI - All Genes List' + CRT)
     fpTAB.write('# MGI Gene ID' + TAB)
     fpTAB.write('Gene Symbol' + TAB)
     fpTAB.write('Gene Name' + TAB)
