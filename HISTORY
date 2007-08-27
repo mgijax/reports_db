@@ -1,3 +1,11 @@
+TAG: reports_db-3-5-4-1
+DATE: 08/27/2007
+STAFF: jmason
+CHANGES:
+1) Renamed MGI_KOMP_AllGenes to MGI_AllGenes
+2) Renamed MGI_KOMP_Mutations to MGI_Mutations
+3) Changed header text appropriately
+
 TAG: reports_db-3-5-3-5
 DATE: 04/27/2007
 STAFF: dbm
