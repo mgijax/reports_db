@@ -1,3 +1,9 @@
+TAG: reports_db-3-5-4-2
+DATE: 08/30/2007
+STAFF: dbm
+CHANGES:
+1) Added HMD_HumanDisease.py (TR 8277)
+
 TAG: reports_db-3-5-4-1
 DATE: 08/27/2007
 STAFF: jmason
