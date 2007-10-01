@@ -1,3 +1,10 @@
+TAG: reports_db-3-5-4-3
+DATE: 10/01/2007
+STAFF: dbm
+CHANGES:
+1) Modified GO_gene_association.py to prefix MGI IDs in Inferred From
+   column with an extra "MGI:" (TR 8504)
+
 TAG: reports_db-3-5-4-2
 DATE: 08/30/2007
 STAFF: dbm
