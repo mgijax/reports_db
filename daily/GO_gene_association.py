@@ -221,7 +221,8 @@ for r in results:
                     referenceID = referenceID + '|PMID:' + pubMed[r['_Refs_key']]
                 fp.write(referenceID + TAB)
 		fp.write(r['eCode'] + TAB)
-		fp.write(mgi_utils.prvalue(r['inferredFrom']) + TAB)
+		inferredFrom = re.sub('MGI:','MGI:MGI:',mgi_utils.prvalue(r['inferredFrom']))
+		fp.write(inferredFrom + TAB)
 
 		fp.write(dag[r['_Term_key']] + TAB)
 		fp.write(r['name'] + TAB)
