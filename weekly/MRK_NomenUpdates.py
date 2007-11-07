@@ -38,21 +38,20 @@ import reportlib
 # Main
 #
 
-currentReport = 'Nomenclature-current.html'
+reportDir = os.environ['FTPREPORTDIR']
+reportName = 'Nomenclature-' + mgi_utils.date('%Y-%m-%d')
+currentReport = 'Nomenclature-current'
+currentDate = mgi_utils.date('%m/%d/%Y')
 
-# remove current report link if it exists
-if os.path.isfile('%s/%s' % (os.environ['FTPREPORTDIR'], currentReport)):
-	os.remove('%s/%s' % (os.environ['FTPREPORTDIR'], currentReport))
+# remove current report links if they exists
+if os.path.isfile('%s/%s' % (reportDir, currentReport + '.html')):
+	os.remove('%s/%s' % (reportDir, currentReport + '.html'))
+if os.path.isfile('%s/%s' % (reportDir, currentReport + '.rpt')):
+	os.remove('%s/%s' % (reportDir, currentReport + '.rpt'))
 
 # move existing Nomen reports to the archive
-os.system('mv %s/Nomenclature-*.html %s/archive/nomen' % (os.environ['FTPREPORTDIR'], os.environ['FTPREPORTDIR']))
-
-if len(sys.argv) > 1:
-	reportName = 'Nomenclature-' + sys.argv[1]
-	currentDate = sys.argv[2]
-else:
-	reportName = 'Nomenclature-' + mgi_utils.date('%Y-%m-%d')
-	currentDate = mgi_utils.date('%m/%d/%Y')
+os.system('mv %s/Nomenclature-*.html %s/archive/nomen' % (reportDir, reportDir))
+os.system('mv %s/Nomenclature-*.rpt %s/archive/nomen' % (reportDir, reportDir))
 
 results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
 bdate = results[0]['']
@@ -61,9 +60,10 @@ results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (current
 edate = results[0]['']
 
 title = 'Updates to Mouse Nomenclature from %s to %s' % (bdate, edate)
-fp = reportlib.init(reportName, title, os.environ['FTPREPORTDIR'], isHTML = 1, printHeading = "MGI")
+fpHTML = reportlib.init(reportName, title, os.environ['FTPREPORTDIR'], isHTML = 1, printHeading = "MGI")
+fpRpt = reportlib.init(reportName, outputdir = os.environ['FTPREPORTDIR'], printHeading = None)
 
-fp.write('J:23000 generally indicates gene family nomenclature revision event.\n\n')
+fpHTML.write('J:23000 generally indicates gene family nomenclature revision event.\n\n')
 
 cmd = []
 
@@ -121,8 +121,8 @@ cmd.append('select distinct * from #markers order by sequenceNum, symbol')
 
 results = db.sql(cmd, 'auto')
 
-fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Human Ortholog', 'Other MGI IDs'))
-fp.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '--------------', '-------------'))
+fpHTML.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Human Ortholog', 'Other MGI IDs'))
+fpHTML.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '--------------', '-------------'))
 
 primaryID = {}
 for r in results[2]:
@@ -150,35 +150,48 @@ for r in results[6]:
 	key = r['_Marker_key']
 	symbol = mgi_html.escape(r['symbol'])
 
-	fp.write('%-2s ' % (r['chromosome']))
+	fpHTML.write('%-2s ' % (r['chromosome']))
 
-	fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), symbol, reportlib.close_accession_anchor()))
-	fp.write('%-35s ' % (r['name']))
-	fp.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnumID'], reportlib.close_accession_anchor()))
-	fp.write('%-20s ' % (r['author']))
-	fp.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), primaryID[key], reportlib.close_accession_anchor()))
+	fpHTML.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), symbol, reportlib.close_accession_anchor()))
+
+	fpHTML.write('%-35s ' % (r['name']))
+
+	fpHTML.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnumID'], reportlib.close_accession_anchor()))
+
+	fpHTML.write('%-20s ' % (r['author']))
+
+	fpHTML.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), primaryID[key], reportlib.close_accession_anchor()))
+
+	fpRpt.write('%s\t%s\t%s\t%s\t%s\t%s\t' % (r['chromosome'], symbol, r['name'], r['jnumID'], r['author'], primaryID[key]))
 
 	if seqIDs.has_key(key):
-		fp.write('%-75s ' % (string.join(seqIDs[key], ',')))
+		fpHTML.write('%-75s ' % (string.join(seqIDs[key], ',')))
+		fpRpt.write('%s\t' % (string.join(seqIDs[key], ',')))
 	else:
-		fp.write('%-75s ' % (''))
+		fpHTML.write('%-75s ' % (''))
+		fpRpt.write('\t')
 
 	if human.has_key(key):
-		fp.write('%-15s ' % (human[key]))
+		fpHTML.write('%-15s ' % (human[key]))
+		fpRpt.write('%s\t' % (human[key]))
 	else:
-		fp.write('%-15s ' % (''))
+		fpHTML.write('%-15s ' % (''))
+		fpRpt.write('\t')
 
 	if otherIDs.has_key(key):
-		fp.write(string.join(otherIDs[key], ','))
-	fp.write(reportlib.CRT)
+		fpHTML.write(string.join(otherIDs[key], ','))
+		fpRpt.write('%s' % (string.join(otherIDs[key], ',')))
+
+	fpHTML.write(reportlib.CRT)
+	fpRpt.write(reportlib.CRT)
 
 	rows = rows + 1
 
-fp.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
-reportlib.finish_nonps(fp, isHTML = 1)	# non-postscript file
+fpHTML.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
+reportlib.finish_nonps(fpHTML, isHTML = 1)	# non-postscript file
+reportlib.finish_nonps(fpRpt)			# non-postscript file
 
 # re-create a symbolic link between the new file and the current file
-
-os.chdir(os.environ['FTPREPORTDIR'])
-os.symlink(reportName + '.html', currentReport)
-
+os.chdir(reportDir)
+os.symlink(reportName + '.html', currentReport + '.html')
+os.symlink(reportName + '.rpt', currentReport + '.rpt')
