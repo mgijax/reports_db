@@ -6,19 +6,12 @@
 
 cd `dirname $0` && source ./Configuration
 
-sed "s/FTPHERE/$FTPURL/" index.html > index.html.new
+# Substitute the FTPURL setting in the index page and copy it to the
+# FTP report directory.
+#
+sed "s/FTPURL_GOES_HERE/$FTPURL/" index.html > index.html.new
 mv -f index.html.new index.html
-
-foreach i (index.html)
-	cp -r $i ${FTPREPORTDIR}
-end
-
-cd daily
-set toEdit=`grep -l radar *`
-foreach i ($toEdit)
-sed "s/radar/$RADAR_DBNAME/g" $i > $i.new
-mv -f $i.new $i
-end
+cp index.html ${FTPREPORTDIR}
 
 #
 # directories
