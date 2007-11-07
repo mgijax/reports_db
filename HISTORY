@@ -1,3 +1,14 @@
+TAG: reports_db-3-5-4-4
+DATE: 11/7/2007
+STAFF: dbm
+CHANGES:
+1) Modified MRK_NomenUpdates.py to create an additional tab-delimited
+   version of the same report (TR 8601).
+2) Modified index.html to have a link to the new report, updated the
+   nomenclature report headings and fixed the FTP server URL so that the
+   Install script can substitute the proper setting ("devftp" or "ftp").
+3) Modified Install script to substitute FTPURL in index.html.
+
 TAG: reports_db-3-5-4-3
 DATE: 10/01/2007
 STAFF: dbm
