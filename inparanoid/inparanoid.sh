@@ -21,7 +21,7 @@ rm -rf ${INPARANOIDDIR}/*
 
 # unzip refseq protein fasta file
 rm -rf ${REFSEQFASTA}
-/usr/bin/gunzip ${REFSEQFASTAGZ}
+/usr/bin/gunzip -c ${REFSEQFASTAGZ} > ${REFSEQFASTA}
 
 # derive a FASTA file from the UniProt file
 /usr/local/wu-blast2.0/sp2fasta ${UNIPROTDAT} > ${UNIPROTFASTA}
