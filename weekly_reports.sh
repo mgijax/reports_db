@@ -26,4 +26,5 @@ cd ${PUBRPTS}
 ${PUBRPTS}/inparanoid/inparanoid.sh >>& ${LOG}
 
 cd ${INPARANOIDDIR}
+rm -f Mus-musculus*
 cp Mus-musculus* aaseq* ${FTPCUSTOM}/inparanoid
