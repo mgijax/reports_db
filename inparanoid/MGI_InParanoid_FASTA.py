@@ -25,6 +25,9 @@
 #
 # History:
 #
+# 11/16/2007	dbm
+#	- added new "aaseq.1090.fasta" file
+#
 # 12/12/2006	lec
 #	- exclude markers annotated to "deleted" sequences
 #	- don't exclude sequences annotated to > 1 marker
@@ -46,14 +49,19 @@ import reportlib
 
 uniprotHeader = '>%s source=MGI; version=%s; symbol=%s, uniprot=%s\n'
 refseqHeader = '>%s source=MGI; version=%s; symbol=%s, refseq=%s\n'
+fastaHeader = '>%s%s MGI:%s "%s"\n'
 uniprotFileName = os.environ['UNIPROTFASTA']
 refseqFileName = os.environ['REFSEQFASTA']
+uniprotLabel = 'UniProt:'
+refseqLabel = 'NCBI:'
 
 reportNameA = 'Mus-musculus_MGI_' + mgi_utils.date('%m%d%Y') + '_protein-reps'
 reportNameB = 'Mus-musculus_MGI_' + mgi_utils.date('%m%d%Y') + '_protein-all'
+reportNameC = 'aaseq'
 fileExtension = '.fa'
 fpA = None
 fpB = None
+fpC = None
 
 rep = {}
 seqs = {}
@@ -62,11 +70,12 @@ mgiIDs = {}
 
 def initialize():
 
-    global fpA, fpB
+    global fpA, fpB, fpC
     global rep, seqs, markers, mgiIDs
 
     fpA = reportlib.init(reportNameA, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = fileExtension)
     fpB = reportlib.init(reportNameB, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = fileExtension)
+    fpC = reportlib.init(reportNameC, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = '.10090.fasta')
 
     # deleted sequences
     db.sql('select s._Sequence_key into #deletedsequences ' + \
@@ -147,7 +156,7 @@ def initialize():
         value = r['accID']
         mgiIDs[key] = value
 
-def process(inFileName, column, header):
+def process(inFileName, column, header, label):
 
     inFile = open(inFileName, 'r')
     skipRecord = 0
@@ -172,6 +181,7 @@ def process(inFileName, column, header):
                     newLine = header % (mgiID, mgi_utils.date('%m/%d/%Y'), symbol, seqID)
 	            if rep.has_key(seqID):
 		        fpA.write(newLine)
+		        fpC.write(fastaHeader % (label, seqID, mgiID, symbol))
 	            fpB.write(newLine)
 
 	    # else, skip until we find the next header record
@@ -185,6 +195,7 @@ def process(inFileName, column, header):
 	    if not skipRecord:
 	        if rep.has_key(seqID):
                     fpA.write(line)
+                    fpC.write(line)
                 fpB.write(line)
 
     inFile.close()
@@ -194,8 +205,8 @@ def process(inFileName, column, header):
 #
 
 initialize()
-process(uniprotFileName, 1, uniprotHeader)
-process(refseqFileName, 3, refseqHeader)
+process(uniprotFileName, 1, uniprotHeader, uniprotLabel)
+process(refseqFileName, 3, refseqHeader, refseqLabel)
 reportlib.finish_nonps(fpA)
 reportlib.finish_nonps(fpB)
-
+reportlib.finish_nonps(fpC)
