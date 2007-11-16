@@ -1,3 +1,11 @@
+TAG: reports_db-3-5-4-6
+DATE: 11/16/2007
+STAFF: dbm
+CHANGES:
+1) Modified MGI_InParanoid_FASTA.py to create an addition fasta file
+   called "aaseq.10090.fasta" (TR 8630).
+2) Modified weekly_reports.sh to copy the new file.
+
 TAG: reports_db-3-5-4-5
 DATE: 11/8/2007
 STAFF: dbm
