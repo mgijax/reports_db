@@ -110,7 +110,11 @@ def writeRecord(i, r, e):
 	fp.write(r['mDate'] + TAB)
 
 	# field 15
-	fp.write(FIELD15)
+	modifiedBy = r['login']
+	if modifiedBy[0:4] == 'GOA_':
+		fp.write(modifiedBy[4:])
+	else:
+		fp.write(FIELD15)
 	fp.write(CRT)
 
 #
@@ -132,9 +136,9 @@ for r in results:
 # retrieve all ISS annotations that have a "with" value that begins "UniProt"
 #
 db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
-	'e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, e.modification_date, e._Refs_key, e._ModifiedBy_key ' + \
+	'e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, e.modification_date, e._Refs_key, e._ModifiedBy_key, u.login ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et, MGI_Synonym q ' + \
+	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et, MGI_Synonym q, MGI_User u ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Term_key = t._Term_key ' + \
@@ -146,7 +150,8 @@ db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_
 	'and e.inferredFrom like "UniProt:%" ' + \
 	'and e._Refs_key not in (89196) ' + \
         'and a._Qualifier_key = q._Object_key ' + \
-	'and q._SynonymType_key = 1023', None)
+	'and q._SynonymType_key = 1023 ' + \
+	'and e._ModifiedBy_key = u._User_key', None)
 
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_Refs_key)', None)
@@ -154,7 +159,7 @@ db.sql('create index idx2 on #gomarker(_Refs_key)', None)
 #
 # resolve pub med id
 #
-db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uniprotIDs, g._ModifiedBy_key, ' + \
+db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uniprotIDs, g._ModifiedBy_key, g.login, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
 	'refID = b.accID ' + \
 	'into #results ' + \
@@ -241,7 +246,7 @@ for r in results:
 
 	# get rid of any dangling delimiters
 
-        i = re.sub('|', '', i)
+        i = i.replace('|', '')
 
         eKey = r['_AnnotEvidence_key']
 
