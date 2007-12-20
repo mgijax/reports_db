@@ -1,3 +1,10 @@
+TAG: reports_db-3-5-4-10
+DATE: 12/20/2007
+STAFF: dbm
+CHANGES:
+1) Changed GXD report title to contain "Literature Content Records" instead
+   of "Literature Index Records" to prepare for 4.0, per Connie.
+
 TAG: reports_db-3-5-4-9
 DATE: 12/14/2007
 STAFF: dbm
