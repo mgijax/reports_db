@@ -45,7 +45,7 @@ def processOrganism(organismKey):
     db.sql('select distinct m._Marker_key, m.chromosome, m._Organism_key, hm._Class_key, s.commonName, c.sequenceNum ' + \
         'into #markers ' + \
 	'from MRK_Marker m, MRK_Homology_Cache hm, MGI_Organism s, MRK_Chromosome c ' + \
-	'where m._Organism_key = %s' % (organismKey) + \
+	'where m._Organism_key = %s ' % (organismKey) + \
 	'and m._Marker_key = hm._Marker_key ' + \
 	'and m._Organism_key = s._Organism_key ' + \
 	'and m._Organism_key = c._Organism_key ' + \
@@ -69,6 +69,11 @@ def processOrganism(organismKey):
 	'and m2._Organism_key = c2._Organism_key ' + \
 	'and m2.chromosome = c2.chromosome ' + \
 	'order by m2._Organism_key, m.sequenceNum, c2.sequenceNum', 'auto')
+
+    # drop the temp table so the next call to this method can recreate it
+    # for the next organism.
+
+    db.sql('drop table #markers', None)
 
     count = 0
     prevKey = ''
