@@ -1,3 +1,10 @@
+TAG: reports_db-3-5-4-12
+DATE: 1/17/2008
+STAFF: dbm
+CHANGES:
+1) Fixed bug in HMD_OxfordGrid.py where the temp table needed to drop between
+   calls to processOrganism() method to avoid an SQL error.
+
 TAG: reports_db-3-5-4-11
 DATE: 1/7/2008
 STAFF: dbm
