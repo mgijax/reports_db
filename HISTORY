@@ -1,3 +1,10 @@
+TAG: reports_db-4-0-0-1
+DATE: 2/20/2008
+STAFF: dbm
+CHANGES:
+1) Removed the general statistics section because the stats are provided
+   in the WI as of the 4.0 release.
+
 TAG: reports_db-3-5-4-12
 DATE: 1/17/2008
 STAFF: dbm
