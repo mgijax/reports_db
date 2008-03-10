@@ -1,3 +1,10 @@
+TAG: reports_db-4-0-0-2
+DATE: 3/10/2008
+STAFF: dbm
+CHANGES:
+1) Added build number next the file links for MGI_Coordinate.rpt,
+   MGI_GTGUP.gff and MGI_MouseHumanSequence.rpt (TR 8837).
+
 TAG: reports_db-4-0-0-1
 DATE: 2/20/2008
 STAFF: dbm
