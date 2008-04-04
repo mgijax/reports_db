@@ -146,7 +146,7 @@ db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_
 	'and ta._MGIType_key = 13 ' + \
 	'and ta.preferred = 1 ' + \
 	'and e._EvidenceTerm_key = et._Term_key ' + \
-	'and et.abbreviation = "ISS" ' + \
+	'and et.abbreviation in ("ISS","ISO","ISM","ISA") ' + \
 	'and e.inferredFrom like "UniProt:%" ' + \
 	'and e._Refs_key not in (89196) ' + \
         'and a._Qualifier_key = q._Object_key ' + \
