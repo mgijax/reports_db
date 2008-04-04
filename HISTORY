@@ -1,3 +1,10 @@
+TAG: reports_db-4-0-1-1
+DATE: 4/4/2008
+STAFF: dbm
+CHANGES:
+1) Modified GO_gene_association_nonmouse.py to include ISS, ISO, ISA and ISM
+   evidence codes (TR 8900).
+
 TAG: reports_db-4-0-0-2
 DATE: 3/10/2008
 STAFF: dbm
