@@ -755,15 +755,15 @@ def strains():
 
     fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
 
-    results = db.sql('select m._Strain_key, m._StrainType_key, s.private, ' + \
+    results = db.sql('select m._Strain_key, m._Annot_key, s.private, ' + \
           'cdate = convert(char(20), m.creation_date, 100), ' + \
           'mdate = convert(char(20), m.modification_date, 100) ' + \
-          'from #strains s, PRB_Strain_Type m ' + \
+          'from #strains s, PRB_Strain_Attribute_View m ' + \
           'where s._Strain_key = m._Strain_key', 'auto')
 
     for r in results:
 	    fp.write(`r['_Strain_key']` + TAB + \
-	             `r['_StrainType_key']` + TAB + \
+	             `r['_Annot_key']` + TAB + \
 	             `r['private']` + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
