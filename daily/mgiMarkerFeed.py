@@ -244,7 +244,7 @@ def vocabs():
     results = db.sql('select _Term_key, term, ' + \
           'cdate = convert(char(20), creation_date, 100), ' + \
           'mdate = convert(char(20), modification_date, 100) ' + \
-          'from VOC_Term_StrainType_View', 'auto')
+          'from VOC_Term_StrainAttribute_View', 'auto')
 
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
@@ -663,7 +663,7 @@ def strains():
     # strain.bcp
     #
 
-    db.sql('select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
+    db.sql('select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, ' + \
           'cdate = convert(char(20), s.creation_date, 100), ' + \
           'mdate = convert(char(20), s.modification_date, 100) ' + \
           'into #strains ' + \
@@ -672,13 +672,13 @@ def strains():
           'and a._MGIType_key = 10 ' + \
           'and a._LogicalDB_key in (22, 38) ' + \
           'union ' + \
-          'select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
+          'select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, ' + \
           'cdate = convert(char(20), s.creation_date, 100), ' + \
           'mdate = convert(char(20), s.modification_date, 100) ' + \
           'from PRB_Strain s, ALL_Allele a ' + \
 	  'where s._Strain_key = a._Strain_key ' + \
           'union ' + \
-          'select distinct s._Strain_key, s._Species_key, s.strain, s.private, ' + \
+          'select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, ' + \
           'cdate = convert(char(20), s.creation_date, 100), ' + \
           'mdate = convert(char(20), s.modification_date, 100) ' + \
           'from PRB_Strain s, ALL_CellLine a ' + \
@@ -755,9 +755,7 @@ def strains():
 
     fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
 
-    results = db.sql('select m._Strain_key, m._Annot_key, s.private, ' + \
-          'cdate = convert(char(20), m.creation_date, 100), ' + \
-          'mdate = convert(char(20), m.modification_date, 100) ' + \
+    results = db.sql('select m._Strain_key, m._Annot_key, s.private, s.cdate, s.mdate ' + \
           'from #strains s, PRB_Strain_Attribute_View m ' + \
           'where s._Strain_key = m._Strain_key', 'auto')
 
@@ -767,6 +765,7 @@ def strains():
 	             `r['private']` + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
+
     fp.close()
 
     #
