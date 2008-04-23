@@ -57,6 +57,7 @@ for r in results:
 results = db.sql('select distinct a.accID, m._Marker_key, m.symbol ' + \
 	'from MRK_Marker m, GXD_Assay g, ACC_Accession a ' + \
 	'where m._Marker_key = g._Marker_key ' + \
+	'and g._AssayType_key not in (10) ' + \
 	'and m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
