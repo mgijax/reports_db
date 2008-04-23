@@ -1,3 +1,12 @@
+TAG: reports_db-tr8747-
+DATE: 4/23/2008
+STAFF: lec
+CHANGES:
+1) MRK_GXDAssay; exclude new assays
+   mgiMarkerFeed: strain attribute replaces strain type
+   PRB_Strain1.sql: removed
+   PRB_Strain2.sql: removed
+
 TAG: reports_db-tr8747-BP
 DATE: 4/23/2008
 STAFF: lec
