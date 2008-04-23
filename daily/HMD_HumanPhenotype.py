@@ -24,6 +24,9 @@
 #
 # History:
 #
+# lec	04/23/2008
+#	- TR 8963; only select primary MP Header Ids
+#
 # lec	01/04/2004
 #	- TR 5939; EntrezGene->EntrezGene
 #
@@ -109,6 +112,7 @@ hlocus = createDict(results, '_Object_key', 'accID')
 
 #
 # Get the MP Header Terms for the mouse markers
+# only select primary ids
 #
 
 results = db.sql('select distinct h.mouseKey, a.accID ' + \
@@ -118,6 +122,7 @@ results = db.sql('select distinct h.mouseKey, a.accID ' + \
                 'and v._AnnotType_key = 1002 ' + \
                 'and a._Object_key = v._Term_key ' + \
                 'and a._MGIType_key = 13 ' + \
+                'and a.preferred = 1 ' + \
                 'and a._LogicalDB_key = 34 ', 'auto')
 mpheno = createDict(results, 'mouseKey', 'accID')
 
