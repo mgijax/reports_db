@@ -48,6 +48,9 @@
 #
 # History:
 #
+# lec	04/23/2008
+#	- TR 8511; strain types changed to strain attribute
+#
 # lec	07/07/2006
 #	- add OMIM annotations
 #
