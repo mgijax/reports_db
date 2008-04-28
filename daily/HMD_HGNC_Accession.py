@@ -99,7 +99,7 @@ for r in results:
 
 		fp.write(mgi[r['mgiKey']] + reportlib.TAB + \
 	         	r['mgiSymbol'] + reportlib.TAB + \
-	         	r['mgiName'][0:50] + reportlib.TAB)
+	         	r['mgiName'] + reportlib.TAB)
 
 		if meg.has_key(r['mgiKey']):
 			fp.write(meg[r['mgiKey']])
