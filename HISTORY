@@ -1,3 +1,9 @@
+TAG: reports_db-4-0-1-2
+DATE: 4/28/2008
+STAFF: dbm
+CHANGES:
+1) Allow HMD_HGNC_Accession.rpt to display entire gene name (TR8960).
+
 TAG: reports_db-tr8528-BP
 DATE: 4/24/2008
 STAFF: dbm
