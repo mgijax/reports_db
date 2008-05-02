@@ -22,6 +22,13 @@
 #
 # History:
 #
+# 05/02/2008	jer
+#	- TR 8994; several small changes; (1) add MGI: prefix to MGI ids
+#	(e.g. MGI:MGI:12345); include all genes with a DNA/RNA 
+#	sequence, even if no protein seqs are available
+#	(leave col 2 blank in those cases); change "SWP:" and "TR:" prefixes
+#	to "UniProtKB:".
+#
 # 12/24/2007    dbm
 #       - TR 8697; complete re-write; Show all protein coding genes and
 #         their representative protein sequences, regardless of annotations.
@@ -86,6 +93,27 @@ cmds.append('select a.accID "mgiID", ' + \
             'order by a.accID')
 
 #
+# Get the genes that have at least one nucleic acid sequence, but no
+# protein sequence. 
+#
+cmds.append('''
+	select mv.mgiID
+	from MRK_Mouse_View mv
+	where mv._Marker_key not in (
+		select ms._Marker_key
+		from #markerseq ms
+		)
+	and mv._Marker_key in (
+		select distinct mc._Marker_key
+		from SEQ_Marker_Cache mc
+		where mc._Organism_key = 1
+		and mc._SequenceType_key in (316373,316346)
+		)
+	and mv.markerType = 'Gene'
+	and mv.status = 'official'
+	''')
+
+#
 # Get the results set.
 #
 results = db.sql(cmds, 'auto')
@@ -94,19 +122,24 @@ results = db.sql(cmds, 'auto')
 # Write a record to the report for each marker/sequence in the results set.
 #
 for r in results[1]:
-    mgiID = r['mgiID']
+    mgiID = "MGI:"+r['mgiID']
     logicalDB = r['_LogicalDB_key']
 
     #
     # Apply the proper prefix to the seq ID based on the logical DB.
     #
-    if logicalDB == 13:
-        seqID = 'SWP:' + r['seqID']
-    elif logicalDB == 41:
-        seqID = 'TR:' + r['seqID']
+    if logicalDB in [13,41]:
+        seqID = 'UniProtKB:' + r['seqID']
     else:
         seqID = 'NCBI:' + r['seqID']
 
     fp.write(mgiID + TAB + seqID + CRT)
+
+#
+#
+#
+for r in results[2]:
+    mgiID = "MGI:"+r['mgiID']
+    fp.write(mgiID + TAB + CRT)
 
 reportlib.finish_nonps(fp)
