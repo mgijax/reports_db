@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	05/07/2008
+#	- TR 8997; lowercase the marker types
+#
 # lec	01/25/2007
 #	- TR 8122; don't convert inferredFrom delimiters; use as is in the database
 #
