@@ -2,7 +2,7 @@
 
 '''
 #
-# MGI_Strain_Strain_Standard.py
+# MGI_Strain.py
 #
 # Report:
 #       Tab-delimited file
@@ -13,7 +13,7 @@
 #	Report B: sorted by strain type, then by strain name
 #
 # Usage:
-#       MGI_Strain_Standard.py
+#       MGI_Strain.py
 #
 # Used by:
 #       Internal Report
@@ -38,8 +38,8 @@ import reportlib
 # Main
 #
 
-fp1 = reportlib.init('MGI_Strain_Standard_A', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
-fp2 = reportlib.init('MGI_Strain_Standard_B', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
+fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2 = reportlib.init('MGI_Strain2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 # Retrieve all Strains w/ Standard = true, Private = false
 
