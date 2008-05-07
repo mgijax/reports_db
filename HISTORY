@@ -1,4 +1,6 @@
+TAG: reports_db-tr8747-2
 TAG: reports_db-tr8747-1
+DATE: 5/7/2008
 DATE: 4/23/2008
 STAFF: lec
 CHANGES:
@@ -6,6 +8,8 @@ CHANGES:
    mgiMarkerFeed: strain attribute replaces strain type
    PRB_Strain1.sql: removed
    PRB_Strain2.sql: removed
+2) MGI_Strain.py (new)
+3) MGI_StrainAllInbred (archive)
 
 TAG: reports_db-tr8747-BP
 DATE: 4/23/2008
