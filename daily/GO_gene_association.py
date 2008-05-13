@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	05/07/2008
+#	- TR 8997; lowercase the marker types
+#
 # lec	01/25/2007
 #	- TR 8122; don't convert inferredFrom delimiters; use as is in the database
 #
@@ -77,9 +80,6 @@ import mgi_utils
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 
-# mapping between MGI Marker Type and what gets printed in the gene association file
-markerTypes = {1: 'gene'}
-
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
@@ -113,9 +113,9 @@ for r in results:
 #
 db.sql('select a._Term_key, t.term, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
 	'e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, ' + \
-	'm._Marker_Type_key, m.symbol, m.name ' + \
+	'm.symbol, m.name, markerType = lower(mt.name) ' + \
 	'into #gomarker ' + \
-	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m, MGI_Synonym q ' + \
+	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m, MRK_Types mt, MGI_Synonym q ' + \
 	'where a._AnnotType_key = 1000 ' + \
 	'and a._Annot_key = e._Annot_key ' + \
 	'and a._Object_key = m._Marker_key ' + \
@@ -124,6 +124,7 @@ db.sql('select a._Term_key, t.term, termID = ta.accID, qualifier = q.synonym, a.
 	'and a._Term_key = ta._Object_key ' + \
 	'and ta._MGIType_key = 13 ' + \
 	'and ta.preferred = 1 ' + \
+	'and m._Marker_Type_key = mt._Marker_Type_key ' + \
 	'and a._Qualifier_key = q._Object_key ' + \
 	'and q._SynonymType_key = 1023', None)
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
@@ -153,7 +154,7 @@ for r in results:
 # resolve foreign keys
 #
 db.sql('select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, ' + \
-	'g._Object_key, g._Marker_Type_key, g.symbol, g.name, ' + \
+	'g._Object_key, g.symbol, g.name, g.markerType, ' + \
 	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
 	'markerID = ma.accID, ' + \
 	'refID = b.accID, ' + \
@@ -232,11 +233,8 @@ for r in results:
 
 		fp.write(TAB)
 
-		if markerTypes.has_key(r['_Marker_Type_key']):
-			fp.write(markerTypes[r['_Marker_Type_key']] + TAB)
-
+		fp.write(r['markerType'] + TAB)
 		fp.write(SPECIES + TAB)
-
 		fp.write(r['mDate'] + TAB)
 
 		if r['modifiedBy'] == 'swissload':

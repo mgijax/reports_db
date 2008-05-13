@@ -2,19 +2,28 @@
 
 '''
 #
-# MGI_Strain.py 02/03/2003
+# MGI_Strain.py
 #
 # Report:
 #       Tab-delimited file
-#       Public Strains
+#       All Strains  w/ Standard = true, Private = false
+#	Dislay fields: MGI ID, Strain Name, Strain Types
+#
+#	Report A: sorted by alpha by strain name
+#	Report B: sorted by strain type, then by strain name
 #
 # Usage:
 #       MGI_Strain.py
 #
+# Used by:
+#       Internal Report
+#
+# Notes:
+#
 # History:
 #
-# lec	02/03/2003
-#	- TR 4378
+# lec	05/06/2008
+#	- TR 8511
 #
 '''
  
@@ -22,46 +31,42 @@ import sys
 import os
 import string
 import db
+import mgi_utils
 import reportlib
 
 #
 # Main
 #
 
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2 = reportlib.init('MGI_Strain2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-cmds = []
+# Retrieve all Strains w/ Standard = true, Private = false
 
-# Retrieve all Super Strains
-
-cmds.append('select s._Strain_key, s.strain ' + \
-	'into #strains ' + \
-	'from PRB_Strain s, VOC_Annot a ' + \
-	'where a._AnnotType_key = 1004 ' + \
-	'and a._Object_key = s._Strain_key')
-
-# Retrieve MGI Accession number
-
-cmds.append('select distinct a._Object_key, a.accID ' + \
-	'from #strains s, ACC_Accession a ' + \
-	'where s._Strain_key = a._Object_key ' + \
+db.sql('select s.strain, s.strainType, a.accID ' + \
+	'into #strain ' + \
+	'from PRB_Strain_View s, ACC_Accession a ' + \
+	'where s.standard = 1 ' + \
+	'and s.private = 0 ' + \
+	'and s._Strain_key = a._Object_key ' + \
 	'and a._MGIType_key = 10 ' + \
-	'and a._LogicalDB_key = 1 ' + \
-	'and a.prefixPart = "MGI:" ' + \
-	'and a.preferred = 1')
+	'and a.prefixPart = "MGI:" ' +
+	'and a.preferred = 1', None)
 
-cmds.append('select * from #strains order by strain')
+results = db.sql('select * from #strain order by strain', 'auto')
+for r in results:
 
-results = db.sql(cmds, 'auto')
+	fp1.write(r['accID'] + reportlib.TAB)
+	fp1.write(r['strain'] + reportlib.TAB)
+	fp1.write(r['strainType'] + reportlib.CRT)
 
-mgiIDs = {}
+results = db.sql('select * from #strain order by strainType, strain', 'auto')
+for r in results:
 
-for r in results[-2]:
-	mgiIDs[r['_Object_key']] = r['accID']
-	
-for r in results[-1]:
-	fp.write(mgiIDs[r['_Strain_key']] + reportlib.TAB + \
-	         r['strain'] + reportlib.CRT)
+	fp2.write(r['accID'] + reportlib.TAB)
+	fp2.write(r['strain'] + reportlib.TAB)
+	fp2.write(r['strainType'] + reportlib.CRT)
 
-reportlib.finish_nonps(fp)
+reportlib.finish_nonps(fp1)
+reportlib.finish_nonps(fp2)
 
