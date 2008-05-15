@@ -49,7 +49,7 @@ db.sql('select a.accID, a._Object_key ' + \
 
 db.sql('create unique index index_object_key on #refs(_Object_key)', None)
 
-results = db.sql('select r.accID, pubMedID = b.accID, jnum = a.accID ' + \
+results = db.sql('select distinct r.accID, pubMedID = b.accID, jnum = a.accID ' + \
 	'from #refs r, ACC_Accession b, ACC_Accession a ' + \
 	'where r._Object_key = b._Object_key ' + \
 	'and b._MGIType_key = 1 ' + \
