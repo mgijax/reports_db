@@ -23,11 +23,14 @@
 # History:
 #
 # 05/02/2008	jer
-#	- TR 8994; several small changes; (1) add MGI: prefix to MGI ids
-#	(e.g. MGI:MGI:12345); include all genes with a DNA/RNA 
-#	sequence, even if no protein seqs are available
-#	(leave col 2 blank in those cases); change "SWP:" and "TR:" prefixes
-#	to "UniProtKB:".
+#	- TR 8994; yet another rewrite; changes to selection logic
+#	as well as to output formatting. Want all coding genes, whether
+#	or not they have representative protein sequence (leave col 2
+#	blank if not). To do this: first get everything that has a
+#	representative protein seq; then add in everything else that
+#	has a VEGA, Ensembl, or NCBI gene model. Output formatting:
+#	change "MGI:12345" to "MGI:MGI:12345"; and change "SP:" and
+#	"TR:" to "UniProtKB:".
 #
 # 12/24/2007    dbm
 #       - TR 8697; complete re-write; Show all protein coding genes and
@@ -58,70 +61,56 @@ fp = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REPO
 cmds = []
 
 #
-# Get the representative sequence (_Qualifier_key = 615421) for each marker
-# if the sequence is:
-# Swiss-Prot (logical DB = 13)
-# TrEMBL (logical DB = 41
-# RefSeq (logical DB = 27 and accID starts with 'NP_' or 'XP_'
-#
-cmds.append('select mc._Marker_key, ' + \
-                   'mc.accID, ' + \
-                   'mc._LogicalDB_key ' + \
-            'into #markerseq ' + \
-            'from ACC_Accession a, SEQ_Marker_Cache mc ' + \
-            'where a._MGIType_key = 2 and ' + \
-                  '(a._LogicalDB_key in (13,41) or ' + \
-                  '(a._LogicalDB_key = 27 and ' + \
-                   'a.prefixPart in ("NP_","XP_"))) and ' + \
-                  'a._Object_key = mc._Marker_key and ' + \
-                  'a.accID = mc.accID and ' + \
-                  'mc._Qualifier_key = 615421 and ' + \
-                  'mc._Organism_key = 1')
-
-#
-# Get the MGI ID for each of the markers.
-#
-cmds.append('select a.accID "mgiID", ' + \
-                   'ms.accID "seqID", ' + \
-                   'ms._LogicalDB_key ' + \
-            'from ACC_Accession a, #markerseq ms ' + \
-            'where a._Object_key = ms._Marker_key and ' + \
-                  'a._MGIType_key = 2 and ' + \
-                  'a._LogicalDB_key = 1 and ' + \
-                  'a.prefixPart = "MGI:" and ' + \
-                  'a.preferred = 1 ' + \
-            'order by a.accID')
-
-#
-# Get the genes that have at least one nucleic acid sequence, but no
-# protein sequence. 
+# all mouse genes with representative protein sequence ids
 #
 cmds.append('''
-	select mv.mgiID
-	from MRK_Mouse_View mv
-	where mv._Marker_key not in (
-		select ms._Marker_key
-		from #markerseq ms
-		)
-	and mv._Marker_key in (
-		select distinct mc._Marker_key
-		from SEQ_Marker_Cache mc
-		where mc._Organism_key = 1
-		and mc._SequenceType_key in (316373,316346)
-		)
-	and mv.markerType = 'Gene'
-	and mv.status = 'official'
-	''')
+    select distinct mm._Marker_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
+    into #results1
+    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
+    where mc._Marker_key = mm._Marker_key
+    and mm._Marker_Type_key = 1
+    and mc._Qualifier_key = 615421
+    ''')
+
+cmds.append('''
+    create index ix1 on #results1(_Marker_key)
+    ''')
 
 #
-# Get the results set.
+# all mouse genes not in the first group that have an Ensembl,
+# NCBI, or VEGA gene model as the representative genomic sequence
+#
+cmds.append('''
+    select distinct mm.mgiID
+    into #results2
+    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
+    where mc._Marker_key = mm._Marker_key
+    and mm._Marker_Type_key = 1
+    and mc._Qualifier_key = 615419
+    and mc._LogicalDB_key in (59,60,85)
+    and mm._Marker_key not in (
+	select _Marker_key
+	from #results1
+	)
+    ''')
+
+cmds.append('''
+    select * 
+    from #results1
+    ''')
+
+cmds.append('''
+    select * 
+    from #results2
+    ''')
+
 #
 results = db.sql(cmds, 'auto')
 
 #
 # Write a record to the report for each marker/sequence in the results set.
 #
-for r in results[1]:
+for r in results[3]:
     mgiID = "MGI:"+r['mgiID']
     logicalDB = r['_LogicalDB_key']
 
@@ -138,7 +127,7 @@ for r in results[1]:
 #
 #
 #
-for r in results[2]:
+for r in results[4]:
     mgiID = "MGI:"+r['mgiID']
     fp.write(mgiID + TAB + CRT)
 
