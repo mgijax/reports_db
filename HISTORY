@@ -1,3 +1,9 @@
+TAG: reports_db-4-0-2-2
+DATE: 5/19/2008
+STAFF: dbm
+CHANGES:
+1) TR8994: change to GO_gp2protein.py to include with 4.02 release
+
 TAG: reports_db-4-0-2-1
 DATE: 5/13/2008
 STAFF: lec
