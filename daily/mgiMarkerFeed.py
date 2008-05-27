@@ -758,13 +758,13 @@ def strains():
 
     fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
 
-    results = db.sql('select m._Strain_key, m._Annot_key, s.private, s.cdate, s.mdate ' + \
+    results = db.sql('select m._Strain_key, m._Term_key, s.private, s.cdate, s.mdate ' + \
           'from #strains s, PRB_Strain_Attribute_View m ' + \
           'where s._Strain_key = m._Strain_key', 'auto')
 
     for r in results:
 	    fp.write(`r['_Strain_key']` + TAB + \
-	             `r['_Annot_key']` + TAB + \
+	             `r['_Term_key']` + TAB + \
 	             `r['private']` + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
