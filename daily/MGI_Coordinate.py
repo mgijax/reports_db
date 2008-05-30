@@ -25,14 +25,20 @@
 #  17. Ensembl gene chromosome
 #  18. Ensembl gene start
 #  19. Ensembl gene end
-#  20. VEGA gene id
-#  21. VEGA gene chromosome
-#  22. VEGA gene start
-#  23. VEGA gene end
-#  24. VEGA gene strand
+#  20. Ensembl gene strand
+#  21. VEGA gene id
+#  22. VEGA gene chromosome
+#  23. VEGA gene start
+#  24. VEGA gene end
 #  25. VEGA gene strand
 #  26. UniSTS gene start
 #  27. UniSTS gene end
+#  28. MGI QTL gene start
+#  29. MGI QTL gene end
+#  30. miRBase gene start
+#  31. miRBase gene end
+#  32. Roopenian gene start
+#  33. Roopenian gene end
 #
 # Usage:
 #       MGI_Coordinate.py
@@ -73,6 +79,8 @@ qtl = 1
 qtlprovider = 'MGI QTL'
 mirbase = 83
 mirbaseprovider = 'miRBase'
+roopenian = 1
+roopenianprovider = 'Roopenian STS'
 
 def getCoords(logicalDBkey, provider):
 
@@ -85,31 +93,31 @@ def getCoords(logicalDBkey, provider):
 
     if logicalDBkey in [vega, ncbi, ensembl]:
         results = db.sql('select m._Marker_key, a.accID, ' + \
-	        'c.chromosome, c.strand, ' + \
-	        'startC = convert(int, c.startCoordinate), ' + \
-	        'endC = convert(int, c.endCoordinate) ' + \
-	            'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
-	            'where m._Marker_key = mc._Marker_key ' + \
-	            'and mc._Sequence_key = c._Sequence_key ' + \
-	            'and mc._Sequence_key = a._Object_key ' + \
-	            'and a._MGIType_key = %d ' % (sequenceType) + \
-	            'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
+                'c.chromosome, c.strand, ' + \
+                'startC = convert(int, c.startCoordinate), ' + \
+                'endC = convert(int, c.endCoordinate) ' + \
+                    'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
+                    'where m._Marker_key = mc._Marker_key ' + \
+                    'and mc._Sequence_key = c._Sequence_key ' + \
+                    'and mc._Sequence_key = a._Object_key ' + \
+                    'and a._MGIType_key = %d ' % (sequenceType) + \
+                    'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
 
         for r in results:
             key = r['_Marker_key']
             value = r
             tempCoords[key] = value
  
-    # UniSTS, QTL, mirBASE
+    # UniSTS, QTL, mirBASE, Roopenian
 
     else:
         results = db.sql('select m._Marker_key, ' + \
-	        'c.chromosome, c.strand, ' + \
-	        'startC = convert(int, c.startCoordinate), ' + \
-	        'endC = convert(int, c.endCoordinate) ' + \
-	            'from #markers m, MRK_Location_Cache c ' + \
-	            'where m._Marker_key = c._Marker_key ' + \
-	            'and c.provider = "%s" ' % (provider), 'auto')
+                'c.chromosome, c.strand, ' + \
+                'startC = convert(int, c.startCoordinate), ' + \
+                'endC = convert(int, c.endCoordinate) ' + \
+                    'from #markers m, MRK_Location_Cache c ' + \
+                    'where m._Marker_key = c._Marker_key ' + \
+                    'and c.provider = "%s" ' % (provider), 'auto')
 
         for r in results:
             key = r['_Marker_key']
@@ -119,16 +127,16 @@ def getCoords(logicalDBkey, provider):
     # get the representative coordinates
 
     results = db.sql('select m._Marker_key, a.accID, ' + \
-	        'c.chromosome, c.strand, ' + \
-	        'startC = convert(int, c.startCoordinate), ' + \
-	        'endC = convert(int, c.endCoordinate), genomeBuild = c.version ' + \
-	            'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
-	            'where m._Marker_key = mc._Marker_key ' + \
-		    'and mc._Qualifier_key = 615419 ' + \
-		    'and mc._Sequence_key = c._Sequence_key ' + \
-	            'and mc._Sequence_key = a._Object_key ' + \
-	            'and a._MGIType_key = %d ' % (sequenceType) + \
-	            'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
+                'c.chromosome, c.strand, ' + \
+                'startC = convert(int, c.startCoordinate), ' + \
+                'endC = convert(int, c.endCoordinate), genomeBuild = c.version ' + \
+                    'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
+                    'where m._Marker_key = mc._Marker_key ' + \
+                    'and mc._Qualifier_key = 615419 ' + \
+                    'and mc._Sequence_key = c._Sequence_key ' + \
+                    'and mc._Sequence_key = a._Object_key ' + \
+                    'and a._MGIType_key = %d ' % (sequenceType) + \
+                    'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
 
     for r in results:
         key = r['_Marker_key']
@@ -170,21 +178,27 @@ fp.write('VEGA gene start' + TAB)
 fp.write('VEGA gene end' + TAB)
 fp.write('VEGA gene strand' + TAB)
 fp.write('UniSTS gene start' + TAB)
-fp.write('UniSTS gene end' + CRT)
+fp.write('UniSTS gene end' + TAB)
+fp.write('MGI QTL gene start' + TAB)
+fp.write('MGI QTL gene end' + TAB)
+fp.write('miRBase gene start' + TAB)
+fp.write('miRBase gene end' + TAB)
+fp.write('Roopenian STS gene start' + TAB)
+fp.write('Roopenian STS gene end' + CRT)
 
 # all active markers
 
 db.sql('select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, markerType = t.name ' + 
-	'into #markers ' + \
-	'from MRK_Marker m, MRK_Types t, ACC_Accession a ' + \
-	'where m._Organism_key = 1 ' + \
-	'and m._Marker_Status_key in (1,3) ' + \
-	'and m._Marker_key = a._Object_key ' + \
-  	'and a._MGIType_key = 2 ' + \
-  	'and a.prefixPart = "MGI:" ' + \
-  	'and a._LogicalDB_key = 1 ' + \
-  	'and a.preferred = 1 ' + \
-	'and m._Marker_Type_key = t._Marker_Type_key', None)
+        'into #markers ' + \
+        'from MRK_Marker m, MRK_Types t, ACC_Accession a ' + \
+        'where m._Organism_key = 1 ' + \
+        'and m._Marker_Status_key in (1,3) ' + \
+        'and m._Marker_key = a._Object_key ' + \
+        'and a._MGIType_key = 2 ' + \
+        'and a.prefixPart = "MGI:" ' + \
+        'and a._LogicalDB_key = 1 ' + \
+        'and a.preferred = 1 ' + \
+        'and m._Marker_Type_key = t._Marker_Type_key', None)
 
 db.sql('create index idx1 on #markers(_Marker_key)', None)
 
@@ -196,6 +210,7 @@ ensemblCoords = {}
 unistsCoords =  {}
 qtlCoords = {}
 mirbaseCoords = {}
+roopenianCoords = {}
 repCoords = {}
 
 vegaCoords = getCoords(vega, vegaprovider)
@@ -204,6 +219,7 @@ ensemblCoords = getCoords(ensembl, ensemblprovider)
 unistsCoords = getCoords(unists, unistsprovider)
 qtlCoords = getCoords(qtl, qtlprovider)
 mirbaseCoords = getCoords(mirbase, mirbaseprovider)
+roopenianCoords = getCoords(roopenian, roopenianprovider)
 
 # process results
 
@@ -228,53 +244,80 @@ for r in results:
         fp.write(mgi_utils.prvalue(c['strand']) + TAB)
         fp.write(c['genomeBuild'] + TAB)
     else:
-	fp.write(5*noneDisplay)
+        fp.write(6*noneDisplay)
 
     # NCBI coordinate
 
     if ncbiCoords.has_key(key):
-	c = ncbiCoords[key]
-	fp.write(c['accID'] + TAB)
+        c = ncbiCoords[key]
+        fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
         fp.write(c['strand'] + TAB)
     else:
-	fp.write(5*noneDisplay)
+        fp.write(5*noneDisplay)
 
     # Ensembl coordinate
 
     if ensemblCoords.has_key(key):
-	c = ensemblCoords[key]
-	fp.write(c['accID'] + TAB)
+        c = ensemblCoords[key]
+        fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
         fp.write(c['strand'] + TAB)
 #        fp.write(coordDisplay % (c['chromosome'], c['startC'], c['endC'], c['strand']) + TAB)
     else:
-	fp.write(5*noneDisplay)
+        fp.write(5*noneDisplay)
 
     # VEGA coordinate
 
     if vegaCoords.has_key(key):
-	c = vegaCoords[key]
-	fp.write(c['accID'] + TAB)
+        c = vegaCoords[key]
+        fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
         fp.write(c['strand'] + TAB)
     else:
-	fp.write(5*noneDisplay)
+        fp.write(5*noneDisplay)
 
     # UniSTS coordinate
 
     if unistsCoords.has_key(key):
-	c = unistsCoords[key]
+        c = unistsCoords[key]
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
     else:
-	fp.write(2*noneDisplay)
+        fp.write(2*noneDisplay)
+
+    # MGI QTL coordinate
+
+    if qtlCoords.has_key(key):
+        c = qtlCoords[key]
+        fp.write(str(c['startC']) + TAB)
+        fp.write(str(c['endC']) + TAB)
+    else:
+        fp.write(2*noneDisplay)
+
+    # miRBase coordinate
+
+    if mirbaseCoords.has_key(key):
+        c = mirbaseCoords[key]
+        fp.write(str(c['startC']) + TAB)
+        fp.write(str(c['endC']) + TAB)
+    else:
+        fp.write(2*noneDisplay)
+
+    # Roopenian coordinate
+
+    if roopenianCoords.has_key(key):
+        c = roopenianCoords[key]
+        fp.write(str(c['startC']) + TAB)
+        fp.write(str(c['endC']) + TAB)
+    else:
+        fp.write(2*noneDisplay)
 
     fp.write(CRT)
 
