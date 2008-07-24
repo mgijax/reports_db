@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	07/24/2008
+#	- TR 9134; change UniProt to UniProtKB
+#
 # lec	05/07/2008
 #	- TR 8997; lowercase the marker types
 #
@@ -238,7 +241,7 @@ for r in results:
 		fp.write(r['mDate'] + TAB)
 
 		if r['modifiedBy'] == 'swissload':
-			fp.write('UniProt')
+			fp.write('UniProtKB')
 		elif string.find(r['modifiedBy'], 'GOA_') >= 0:
 			modifiedBy = re.sub('GOA_', '', r['modifiedBy'])
 			fp.write(modifiedBy)
