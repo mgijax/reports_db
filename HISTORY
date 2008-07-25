@@ -1,3 +1,10 @@
+TAG: reports_db-4-1-1-2
+DATE: 07/25/2008
+STAFF: jer
+CHANGES:
+1) TR9120: Added tab-delimited versions of MRK_List1, MRK_List2,
+           MRK_List3, MRK_List4 and MRK_Synonym.
+
 TAG: reports_db-4-1-1-1
 DATE: 07/24/2008
 STAFF: lec
@@ -16,7 +23,6 @@ STAFF: dbm
 CHANGES:
 1) Merged tr8528 branch to the trunk
 
->>>>>>> 1.319
 TAG: reports_db-4-0-2-3
 DATE: 05/27/2008
 STAFF: lec
