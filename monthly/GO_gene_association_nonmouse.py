@@ -133,7 +133,7 @@ for r in results:
 	dag[r['_Object_key']] = r['dagAbbrev']
 
 #
-# retrieve all ISS annotations that have a "with" value that begins "UniProt"
+# retrieve all ISS annotations that have a "with" value that begins "UniProtKB"
 #
 db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
 	'e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, e.modification_date, e._Refs_key, e._ModifiedBy_key, u.login ' + \
@@ -147,7 +147,7 @@ db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_
 	'and ta.preferred = 1 ' + \
 	'and e._EvidenceTerm_key = et._Term_key ' + \
 	'and et.abbreviation in ("ISS","ISO","ISM","ISA") ' + \
-	'and e.inferredFrom like "UniProt:%" ' + \
+	'and e.inferredFrom like "UniProtKB:%" ' + \
 	'and e._Refs_key not in (89196) ' + \
         'and a._Qualifier_key = q._Object_key ' + \
 	'and q._SynonymType_key = 1023 ' + \
@@ -237,7 +237,7 @@ for r in results:
     # there may be multiple instances of UniProt ids
     # write out one record per UniProt id
 
-    ids = string.split(r['uniprotIDs'], 'UniProt:')
+    ids = string.split(r['uniprotIDs'], 'UniProtKB:')
 
     for i in ids:
 
