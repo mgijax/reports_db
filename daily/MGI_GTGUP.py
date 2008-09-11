@@ -18,7 +18,7 @@
 #   9. MGI ID;marker symbol" or blank
 #
 # Usage:
-#       MGI_MappedFeature.py
+#       MGI_GTGUP.py
 #
 # History:
 #

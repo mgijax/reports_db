@@ -31,19 +31,23 @@
 #  23. VEGA gene start
 #  24. VEGA gene end
 #  25. VEGA gene strand
-#  26. UniSTS gene start
-#  27. UniSTS gene end
-#  28. MGI QTL gene start
-#  29. MGI QTL gene end
-#  30. miRBase gene start
-#  31. miRBase gene end
-#  32. Roopenian gene start
-#  33. Roopenian gene end
+#  26. UniSTS gene chromosome
+#  27. UniSTS gene start
+#  28. UniSTS gene end
+#  29. MGI QTL gene start
+#  30. MGI QTL gene end
+#  31. miRBase gene start
+#  32. miRBase gene end
+#  33. Roopenian gene start
+#  34. Roopenian gene end
 #
 # Usage:
 #       MGI_Coordinate.py
 #
 # History:
+#
+# 07/30/2008 lec
+#	- TR9152/Steve Grubb; add UniSTS chromosome
 #
 # 04/21/2006 lec
 #	- added UniSTS coordinates
@@ -177,6 +181,7 @@ fp.write('VEGA gene chromosome' + TAB)
 fp.write('VEGA gene start' + TAB)
 fp.write('VEGA gene end' + TAB)
 fp.write('VEGA gene strand' + TAB)
+fp.write('UniSTS gene chromosome' + TAB)
 fp.write('UniSTS gene start' + TAB)
 fp.write('UniSTS gene end' + TAB)
 fp.write('MGI QTL gene start' + TAB)
@@ -287,10 +292,11 @@ for r in results:
 
     if unistsCoords.has_key(key):
         c = unistsCoords[key]
+        fp.write(str(c['chromosome']) + TAB)
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
     else:
-        fp.write(2*noneDisplay)
+        fp.write(3*noneDisplay)
 
     # MGI QTL coordinate
 
