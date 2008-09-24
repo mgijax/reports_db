@@ -19,6 +19,9 @@
 #
 # History:
 #
+# dbm	09/24/2008
+#	- removed marker type restriction that was only looking for "genes"
+#
 # lec	08/26/2003
 #	- added to reports_db product
 #	- changed order of cM position and chromosome to be consistent
@@ -57,7 +60,6 @@ cmd = 'select a1.accID "MGI", m.symbol, m.name, m.chromosome, o.offset, a2.accID
             'a1.preferred = 1 and ' + \
             'a2._LogicalDB_key = 60 and ' + \
             'a2._MGIType_key = 2 and ' + \
-            'm._Marker_Type_key = 1 and ' + \
             'o.source = 0 ' + \
       'order by m.chromosome, m.symbol'
 
