@@ -24,15 +24,13 @@ import reportlib
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
+fileName = 'nucleotide-mgd-'
 
 db.useOneConnection(1)
+db.set_sqlLogFunction(db.sqlLogAll)
 
-fpLinkOut = reportlib.init('nucleotide-mgd', fileExt = '.xml', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-
-fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "LinkOut.dtd"\n[' + CRT)
-fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
-fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + '">' + CRT)
-fpLinkOut.write(']>' + CRT + '<LinkSet>' + CRT)
+# remove old file names
+#os.remove(os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
 
 # deleted sequences
 
@@ -91,6 +89,7 @@ for r in results:
 # process
 
 results = db.sql('select * from #markers order by _Marker_key', 'auto')
+fileCounter = 1
 count = 1
 
 for r in results:
@@ -98,6 +97,16 @@ for r in results:
 
     if not gbID.has_key(key) and not rsID.has_key(key):
 	    continue
+
+    # create a file
+
+    if count == 1:
+        newfile = fileName + str(fileCounter)
+        fpLinkOut = reportlib.init(newfile, fileExt = '.xml', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+        fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "LinkOut.dtd"\n[' + CRT)
+        fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
+        fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + '">' + CRT)
+        fpLinkOut.write(']>' + CRT + '<LinkSet>' + CRT)
 
     fpLinkOut.write('<Link>' + CRT)
     fpLinkOut.write(TAB + '<LinkId>' + str(count) + '</LinkId>' + CRT)
@@ -122,11 +131,11 @@ for r in results:
 
     count = count + 1
 
-#    if count == 20:
-#	break
-
-fpLinkOut.write('</LinkSet>' + CRT)
-reportlib.finish_nonps(fpLinkOut)
+    if count == 10000:
+        fpLinkOut.write('</LinkSet>' + CRT)
+        reportlib.finish_nonps(fpLinkOut)
+	count = 1
+        fileCounter = fileCounter + 1
 
 db.useOneConnection(0)
 
