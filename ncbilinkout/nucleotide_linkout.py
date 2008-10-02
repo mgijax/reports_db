@@ -24,7 +24,7 @@ import reportlib
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
-maxfileCounter = os.environ['NCBILINKOUT_COUNT']
+maxfileCounter = int(os.environ['NCBILINKOUT_COUNT'])
 fileName = 'nucleotide-mgd-'
 
 db.useOneConnection(1)
@@ -99,7 +99,7 @@ for r in results:
     if not gbID.has_key(key) and not rsID.has_key(key):
 	    continue
 
-    # create a file
+    # create a new file
 
     if count == 1:
         newfile = fileName + str(fileCounter)
@@ -132,8 +132,9 @@ for r in results:
 
     count = count + 1
 
+    # skip to a new file every 'maxfileCounter' times...
+
     if count == maxfileCounter:
-        print maxfileCounter
         fpLinkOut.write('</LinkSet>' + CRT)
         reportlib.finish_nonps(fpLinkOut)
 	count = 1
