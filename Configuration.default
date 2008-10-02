@@ -51,6 +51,7 @@ setenv KOMP_TARGETLIST		/data/loads/komp/kompreports/output/geneListNoKo.txt
 setenv NCBILINKOUT_ICON         "http://www.informatics.jax.org/mgihome/other/favicon.ico"
 setenv NCBILINKOUT_BASE         "http://www.informatics.jax.org/searches/accession_report.cgi?"
 setenv NCBILINKOUT_HOST         ftp-private.ncbi.nlm.nih.gov
-setenv NCBILINKOUT_USER         "mgd keUPdTuD"
+setenv NCBILINKOUT_USER         mgd
+setenv NCBILINKOUT_PASSWORD     keUPdTuD
 setenv NCBILINKOUT_COUNT        10000
 

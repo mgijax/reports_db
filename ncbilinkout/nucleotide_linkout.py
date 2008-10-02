@@ -24,13 +24,14 @@ import reportlib
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
+maxfileCounter = os.environ['NCBILINKOUT_COUNT']
 fileName = 'nucleotide-mgd-'
 
 db.useOneConnection(1)
 db.set_sqlLogFunction(db.sqlLogAll)
 
 # remove old file names
-#os.remove(os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
+os.system('rm -rf ' + os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
 
 # deleted sequences
 
@@ -131,7 +132,8 @@ for r in results:
 
     count = count + 1
 
-    if count == 10000:
+    if count == maxfileCounter:
+        print maxfileCounter
         fpLinkOut.write('</LinkSet>' + CRT)
         reportlib.finish_nonps(fpLinkOut)
 	count = 1
