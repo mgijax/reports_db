@@ -34,51 +34,41 @@ fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
 fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + '">' + CRT)
 fpLinkOut.write(']>' + CRT)
 
-fpLinkOut.write('''<LinkSet>
-   <Link>
-      <LinkId></LinkId>
-         <ProviderId>2002</ProviderId>
-         <IconUrl>&icon;</IconUrl>
-         <ObjectSelector>
-            <Database>PubMed</Database>
-            <ObjectList>
-''')
-
 # retrieve all PubMed Ids
 
-results = db.sql('select a.accID ' + \
-      'from ACC_Accession a ' + \
-      'where a._MGIType_key = 1 ' + \
-      'and a._LogicalDB_key = 29 ' + \
-      'order by a.accID', 'auto')
-
-#results = db.sql('select a.accID, pubMedID = b.accID ' + \
-#       'from ACC_Accession a, ACC_Accession b ' + \
-#       'where a._MGIType_key = 1 ' + \
-#       'and a._LogicalDB_key = 1 ' + \
-#       'and a.prefixPart = "MGI:" ' + \
-#       'and a._LogicalDB_key = 1 ' + \
-#       'and a.preferred = 1 ' + \
-#       'and a._Object_key = b._Object_key ' + \
-#       'and b._MGIType_key = 1 ' + \
-#       'and b._LogicalDB_key = 29 ' + \
-#       'order by a.accID', 'auto')
+results = db.sql('select a.accID, pubMedID = b.accID ' + \
+       'from ACC_Accession a, ACC_Accession b ' + \
+       'where a._MGIType_key = 1 ' + \
+       'and a._LogicalDB_key = 1 ' + \
+       'and a.prefixPart = "MGI:" ' + \
+       'and a._LogicalDB_key = 1 ' + \
+       'and a.preferred = 1 ' + \
+       'and a._Object_key = b._Object_key ' + \
+       'and b._MGIType_key = 1 ' + \
+       'and b._LogicalDB_key = 29 ' + \
+       'order by a.accID', 'auto')
 
 count = 1
 for r in results:
-    fpLinkOut.write(2 * TAB + '<ObjId>' + r['accID'] + '</ObjId>' + CRT)
+    fpLinkOut.write('<Link>' + CRT)
+    fpLinkOut.write(TAB + '<LinkId>' + str(count) + '</LinkId>' + CRT)
+    fpLinkOut.write(TAB + '<ProviderId>2002</ProviderId>' + CRT)
+    fpLinkOut.write(TAB + '<IconUrl>&icon;</IconUrl>' + CRT)
+    fpLinkOut.write(TAB + '<ObjectSelector>' + CRT)
+    fpLinkOut.write(2* TAB + '<Database>OMIM</Database>' + CRT)
+    fpLinkOut.write(2* TAB + '<ObjectList>' + CRT)
+    fpLinkOut.write(3* TAB + '<ObjId>' + r['pubMedID'] + '</ObjId>' + CRT)
+    fpLinkOut.write(2* TAB + '</ObjectList>' + CRT)
+    fpLinkOut.write(TAB + '</ObjectSelector>' + CRT)
+    fpLinkOut.write(TAB + '<ObjectUrl>' + CRT)
+    fpLinkOut.write(2* TAB + '<Base>http://www.informatics.jax.org/searches/accession_report.cgi?id=' 
+		+ r['accID']
+		+ '</Base>' + CRT)
+    fpLinkOut.write(TAB + '</ObjectUrl>' + CRT)
+    fpLinkOut.write('</Link>' + CRT)
     count = count + 1
 
-fpLinkOut.write('''         </ObjectList>
-         </ObjectSelector>
-         <ObjectUrl>
-            <Base>&base;</Base>
-            <Rule>id=&lo.id;</Rule>
-         </ObjectUrl>
-      </Link>
-</LinkSet>
-''')
-
+fpLinkOut.write('</LinkSet>' + CRT)
 reportlib.finish_nonps(fpLinkOut)
 db.useOneConnection(0)
 
