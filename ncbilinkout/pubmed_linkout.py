@@ -25,14 +25,14 @@ import reportlib
 CRT = reportlib.CRT
 TAB = reportlib.TAB
 
+maxfileCounter = int(os.environ['NCBILINKOUT_COUNT'])
+fileName = 'pubmed-mgd-'
+
 db.useOneConnection(1)
+db.set_sqlLogFunction(db.sqlLogAll)
 
-fpLinkOut = reportlib.init('pubmed-mgd', fileExt = '.xml', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-
-fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "LinkOut.dtd"\n[' + CRT)
-fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
-fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + '">' + CRT)
-fpLinkOut.write(']>' + CRT)
+# remove old file names
+os.system('rm -rf ' + os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
 
 # retrieve all PubMed Ids
 
@@ -48,8 +48,18 @@ results = db.sql('select a.accID, pubMedID = b.accID ' + \
        'and b._LogicalDB_key = 29 ' + \
        'order by a.accID', 'auto')
 
+fileCounter = 1
 count = 1
 for r in results:
+
+    if count == 1:
+        newfile = fileName + str(fileCounter)
+        fpLinkOut = reportlib.init(newfile, fileExt = '.xml', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+        fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "LinkOut.dtd"\n[' + CRT)
+        fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
+        fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + '">' + CRT)
+        fpLinkOut.write(']>' + CRT + '<LinkSet>' + CRT)
+
     fpLinkOut.write('<Link>' + CRT)
     fpLinkOut.write(TAB + '<LinkId>' + str(count) + '</LinkId>' + CRT)
     fpLinkOut.write(TAB + '<ProviderId>2002</ProviderId>' + CRT)
@@ -66,9 +76,16 @@ for r in results:
 		+ '</Base>' + CRT)
     fpLinkOut.write(TAB + '</ObjectUrl>' + CRT)
     fpLinkOut.write('</Link>' + CRT)
+
     count = count + 1
 
-fpLinkOut.write('</LinkSet>' + CRT)
-reportlib.finish_nonps(fpLinkOut)
+    # skip to a new file every 'maxfileCounter' times...
+
+    if count == maxfileCounter:
+        fpLinkOut.write('</LinkSet>' + CRT)
+        reportlib.finish_nonps(fpLinkOut)
+	count = 1
+        fileCounter = fileCounter + 1
+
 db.useOneConnection(0)
 
