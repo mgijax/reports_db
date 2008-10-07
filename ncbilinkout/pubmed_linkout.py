@@ -65,7 +65,7 @@ for r in results:
     fpLinkOut.write(TAB + '<ProviderId>2002</ProviderId>' + CRT)
     fpLinkOut.write(TAB + '<IconUrl>&icon;</IconUrl>' + CRT)
     fpLinkOut.write(TAB + '<ObjectSelector>' + CRT)
-    fpLinkOut.write(2* TAB + '<Database>OMIM</Database>' + CRT)
+    fpLinkOut.write(2* TAB + '<Database>PubMed</Database>' + CRT)
     fpLinkOut.write(2* TAB + '<ObjectList>' + CRT)
     fpLinkOut.write(3* TAB + '<ObjId>' + r['pubMedID'] + '</ObjId>' + CRT)
     fpLinkOut.write(2* TAB + '</ObjectList>' + CRT)
