@@ -21,9 +21,12 @@ foreach i (`ls *.py`)
 $i >>& ${LOG}
 end
 
+# Generate NCBI LinkOut files
+cd ${PUBRPTS}
+${PUBRPTS}/ncbilinkout/ncbilinkout.sh >>& ${LOG}
+
 cp ${REPORTOUTPUTDIR}/gene_association.mgi_nonmouse ${FTPCUSTOM}
 rm -rf ${REPORTOUTPUTDIR}/gene_association.mgi_nonmouse
 
 cp ${REPORTOUTPUTDIR}/ES_CellLine.rpt ${FTPREPORTDIR}
-
 cp ${REPORTOUTPUTDIR}/MRK_GeneTrap.rpt ${FTPREPORTDIR}
