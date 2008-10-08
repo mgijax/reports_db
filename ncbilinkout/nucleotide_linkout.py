@@ -140,5 +140,7 @@ for r in results:
 	count = 1
         fileCounter = fileCounter + 1
 
+fpLinkOut.write('</LinkSet>' + CRT)
+reportlib.finish_nonps(fpLinkOut)
 db.useOneConnection(0)
 
