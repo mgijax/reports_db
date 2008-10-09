@@ -121,12 +121,15 @@ for r in results:
 	for i in gbID[key]:
 	    fpLinkOut.write(3 * TAB + '<Query>' + i + '[pacc]</Query>' + CRT)
 
+    newSymbol = string.replace(r['symbol'], '<', '&lt;')
+    newSymbol = string.replace(newSymbol, '>', '&gt;')
+
     fpLinkOut.write(2* TAB + '</ObjectList>' + CRT)
     fpLinkOut.write(TAB + '</ObjectSelector>' + CRT)
     fpLinkOut.write(TAB + '<ObjectUrl>' + CRT)
     fpLinkOut.write(2* TAB + '<Base>&base;</Base>' + CRT)
     fpLinkOut.write(2* TAB + '<Rule>id=' + mgiID[key] + '</Rule>' + CRT)
-    fpLinkOut.write(2* TAB + '<UrlName>' + r['symbol'] + '</UrlName>' + CRT)
+    fpLinkOut.write(2* TAB + '<UrlName>' + newSymbol + '</UrlName>' + CRT)
     fpLinkOut.write(TAB + '</ObjectUrl>' + CRT)
     fpLinkOut.write('</Link>' + CRT)
 
