@@ -22,6 +22,9 @@
 #
 # History:
 #
+# 10/21/2008	lec
+#	- TR 9325; add micoRNA marker types with transcript
+#
 # 05/02/2008	jer
 #	- TR 8994; yet another rewrite; changes to selection logic
 #	as well as to output formatting. Want all coding genes, whether
@@ -58,29 +61,34 @@ CRT = reportlib.CRT
 
 fp = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-cmds = []
+db.useOneConnection(1)
 
 #
 # all mouse genes with representative protein sequence ids
+# all mouse microRNA with transcripts
 #
-cmds.append('''
-    select distinct mm._Marker_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
+db.sql('''
+    select distinct mm._Marker_key, mm._Marker_Type_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
     into #results1
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
     and mm._Marker_Type_key = 1
     and mc._Qualifier_key = 615421
-    ''')
+    union
+    select distinct mm._Marker_key, mm._Marker_Type_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
+    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
+    where mc._Marker_key = mm._Marker_key
+    and mm._Marker_Type_key = 11
+    and mc._Qualifier_key = 615420
+    ''', None)
 
-cmds.append('''
-    create index ix1 on #results1(_Marker_key)
-    ''')
+db.sql('create index ix1 on #results1(_Marker_key)', None)
 
 #
 # all mouse genes not in the first group that have an Ensembl,
 # NCBI, or VEGA gene model as the representative genomic sequence
 #
-cmds.append('''
+db.sql('''
     select distinct mm.mgiID
     into #results2
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
@@ -88,29 +96,14 @@ cmds.append('''
     and mm._Marker_Type_key = 1
     and mc._Qualifier_key = 615419
     and mc._LogicalDB_key in (59,60,85)
-    and mm._Marker_key not in (
-	select _Marker_key
-	from #results1
-	)
-    ''')
-
-cmds.append('''
-    select * 
-    from #results1
-    ''')
-
-cmds.append('''
-    select * 
-    from #results2
-    ''')
-
-#
-results = db.sql(cmds, 'auto')
+    and mm._Marker_key not in (select _Marker_key from #results1)
+    ''', None)
 
 #
 # Write a record to the report for each marker/sequence in the results set.
 #
-for r in results[3]:
+results = db.sql('select * from #results1', 'auto')
+for r in results:
     mgiID = "MGI:"+r['mgiID']
     logicalDB = r['_LogicalDB_key']
 
@@ -119,6 +112,8 @@ for r in results[3]:
     #
     if logicalDB in [13,41]:
         seqID = 'UniProtKB:' + r['seqID']
+    elif logicalDB in [9]:
+        seqID = 'EMBL:' + r['seqID']
     else:
         seqID = 'NCBI:' + r['seqID']
 
@@ -127,8 +122,11 @@ for r in results[3]:
 #
 #
 #
-for r in results[4]:
+results = db.sql('select * from #results2', 'auto')
+for r in results:
     mgiID = "MGI:"+r['mgiID']
     fp.write(mgiID + TAB + CRT)
 
 reportlib.finish_nonps(fp)
+db.useOneConnection(1)
+
