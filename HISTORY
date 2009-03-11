@@ -1,8 +1,11 @@
+TAG: reports_db-4-2-0-4
 TAG: reports_db-4-2-0-3
 DATE: 3/11/2009
 STAFF: lec
 CHANGES:
 1) TR9506/Chr missing from MGI_Coordinate.rpt
+2) TR9517/problem running public/qc reports that join to IMSR
+   moved MGI_Knockout.py from daily to weekly
 
 TAG: reports_db-tr9440-BP
 DATE: 2/23/2009
