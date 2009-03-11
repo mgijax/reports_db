@@ -1,3 +1,9 @@
+TAG: reports_db-4-2-0-3
+DATE: 3/11/2009
+STAFF: lec
+CHANGES:
+1) TR9506/Chr missing from MGI_Coordinate.rpt
+
 TAG: reports_db-tr9440-BP
 DATE: 2/23/2009
 STAFF: dbm

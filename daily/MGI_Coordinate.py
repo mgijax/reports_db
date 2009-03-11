@@ -34,12 +34,13 @@
 #  26. UniSTS gene chromosome
 #  27. UniSTS gene start
 #  28. UniSTS gene end
-#  29. MGI QTL gene start
-#  30. MGI QTL gene end
-#  31. miRBase gene start
-#  32. miRBase gene end
-#  33. Roopenian gene start
-#  34. Roopenian gene end
+#  29. MGI QTL gene chromosome
+#  30. MGI QTL gene start
+#  31. MGI QTL gene end
+#  32. miRBase gene start
+#  33. miRBase gene end
+#  34. Roopenian gene start
+#  35. Roopenian gene end
 #
 # Usage:
 #       MGI_Coordinate.py
@@ -184,6 +185,7 @@ fp.write('VEGA gene strand' + TAB)
 fp.write('UniSTS gene chromosome' + TAB)
 fp.write('UniSTS gene start' + TAB)
 fp.write('UniSTS gene end' + TAB)
+fp.write('MGI QTL gene chromosome' + TAB)
 fp.write('MGI QTL gene start' + TAB)
 fp.write('MGI QTL gene end' + TAB)
 fp.write('miRBase gene start' + TAB)
@@ -302,6 +304,7 @@ for r in results:
 
     if qtlCoords.has_key(key):
         c = qtlCoords[key]
+        fp.write(str(c['chromosome']) + TAB)
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
     else:
