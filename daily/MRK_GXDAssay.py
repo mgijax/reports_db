@@ -15,6 +15,9 @@
 #
 # History:
 #
+# lec	03/27/2009
+#	- TR 9568; do not include recombinase assay (11)
+#
 # lec	04/23/2008
 #	- TR 8775; do not include new assay types
 #
@@ -40,7 +43,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 results = db.sql('select distinct a.accID, g._Marker_key ' + \
 	'from GXD_Assay g, ACC_Accession a ' + \
-	'where g._AssayType_key not in (10) ' + \
+	'where g._AssayType_key not in (10,11) ' + \
 	'and g._Assay_key = a._Object_key ' + \
 	'and a._MGIType_key = 8 ' + \
 	'and a.prefixPart = "MGI:" ' + \
@@ -57,7 +60,7 @@ for r in results:
 results = db.sql('select distinct a.accID, m._Marker_key, m.symbol ' + \
 	'from MRK_Marker m, GXD_Assay g, ACC_Accession a ' + \
 	'where m._Marker_key = g._Marker_key ' + \
-	'and g._AssayType_key not in (10) ' + \
+	'and g._AssayType_key not in (10,11) ' + \
 	'and m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
