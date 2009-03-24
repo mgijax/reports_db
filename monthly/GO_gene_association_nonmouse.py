@@ -17,25 +17,28 @@
 #
 # Special format for this report:
 #
-#   1.  Database designation (UniProt)
-#   2.  Inferred From (id minus the UniProt prefix)
-#   3.  NOT
-#   4.  null
-#   5.  GO id
-#   6.  PubMed ID of Reference from GO notes (external ref:)
-#   7.  Evidence abbreviation (external ref:)
-#   8.  DBXRef (external ref:)
-#   9.  GO DAG Abbreviation (F, P, C)
-#   10. null
-#   11. null
-#   12. protein
-#   13. null
-#   14. Modification Date (YYYYMMDD)
-#   15. Assigned By (MGI)
+#   1.  Database designation (UniProt) required
+#   2.  DB_Object_ID (Inferred From (id minus the UniProt prefix))
+#   3.  DB_Object_Symbol (null) optional
+#   4.  Qualifier (NOT) optional
+#   5.  GO id required
+#   6.  DB:Reference (|DB:Reference) (PubMed ID of Reference from GO notes) required
+#   7.  Evidence code required
+#   8.  With (or) From	optional
+#   9.  Aspect required (GO DAG Abbreviation (F, P, C))
+#   10. DB_Object_Name optional (null)
+#   11. DB_Object_Synonym optional (null)
+#   12. DB_Object_Type required (protein)
+#   13. taxon (|taxon) required (null)
+#   14. Modification Date required (YYYYMMDD)
+#   15. Assigned By required (MGI)
 #
 # exclude J:88213 (olfactory load)
 #
 # History:
+#
+# 03/24/2009	lec
+#	- TR 9569; fix columns 3,4,8,13
 #
 # 01/30/2006	lec
 #	- TR 7424; modified to new format
@@ -74,10 +77,10 @@ def writeRecord(i, r, e):
 	fp.write(i + TAB)
 
 	# field 3
-	fp.write(string.strip(r['qualifier']) + TAB)
+	fp.write(TAB)
 
 	# field 4
-	fp.write(TAB)
+	fp.write(string.strip(r['qualifier']) + TAB)
 
 	# field 5
 	fp.write(r['termID'] + TAB)
@@ -251,6 +254,7 @@ for r in results:
         eKey = r['_AnnotEvidence_key']
 
 	# if no evidence (no pub med id) and "tbreddy", skip it
+	# these are Rat Genome (J:104715)
         if not evidence.has_key(eKey) and r['_ModifiedBy_key'] == 1095:
 	    continue
 
