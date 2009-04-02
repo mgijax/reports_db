@@ -6,11 +6,11 @@
 
 cd `dirname $0` && source ./Configuration
 
-# Substitute the FTPURL setting in the index page and copy it to the
-# FTP report directory.
+# Create a copy of the default index page that has the proper FTPURL
+# substituted in it and copy it to the FTP report directory.
 #
-sed "s/FTPURL_GOES_HERE/$FTPURL/" index.html > index.html.new
-mv -f index.html.new index.html
+rm -f index.html
+sed "s/FTPURL_GOES_HERE/$FTPURL/" index.html.default > index.html
 cp index.html ${FTPREPORTDIR}
 
 #
