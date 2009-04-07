@@ -28,6 +28,11 @@
 # dbm   12/13/2002
 #       - created
 #
+# NOTE: This report is a variation of the daily report with the same name.
+#       It does not get copied to the FTP site and is only used by the
+#       mgddbutilities product to generate the input file for the NIA
+#       association load.
+#
 '''
  
 import sys 
