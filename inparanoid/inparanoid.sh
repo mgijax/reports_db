@@ -24,7 +24,7 @@ rm -rf ${REFSEQFASTA}
 /usr/bin/gunzip -c ${REFSEQFASTAGZ} > ${REFSEQFASTA}
 
 # derive a FASTA file from the UniProt file
-/usr/local/wu-blast2.0/sp2fasta ${UNIPROTDAT} > ${UNIPROTFASTA}
+${SP2FASTA} ${UNIPROTDAT} > ${UNIPROTFASTA}
 
 # generate files
 foreach i (`ls *.py`)
