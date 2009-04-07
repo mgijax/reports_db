@@ -55,3 +55,6 @@ setenv NCBILINKOUT_USER         mgd
 setenv NCBILINKOUT_PASSWORD     keUPdTuD
 setenv NCBILINKOUT_COUNT        10000
 
+# Setting for the InParanoid script
+setenv SP2FASTA			/usr/local/bin/sp_to_fasta
+setenv PERLLIB			/usr/local/lib
