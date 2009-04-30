@@ -100,6 +100,7 @@ fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ
 # (like adding a new column)
 #
 
+fp.write('!gaf-version: 2.0\n')
 fp.write('!software version: $Revision$\n')
 fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
