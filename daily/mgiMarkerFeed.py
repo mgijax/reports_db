@@ -48,6 +48,9 @@
 #
 # History:
 #
+# lec   05/13/2009
+#       - TR 9405, gene trap less filling (TR7493)
+#
 # lec	04/23/2008
 #	- TR 8511; strain types changed to strain attribute
 #
@@ -190,15 +193,15 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_cellline.bcp', 'w')
     
-    results = db.sql('select _CellLine_key, cellLine, _Strain_key, provider, isMutant, ' + \
+    results = db.sql('select _CellLine_key, cellLine, _Strain_key, creator, isMutant, ' + \
 	    'cdate = convert(char(20), creation_date, 100), ' + \
 	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from ALL_CellLine', 'auto', execute = 1)
+	    'from ALL_CellLine_View', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_CellLine_key']` + TAB + \
 		     r['cellLine'] + TAB + \
 		     `r['_Strain_key']` + TAB + \
-		     mgi_utils.prvalue(r['provider']) + TAB + \
+		     mgi_utils.prvalue(r['creator']) + TAB + \
 		     `r['isMutant']` + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
@@ -536,8 +539,11 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele.bcp', 'w')
 
+#	'm._ESCellLine_key, m._MutantESCellLine_key, ' + \
+#	             `r['_ESCellLine_key']` + TAB + \
+#	             `r['_MutantESCellLine_key']` + TAB + \
+
     results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, ' + \
-	'm._ESCellLine_key, m._MutantESCellLine_key, ' + \
 	'm._Strain_key, m.isWildType, m.symbol, m.name, status = t.term, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
@@ -550,8 +556,6 @@ def alleles():
 	             `r['_Marker_key']` + TAB + \
 	             `r['_Mode_key']` + TAB + \
 	             `r['_Allele_Type_key']` + TAB + \
-	             `r['_ESCellLine_key']` + TAB + \
-	             `r['_MutantESCellLine_key']` + TAB + \
 		     mgi_status(r['status']) + TAB + \
 		     `r['_Strain_key']` + TAB + \
 		     `r['isWildType']` + TAB + \
