@@ -11,45 +11,77 @@
 #	MPR
 #
 # bcp files
-#	1. marker_type.bcp
-#	2. species.bcp
-#	3. marker.bcp
-#	4. marker_label.bcp
-#	5. accession_marker.bcp
-#	6. allele_type.bcp
-#	7. allele_cellline.bcp
-#	8. allele_inheritance_mode.bcp
-#	9. allele_pairstate.bcp
-#	10. allele.bcp
-#	11. allele_label.bcp
-#	12. allele_pair.bcp
-#	13. allele_note.bcp
-#	14. accession_allele.bcp
-#	15. strain_marker.bcp
-#	16. strain_synonym.bcp
-#	17. strain.bcp
-#	18. strain_type.bcp
-#	19. strain_strain_type.bcp
-#	20. strain_genotype.bcp
-#	21. accession_strain.bcp
-#	22. strain_species.bcp
-#	23. reference.bcp
-#	24. genotype_mpt_reference.bcp
-#	25. allele_reference.bcp
-#	26. marker_reference.bcp
-#	27. strain_reference.bcp
-#	28. mp_term.bcp
-#	29. mp_synonym.bcp
-#	30. mp_closure.bcp
-#	31. marker_omim.bcp
+#	1.  marker_type.bcp
+#	2.  species.bcp
+#	3.  allele_type.bcp
+#	4.  allele_inheritance_mode.bcp
+#	5.  allele_pairstate.bcp
+#       6.  allele_transmission.bcp
+#	7.  allele_creator.bcp
+#	8.  allele_celllinetype.bcp
+#	9.  allele_vector.bcp
+#	10. allele_vectortype.bcp
+#	11. allele_markerstatus.bcp
+#	12. allele_markerqualifier.bcp
+#       13. genotype_existsas.bcp
+#	14. strain_type.bcp
+#	15. mp_term.bcp
+#	16. mp_synonym.bcp
+#	17. mp_closure.bcp
+#	18. marker.bcp
+#	19. marker_label.bcp
+#	20. accession_marker.bcp
+#	21. allele_cellline.bcp
+#	22. allele_derivation.bcp
+#	23. allele.bcp
+#	24. allele_allele_cellline.bcp
+#	25. allele_marker.bcp
+#	26. allele_label.bcp
+#	27. allele_note.bcp
+#	28. accession_allele.bcp
+#	29. strain.bcp
+#	30. strain_marker.bcp
+#	31. strain_synonym.bcp
+#	32. strain_strain_type.bcp
+#	33. accession_strain.bcp
+#	34. strain_species.bcp
+#       35. genotype.bcp
+#       36. genotype_mpt.bcp
+#       37. genotype_header.bcp
+#       38. strain_genotype.bcp
+#       39. allele_pair.bcp
+#	40. reference.bcp
+#	41. accession_reference.bcp
+#	42. genotype_mpt_reference.bcp
+#	43. allele_reference.bcp
+#	44. strain_reference.bcp
+#	45. marker_reference.bcp
+#	46. marker_omim.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
 #
 # History:
 #
-# lec   05/13/2009
+# lec   05/17/2009
 #       - TR 9405, gene trap less filling (TR7493)
+#
+#	new:
+#       allele_transmission.bcp
+#	allele_creator.bcp
+#       allele_celllinetype.bcp
+#       allele_vector.bcp
+#       allele_vectortype.bcp
+#	allele_markerstatus.bcp
+#	allele_markerqualifier.bcp
+#       genotype_existsas.bcp
+#       allele_cellline.bcp
+#       allele_marker.bcp
+#	allele_derivation.bcp
+#
+#	modified:
+#	allele.bcp:
+#	genotype.bcp:  _ExistsAs_key
 #
 # lec	04/23/2008
 #	- TR 8511; strain types changed to strain attribute
@@ -188,26 +220,6 @@ def vocabs():
     fp.close()
 
     #
-    # allele_cellline
-    #
-
-    fp = open(OUTPUTDIR + 'allele_cellline.bcp', 'w')
-    
-    results = db.sql('select _CellLine_key, cellLine, _Strain_key, creator, isMutant, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from ALL_CellLine_View', 'auto', execute = 1)
-    for r in results:
-	    fp.write(`r['_CellLine_key']` + TAB + \
-		     r['cellLine'] + TAB + \
-		     `r['_Strain_key']` + TAB + \
-		     mgi_utils.prvalue(r['creator']) + TAB + \
-		     `r['isMutant']` + TAB + \
-		     r['cdate'] + TAB + \
-		     r['mdate'] + CRT)
-    fp.close()
-
-    #
     # allele_inheritance_mode
     #
     
@@ -234,6 +246,143 @@ def vocabs():
 	    'cdate = convert(char(20), creation_date, 100), ' + \
 	    'mdate = convert(char(20), modification_date, 100) ' + \
 	    'from VOC_Term_ALLPairState_View', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_transmission.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_transmission.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term_ALLTransmission_View', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_creator.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_creator.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term ' + \
+	    'where _Vocab_key = 62', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_celllinetype.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_celllinetype.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term where _Vocab_key = 63', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_vector.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_vector.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term where _Vocab_key = 72', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_vectortype.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_vectortype.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term where _Vocab_key = 64', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_markerstatus.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_markerstatus.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term where _Vocab_key = 73', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_markerqualifier.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_markerqualifier.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term where _Vocab_key = 70', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # genotype_existsas.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'genotype_existsas.bcp', 'w')
+
+    results = db.sql('select _Term_key, term, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from VOC_Term where _Vocab_key = 60', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -516,12 +665,63 @@ def markers():
 def alleles():
 
     #
+    # allele_cellline
     # allele
+    # allele_allele_cellline
+    # allele_marker
     # allele_label
     # allele_pair
     # allele_note
     # accession_allele
     #
+
+    #
+    # allele_cellline.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_cellline.bcp', 'w')
+    
+    results = db.sql('select _CellLine_key, cellLine, _CellLine_Type_key, _Strain_key, _Derivation_key, isMutant, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from ALL_CellLine', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_CellLine_key']` + TAB + \
+		     r['cellLine'] + TAB + \
+		     `r['_CellLine_Type_key']` + TAB + \
+		     `r['_Strain_key']` + TAB + \
+		     `r['_Derivation_key']` + TAB + \
+		     `r['isMutant']` + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # allele_derivation.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_derivation.bcp', 'w')
+    
+    results = db.sql('select _Derivation_key, name, description, ' + \
+	    '_Vector_key, _VectorType_key, ' + \
+	    '_ParentCellLine_key, _DerivationType_key, ' + \
+	    '_Creator_key, _Refs_key, ' + \
+	    'cdate = convert(char(20), creation_date, 100), ' + \
+	    'mdate = convert(char(20), modification_date, 100) ' + \
+	    'from ALL_CellLine_Derivation', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Derivation_key']` + TAB + \
+		     r['name'] + TAB + \
+		     mgi_utils.prvalue(r['description']) + TAB + \
+		     `r['_Vector_key']` + TAB + \
+		     `r['_VectorType_key']` + TAB + \
+		     `r['_ParentCellLine_key']` + TAB + \
+		     `r['_DerivationType_key']` + TAB + \
+		     `r['_Creator_key']` + TAB + \
+		     `r['_Refs_key']` + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
 
     #
     # select all alleles with a status of "approved"
@@ -530,7 +730,8 @@ def alleles():
 
     db.sql('select m._Allele_key into #alleles ' + \
 	'from ALL_Allele m, VOC_Term t ' + \
-	'where m._Marker_key is not null and m._Allele_Status_key = t._Term_key and t.term = "Approved" ', None)
+	'where m._Marker_key is not null and m._Allele_Status_key = t._Term_key ' + \
+	'and t.term = "Approved" ', None)
     db.sql('create index idx1 on #alleles(_Allele_key)', None)
 
     #
@@ -539,12 +740,8 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele.bcp', 'w')
 
-#	'm._ESCellLine_key, m._MutantESCellLine_key, ' + \
-#	             `r['_ESCellLine_key']` + TAB + \
-#	             `r['_MutantESCellLine_key']` + TAB + \
-
-    results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, ' + \
-	'm._Strain_key, m.isWildType, m.symbol, m.name, status = t.term, ' + \
+    results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._Transmission_key, ' + \
+	'm._Strain_key, m.isWildType, m.isExtinct, m.isMixed, m.symbol, m.name, status = t.term, ' + \
 	'cdate = convert(char(20), m.creation_date, 100), ' + \
 	'mdate = convert(char(20), m.modification_date, 100) ' + \
 	'from #alleles a, ALL_Allele m, VOC_Term t ' + \
@@ -556,11 +753,58 @@ def alleles():
 	             `r['_Marker_key']` + TAB + \
 	             `r['_Mode_key']` + TAB + \
 	             `r['_Allele_Type_key']` + TAB + \
+	             `r['_Transmission_key']` + TAB + \
 		     mgi_status(r['status']) + TAB + \
 		     `r['_Strain_key']` + TAB + \
 		     `r['isWildType']` + TAB + \
+		     `r['isExtinct']` + TAB + \
+		     `r['isMixed']` + TAB + \
 		     strip_newline(r['symbol']) + TAB + \
 		     strip_newline(r['name']) + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # select data fields for allele_allele_cellline.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_allele_cellline.bcp', 'w')
+
+    results = db.sql('select m._Assoc_key, m._Allele_key, m._MutantCellLine_key, ' + \
+	    'cdate = convert(char(20), m.creation_date, 100), ' + \
+	    'mdate = convert(char(20), m.modification_date, 100) ' + \
+	    'from #alleles a, ALL_Allele_Cellline m ' + \
+	    'where a._Allele_key = m._Allele_key ', 'auto')
+
+    for r in results:
+	    fp.write(`r['_Assoc_key']` + TAB + \
+		     `r['_Allele_key']` + TAB + \
+		     `r['_MutantCellLine_key']` + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
+    # select data fields for allele_marker.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_marker.bcp', 'w')
+
+    results = db.sql('select m._Assoc_key, m._Allele_key, m._Marker_key, m._Qualifier_key, ' + \
+	    '_Refs_key, _Status_key, ' + \
+	    'cdate = convert(char(20), m.creation_date, 100), ' + \
+	    'mdate = convert(char(20), m.modification_date, 100) ' + \
+	    'from #alleles a, ALL_Marker_Assoc m ' + \
+	    'where a._Allele_key = m._Allele_key ', 'auto')
+
+    for r in results:
+	    fp.write(`r['_Assoc_key']` + TAB + \
+		     `r['_Allele_key']` + TAB + \
+		     `r['_Marker_key']` + TAB + \
+		     `r['_Qualifier_key']` + TAB + \
+		     `r['_Refs_key']` + TAB + \
+		     `r['_Status_key']` + TAB + \
 		     r['cdate'] + TAB + \
 		     r['mdate'] + CRT)
     fp.close()
@@ -820,6 +1064,14 @@ def strains():
 def genotypes():
 
     #
+    # genotype.bcp
+    # genotype_mpt.bcp
+    # genotype_header.bcp
+    # strain_genotype.bcp
+    # allele_pair.bcp
+    #
+
+    #
     # MP/Genotype annotations (1002)
     # OMIM/Genotype annotations (1005)
     #
@@ -843,7 +1095,7 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'genotype.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, s.strain, p.isConditional, c.note, ' + \
+    results = db.sql('select g._Genotype_key, s.strain, p.isConditional, p._ExistsAs_key, c.note, ' + \
           'cdate = convert(char(20), p.creation_date, 100), ' + \
           'mdate = convert(char(20), p.modification_date, 100) ' + \
 	  'from #genotypes g, GXD_Genotype p, PRB_Strain s, MGI_Note n, MGI_NoteChunk c ' + \
@@ -860,6 +1112,7 @@ def genotypes():
 	fp.write(`r['_Genotype_key']` + TAB + \
 		r['strain'] + TAB + \
 		`r['isConditional']` + TAB + \
+	        `r['_ExistsAs_key']` + TAB + \
 		note + TAB + \
 		r['cdate'] + TAB + \
 		r['mdate'] + CRT)
