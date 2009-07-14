@@ -19,6 +19,9 @@
 #
 # History:
 #
+# lec	05/14/2009
+#	- TR9405/gene trap less filling
+#
 # sc    04/12/2007 - created
 #
 '''
@@ -48,11 +51,11 @@ db.sql('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
         'and o.source = 0 ' + \
         'and m._Marker_Status_key = s._Marker_Status_key ' + \
         'and m._Marker_Type_key = t._Marker_Type_key ' + \
-        'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
-        'and a._MGIType_key = 2 and a._LogicalDB_key in ' + \
-        '(select _Object_key ' +
-        'from MGI_SetMember ' + \
-        'where _Set_key = 1023) )', None)
+	'and exists (select 1 from ALL_Marker_Assoc am, ALL_Allele a ' + \
+	'where m._Marker_key = am._Marker_key ' + \
+	'and am._Allele_key = a._Allele_key ' + \
+        'and a.isMixed = 0 ' + \
+	'and a._Allele_Type_key = 847121)', None)
 db.sql('create index idx1 on #markers(_Marker_key)', None)
 db.sql('create index idx2 on #markers(symbol)', None)
 
@@ -71,23 +74,24 @@ for r in results:
     value = r['accID']
     mgiID[key] = value
 
-# Gene Trap ids
+# Mutant Cell Line for gene traps
 
-results = db.sql('select distinct m._Marker_key, a.accID ' + \
-      'from #markers m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key in ' + \
-      '(select _Object_key ' +        
-        'from MGI_SetMember ' + \
-        'where _Set_key = 1023 )', 'auto')
-gtID = {}
+results = db.sql('select distinct m._Marker_key, c.cellLine ' + \
+      'from #markers m, ALL_Marker_Assoc am, ALL_Allele a, ALL_Allele_CellLine ac, ALL_Cellline c ' + \
+      'where m._Marker_key = am._Marker_key ' + \
+      'and am._Allele_key  = a._Allele_key ' + \
+      'and a._Allele_Type_key = 847121 ' + \
+      'and a.isMixed = 0 ' + \
+      'and a._Allele_key = ac._Allele_key ' + \
+      'and ac._MutantCellLine_key = c._CellLine_key ', 'auto')
+#      'and c.cellLine not in ("Not Specified", "Not Applicable")', 'auto')
+mutantCellLine = {}
 for r in results:
     key = r['_Marker_key']
-    value = r['accID']
-    if not gtID.has_key(key):
-        gtID[key] = []
-    gtID[key].append(value)
+    value = r['cellLine']
+    if not mutantCellLine.has_key(key):
+        mutantCellLine[key] = []
+    mutantCellLine[key].append(value)
 
 # process
 
@@ -111,8 +115,8 @@ for r in results:
 	         offset + reportlib.TAB + \
 	         r['chromosome'] + reportlib.TAB)
 
-	if gtID.has_key(key):
-		fp.write(string.join(gtID[key], ' '))
+	if mutantCellLine.has_key(key):
+		fp.write(string.join(mutantCellLine[key], ' '))
 	fp.write(reportlib.TAB)
 
 	fp.write(reportlib.CRT)
