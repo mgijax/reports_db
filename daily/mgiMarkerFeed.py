@@ -66,7 +66,7 @@
 # lec   05/17/2009
 #       - TR 9405, gene trap less filling (TR7493)
 #
-#	new:
+#	new vocabularies:
 #       allele_transmission.bcp
 #	allele_creator.bcp
 #       allele_celllinetype.bcp
@@ -75,9 +75,12 @@
 #	allele_markerstatus.bcp
 #	allele_markerqualifier.bcp
 #       genotype_existsas.bcp
+#
+#	new joins:
 #       allele_cellline.bcp
-#       allele_marker.bcp
 #	allele_derivation.bcp
+#       allele_allele_cellline.bcp
+#       allele_marker.bcp
 #
 #	modified:
 #	allele.bcp:
@@ -702,7 +705,7 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele_derivation.bcp', 'w')
     
-    results = db.sql('select _Derivation_key, name, description, ' + \
+    results = db.sql('select _Derivation_key, name, ' + \
 	    '_Vector_key, _VectorType_key, ' + \
 	    '_ParentCellLine_key, _DerivationType_key, ' + \
 	    '_Creator_key, _Refs_key, ' + \
@@ -712,7 +715,6 @@ def alleles():
     for r in results:
 	    fp.write(`r['_Derivation_key']` + TAB + \
 		     r['name'] + TAB + \
-		     mgi_utils.prvalue(r['description']) + TAB + \
 		     `r['_Vector_key']` + TAB + \
 		     `r['_VectorType_key']` + TAB + \
 		     `r['_ParentCellLine_key']` + TAB + \
