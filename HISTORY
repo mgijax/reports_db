@@ -1,3 +1,8 @@
+TAG: reports_db-4-3-0-2
+DATE: 08/09/2009
+STAFF: dbm
+CHANGES: Remove MGI_UnassociatedGeneTraps.rpt from index file
+
 TAG: reports_db-4-3-0-1
 DATE: 07/14/2009
 STAFF: lec
