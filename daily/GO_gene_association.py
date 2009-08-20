@@ -369,7 +369,7 @@ for r in results:
 
         # The currently blank column 16
 
-        reportRow = reportRow + ' ' + TAB
+        reportRow = reportRow + '' + TAB
 
         # Column 17 is populated in a special way.  
         # If there is an isoform, use that, parsing through it to check for multiple annotations.
@@ -390,7 +390,7 @@ for r in results:
                 row = str(proteinsGene[r['_Object_key']])
                 #row = 'Protein gene: ' +str(proteinsGene[r['_Object_key']])
             else:
-                row = ' '
+                row = ''
             fp.write(reportRow + row + CRT)
     
 #
@@ -402,7 +402,7 @@ try:
     goaFile = open(os.environ['GOAMGI'], 'r')
 
     for line in goaFile.readlines():
-        fp.write(line)
+        fp.write(line.rstrip()+TAB+TAB+CRT)
     goaFile.close()
 
 except:
