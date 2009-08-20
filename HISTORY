@@ -1,3 +1,9 @@
+TAG: reports_db-4-3-0-3
+DATE: 08/20/2009
+STAFF: mhall
+CHANGES: Changes to the GO Gene Association report as per tr9919
+Also merged branch tr9592 to the trunk
+
 TAG: reports_db-4-3-0-2
 DATE: 08/09/2009
 STAFF: dbm
