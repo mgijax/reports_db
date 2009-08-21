@@ -530,8 +530,9 @@
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Gene Ontology (GO) Annotations of Mouse Markers (tab-delimited)
-        <BR>(<I>see also</I> <A HREF="http://www.geneontology.org/doc/GO.annotation.html#file">GO Annotation File format</A> at the Gene Ontology Consortium, and
-        <A HREF="go_terms.mgi">go_terms.mgi</A> to translate GO IDs to GO terms)</B></TD></TR>
+        <BR>(<I>see also</I> <A HREF="go_terms.mgi">go_terms.mgi</A> to translate GO IDs to GO terms)<br><br>
+	Notice: as of  21-Aug-2009, MGI will be providing this daily gene_association.mgi file in GAF 2.0 format. This file has two additional columns, 16 and 17, explained in detail <a href="http://wiki.geneontology.org/index.php/GAF_2.0">here</a>. 
+	<br><br>A GAF 2.0 file can be easily converted to GAF 1 by the removal of the last two columns. Additionally, a GAF 1 version of this file which is updated weekly is available <a href="http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.mgi.gz?rev=HEAD">here</a>.</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Database<BR>Designation</TD><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>NOT<BR>Designation</TD><TD>GO<BR>Term ID</TD><TD>MGI<BR>Reference Accession ID</TD><TD>GO<BR>Evidence Code</TD><TD>Inferred From</TD>
         <TD>Ontology<BR><FONT SIZE=-1>P=Biological Process<BR>F=Molecular Function<BR>C=Cellular Component</FONT></TD>
