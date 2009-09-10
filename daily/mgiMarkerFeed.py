@@ -63,6 +63,10 @@
 #
 # History:
 #
+#
+# lec   09/10/2009
+#	- TR 9831; add "Autoload" status to allele.bcp
+#
 # lec   05/17/2009
 #       - TR 9405, gene trap less filling (TR7493)
 #
@@ -726,14 +730,14 @@ def alleles():
     fp.close()
 
     #
-    # select all alleles with a status of "approved"
+    # select all alleles with a status of "approved" or "autload"
     # all other statuses are private/confidential alleles
     #
 
     db.sql('select m._Allele_key into #alleles ' + \
 	'from ALL_Allele m, VOC_Term t ' + \
 	'where m._Marker_key is not null and m._Allele_Status_key = t._Term_key ' + \
-	'and t.term = "Approved" ', None)
+	'and t.term in ("Approved", "Autoload") ', None)
     db.sql('create index idx1 on #alleles(_Allele_key)', None)
 
     #
