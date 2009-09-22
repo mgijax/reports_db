@@ -63,6 +63,14 @@
 #
 # History:
 #
+# lec	9/15/2009
+#	- TR 9838;
+#	missing strain_genotype, allele_pair:  
+#		no changes; looks like the TR9831 fix solved this problem
+#	missing references:  
+#		added temp table "allrefs2" to add Allele/Marker references
+#		and Allele/Derivation references
+#	add "Autoload" to mgi_status()
 #
 # lec   09/10/2009
 #	- TR 9831; add "Autoload" status to allele.bcp
@@ -160,6 +168,9 @@ def mgi_status(status):
 
 	if status == "Approved":
 		return "A"
+
+	if status == "Autoload":
+		return "U"
 
 	if status == "official":
 		return "O"
@@ -730,13 +741,15 @@ def alleles():
     fp.close()
 
     #
-    # select all alleles with a status of "approved" or "autload"
+    # select all alleles with a status of "approved" or "autoload"
     # all other statuses are private/confidential alleles
+    #
+    # only include non-nomen symbols (where nomenSymbol is null)
     #
 
     db.sql('select m._Allele_key into #alleles ' + \
 	'from ALL_Allele m, VOC_Term t ' + \
-	'where m._Marker_key is not null and m._Allele_Status_key = t._Term_key ' + \
+	'where nomenSymbol is null and m._Allele_Status_key = t._Term_key ' + \
 	'and t.term in ("Approved", "Autoload") ', None)
     db.sql('create index idx1 on #alleles(_Allele_key)', None)
 
@@ -920,26 +933,28 @@ def strains():
     # strain.bcp
     #
 
-    db.sql('select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, ' + \
-          'cdate = convert(char(20), s.creation_date, 100), ' + \
-          'mdate = convert(char(20), s.modification_date, 100) ' + \
-          'into #strains ' + \
-          'from PRB_Strain s, ACC_Accession a ' + \
-          'where s._Strain_key = a._Object_key ' + \
-          'and a._MGIType_key = 10 ' + \
-          'and a._LogicalDB_key in (22, 38) ' + \
-          'union ' + \
-          'select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, ' + \
-          'cdate = convert(char(20), s.creation_date, 100), ' + \
-          'mdate = convert(char(20), s.modification_date, 100) ' + \
-          'from PRB_Strain s, ALL_Allele a ' + \
-	  'where s._Strain_key = a._Strain_key ' + \
-          'union ' + \
-          'select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, ' + \
-          'cdate = convert(char(20), s.creation_date, 100), ' + \
-          'mdate = convert(char(20), s.modification_date, 100) ' + \
-          'from PRB_Strain s, ALL_CellLine a ' + \
-	  'where s._Strain_key = a._Strain_key ', None)
+    db.sql('''
+	  select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
+          cdate = convert(char(20), s.creation_date, 100), 
+          mdate = convert(char(20), s.modification_date, 100) 
+          into #strains 
+          from PRB_Strain s, ACC_Accession a 
+          where s._Strain_key = a._Object_key 
+          and a._MGIType_key = 10 
+          and a._LogicalDB_key in (22, 38) 
+          union 
+          select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
+          cdate = convert(char(20), s.creation_date, 100), 
+          mdate = convert(char(20), s.modification_date, 100) 
+          from PRB_Strain s, ALL_Allele a 
+	  where s._Strain_key = a._Strain_key 
+          union 
+          select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
+          cdate = convert(char(20), s.creation_date, 100), 
+          mdate = convert(char(20), s.modification_date, 100) 
+          from PRB_Strain s, ALL_CellLine a 
+	  where s._Strain_key = a._Strain_key
+	  ''', None)
 
     db.sql('create index idx1 on #strains(_Strain_key)', None)
 
@@ -1082,16 +1097,18 @@ def genotypes():
     # OMIM/Genotype annotations (1005)
     #
 
-    db.sql('select distinct g._Genotype_key ' + \
-	    'into #genotypes ' + \
-	    'from #strains s, GXD_Genotype g, VOC_Annot a ' + \
-	    'where s._Strain_key = g._Strain_key ' + \
-	    'and g._Genotype_key = a._Object_key ' + \
-	    'and a._AnnotType_key in (1002, 1005) ' + \
-	    'union ' + \
-	    'select distinct g._Genotype_key ' + \
-	    'from #strains s, PRB_Strain_Genotype g ' + \
-	    'where s._Strain_key = g._Strain_key', 'auto')
+    db.sql('''
+	   select distinct g._Genotype_key 
+	   into #genotypes 
+	   from #strains s, GXD_Genotype g, VOC_Annot a 
+	   where s._Strain_key = g._Strain_key 
+	   and g._Genotype_key = a._Object_key 
+	   and a._AnnotType_key in (1002, 1005) 
+	   union 
+	   select distinct g._Genotype_key 
+	   from #strains s, PRB_Strain_Genotype g 
+	   where s._Strain_key = g._Strain_key
+	   ''', 'auto')
 
     db.sql('create index idex1 on #genotypes(_Genotype_key)', None)
 
@@ -1101,15 +1118,17 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'genotype.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, s.strain, p.isConditional, p._ExistsAs_key, c.note, ' + \
-          'cdate = convert(char(20), p.creation_date, 100), ' + \
-          'mdate = convert(char(20), p.modification_date, 100) ' + \
-	  'from #genotypes g, GXD_Genotype p, PRB_Strain s, MGI_Note n, MGI_NoteChunk c ' + \
-	  'where g._Genotype_key = p._Genotype_key ' + \
-	  'and p._Strain_key = s._Strain_key ' + \
-	  'and g._Genotype_key = n._Object_key ' + \
-	  'and n._NoteType_key = 1016 ' + \
-	  'and n._Note_key = c._Note_key', 'auto')
+    results = db.sql('''
+	  select g._Genotype_key, s.strain, p.isConditional, p._ExistsAs_key, c.note, 
+          cdate = convert(char(20), p.creation_date, 100), 
+          mdate = convert(char(20), p.modification_date, 100) 
+	  from #genotypes g, GXD_Genotype p, PRB_Strain s, MGI_Note n, MGI_NoteChunk c 
+	  where g._Genotype_key = p._Genotype_key 
+	  and p._Strain_key = s._Strain_key 
+	  and g._Genotype_key = n._Object_key 
+	  and n._NoteType_key = 1016 
+	  and n._Note_key = c._Note_key
+	  ''', 'auto')
 
     for r in results:
 
@@ -1134,9 +1153,11 @@ def genotypes():
 
     omimCat = {}
 
-    results = db.sql('select _Genotype_key, category = min(omimCategory3) ' + \
-	'from MRK_OMIM_Cache where omimCategory3 != -1 ' + \
-	'group by _Genotype_key', 'auto')
+    results = db.sql('''
+	select _Genotype_key, category = min(omimCategory3) 
+	from MRK_OMIM_Cache where omimCategory3 != -1 
+	group by _Genotype_key
+	''', 'auto')
 
     for r in results:
 	key = r['_Genotype_key']
@@ -1145,13 +1166,15 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'genotype_mpt.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, qualifier = q.term, ' + \
-          'cdate = convert(char(20), a.creation_date, 100), ' + \
-          'mdate = convert(char(20), a.modification_date, 100) ' + \
-	'from #genotypes g, VOC_Annot a, VOC_Term q ' + \
-	'where g._Genotype_key = a._Object_key ' + \
-	'and a._AnnotType_key in (1002, 1005) ' + \
-	'and a._Qualifier_key = q._Term_key', 'auto')
+    results = db.sql('''
+	select g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, qualifier = q.term, 
+        cdate = convert(char(20), a.creation_date, 100), 
+        mdate = convert(char(20), a.modification_date, 100) 
+	from #genotypes g, VOC_Annot a, VOC_Term q 
+	where g._Genotype_key = a._Object_key 
+	and a._AnnotType_key in (1002, 1005) 
+	and a._Qualifier_key = q._Term_key
+	''', 'auto')
 
     for r in results:
 
@@ -1177,12 +1200,14 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'genotype_header.bcp', 'w')
 
-    results = db.sql('select g._Genotype_key, headerTerm = h._Term_key, h.sequenceNum, ' + \
-          'cdate = convert(char(20), h.creation_date, 100), ' + \
-          'mdate = convert(char(20), h.modification_date, 100) ' + \
-	'from #genotypes g, VOC_AnnotHeader h ' + \
-	'where g._Genotype_key = h._Object_key ' + \
-	'and h._AnnotType_key = 1002 ', 'auto')
+    results = db.sql('''
+	select g._Genotype_key, headerTerm = h._Term_key, h.sequenceNum, 
+        cdate = convert(char(20), h.creation_date, 100), 
+        mdate = convert(char(20), h.modification_date, 100) 
+	from #genotypes g, VOC_AnnotHeader h 
+	where g._Genotype_key = h._Object_key 
+	and h._AnnotType_key = 1002 
+	''', 'auto')
 
     for r in results:
 	fp.write(`r['_Genotype_key']` + TAB + \
@@ -1200,13 +1225,15 @@ def genotypes():
     
     fp = open(OUTPUTDIR + 'strain_genotype.bcp', 'w')
 
-    results = db.sql('select p._Strain_key, p._Genotype_key, t.term, ' + \
-          'cdate = convert(char(20), p.creation_date, 100), ' + \
-          'mdate = convert(char(20), p.modification_date, 100) ' + \
-          'from #strains s, #genotypes g, PRB_Strain_Genotype p, VOC_Term t ' + \
-          'where s._Strain_key = p._Strain_key ' + \
-	  'and g._Genotype_key = p._Genotype_key ' + \
-          'and p._Qualifier_key = t._Term_key', 'auto')
+    results = db.sql('''
+	  select p._Strain_key, p._Genotype_key, t.term, 
+          cdate = convert(char(20), p.creation_date, 100), 
+          mdate = convert(char(20), p.modification_date, 100) 
+          from #strains s, #genotypes g, PRB_Strain_Genotype p, VOC_Term t 
+          where s._Strain_key = p._Strain_key 
+	  and g._Genotype_key = p._Genotype_key 
+          and p._Qualifier_key = t._Term_key
+	  ''', 'auto')
     
     for r in results:
             fp.write(`r['_Strain_key']` + TAB + \
@@ -1222,20 +1249,22 @@ def genotypes():
 
     fp = open(OUTPUTDIR + 'allele_pair.bcp', 'w')
 
-    results = db.sql('select p.*, ' + 
-	    'cdate = convert(char(20), p.creation_date, 100), ' + \
-	    'mdate = convert(char(20), p.modification_date, 100) ' + \
-	    'from #alleles a, #genotypes g, GXD_AllelePair p ' +  \
-	    'where a._Allele_key = p._Allele_key_1 ' + \
-	    'and g._Genotype_key = p._Genotype_key ' + \
-	    'union ' + \
-            'select p.*, ' + 
-	    'cdate = convert(char(20), p.creation_date, 100), ' + \
-	    'mdate = convert(char(20), p.modification_date, 100) ' + \
-	    'from #alleles a, #genotypes g, GXD_AllelePair p ' +  \
-	    'where a._Allele_key = p._Allele_key_2 ' + \
-	    'and g._Genotype_key = p._Genotype_key ' + \
-	    'order by p._Genotype_key, p.sequenceNum', 'auto')
+    results = db.sql('''
+	    select p.*, 
+	    cdate = convert(char(20), p.creation_date, 100), 
+	    mdate = convert(char(20), p.modification_date, 100) 
+	    from #alleles a, #genotypes g, GXD_AllelePair p 
+	    where a._Allele_key = p._Allele_key_1 
+	    and g._Genotype_key = p._Genotype_key 
+	    union 
+            select p.*, 
+	    cdate = convert(char(20), p.creation_date, 100), 
+	    mdate = convert(char(20), p.modification_date, 100) 
+	    from #alleles a, #genotypes g, GXD_AllelePair p 
+	    where a._Allele_key = p._Allele_key_2 
+	    and g._Genotype_key = p._Genotype_key 
+	    order by p._Genotype_key, p.sequenceNum
+	    ''', 'auto')
 
     for r in results:
 	    fp.write(`r['_AllelePair_key']` + TAB + \
@@ -1261,103 +1290,139 @@ def references():
     # references annotated to a Genotype
     #
 
-    db.sql('select distinct e._Refs_key, g._Genotype_key, a._Annot_key, e._AnnotEvidence_key, ' + \
-	    'cdate = convert(char(20), e.creation_date, 100), ' + \
-	    'mdate = convert(char(20), e.modification_date, 100) ' + \
-	    'into #genoreferences ' + \
-	    'from #genotypes g, VOC_Annot a, VOC_Evidence e ' + \
-	    'where g._Genotype_key = a._Object_key ' + \
-	    'and a._AnnotType_key in (1002, 1005) ' + \
-	    'and a._Annot_key = e._Annot_key', None)
+    db.sql('''
+	   select distinct e._Refs_key, g._Genotype_key, a._Annot_key, e._AnnotEvidence_key, 
+	   cdate = convert(char(20), e.creation_date, 100), 
+	   mdate = convert(char(20), e.modification_date, 100) 
+	   into #genoreferences 
+	   from #genotypes g, VOC_Annot a, VOC_Evidence e 
+	   where g._Genotype_key = a._Object_key 
+	   and a._AnnotType_key in (1002, 1005) 
+	   and a._Annot_key = e._Annot_key
+	   ''', None)
 
     #
     # references annotated to an Allele via the Genotype
     # references annotated to an Allele via the Strain
     #
 
-    db.sql('select distinct r._Refs_key, ag._Allele_key, rt.assocType, ' + \
-	    'cdate = convert(char(20), r.creation_date, 100), ' + \
-	    'mdate = convert(char(20), r.modification_date, 100) ' + \
-	    'into #allreferences ' + \
-	    'from #genotypes g, GXD_AlleleGenotype ag, MGI_Reference_Assoc r, MGI_RefAssocType rt ' + \
-	    'where g._Genotype_key = ag._Genotype_key ' + \
-	    'and ag._Allele_key = r._Object_key ' + \
-	    'and r._MGIType_key = 11 ' + \
-	    'and r._RefAssocType_key = rt._RefAssocType_key ' + \
-	    'union ' + \
-            'select distinct r._Refs_key, sm._Allele_key, rt.assocType, ' + \
-	    'cdate = convert(char(20), r.creation_date, 100), ' + \
-	    'mdate = convert(char(20), r.modification_date, 100) ' + \
-	    'from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r, MGI_RefAssocType rt ' + \
-	    'where s._Strain_key = sm._Strain_key ' + \
-	    'and sm._Allele_key = r._Object_key ' + \
-	    'and r._MGIType_key = 11 ' + \
-	    'and r._RefAssocType_key = rt._RefAssocType_key', None)
+    db.sql('''
+	   select distinct r._Refs_key, ag._Allele_key, rt.assocType, 
+	   cdate = convert(char(20), r.creation_date, 100), 
+	   mdate = convert(char(20), r.modification_date, 100) 
+	   into #allrefs 
+	   from #genotypes g, GXD_AlleleGenotype ag, MGI_Reference_Assoc r, MGI_RefAssocType rt 
+	   where g._Genotype_key = ag._Genotype_key 
+	   and ag._Allele_key = r._Object_key 
+	   and r._MGIType_key = 11 
+	   and r._RefAssocType_key = rt._RefAssocType_key 
+	   union 
+           select distinct r._Refs_key, sm._Allele_key, rt.assocType, 
+	   cdate = convert(char(20), r.creation_date, 100), 
+	   mdate = convert(char(20), r.modification_date, 100) 
+	   from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r, MGI_RefAssocType rt 
+	   where s._Strain_key = sm._Strain_key 
+	   and sm._Allele_key = r._Object_key 
+	   and r._MGIType_key = 11 
+	   and r._RefAssocType_key = rt._RefAssocType_key
+	   ''', None)
+
+    #
+    # references annotated to an Allele via the Marker
+    # references annotated to an Allele via the Derivation
+    #
+
+    db.sql('''
+	   select distinct r._Refs_key, 
+	   cdate = convert(char(20), r.creation_date, 100), 
+	   mdate = convert(char(20), r.modification_date, 100) 
+	   into #allrefs2 
+	   from ALL_Marker_Assoc r 
+	   where r._Refs_key is not null
+	   union 
+           select distinct r._Refs_key, 
+	   cdate = convert(char(20), r.creation_date, 100), 
+	   mdate = convert(char(20), r.modification_date, 100) 
+	   from ALL_CellLine_Derivation r 
+	   where r._Refs_key is not null
+	   ''', None)
 
     #
     # references annotated to Strains
     #
 
-    db.sql('select r._Refs_key, r._Object_key, rt.assocType, ' + \
-            'cdate = convert(char(20), r.creation_date, 100), ' + \
-            'mdate = convert(char(20), r.modification_date, 100) ' + \
-            'into #strainreferences ' + \
-            'from #strains s, MGI_Reference_Assoc r, MGI_RefAssocType rt ' + \
-            'where s._Strain_key = r._Object_key ' + \
-            'and r._MGIType_key = 10 ' + \
-            'and r._RefAssocType_key = rt._RefAssocType_key', None)
+    db.sql('''
+	   select r._Refs_key, r._Object_key, rt.assocType, 
+           cdate = convert(char(20), r.creation_date, 100), 
+           mdate = convert(char(20), r.modification_date, 100) 
+           into #strainreferences 
+           from #strains s, MGI_Reference_Assoc r, MGI_RefAssocType rt 
+           where s._Strain_key = r._Object_key 
+           and r._MGIType_key = 10 
+           and r._RefAssocType_key = rt._RefAssocType_key
+	   ''', None)
 
     #
     # references annotated to a Marker via the Genotype
     # references annotated to a Marker via the Strain
     #
 
-    db.sql('select distinct r._Refs_key, r._Marker_key ' + \
-	    'into #mrkreferences ' + \
-	    'from #genotypes g, GXD_AlleleGenotype ag, MRK_Reference r ' + \
-	    'where g._Genotype_key = ag._Genotype_key ' + \
-	    'and ag._Marker_key = r._Marker_key ' + \
-	    'union ' + \
-            'select distinct r._Refs_key, sm._Marker_key ' + \
-	    'from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r ' + \
-	    'where s._Strain_key = sm._Strain_key ' + \
-	    'and sm._Marker_key = r._Object_key ' + \
-	    'and r._MGIType_key = 2 ', None)
+    db.sql('''
+	   select distinct r._Refs_key, r._Marker_key 
+	   into #mrkreferences 
+	   from #genotypes g, GXD_AlleleGenotype ag, MRK_Reference r 
+	   where g._Genotype_key = ag._Genotype_key 
+	   and ag._Marker_key = r._Marker_key 
+	   union 
+           select distinct r._Refs_key, sm._Marker_key 
+	   from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r 
+	   where s._Strain_key = sm._Strain_key 
+	   and sm._Marker_key = r._Object_key 
+	   and r._MGIType_key = 2 
+	   ''', None)
 
     #
     # references used in Human/OMIM annotations
     #
 
-    db.sql('select distinct e._Refs_key, ' + \
-	    'cdate = convert(char(20), e.creation_date, 100), ' + \
-	    'mdate = convert(char(20), e.modification_date, 100) ' + \
-	    'into #omimreferences ' + \
-	    'from VOC_Annot a, VOC_Evidence e ' + \
-	    'where a._AnnotType_key = 1006 ' + \
-	    'and a._Annot_key = e._Annot_key', None)
+    db.sql('''
+	   select distinct e._Refs_key, 
+	   cdate = convert(char(20), e.creation_date, 100), 
+	   mdate = convert(char(20), e.modification_date, 100) 
+	   into #omimreferences 
+	   from VOC_Annot a, VOC_Evidence e 
+	   where a._AnnotType_key = 1006 
+	   and a._Annot_key = e._Annot_key
+	   ''', None)
 
     db.sql('create index idx1 on #genoreferences(_Refs_key)', None)
-    db.sql('create index idx1 on #allreferences(_Refs_key)', None)
+    db.sql('create index idx1 on #allrefs(_Refs_key)', None)
+    db.sql('create index idx1 on #allrefs2(_Refs_key)', None)
     db.sql('create index idx1 on #strainreferences(_Refs_key)', None)
     db.sql('create index idx1 on #mrkreferences(_Refs_key)', None)
     db.sql('create index idx1 on #omimreferences(_Refs_key)', None)
 
-    db.sql('select distinct _Refs_key into #references from #genoreferences ' + \
-	    'union select distinct _Refs_key from #allreferences ' + \
-	    'union select distinct _Refs_key from #strainreferences ' + \
-	    'union select distinct _Refs_key from #mrkreferences ' + \
-	    'union select distinct _Refs_key from #omimreferences', None)
+    db.sql('''
+	   select distinct _Refs_key into #references from #genoreferences 
+	   union select distinct _Refs_key from #allrefs 
+	   union select distinct _Refs_key from #allrefs2 
+	   union select distinct _Refs_key from #strainreferences 
+	   union select distinct _Refs_key from #mrkreferences 
+	   union select distinct _Refs_key from #omimreferences
+	   ''', None)
     db.sql('create index idx1 on #references(_Refs_key)', None)
 
-    results = db.sql('select r._Refs_key, b.refType, b.authors, b.authors2, ' + \
-	    'b.title, b.title2, b.journal, b.vol, b.issue, b.pgs, b.year, ' + \
-	    'b.isReviewArticle, ' + \
-	    'k.book_au, k.book_title, k.publisher, k.place, k.series_ed, ' + \
-	    'cdate = convert(char(20), b.creation_date, 100), ' + \
-	    'mdate = convert(char(20), b.modification_date, 100) ' + \
-	    'from #references r, BIB_Refs b, BIB_Books k ' + \
-	    'where r._Refs_key = b._Refs_key ' + \
-	    'and b._Refs_key *= k._Refs_key', 'auto')
+    results = db.sql('''
+	    select r._Refs_key, b.refType, b.authors, b.authors2, 
+	    b.title, b.title2, b.journal, b.vol, b.issue, b.pgs, b.year, 
+	    b.isReviewArticle, 
+	    k.book_au, k.book_title, k.publisher, k.place, k.series_ed, 
+	    cdate = convert(char(20), b.creation_date, 100), 
+	    mdate = convert(char(20), b.modification_date, 100) 
+	    from #references r, BIB_Refs b, BIB_Books k 
+	    where r._Refs_key = b._Refs_key 
+	    and b._Refs_key *= k._Refs_key
+	    ''', 'auto')
 
     for r in results:
 	    fp.write(`r['_Refs_key']` + TAB + \
@@ -1384,13 +1449,15 @@ def references():
     #
 
     fp = open(OUTPUTDIR + 'accession_reference.bcp', 'w')
-    results = db.sql('select a.accID, LogicalDB = l.name, a._Object_key, a.preferred, ' + \
-	    'cdate = convert(char(20), a.creation_date, 100), ' + \
-	    'mdate = convert(char(20), a.modification_date, 100) ' + \
-	    'from #references r, ACC_Accession a, ACC_LogicalDB l ' + \
-	    'where r._Refs_key = a._Object_key ' + \
-	    'and a._MGIType_key = 1 ' + \
-	    'and a._LogicalDB_key = l._LogicalDB_key', 'auto')
+    results = db.sql('''
+	    select a.accID, LogicalDB = l.name, a._Object_key, a.preferred, 
+	    cdate = convert(char(20), a.creation_date, 100), 
+	    mdate = convert(char(20), a.modification_date, 100) 
+	    from #references r, ACC_Accession a, ACC_LogicalDB l 
+	    where r._Refs_key = a._Object_key 
+	    and a._MGIType_key = 1 
+	    and a._LogicalDB_key = l._LogicalDB_key
+	    ''', 'auto')
 
     for r in results:
 	    fp.write(r['accID'] + TAB + \
@@ -1407,11 +1474,13 @@ def references():
 
     fp = open(OUTPUTDIR + 'genotype_mpt_reference.bcp', 'w')
 
-    results = db.sql('select g._Refs_key, g._Genotype_key, g._Annot_key, g.cdate, g.mdate ' + \
-	'from #genoreferences g ' + \
-	'where not exists (select 1 from MGI_Note_VocEvidence_View n ' + \
-	'where g._AnnotEvidence_key = n._Object_key) ' + \
-	'order by g._Genotype_key ', 'auto')
+    results = db.sql('''
+	select g._Refs_key, g._Genotype_key, g._Annot_key, g.cdate, g.mdate 
+	from #genoreferences g 
+	where not exists (select 1 from MGI_Note_VocEvidence_View n 
+	where g._AnnotEvidence_key = n._Object_key) 
+	order by g._Genotype_key 
+	''', 'auto')
     for r in results:
 	    fp.write(`r['_Annot_key']` + COLDELIM + \
 		     `r['_Refs_key']` + COLDELIM + \
@@ -1422,11 +1491,13 @@ def references():
 		     r['cdate'] + COLDELIM + \
 		     r['mdate'] + LINEDELIM)
 
-    results = db.sql('select g._Refs_key, g._Genotype_key, g._Annot_key, g._AnnotEvidence_key, g.cdate, g.mdate, ' + \
-	'n._Note_key, n.noteType, n.sequenceNum, n.note ' + \
-	'from #genoreferences g, MGI_Note_VocEvidence_View n ' + \
-	'where g._AnnotEvidence_key = n._Object_key ' + \
-	'order by g._Genotype_key, g._AnnotEvidence_key, n.sequenceNum', 'auto')
+    results = db.sql('''
+	select g._Refs_key, g._Genotype_key, g._Annot_key, g._AnnotEvidence_key, g.cdate, g.mdate, 
+	n._Note_key, n.noteType, n.sequenceNum, n.note 
+	from #genoreferences g, MGI_Note_VocEvidence_View n 
+	where g._AnnotEvidence_key = n._Object_key 
+	order by g._Genotype_key, g._AnnotEvidence_key, n.sequenceNum
+	''', 'auto')
     for r in results:
 	    fp.write(`r['_Annot_key']` + COLDELIM + \
 		     `r['_Refs_key']` + COLDELIM + \
@@ -1444,7 +1515,7 @@ def references():
 
     fp = open(OUTPUTDIR + 'allele_reference.bcp', 'w')
 
-    results = db.sql('select * from #allreferences', 'auto')
+    results = db.sql('select * from #allrefs', 'auto')
     for r in results:
 	    fp.write(`r['_Allele_key']` + TAB + \
 		     `r['_Refs_key']` + TAB + \
@@ -1490,12 +1561,14 @@ def omim():
 
     fp = open(OUTPUTDIR + 'marker_omim.bcp', 'w')
 
-    results = db.sql('select a._Term_key, a._Object_key, e._Refs_key, ' + \
-          'cdate = convert(char(20), a.creation_date, 100), ' + \
-          'mdate = convert(char(20), a.modification_date, 100) ' + \
-	'from VOC_Annot a, VOC_Evidence e ' + \
-	'where a._AnnotType_key = 1006 ' + \
-	'and a._Annot_key = e._Annot_key', 'auto')
+    results = db.sql('''
+	select a._Term_key, a._Object_key, e._Refs_key, 
+        cdate = convert(char(20), a.creation_date, 100), 
+        mdate = convert(char(20), a.modification_date, 100) 
+	from VOC_Annot a, VOC_Evidence e 
+	where a._AnnotType_key = 1006 
+	and a._Annot_key = e._Annot_key
+	''', 'auto')
 
     for r in results:
 	fp.write(`r['_Term_key']` + TAB + \
