@@ -1,3 +1,9 @@
+TAG: reports_db-4-3-0-7
+DATE: 09/25/2009
+STAFF: dbm
+CHANGES: TR9711/ALL_OMIM.py; Tested and tagged for the new report that
+         Joel converted from a custom SQL.
+
 TAG: reports_db-4-3-0-6
 DATE: 09/22/2009
 STAFF: lec
