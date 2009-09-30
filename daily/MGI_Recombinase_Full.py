@@ -22,6 +22,9 @@
 #	field 8: IMSR Strain
 #		pipe-delimited list of IMSR lines available (cell lines and non-cell lines)
 #
+# This generates both an HTML version and a tab-delimited version of the report.
+# It also superscripts the allele symbol, imsr label
+#
 # Usage:
 #       MGI_Recombinase_Full.py
 #
@@ -116,6 +119,8 @@ def writeHTML(r):
     #
 
     key = r['_Allele_key']
+
+    # superscript the symbol
 
     symbol = regsub.gsub('<', 'beginss', r['symbol'])
     symbol = regsub.gsub('>', 'endss', symbol)
@@ -298,6 +303,13 @@ results = db.sql('select * from #cre order by symbol', 'auto')
 for r in results:
     writeHTML(r)
     writeTAB(r)
+
+#
+# clean up
+#
+
+fpHTML.write('</TABLE>')
+fpHTML.write('<pre>')
 
 reportlib.finish_nonps(fpHTML, isHTML = 1)  # non-postscript file
 reportlib.finish_nonps(fpTAB)	# non-postscript file
