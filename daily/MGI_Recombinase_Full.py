@@ -161,10 +161,10 @@ def writeTAB(r):
     key = r['_Allele_key']
 
     fpTAB.write(r['accID'] + TAB + \
-                 r['symbol'] + TAB + \
-		 r['name'] + TAB + \
-		 r['alleleType'] + TAB + \
-		 r['driverNote'] + TAB)
+                r['symbol'] + TAB + \
+		r['name'] + TAB + \
+		r['alleleType'] + TAB + \
+		r['driverNote'] + TAB)
 
     if expressedTAB.has_key(key):
       fpTAB.write(string.join(expressedTAB[key], '|'))
