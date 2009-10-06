@@ -53,7 +53,7 @@ IMSR = os.environ['IMSR_DBNAME']
 
 introBLOG = '''
 <p>
-This report provides a list of all recombinases-containing alleles in the MGI database.
+This report provides a list of all recombinase-containing alleles in the MGI database.
 <p>
 Each allele symbol is linked to its respective MGI Allele Detail page, containing phenotypic
 and disease model data; each Anatomical System for an allele is linked to its MGI Recombinase Detail page.
@@ -61,7 +61,7 @@ A link is provided to the International Mouse Strain Resource (IMSR) strain if a
 carrying the listed allele.
 <p>
 To search for floxed, frt, or other recombinase target-containing alleles in MGI, use the
-Phenotype and <A HREF="%ssearches/allele_form.shtml">Alleles Query Form</A>.
+<A HREF="%ssearches/allele_form.shtml">Phenotype and Alleles Query Form</A>.
 <p>
 To search repositories for specific strains carrying mutations of all types, use the 
 <A HREF="http://www.findmice.org//IMSRSearchForm.jsp">IMSR Search Form</A>.
@@ -83,7 +83,7 @@ def printHeaderHTML():
     #
 
     fpHTML.write('</pre>\n')
-    fpHTML.write('<H2>MGI Recombinase Alleles</H2>')
+    fpHTML.write('<H2>MGI Recombinase Alleles Report</H2>')
     fpHTML.write(introBLOG)
     fpHTML.write('<TABLE BORDER=3 WIDTH=100%>')
     fpHTML.write('''
@@ -102,7 +102,7 @@ def printHeaderTAB():
     # write record to tab-delimited file
     #
 
-    fpTAB.write('# MGI - Recombinase Alleles\n')
+    fpTAB.write('# MGI Recombinase Alleles Report\n')
     fpTAB.write('# field 1: Allele ID\n')
     fpTAB.write('# field 2: Allele Symbol\n')
     fpTAB.write('# field 3: Allele Name\n')
