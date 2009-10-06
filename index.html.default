@@ -732,6 +732,16 @@
         </TD></TR>
     </TABLE></TD></TR>
 
+    <TR><TD><TABLE>
+        <TR><TD><B>7. Recombinase (cre) Specificity</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allele ID</TD><TD>Allele Symbol</TD><TD>Allele Name</TD><TD>Allele Type</TD><TD>Driver</TD><TD>Detected in</TD><TD>Absent in</TD><TD>IMSR Strain</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Recombinase_Full.html">MGI_Recombinase_Full.html</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Recombinase_Full.rpt">MGI_Recombinase_Full.rpt</A> (Tab-delimited version)</TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+
 </TABLE><BR>
 
 <!-- -->
