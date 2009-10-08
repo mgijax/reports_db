@@ -20,6 +20,7 @@
 <TR><TD><A HREF="#strain">Strains and Polymorphisms</A></TD></TR>
 <TR><TD><A HREF="#expression">Gene Expression</A></TD></TR>
 <TR><TD><A HREF="#pheno">Alleles and Phenotypes</A></TD></TR>
+<TR><TD><A HREF="#cre">Recombinase (cre) Specificity</A></TD></TR>
 <TR><TD><A HREF="#nomen">Nomenclature</A></TD></TR>
 <TR><TD><A HREF="#refs">References</A></TD></TR>
 <TR><TD><A HREF="#clonecoll">Clone Collections</A></TD></TR>
@@ -732,8 +733,15 @@
         </TD></TR>
     </TABLE></TD></TR>
 
+</TABLE><BR>
+
+<!-- -->
+
+<A NAME="cre"></A>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Recombinase (cre) Specificity</TH></TR>
+
     <TR><TD><TABLE>
-        <TR><TD><B>7. Recombinase (cre) Specificity</B></TD></TR>
+        <TR><TD><B>1. Recombinase (cre) Specificity</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allele ID</TD><TD>Allele Symbol</TD><TD>Allele Name</TD><TD>Allele Type</TD><TD>Driver</TD><TD>Detected in</TD><TD>Absent in</TD><TD>IMSR Strain</TD></TABLE>
         </TD></TR>
