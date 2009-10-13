@@ -119,6 +119,7 @@ def writeHTML(r):
     #
 
     key = r['_Allele_key']
+    driverNote = regsub.gsub('\n', '', r['driverNote'])
 
     # superscript the symbol
 
@@ -132,7 +133,7 @@ def writeHTML(r):
         BEGTD + ALLELE_ANCHOR % (WI_URL, r['accID']) + symbol + CLOSE_ANCHOR + ENDTD + \
         BEGTD + r['name'] + ENDTD + \
         BEGTD + r['alleleType'] + ENDTD + \
-        BEGTD + r['driverNote'] + ENDTD
+        BEGTD + driverNote + ENDTD
 
     if expressedHTML.has_key(key):
 	s = s + BEGTD + '%s' % (string.join(expressedHTML[key], BREAK)) + ENDTD
@@ -159,12 +160,13 @@ def writeTAB(r):
     #
 
     key = r['_Allele_key']
+    driverNote = regsub.gsub('\n', '', r['driverNote'])
 
     fpTAB.write(r['accID'] + TAB + \
                 r['symbol'] + TAB + \
 		r['name'] + TAB + \
 		r['alleleType'] + TAB + \
-		r['driverNote'] + TAB)
+		driverNote + TAB)
 
     if expressedTAB.has_key(key):
       fpTAB.write(string.join(expressedTAB[key], '|'))
