@@ -63,6 +63,9 @@
 #
 # History:
 #
+# lec	10/13/2009
+#	- TR 9887; allele_notes.bcp; check for duplicates
+#
 # lec	9/15/2009
 #	- TR 9838;
 #	missing strain_genotype, allele_pair:  
@@ -872,16 +875,28 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele_note.bcp', 'w')
 
-    results = db.sql('select a._Allele_key, note = rtrim(nc.note), nc.sequenceNum, nt.noteType, ' + \
-	    'cdate = convert(char(20), n.creation_date, 100), ' + \
-	    'mdate = convert(char(20), n.modification_date, 100) ' + \
-	    'from #alleles a, MGI_Note n, MGI_NoteChunk nc, MGI_NoteType nt ' + \
-	    'where a._Allele_key = n._Object_key ' + \
-	    'and n._MGIType_key = 11 ' + \
-	    'and n._Note_key = nc._Note_key ' + \
-	    'and n._NoteType_key = nt._NoteType_key', 'auto')
+    results = db.sql('''
+	    select a._Allele_key, note = rtrim(nc.note), nc.sequenceNum, nt.noteType, 
+	    cdate = convert(char(20), n.creation_date, 100), 
+	    mdate = convert(char(20), n.modification_date, 100) 
+	    from #alleles a, MGI_Note n, MGI_NoteChunk nc, MGI_NoteType nt 
+	    where a._Allele_key = n._Object_key 
+	    and n._MGIType_key = 11 
+	    and n._Note_key = nc._Note_key 
+	    and n._NoteType_key = nt._NoteType_key
+	    ''', 'auto')
 
+    notes = {}
     for r in results:
+
+	    # check duplicates by allele/sequence/note type
+	    key = str(r['_Allele_key']) + ':' + str(r['sequenceNum']) + ':' + str(r['noteType'])
+	    value = key
+	    if notes.has_key(key):
+		print key
+		continue
+	    notes[key] = value
+
 	    fp.write(`r['_Allele_key']` + COLDELIM + \
 		     r['noteType'] + COLDELIM + \
 		     `r['sequenceNum']` + COLDELIM + \
@@ -1585,12 +1600,12 @@ def omim():
 
 db.useOneConnection(1)
 db.set_sqlLogFunction(db.sqlLogAll)
-vocabs()
+#vocabs()
 alleles()
-markers()
-strains()
-genotypes()
-references()
-omim()
+#markers()
+#strains()
+#genotypes()
+#references()
+#omim()
 db.useOneConnection(0)
 
