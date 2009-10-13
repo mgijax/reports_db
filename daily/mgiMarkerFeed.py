@@ -64,7 +64,8 @@
 # History:
 #
 # lec	10/13/2009
-#	- TR 9887; allele_notes.bcp; check for duplicates
+#	- TR 9887; allele notes, check for duplicates
+#	this fix can be removed once the allmrkload issue is resolved.
 #
 # lec	9/15/2009
 #	- TR 9838;
@@ -890,6 +891,7 @@ def alleles():
     for r in results:
 
 	    # check duplicates by allele/sequence/note type
+	    # remove this check once the allmrkload issue is resolved
 	    key = str(r['_Allele_key']) + ':' + str(r['sequenceNum']) + ':' + str(r['noteType'])
 	    value = key
 	    if notes.has_key(key):
