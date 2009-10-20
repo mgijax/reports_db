@@ -11,7 +11,7 @@
 #
 #	field 1: Driver note
 #	field 2: Allele Symbol
-#	field 3: Allele Name
+#	field 3: Name
 #	field 4: Detected In 
 #		pipe-deimited list of anatomical system with expressed assay results (expressed = true)
 #	field 5: Absent in
@@ -89,7 +89,7 @@ def printHeaderHTML():
     fpHTML.write('''
     <th align=left valign=top>Driver</th>
     <th align=left valign=top>Allele Symbol</th>
-    <th align=left valign=top>Allele Name</th>
+    <th align=left valign=top>Name</th>
     <th align=left valign=top>Detected in</th>
     <th align=left valign=top>Absent in</th>
     <th align=left valign=top>IMSR Strain</th>
@@ -104,7 +104,7 @@ def printHeaderTAB():
     fpTAB.write('# MGI Recombinase Alleles Report\n')
     fpTAB.write('# field 1: Driver\n')
     fpTAB.write('# field 2: Allele Symbol\n')
-    fpTAB.write('# field 3: Allele Name\n')
+    fpTAB.write('# field 3: Name\n')
     fpTAB.write('# field 4: Detected in (anatomical systems with expressed assay results)\n')
     fpTAB.write('# field 5: Absent in (anatomical systems with notexpressed assay results)\n')
     fpTAB.write('# field 6: IMSR Strain (list of IMSR lines available (cell lines, cryo materials, and live)\n')
@@ -126,10 +126,15 @@ def writeHTML(r):
     symbol = regsub.gsub('beginss', '<sup>', symbol)
     symbol = regsub.gsub('endss', '</sup>', symbol)
 
+    if r['name'] == r['markerName']:
+	name = r['name']
+    else:
+	name = r['markerName'] + '; ' + r['name']
+ 
     s = '<tr>' + \
         BEGTD + driverNote + ENDTD + \
         BEGTD + ALLELE_ANCHOR % (WI_URL, r['accID']) + symbol + CLOSE_ANCHOR + ENDTD + \
-        BEGTDWRAP + r['name'] + ENDTD
+        BEGTDWRAP + name + ENDTD
 
     if expressedHTML.has_key(key):
 	s = s + BEGTD + '%s' % (string.join(expressedHTML[key], BREAK)) + ENDTD
@@ -158,9 +163,14 @@ def writeTAB(r):
     key = r['_Allele_key']
     driverNote = regsub.gsub('\n', '', r['driverNote'])
 
+    if r['name'] == r['markerName']:
+	name = r['name']
+    else:
+	name = r['markerName'] + '; ' + r['name']
+ 
     fpTAB.write(driverNote + TAB + \
                 r['symbol'] + TAB + \
-		r['name'] + TAB)
+		name + TAB)
 
     if expressedTAB.has_key(key):
       fpTAB.write(string.join(expressedTAB[key], '|'))
@@ -189,16 +199,24 @@ printHeaderTAB()
 #
 # select all Cre Alleles
 #
+# the Marker name was added to this report at the last minue,
+# and my preferred method would have been to add the marker key and name
+# to the Cre cache table...but at this stage in the process, I'm not going to do that...
+# which is why there needs to be another join to the allele/marker tables to grab
+# the marker name
+#
 
 db.sql('''
-       select distinct c._Allele_key, c.symbol, c.name, c.driverNote, a.accID
+       select distinct c._Allele_key, c.symbol, c.name, c.driverNote, a.accID, markerName = rtrim(m.name)
        into #cre
-       from ALL_Cre_Cache c, ACC_Accession a
+       from ALL_Cre_Cache c, ACC_Accession a, ALL_Allele aa, MRK_Marker m
        where c._Allele_key = a._Object_key
        and a._MGIType_key = 11
        and a._LogicalDB_key = 1 
        and a.prefixPart = "MGI:" 
        and a.preferred = 1
+       and c._Allele_key = aa._Allele_key
+       and aa._Marker_key = m._Marker_key
        ''', None)
 
 db.sql('create index idx1 on #cre(_Allele_key)', None)
