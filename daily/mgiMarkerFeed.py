@@ -1602,12 +1602,12 @@ def omim():
 
 db.useOneConnection(1)
 db.set_sqlLogFunction(db.sqlLogAll)
-#vocabs()
+vocabs()
 alleles()
-#markers()
-#strains()
-#genotypes()
-#references()
-#omim()
+markers()
+strains()
+genotypes()
+references()
+omim()
 db.useOneConnection(0)
 
