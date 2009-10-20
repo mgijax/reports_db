@@ -9,18 +9,17 @@
 #
 #	Tab-delimited report of all ALL_Cre_Cache records
 #
-#	field 1: Allele ID
+#	field 1: Driver note
 #	field 2: Allele Symbol
 #	field 3: Allele Name
-#	field 4: Allele Type
-#	field 5: Driver note
-#	field 6: Detected In 
+#	field 4: Detected In 
 #		pipe-deimited list of anatomical system with expressed assay results (expressed = true)
-#	field 7: Absent in
+#	field 5: Absent in
 #		pipe-deimited list of anatomical system with expressed assay results (expressed = false)
 #		if system already exists in field 6, skip it
-#	field 8: IMSR Strain
+#	field 6: IMSR Strain
 #		pipe-delimited list of IMSR lines available (cell lines and non-cell lines)
+#	field 7: Allele ID
 #
 # This generates both an HTML version and a tab-delimited version of the report.
 # It also superscripts the allele symbol, imsr label
@@ -68,8 +67,9 @@ To search repositories for specific strains carrying mutations of all types, use
 <p>
 ''' % (WI_URL)
 
-BEGTD = '<td style="white-space:nowrap;">'
-ENDTD = '</td>'
+BEGTD = '<td style="white-space:nowrap;"><font size="-1">'
+BEGTDWRAP = '<td><font size="-1">'
+ENDTD = '</font></td>'
 BREAK = '<br>'
 BLANKFIELD = '%s&nbsp;%s' % (BEGTD, ENDTD)
 
@@ -87,14 +87,13 @@ def printHeaderHTML():
     fpHTML.write(introBLOG)
     fpHTML.write('<TABLE BORDER=3 WIDTH=100%>')
     fpHTML.write('''
-    <th align=left valign=top>Allele ID</th>
+    <th align=left valign=top>Driver</th>
     <th align=left valign=top>Allele Symbol</th>
     <th align=left valign=top>Allele Name</th>
-    <th align=left valign=top>Allele Type</th>
-    <th align=left valign=top>Driver</th>
     <th align=left valign=top>Detected in</th>
     <th align=left valign=top>Absent in</th>
     <th align=left valign=top>IMSR Strain</th>
+    <th align=left valign=top>Allele ID</th>
     ''')
 
 def printHeaderTAB():
@@ -103,14 +102,13 @@ def printHeaderTAB():
     #
 
     fpTAB.write('# MGI Recombinase Alleles Report\n')
-    fpTAB.write('# field 1: Allele ID\n')
+    fpTAB.write('# field 1: Driver\n')
     fpTAB.write('# field 2: Allele Symbol\n')
     fpTAB.write('# field 3: Allele Name\n')
-    fpTAB.write('# field 4: Allele Type\n')
-    fpTAB.write('# field 5: Driver\n')
-    fpTAB.write('# field 6: Detected in (anatomical systems with expressed assay results)\n')
-    fpTAB.write('# field 7: Absent in (anatomical systems with notexpressed assay results)\n')
-    fpTAB.write('# field 8: IMSR Strain (list of IMSR lines available (cell lines, cryo materials, and live)\n')
+    fpTAB.write('# field 4: Detected in (anatomical systems with expressed assay results)\n')
+    fpTAB.write('# field 5: Absent in (anatomical systems with notexpressed assay results)\n')
+    fpTAB.write('# field 6: IMSR Strain (list of IMSR lines available (cell lines, cryo materials, and live)\n')
+    fpTAB.write('# field 7: Allele ID\n')
     fpTAB.write(CRT*2)
 
 def writeHTML(r):
@@ -129,11 +127,9 @@ def writeHTML(r):
     symbol = regsub.gsub('endss', '</sup>', symbol)
 
     s = '<tr>' + \
-        BEGTD + r['accID'] + ENDTD + '\n' + \
+        BEGTD + driverNote + ENDTD + \
         BEGTD + ALLELE_ANCHOR % (WI_URL, r['accID']) + symbol + CLOSE_ANCHOR + ENDTD + \
-        BEGTD + r['name'] + ENDTD + \
-        BEGTD + r['alleleType'] + ENDTD + \
-        BEGTD + driverNote + ENDTD
+        BEGTDWRAP + r['name'] + ENDTD
 
     if expressedHTML.has_key(key):
 	s = s + BEGTD + '%s' % (string.join(expressedHTML[key], BREAK)) + ENDTD
@@ -150,7 +146,7 @@ def writeHTML(r):
     else:
         s = s + BLANKFIELD
       
-    s = s + CRT
+    s = s + BEGTD + r['accID'] + ENDTD + CRT
 
     fpHTML.write(s)
 
@@ -162,11 +158,9 @@ def writeTAB(r):
     key = r['_Allele_key']
     driverNote = regsub.gsub('\n', '', r['driverNote'])
 
-    fpTAB.write(r['accID'] + TAB + \
+    fpTAB.write(driverNote + TAB + \
                 r['symbol'] + TAB + \
-		r['name'] + TAB + \
-		r['alleleType'] + TAB + \
-		driverNote + TAB)
+		r['name'] + TAB)
 
     if expressedTAB.has_key(key):
       fpTAB.write(string.join(expressedTAB[key], '|'))
@@ -178,7 +172,9 @@ def writeTAB(r):
 
     if imsrTAB.has_key(key):
         fpTAB.write(string.join(imsrTAB[key], '|'))
-    fpTAB.write(CRT)
+    fpTAB.write(TAB)
+
+    fpTAB.write(r['accID'] + CRT)
 
 #
 # Main
@@ -195,7 +191,7 @@ printHeaderTAB()
 #
 
 db.sql('''
-       select distinct c._Allele_key, c.symbol, c.name, c.alleleType, c.driverNote, a.accID
+       select distinct c._Allele_key, c.symbol, c.name, c.driverNote, a.accID
        into #cre
        from ALL_Cre_Cache c, ACC_Accession a
        where c._Allele_key = a._Object_key
@@ -300,7 +296,7 @@ for r in results:
 #
 # process results
 #
-results = db.sql('select * from #cre order by symbol', 'auto')
+results = db.sql('select * from #cre order by driverNote', 'auto')
 
 for r in results:
     writeHTML(r)
