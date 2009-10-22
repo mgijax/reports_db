@@ -80,7 +80,7 @@ db.sql('''select a._Allele_key, a._Marker_key, a.symbol, a.name,
 	from ALL_Allele a, ACC_Accession aa, ACC_LogicalDB ldb, MRK_Marker m 
         where a._Allele_key = aa._Object_key 
         and aa._MGIType_key = 11 
-        and aa._LogicalDB_key in (125) 
+        and aa._LogicalDB_key in (125, 126) 
         and aa._LogicalDB_key = ldb._LogicalDB_key 
 	and a._Marker_key = m._Marker_key''', None)
 
