@@ -31,7 +31,7 @@ import reportlib
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
 
-reportTitle = 'Human and Mouse Orthology with Human OMIM IDs'
+reportTitle = 'Human and Mouse Orthology with Human OMIM Gene IDs'
 	
 db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], reportTitle, os.environ['REPORTOUTPUTDIR'], printHeading = "MGI")
@@ -42,7 +42,7 @@ fp.write(string.ljust('Mouse Symbol', 25))
 fp.write(SPACE)
 fp.write(string.ljust('Human Symbol', 25))
 fp.write(SPACE)
-fp.write(string.ljust('OMIM ID', 10))
+fp.write(string.ljust('OMIM Gene ID', 12))
 fp.write(SPACE)
 fp.write(CRT)
 
@@ -52,7 +52,7 @@ fp.write(string.ljust('------------', 25))
 fp.write(SPACE)
 fp.write(string.ljust('------------', 25))
 fp.write(SPACE)
-fp.write(string.ljust('-------', 10))
+fp.write(string.ljust('------------', 12))
 fp.write(SPACE)
 fp.write(CRT)
 
@@ -109,7 +109,7 @@ for r in results:
     fp.write(SPACE)
     fp.write(string.ljust(r['humanSymbol'], 25))
     fp.write(SPACE)
-    fp.write(string.ljust(string.join(mimIDs[r['humanKey']], ','), 10))
+    fp.write(string.ljust(string.join(mimIDs[r['humanKey']], ','), 12))
     fp.write(SPACE)
     fp.write(CRT)
     count = count + 1
