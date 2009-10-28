@@ -408,9 +408,9 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>7. Human and Mouse Orthology with Human OMIM IDs</B></TD></TR>
+        <TR><TD><B>7. Human and Mouse Orthology with Human OMIM Gene IDs</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Human Marker Symbol</TD><TD>OMIM ID</TD></TR></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Human Marker Symbol</TD><TD>OMIM Gene ID</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_OMIM.rpt">HMD_OMIM.rpt</A></TD></TR>
     </TABLE></TD></TR>
