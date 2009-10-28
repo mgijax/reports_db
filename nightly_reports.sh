@@ -42,14 +42,6 @@ echo $i, `date`
 echo $i, `date`
 end
 
-cd ..
-
-cd anatdict
-foreach i (*.py)
-$i >> ${LOG}
-end
-cd ..
-
 foreach i (${REPORTOUTPUTDIR}/*)
 if ( ! -d $i ) then
 cp $i ${FTPREPORTDIR}
