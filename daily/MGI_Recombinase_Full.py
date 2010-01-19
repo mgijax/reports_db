@@ -29,6 +29,9 @@
 #
 # History:
 #
+# lec	01/19/2010
+#	- TR 10042; added JAX print header
+#
 # lec	09/29/2009
 #	- created
 #
@@ -191,7 +194,7 @@ def writeTAB(r):
 #
 
 fpHTML = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None, isHTML = 1)
-fpTAB = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fpTAB = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 'JAX')
 
 printHeaderHTML()
 printHeaderTAB()
