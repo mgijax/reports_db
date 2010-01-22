@@ -250,8 +250,8 @@ for r in results:
             temp = r1.findall(tempString)
             for word in temp:
                 workString += word + '#'
-            if workString.strip() != '':
-                clHash[currentKey] = workString.strip()
+            #if workString.strip() != '':
+                #clHash[currentKey] = workString.strip()
         else:
             first = 0
         workString = ''
