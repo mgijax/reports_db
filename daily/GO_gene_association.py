@@ -210,6 +210,58 @@ for r in results:
     pubMed[key] = value
 
 #
+# Setup the cell ontology hash
+#
+#
+
+clHash = {}
+
+results = db.sql('''select distinct  mm._Marker_key as 'key', nc.note as 'gpe',
+	nc.sequenceNum, vt._Term_key as 'tk', ve._Refs_key
+	from mgi_notechunk nc, mgi_note n, voc_evidence ve, 
+	voc_annot va, mrk_marker mm, voc_term vt 
+	where nc.note like '%cell type%CL:%'   and nc._Note_key = n._Note_key 
+	and n._Object_key = ve._AnnotEvidence_key 
+	and ve._Annot_key = va._Annot_key 
+	and va._Object_key = mm._Marker_key 
+	and va._AnnotType_key = 1000 and va._Term_key = vt._Term_key 
+	order by mm._Marker_key, sequenceNum, vt._Term_key''', 'auto')
+
+#r1 = re.compile(r'cell.type:([^\s\\\n]*)', re.I)
+r1 = re.compile(r'(CL:[0-9]{7}?)', re.I)
+
+clPattern1 = re.compile(r'CL:', re.I)
+
+tempString = ''
+currentKey = ''
+first = 1
+workString = ''
+
+for r in results:
+
+    # The key to this hash is compound in nature, if any of the marker key, term key or reference key changes
+    # we are on a new note.
+
+    newKey = 'mk:' +str(r['key'])+'tk:'+str(r['tk'])+'rk:'+str(r['_Refs_key'])
+
+    if currentKey != newKey:
+        # Is this the first pass through the loop?
+        if first != 1:
+            temp = r1.findall(tempString)
+            for word in temp:
+                workString += word + '#'
+            if workString.strip() != '':
+                clHash[currentKey] = workString.strip()
+        else:
+            first = 0
+        workString = ''
+        tempString = r['gpe']
+        # Construct the key for the current row (The row we are about to leave behind)
+        currentKey = 'mk:' +str(r['key'])+'tk:'+str(r['tk'])+'rk:'+str(r['_Refs_key'])
+    else:        
+        tempString = tempString + r['gpe']
+
+#
 # Setup the isoformsProtein hash.  
 # The items in this hash are seperated by a #, and are broken up later on into multiple rows.
 #
@@ -227,6 +279,8 @@ results = db.sql('select distinct  mm._Marker_key as "key", nc.note as "gpe", ' 
     'and va._AnnotType_key = 1000 and va._Term_key = vt._Term_key ' + \
     'order by mm._Marker_key, sequenceNum, vt._Term_key', 'auto')
 
+
+
 r1 = re.compile(r'gene.product:([^\s\\\n]*)', re.I)
 
 isoformPattern1 = re.compile(r'UniProtKB:', re.I)
@@ -237,7 +291,6 @@ isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
 tempString = ''
 currentKey = ''
 first = 1
-gpList = []
 workString = ''
 
 for r in results:
@@ -367,9 +420,21 @@ for r in results:
         else:
             reportRow = reportRow + DBABBREV + TAB
 
-        # The currently blank column 16
-
-        reportRow = reportRow + '' + TAB
+        # The currently blank column 16 - Not so much anymore
+        if clHash.has_key(isoformKey):
+            startPart = 'occurs_in('
+            if dag[r['_Term_key']] == 'C':
+                startPart = 'part_of('
+            row = ''
+            for word3 in clHash[isoformKey].split('#'):
+                word3 = word3.replace(';', '')
+                if word3 != '' and row == '':
+                    row = startPart + str(word3) + ')'
+                elif word3 != '': 
+                    row = row + '|' + startPart + str(word3) + ')'
+            reportRow = reportRow + row + TAB
+        else:                    
+            reportRow = reportRow + '' + TAB
 
         # Column 17 is populated in a special way.  
         # If there is an isoform, use that, parsing through it to check for multiple annotations.
@@ -380,7 +445,6 @@ for r in results:
             for word3 in isoformsProtein[isoformKey].split('#'):
                 if word3 != '':
                     row = str(word3)
-                    #row = 'ISOFORM: ' + str(word3)
                     fp.write(reportRow + row + CRT)
         else:
             if proteins.has_key(r['_Object_key']):
