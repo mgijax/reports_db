@@ -432,7 +432,9 @@ for r in results:
                     row = startPart + str(word3) + ')'
                 elif word3 != '': 
                     row = row + '|' + startPart + str(word3) + ')'
-            reportRow = reportRow + row + TAB
+            #Commented out until release.
+            #reportRow = reportRow + row + TAB
+            reportRow = reportRow + '' + TAB
         else:                    
             reportRow = reportRow + '' + TAB
 
