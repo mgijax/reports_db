@@ -250,8 +250,8 @@ for r in results:
             temp = r1.findall(tempString)
             for word in temp:
                 workString += word + '#'
-            #if workString.strip() != '':
-                #clHash[currentKey] = workString.strip()
+            if workString.strip() != '':
+                clHash[currentKey] = workString.strip()
         else:
             first = 0
         workString = ''
@@ -432,9 +432,7 @@ for r in results:
                     row = startPart + str(word3) + ')'
                 elif word3 != '': 
                     row = row + '|' + startPart + str(word3) + ')'
-            #Commented out until release.
-            #reportRow = reportRow + row + TAB
-            reportRow = reportRow + '' + TAB
+            reportRow = reportRow + row + TAB
         else:                    
             reportRow = reportRow + '' + TAB
 
