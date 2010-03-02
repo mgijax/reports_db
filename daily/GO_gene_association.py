@@ -38,6 +38,10 @@
 #
 # History:
 #
+# lec	03/02/2010
+#   - TR10035; added RGD check for column 15
+#   note that the isoform edits have no TR # attached
+#
 # lec   07/24/2008
 #   - TR 9134; change UniProt to UniProtKB
 #
@@ -270,8 +274,8 @@ isoformsProtein = {}
 
 results = db.sql('select distinct  mm._Marker_key as "key", nc.note as "gpe", ' + \
     'nc.sequenceNum, vt._Term_key as "tk", ve._Refs_key ' + \
-    'from mgi_notechunk nc, mgi_note n, voc_evidence ve, ' + \
-    'voc_annot va, mrk_marker mm, voc_term vt ' + \
+    'from MGI_NoteChunk nc, MGI_Note n, VOC_Evidence ve, ' + \
+    'VOC_Annot va, MRK_Marker mm, VOC_Term vt ' + \
     'where nc.note like "%%gene_product:%%" and nc._Note_key = n._Note_key ' + \
     'and n._Object_key = ve._AnnotEvidence_key ' + \
     'and ve._Annot_key = va._Annot_key ' + \
@@ -362,8 +366,6 @@ for r in results:
     else:
         proteinsGene[key] = 'NCBI:' + r['seqID']   
 
-        
-
 #
 # process results
 #
@@ -417,6 +419,8 @@ for r in results:
         elif string.find(r['modifiedBy'], 'GOA_') >= 0:
             modifiedBy = re.sub('GOA_', '', r['modifiedBy'])
             reportRow = reportRow + modifiedBy + TAB
+        elif string.find(r['modifiedBy'], 'RGD') >= 0:
+            reportRow = reportRow + r['modifiedBy']
         else:
             reportRow = reportRow + DBABBREV + TAB
 
