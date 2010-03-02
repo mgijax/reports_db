@@ -522,6 +522,14 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_Dog.rpt">HMD_Dog.rpt</A> (sorted by dog chromosome, space-delimited)</TD></TR>
     </TABLE></TD></TR>
 
+    <TR><TD><TABLE>
+        <TR><TD><B>20. Human and Mouse Orthology with Synonyms</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Mouse MGI Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Exact Synonyms</TD><TD>Mouse Entrez Gene ID</TD><TD>Human Entrez Gene ID</TD><TD>Human Marker Symbols</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF=".rpt">.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
 </TABLE><BR>
 
 <!-- -->
