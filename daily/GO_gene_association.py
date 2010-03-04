@@ -448,7 +448,7 @@ for r in results:
             reportRow = reportRow + DBABBREV + TAB
 
 	# column 16
-        # 'occurs_in' or 'part_of'
+        # cell ontology: 'occurs_in' or 'part_of'
 
         if clHash.has_key(isoformKey):
             startPart = 'occurs_in('
