@@ -89,6 +89,8 @@ import mgi_utils
 
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
+UNIPROTKB = 'swissload'
+assignedByList = ['RGD', 'GOC']
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -170,7 +172,7 @@ db.sql('select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
     'markerID = ma.accID, ' + \
     'refID = b.accID, ' + \
     'eCode = rtrim(t.abbreviation), ' + \
-    'modifiedBy = u.login ' + \
+    'assignedBy = u.login ' + \
     'into #results ' + \
     'from #gomarker g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u ' + \
     'where g._Object_key = ma._Object_key ' + \
@@ -428,14 +430,20 @@ for r in results:
 	# column 14
         reportRow = reportRow + r['mDate'] + TAB
 
-	# column 15
-        if r['modifiedBy'] == 'swissload':
+	# column 15; assigned by
+        if r['assignedBy'] == UNIPROTKB:
             reportRow = reportRow + 'UniProtKB' + TAB
-        elif string.find(r['modifiedBy'], 'GOA_') >= 0:
-            modifiedBy = re.sub('GOA_', '', r['modifiedBy'])
-            reportRow = reportRow + modifiedBy + TAB
-        elif string.find(r['modifiedBy'], 'RGD') >= 0:
-            reportRow = reportRow + r['modifiedBy']
+
+	# remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
+        elif string.find(r['assignedBy'], 'GOA_') >= 0:
+            assignedBy = re.sub('GOA_', '', r['assignedBy'])
+            reportRow = reportRow + assignedBy + TAB
+
+	# check list
+        elif r['assignedBy'] in assignedByList:
+            reportRow = reportRow + r['assignedBy']
+
+	# else use default
         else:
             reportRow = reportRow + DBABBREV + TAB
 
