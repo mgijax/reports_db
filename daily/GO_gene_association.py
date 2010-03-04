@@ -29,11 +29,11 @@
 #   9.  GO DAG Abbreviation (F, P, C)
 #   10. Gene name
 #   11. Gene synonym(s) - list of |-delimited synonyms
-#   12. Marker Type (gene)
+#   12. Marker Type or Protein (gene)
 #   13. Species (taxon:10090)
 #   14. Modification Date (YYYYMMDD)
 #   15. Assigned By
-#   16. Unused
+#   16. Cell Ontology (occurs_in or part_of)
 #   17. Isorform/Protein Data/MGI ID (Depending on data)
 #
 # History:
@@ -222,8 +222,8 @@ clHash = {}
 
 results = db.sql('''select distinct  mm._Marker_key as 'key', nc.note as 'gpe',
 	nc.sequenceNum, vt._Term_key as 'tk', ve._Refs_key
-	from mgi_notechunk nc, mgi_note n, voc_evidence ve, 
-	voc_annot va, mrk_marker mm, voc_term vt 
+	from MGI_NoteChunk nc, MGI_Note n, VOC_Evidence ve, 
+	VOC_Annot va, MRK_Marker mm, VOC_Term vt 
 	where nc.note like '%cell type%CL:%'   and nc._Note_key = n._Note_key 
 	and n._Object_key = ve._AnnotEvidence_key 
 	and ve._Annot_key = va._Annot_key 
@@ -371,26 +371,38 @@ for r in results:
 #
 results = db.sql('select * from #results order by symbol', 'auto')
 for r in results:
+
     reportRow = ''    
+
     if dag.has_key(r['_Term_key']):
+
+	# columns 1-5
         reportRow = DBABBREV + TAB
         reportRow = reportRow + r['markerID'] + TAB
         reportRow = reportRow + r['symbol'] + TAB
         reportRow = reportRow + string.strip(r['qualifier']) + TAB
         reportRow = reportRow + r['termID'] + TAB
 
-        # reference
+        # column 6; reference
         referenceID = DBABBREV + ':' + r['refID']
+
         if pubMed.has_key(r['_Refs_key']):
             referenceID = referenceID + '|PMID:' + pubMed[r['_Refs_key']]
+
         reportRow = reportRow + referenceID + TAB
+
+	# column 7
         reportRow = reportRow + r['eCode'] + TAB
+
+	# column 8
         inferredFrom = re.sub('MGI:','MGI:MGI:',mgi_utils.prvalue(r['inferredFrom']))
         reportRow = reportRow + inferredFrom + TAB
 
+	# column 9-10
         reportRow = reportRow + dag[r['_Term_key']] + TAB
         reportRow = reportRow + r['name'] + TAB
 
+	# column 11
         if syns.has_key(r['_Object_key']):
             syn_string = string.join(syns[r['_Object_key']], '|')
             reportRow = reportRow + syn_string + TAB
@@ -401,7 +413,7 @@ for r in results:
 
         isoformKey = 'mk:'+str(r['_Object_key'])+'tk:'+str(r['_Term_key'])+'rk:'+str(r['_Refs_key'])
 
-        # Column 12 is populated in a special way
+        # column 12 is populated in a special way
         # If there is a isoform or a protein, print out protein
         # otherwise print out the marker type.
 
@@ -410,10 +422,13 @@ for r in results:
         else:
             reportRow = reportRow + r['markerType'] + TAB
                 
-        #reportRow = reportRow + r['markerType'] + TAB
+	# column 13
         reportRow = reportRow + SPECIES + TAB
+
+	# column 14
         reportRow = reportRow + r['mDate'] + TAB
 
+	# column 15
         if r['modifiedBy'] == 'swissload':
             reportRow = reportRow + 'UniProtKB' + TAB
         elif string.find(r['modifiedBy'], 'GOA_') >= 0:
@@ -424,7 +439,9 @@ for r in results:
         else:
             reportRow = reportRow + DBABBREV + TAB
 
-        # The currently blank column 16 - Not so much anymore
+	# column 16
+        # 'occurs_in' or 'part_of'
+
         if clHash.has_key(isoformKey):
             startPart = 'occurs_in('
             if dag[r['_Term_key']] == 'C':
@@ -440,7 +457,7 @@ for r in results:
         else:                    
             reportRow = reportRow + '' + TAB
 
-        # Column 17 is populated in a special way.  
+        # column 17 is populated in a special way.  
         # If there is an isoform, use that, parsing through it to check for multiple annotations.
         # If not, if there is a protein use that.
         # If not, leave it blank for now.
