@@ -59,7 +59,7 @@ db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('#\n')
-fp.write('# This report lists the Markers that have a Biotype Conflict\n')
+fp.write('# This report lists the Markers that have a Biotype Conflict that involves a pseudogene.\n')
 fp.write('#\n')
 fp.write('#  column 1: Symbol\n')
 fp.write('#  column 2: Source:  for gene models, this is the provider\n')
