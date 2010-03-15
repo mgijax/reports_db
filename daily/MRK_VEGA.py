@@ -13,7 +13,8 @@
 #       Chromosome
 #       cM Position
 #       VEGA Gene ID
-#
+#	VEGA Transcript IDs - space delimited
+#	VEGA Protein IDs - space delimited
 # Usage:
 #       MRK_VEGA.py
 #

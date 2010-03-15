@@ -167,10 +167,10 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>3. MGI Marker associations to Sequence (GenBank or RefSeq) information (tab-delimited)</B></TD></TR>
+        <TR><TD><B>3. MGI Marker associations to Sequence (GenBank, RefSeq,VEGA, Ensembl) information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Type</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
-        <TD>GenBank Accession IDs<BR>(space-delimited)</TD><TD>Unigene ID<BR>(if any)</TD><TD>RefSeq ID<BR>(if any)</TD></TR></TABLE>
+        <TD>GenBank Accession IDs<BR>(space-delimited)</TD><TD>Unigene ID<BR>(if any)</TD><TD>RefSeq ID<BR>(if any)</TD><TD>VEGA ID<BR>(if any)</TD><TD>Ensembl ID<BR>(if any)</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Sequence.rpt">MRK_Sequence.rpt</A></TD></TR>
         </TD></TR>
@@ -221,9 +221,9 @@
         <TR><TD><B>8. MGI Marker associations to VEGA sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
-        <TD>VEGA Accession ID</TD></TR></TABLE>
+        <TD>VEGA Accession ID</TD><TD>VEGA Transcript ID<BR>(space-delimited, if any)</TD><TD>VEGA Protein ID<BR>(space-delimited, if any)</TD></TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_VEGA.rpt">MGI_VEGA.rpt</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_VEGA.rpt">MRK_VEGA.rpt</A></TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
@@ -231,7 +231,7 @@
         <TR><TD><B>9. MGI Marker associations to Ensembl sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
-        <TD>Ensembl Accession ID</TD></TR></TABLE>
+        <TD>Ensembl Accession ID</TD><TD>VEGA Transcript ID<BR>(space-delimited, if any)</TD><TD>VEGA Protein ID<BR>(space-delimited, if any)</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_ENSEMBL.rpt">MRK_ENSEMBL.rpt</A></TD></TR>
         </TD></TR>
@@ -307,6 +307,10 @@
         <TD>GenBank IDs<BR>(comma-delimited)</TD>
         <TD>Unigene IDs<BR>(comma-delimited)</TD>
         <TD>RefSeq IDs<BR>(comma-delimited)</TD>
+	<TD>Ensembl Transcript IDs<BR>(comma-delimited)</TD>
+	<TD>Ensembl Protein IDs<BR>(comma-delimited)</TD>
+	<TD>VEGA Transcript IDs<BR>(comma-delimited)</TD>
+	<TD>VEGA Protein IDs<BR>(comma-delimited)</TD>
         <TD>SwissProt IDs<BR>(comma-delimited)</TD>
         <TD>InterPro IDs<BR>(comma-delimited)</TD>
         <TD>Mouse Synonyms<BR>(comma-delimited)</TD>
@@ -757,6 +761,14 @@
         <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="KOMP_Allele.rpt">KOMP_Allele.rpt</A></TD></TR>
+        </TD></TR>
+    <TR><TD><TABLE>
+        <TR><TD><B>8. List of All EUCOMM Alleles (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="EUCOMM_Allele.rpt">EUCOMM_Allele.rpt</A></TD>
+</TR>
         </TD></TR>
     </TABLE></TD></TR>
 
