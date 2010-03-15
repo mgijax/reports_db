@@ -20,6 +20,9 @@
 #
 # History:
 #
+# sc	03/12/2010
+#	- TR9774 Add Ensembl and VEGA transcripts
+#
 # lec	10/10/2006
 #	- only include Markers that have at least one sequence.
 #
@@ -83,7 +86,7 @@ db.sql('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
 	'and m._Marker_Status_key = s._Marker_Status_key ' + \
 	'and m._Marker_Type_key = t._Marker_Type_key ' + \
 	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27) and a.prefixPart not in ("XP_", "NP_"))', None)
+	'and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27, 131, 133) and a.prefixPart not in ("XP_", "NP_"))', None)
 db.sql('create index idx1 on #markers(_Marker_key)', None)
 db.sql('create index idx2 on #markers(symbol)', None)
 
@@ -151,6 +154,40 @@ for r in results:
 	rsID[key] = []
     rsID[key].append(value)
 
+# Ensembl transript IDs
+results = db.sql('select distinct m._Marker_key, a.accID ' + \
+      'from #markers m, ACC_Accession a ' + \
+      'where m._Marker_key = a._Object_key ' + \
+      'and a._MGIType_key = 2 ' + \
+      'and a._LogicalDB_key = 133 ' + \
+      'and not exists (select 1 from #deletedIDs d ' + \
+      'where a.accID = d.accID ' + \
+      'and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
+ensID = {}
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    if not ensID.has_key(key):
+        ensID[key] = []
+    ensID[key].append(value)
+
+# VEGA transcript IDs
+results = db.sql('select distinct m._Marker_key, a.accID ' + \
+      'from #markers m, ACC_Accession a ' + \
+      'where m._Marker_key = a._Object_key ' + \
+      'and a._MGIType_key = 2 ' + \
+      'and a._LogicalDB_key = 131 ' + \
+      'and not exists (select 1 from #deletedIDs d ' + \
+      'where a.accID = d.accID ' + \
+      'and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
+vegaID = {}
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    if not vegaID.has_key(key):
+        vegaID[key] = []
+    vegaID[key].append(value)
+
 # process
 
 results = db.sql('select * from #markers order by symbol', 'auto')
@@ -186,6 +223,14 @@ for r in results:
 
 	if rsID.has_key(key):
 		fp.write(string.join(rsID[key], ' '))
+	fp.write(reportlib.TAB)
+
+	if vegaID.has_key(key):
+		fp.write(string.join(vegaID[key], ' '))
+	fp.write(reportlib.TAB)
+
+        if ensID.has_key(key):
+                fp.write(string.join(ensID[key], ' '))
 	fp.write(reportlib.CRT)
 
 reportlib.finish_nonps(fp)
