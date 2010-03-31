@@ -535,6 +535,7 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_Dog.rpt">HMD_Dog.rpt</A> (sorted by dog chromosome, space-delimited)</TD></TR>
     </TABLE></TD></TR>
 
+<!--
     <TR><TD><TABLE>
         <TR><TD><B>20. Human and Mouse Orthology with Synonyms</B></TD></TR>
         <TR><TD>
@@ -542,6 +543,7 @@
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF=".rpt">.rpt</A></TD></TR>
     </TABLE></TD></TR>
+-->
 
 </TABLE><BR>
 
