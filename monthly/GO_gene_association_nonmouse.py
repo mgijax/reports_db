@@ -34,8 +34,12 @@
 #   15. Assigned By required (MGI)
 #
 # exclude J:88213 (olfactory load)
+# exclude J:155856 (RGD)
 #
 # History:
+#
+# 04/13/2010	lec
+#	- TR 10163; skip ISO/J:155856
 #
 # 03/24/2009	lec
 #	- TR 9569; fix columns 3,4,8,13
@@ -136,7 +140,10 @@ for r in results:
 	dag[r['_Object_key']] = r['dagAbbrev']
 
 #
-# retrieve all ISS annotations that have a "with" value that begins "UniProtKB"
+# retrieve all ISS,ISO, ISM, ISA annotations 
+# that have a "with" value 
+# that begins "UniProtKB"
+# and are not J:155856 (RGD)
 #
 db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
 	'e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, e.modification_date, e._Refs_key, e._ModifiedBy_key, u.login ' + \
@@ -151,7 +158,7 @@ db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_
 	'and e._EvidenceTerm_key = et._Term_key ' + \
 	'and et.abbreviation in ("ISS","ISO","ISM","ISA") ' + \
 	'and e.inferredFrom like "UniProtKB:%" ' + \
-	'and e._Refs_key not in (89196) ' + \
+	'and e._Refs_key not in (89196,156949) ' + \
         'and a._Qualifier_key = q._Object_key ' + \
 	'and q._SynonymType_key = 1023 ' + \
 	'and e._ModifiedBy_key = u._User_key', None)
