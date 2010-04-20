@@ -1,3 +1,10 @@
+TAG: reports_db-4-3-3-11
+DATE: 04/20/2010
+STAFF: dbm
+CHANGES: 
+TR10163
+1) weekly/ALL_CRE.py - Added by Joel (TR9848)
+
 TAG: reports_db-4-3-3-10
 DATE: 04/15/2010
 STAFF: lec
