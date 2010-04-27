@@ -59,7 +59,19 @@ cmd.append('''select _Cross_key, sequenceNum, name
 cmd.append('''select bv.jnumID, cr._Cross_key, cr._Marker_key from CRS_References cr, BIB_View bv
 			where cr._Refs_key != null
 			and cr._Refs_key = bv._Refs_key
-			order by cr._Cross_key, cr._Marker_key, bv.jnumID''')			
+			order by cr._Cross_key, cr._Marker_key, bv.jnumID''')
+
+cmd.append('''select distinct cm._Marker_key, a.accID 
+			into #tmp_accID
+			from CRS_Matrix cm, acc_accession a
+			where cm._Marker_key *= a._Object_key and a._MGIType_key = 2 and a.prefixPart = 'MGI:'
+			and a.private != 1 and a.preferred = 1''')
+
+cmd.append('''select mc._Marker_key, a.accID
+			from MRK_Current mc, acc_accession a
+			where mc._Marker_key in (select _Marker_key from #tmp_accID where accID = null)
+			and mc._Current_key = a._Object_key and a.prefixPart = 'MGI:'
+			and a.private != 1 and a.preferred = 1 and a._MGIType_key = 2''')
 			
 results = db.sql(cmd, 'auto')
 
@@ -80,6 +92,7 @@ refs = {}
 maxLength = 0
 preheader = {}
 preheader2 = {}
+mergedID = {}
 
 for item in results[0]:
 	key = 'cross_key' + str(item['_Cross_key']) + 'rowNumber' + str(item['rowNumber'])
@@ -116,7 +129,12 @@ for key in typings:
 for item in results[1]:
 	key = str(item['_Cross_key'])
 	cross[key] = item['whoseCross']
-	strain[key] = item['femaleStrain'] + ' x ' + item['maleStrain']
+	
+	if item['_Cross_key'] != 4347:
+		strain[key] = item['femaleStrain'] + ' x ' + item['maleStrain']
+	else:
+		strain[key] = item['femaleStrain']
+		
 	lastMod[key] = item['modification_date'].replace(" ", "-")
 	abbrevHT[key] = item['abbrevHT']
 	abbrevHO[key] = item['abbrevHO']
@@ -138,6 +156,9 @@ for item in results[3]:
 		refs[key] = refs[key] + ', ' + item['jnumID']
 	else:
 		refs[key] = item['jnumID']
+
+for item in results[5]:
+	mergedID[item['_Marker_key']] = item['accID']
 
 cmd = '''select distinct cm.chromosome, cm._Marker_key, cm._Cross_key, cm.rowNumber, mm.symbol, cm.otherSymbol, a.accID, mm._Marker_Status_key
 		from CRS_Matrix cm, MRK_Marker mm, acc_accession a, CRS_References cr
@@ -161,15 +182,18 @@ for panel in allPanels:
 	fp2.write('Cross designation: ' + strain[panel] + '\n')
 	fp.write('Last Modified: ' + lastMod[panel] + '\n')
 	fp2.write('Last Modified: ' + lastMod[panel] + '\n')
-	fp.write('Legend:\n')
-	fp2.write('Legend:\n')
-	fp.write('    ' + abbrevHT[panel] + ' indicates allele from ' + strainHT[panel] + '\n')
-	fp2.write('    ' + abbrevHT[panel] + ' indicates allele from ' + strainHT[panel] + '\n')
-	fp.write('    ' + abbrevHO[panel] + ' indicates allele from ' + strainHO[panel] + '\n')
-	fp2.write('    ' + abbrevHO[panel] + ' indicates allele from ' + strainHO[panel] + '\n')
-	fp.write('    . indicates animal was not typed.\n\n')	
-	fp2.write('    . indicates animal was not typed.\n\n')	
-
+	if panel != '3383':
+		fp.write('Legend:\n')
+		fp2.write('Legend:\n')
+		fp.write('    ' + abbrevHT[panel] + ' indicates allele from ' + strainHT[panel] + '\n')
+		fp2.write('    ' + abbrevHT[panel] + ' indicates allele from ' + strainHT[panel] + '\n')
+		fp.write('    ' + abbrevHO[panel] + ' indicates allele from ' + strainHO[panel] + '\n')
+		fp2.write('    ' + abbrevHO[panel] + ' indicates allele from ' + strainHO[panel] + '\n')
+		fp.write('    . indicates animal was not typed.\n\n')	
+		fp2.write('    . indicates animal was not typed.\n\n')	
+	else:
+		fp.write('\n\n')
+		fp2.write('\n\n')
 	fp.write(preheader[panel] + '\n')
 	fp2.write(preheader2[panel] + '\n')
 
@@ -194,14 +218,14 @@ for panel in allPanels:
 			if accID != None:
 				if marker_status == 2:
 					line = line + TAB + 'withdrawn'
-					line2 = line2 + 'withdrawn'.ljust(12)				
+					line2 = line2 + 'withdrawn'.ljust(12)														
 				else:
 					line = line + TAB + accID
 					line2 = line2 + accID.ljust(12)
 			else:
 				if marker_status == 2:
-					line = line + TAB + 'unknown'
-					line2 = line2 + 'unknown'.ljust(12)											
+					line = line + TAB + mergedID[item['_Marker_key']]
+					line2 = line2 + mergedID[item['_Marker_key']].ljust(12)					
 				else:							
 					line = line + TAB + 'n/a'
 					line2 = line2 + 'n/a'.ljust(12)
