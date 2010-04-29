@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	04/29/2010
+#   - TR9777/"swissload" login name changed to "uniprotload"
+#
 # lec	03/02/2010
 #   - TR10035; added RGD check for column 15
 #   note that the isoform edits have no TR # attached
@@ -89,7 +92,7 @@ import mgi_utils
 
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
-UNIPROTKB = 'swissload'
+UNIPROTKB = 'uniprotload'
 assignedByList = ['RGD', 'GOC']
 
 TAB = reportlib.TAB

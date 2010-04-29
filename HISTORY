@@ -1,3 +1,10 @@
+TAG: reports_db-4-3-3-12
+DATE: 04/29/2010
+STAFF: lec
+CHANGES: 
+TR9777
+1) daily/GO_gene_association.py; changed 'swissload' to 'uniprotload'
+
 TAG: reports_db-tr10173-BP
 DATE: 04/20/2010
 STAFF: mhall
