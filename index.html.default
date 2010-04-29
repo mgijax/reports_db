@@ -703,10 +703,9 @@
          If you require the file in this format, a conversion script - OBO2flat - can
          be obtained as part of the OBO-Edit software package available for free from
          the following site: <A HREF="http://sourceforge.net/project/showfiles.php?group_id=36855">http://sourceforge.net/project/showfiles.php?group_id=36855</A></TD></TR>
-        <TR><TD>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MPheno_OBO.ontology">MPheno_OBO.ontology</A>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_MammalianPhenotype.rpt">VOC_MammalianPhenotype.rpt</A>
+        <TR><TD></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MPheno_OBO.ontology">MPheno_OBO.ontology</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_MammalianPhenotype.rpt">VOC_MammalianPhenotype.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
@@ -724,7 +723,6 @@
         <TD>High-level Mammalian Phenotype ID</TD><TD>Mammalian Phenotype Term</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Ensembl_Pheno.rpt">MRK_Ensembl_Pheno.rpt</A></TD></TR>
-        </TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
@@ -735,7 +733,6 @@
         <TD>Marker Ensembl ID</TD><TD>High-level Mammalian Phenotype ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_PhenotypicAllele.rpt">MGI_PhenotypicAllele.rpt</A></TD></TR>
-        </TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
@@ -746,7 +743,6 @@
         <TD>Marker Ensembl ID</TD><TD>High-level Mammalian Phenotype ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_QTLAllele.rpt">MGI_QTLAllele.rpt</A></TD></TR>
-        </TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
@@ -755,7 +751,6 @@
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_PhenoGenoMP.rpt">MGI_PhenoGenoMP.rpt</A></TD></TR>
-        </TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
@@ -764,15 +759,14 @@
         <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="KOMP_Allele.rpt">KOMP_Allele.rpt</A></TD></TR>
-        </TD></TR>
+    </TABLE></TD></TR>
+
     <TR><TD><TABLE>
         <TR><TD><B>8. List of All EUCOMM Alleles (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="EUCOMM_Allele.rpt">EUCOMM_Allele.rpt</A></TD>
-</TR>
-        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="EUCOMM_Allele.rpt">EUCOMM_Allele.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
 </TABLE><BR>
