@@ -13,6 +13,9 @@ rm -f index.html
 sed "s/FTPURL_GOES_HERE/$FTPURL/" index.html.default > index.html
 cp index.html ${FTPREPORTDIR}
 
+# Copy the readme docs to the reports directory.
+cp ./panelDocs/*.doc ${FTPREPORTDIR}
+
 #
 # directories
 #
