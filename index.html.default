@@ -922,7 +922,7 @@
     </tbody></table></td></tr>
 
     <tr><td><table>
-        <tbody><tr><td><b>4. JAX (BSB) - (C57BL/6J x M.spretus)F1 x C57BL/6J</b> (<a href="README_JAX_BSB_BSS.doc">readme.doc</a>)</td></tr>
+        <tbody><tr><td><b>4. JAX (BSB) - (C57BL/6J x M.spretus)F1 x C57BL/6J</b></td></tr>
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 94 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
 
@@ -932,7 +932,7 @@
     </tbody></table></td></tr>
 
     <tr><td><table>
-        <tbody><tr><td><b>5. JAX (BSS) - (C57BL/6JEi x SPRET/Ei)F1 x SPRET/EiJ</b> (<a href="README_JAX_BSB_BSS.doc">readme.doc</a>)</td></tr>
+        <tbody><tr><td><b>5. JAX (BSS) - (C57BL/6JEi x SPRET/Ei)F1 x SPRET/EiJ</b></td></tr>
 
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 94 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
