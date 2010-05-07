@@ -891,7 +891,7 @@
 <table bgcolor="#ffffff" border="1" cellpadding="2" width="100%"><tbody><tr><th>DNA Mapping Panels</th></tr>
 
     <tr><td><table>
-        <tbody><tr><td><b>1. Copeland-Jenkins - (C57BL/6J) x M.spretus)F1 x C57BL/6J</b></td></tr>
+        <tbody><tr><td><b>1. Copeland-Jenkins - (C57BL/6J x M.spretus)F1 x C57BL/6J</b></td></tr>
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 205 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
