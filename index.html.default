@@ -995,7 +995,7 @@
     </tbody></table></td></tr>
 
     <tr><td><table>
-        <tbody><tr><td><b>11. MIT - (C57B&gt;/6J-Lep<ob> x CAST)F1 x (C57BL/6J-Lep<ob> x CAST)F1</ob></ob></b></td></tr>
+        <tbody><tr><td><b>11. MIT - (C57BL/6J-Lep&lt;ob&gt; x CAST)F1 x (C57BL/6J-Lep&lt;ob&gt; x CAST)F1</b></td></tr>
 
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 46 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
@@ -1016,7 +1016,7 @@
     </tbody></table></td></tr>
 
     <tr><td><table>
-        <tbody><tr><td><b>13. Seldin - (C3H/HeJ-Fasl<gld> x M.spretus)F1 x C3H/HeJ-Fasl<gld>/J</gld></gld></b></td></tr>
+        <tbody><tr><td><b>13. Seldin - (C3H/HeJ-Fasl&lt;gld&gt; x M.spretus)F1 x C3H/HeJ-Fasl&lt;gld&gt;/J</b></td></tr>
 
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 849 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
