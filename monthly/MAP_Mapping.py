@@ -39,8 +39,6 @@ db.useOneConnection(1)
 allPanels = ['1839', '8', '7', '2944', '3241', '4867', '4868', '4377', '4378', '2941', '3383', '4347', '6', '4869']
 allChromosomes = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','X','Y','XY']
 
-fp = reportlib.init('mapping', fileExt = '.txt', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-
 cmd = []
 
 cmd.append('''select _Cross_key, rowNumber, colNumber, data 
