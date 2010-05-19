@@ -89,7 +89,7 @@ IMSR_FACIL_TYPE		= 4
 
 ''' # no need to do this...server/database are set in env.
 if len(sys.argv) == 1:
-    server = "PROD_MGI"
+    server = "PROD1_MGI"
     database = "mgd"
 elif len(sys.argv) == 2:
     server = sys.argv[1]
