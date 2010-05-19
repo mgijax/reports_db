@@ -92,8 +92,7 @@ import mgi_utils
 
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
-#UNIPROTKB = 'uniprotload'
-UNIPROTKB = 'swissload'
+UNIPROTKB = 'uniprotload'
 assignedByList = ['RGD', 'GOC']
 
 TAB = reportlib.TAB
