@@ -11,11 +11,11 @@
 #	represents a Genotype annotation to a MP term
 #	and all of the references (J:) used to annotate that term.
 #
-#	field 1: MGI Marker ID
-#	field 2: Allele Combination
-#	field 3: Strain
-#	field 4: MP ID
-#	field 5: comma-delimited set of J:
+#	field 1: Allelic Composition
+#	field 2: Genetic Background
+#	field 3: Mammalian Phenotype ID
+#	field 4: PubMed ID
+#	field 5: MGI Marker Accession ID (comma-delimited)
 #
 # Usage:
 #       MGI_PhenoGenoMP.py

@@ -37,15 +37,21 @@
 #  29. MGI QTL gene chromosome
 #  30. MGI QTL gene start
 #  31. MGI QTL gene end
-#  32. miRBase gene start
-#  33. miRBase gene end
-#  34. Roopenian gene start
-#  35. Roopenian gene end
+#  32. miRBase gene id
+#  33. miRBase gene chromosome
+#  34. miRBase gene start
+#  35. miRBase gene end
+#  36. miRBase gene strand
+#  37. Roopenian gene start
+#  38. Roopenian gene end
 #
 # Usage:
 #       MGI_Coordinate.py
 #
 # History:
+#
+# 05/20/2010
+#	- TR 10178/add miRBase gene id/chromosome/gene strand
 #
 # 07/30/2008 lec
 #	- TR9152/Steve Grubb; add UniSTS chromosome
@@ -72,6 +78,7 @@ coordDisplay = '(%s:%s-%s (%s))'
 noneDisplay = 'null' + TAB
 repGenomicKey = 615419
 sequenceType = 19
+mgiMarkerType = 2
 vega = 85
 vegaprovider = 'VEGA Gene Model'
 ncbi = 59
@@ -95,6 +102,10 @@ def getCoords(logicalDBkey, provider):
 
     # we're assuming that markers may have a VEGA, NCBI and/or Ensembl coordinate
     # OR a UniSTS coordinate but not both
+    #
+    # VEGA, NCBI, Ensembl
+    # contains accID, chromosome, strand, startC, endC
+    #
 
     if logicalDBkey in [vega, ncbi, ensembl]:
         results = db.sql('select m._Marker_key, a.accID, ' + \
@@ -113,7 +124,29 @@ def getCoords(logicalDBkey, provider):
             value = r
             tempCoords[key] = value
  
-    # UniSTS, QTL, mirBASE, Roopenian
+    # miRBase
+    # contains accid, chromosome, strand, startC, endC
+
+    elif logicalDBkey in [mirbase]:
+
+        results = db.sql('select m._Marker_key, a.accID, ' + \
+                'c.chromosome, c.strand, ' + \
+                'startC = convert(int, c.startCoordinate), ' + \
+                'endC = convert(int, c.endCoordinate) ' + \
+                    'from #markers m, MRK_Location_Cache c, ACC_Accession a ' + \
+                    'where m._Marker_key = c._Marker_key ' + \
+                    'and c.provider = "%s" ' % (provider) + \
+		    'and m._Marker_key = a._Object_key ' + \
+		    'and a._MGIType_key = %d ' % (mgiMarkerType) + \
+		    'and a._LogicalDB_Key = %d ' % (logicalDBkey) , 'auto')
+
+        for r in results:
+            key = r['_Marker_key']
+            value = r
+            tempCoords[key] = value
+
+    # UniSTS, QTL, Roopenian
+    # contains chromosome, strand, startC, endC
 
     else:
         results = db.sql('select m._Marker_key, ' + \
@@ -188,8 +221,11 @@ fp.write('UniSTS gene end' + TAB)
 fp.write('MGI QTL gene chromosome' + TAB)
 fp.write('MGI QTL gene start' + TAB)
 fp.write('MGI QTL gene end' + TAB)
+fp.write('miRBase gene id' + TAB)
+fp.write('miRBase gene chromosome' + TAB)
 fp.write('miRBase gene start' + TAB)
 fp.write('miRBase gene end' + TAB)
+fp.write('miRBase gene strand' + TAB)
 fp.write('Roopenian STS gene start' + TAB)
 fp.write('Roopenian STS gene end' + CRT)
 
@@ -314,8 +350,11 @@ for r in results:
 
     if mirbaseCoords.has_key(key):
         c = mirbaseCoords[key]
+        fp.write(c['accID'] + TAB)
+        fp.write(c['chromosome'] + TAB)
         fp.write(str(c['startC']) + TAB)
         fp.write(str(c['endC']) + TAB)
+        fp.write(c['strand'] + TAB)
     else:
         fp.write(2*noneDisplay)
 
