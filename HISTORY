@@ -1,3 +1,11 @@
+TAG: reports_db-4-3-4-9
+DATE: 05/25/2010
+STAFF: lec
+CHANGES: 
+1) TR10049/daily/HMD_Synonyms.py
+2) TR10178/MGI_Coordinate.py
+3) TR10179/MGI_PhenoGenoMP.py
+
 TAG: reports_db-4-3-4-8
 DATE: 05/19/2010
 STAFF: lec

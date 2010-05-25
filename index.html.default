@@ -140,8 +140,11 @@
         <TD>MGI QTL Gene Chromosome</TD>
         <TD>MGI QTL Gene Start</TD>
         <TD>MGI QTL Gene End</TD>
+        <TD>miRBase Gene ID</TD>
+        <TD>miRBase Gene Chromosome</TD>
         <TD>miRBase Gene Start</TD>
         <TD>miRBase Gene End</TD>
+        <TD>miRBase Gene Strand</TD>
         <TD>Roopenian Gene Start</TD>
         <TD>Roopenian Gene End</TD>
         </TR></TABLE>
@@ -430,7 +433,15 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>8. Rat and Mouse Orthology</B></TD></TR>
+        <TR><TD><B>8. Human and Mouse Orthology with Synonyms (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Mouse MGI Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Entrez Gene ID</TD><TD>Human Entrez Gene ID</TD><TD>Mouse Marker Synonym</TD><TD>Human Marker Symbol</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_Synonyms.rpt">HMD_Synonyms.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>9. Rat and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Rat Chromosome</TD><TD>Rat Entrez Gene ID</TD><TD>Rat Marker Symbol</TD><TD>Mouse MGI Accession ID</TD><TD>Mouse Chromosome</TD><TD>Mouse cM Position</TD>
         <TD>Mouse Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -440,7 +451,7 @@
     </TABLE></TD></TR>
 
      <TR><TD><TABLE>
-     <TR><TD><B>9. Rat and Mouse Orthology</B></TD></TR>
+     <TR><TD><B>10. Rat and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Mouse MGI Accession ID</TD><TD>Mouse Chromosome</TD><TD>Mouse cM Position</TD><TD>Mouse Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>Rat Chromosome</TD>
         <TD>Rat Entrez Gene ID</TD><TD>Rat Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -449,7 +460,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-    <TR><TD><B>10. Rat and Mouse Orthology</B></TD></TR>
+    <TR><TD><B>11. Rat and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Rat Entrez Gene ID</TD><TD>Rat Marker Symbol </TD><TD>Rat Chromosome</TD><TD>Mouse MGI Accession ID</TD><TD>Mouse Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Chromosome</TD>
         <TD>Mouse cM Position</TD><TD>Mouse Cytogenetic Band</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -458,7 +469,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-    <TR><TD><B>11. Rat and Mouse Orthology</B></TD></TR>
+    <TR><TD><B>12. Rat and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Mouse MGI Accession ID </TD><TD>Mouse Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Chromosome</TD><TD>Mouse cM Position</TD><TD>Mouse Cytogenetic Band</TD>
         <TD>Rat Entrez Gene ID</TD><TD>Rat Marker Symbol</TD><TD>Rat Chromosome</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -467,7 +478,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>12. Rat and Human Orthology</B></TD></TR>
+        <TR><TD><B>13. Rat and Human Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Rat Chromosome</TD><TD>Rat Entrez Gene ID</TD><TD>Rat Marker Symbol</TD><TD>Human Chromosome</TD>
         <TD>Human Entrez Gene ID</TD><TD>Human Marker Symbol</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -477,7 +488,7 @@
     </TABLE></TD></TR>
 
      <TR><TD><TABLE>
-     <TR><TD><B>13. Rat and Human Orthology</B></TD></TR>
+     <TR><TD><B>14. Rat and Human Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Human Chromosome</TD><TD>Human Entrez Gene ID</TD><TD>Human Marker Symbol</TD><TD>Rat Chromosome</TD>
         <TD>Rat Entrez Gene ID</TD><TD>Rat Marker Symbol</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -486,7 +497,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-    <TR><TD><B>14. Rat and Human Orthology</B></TD></TR>
+    <TR><TD><B>15. Rat and Human Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Rat Entrez Gene ID</TD><TD>Rat Marker Symbol </TD><TD>Rat Chromosome</TD><TD>Human Entrez Gene ID</TD><TD>Human Marker Symbol</TD><TD>Human Chromosome</TD><TD>Data Attributes</TD></TABLE>
         </TD></TR>
@@ -494,7 +505,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-    <TR><TD><B>15. Rat and Human Orthology</B></TD></TR>
+    <TR><TD><B>16. Rat and Human Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Human Entrez Gene ID</TD><TD>Human Marker Symbol</TD><TD>Human Chromosome</TD>
         <TD>Rat Entrez Gene ID</TD><TD>Rat Marker Symbol</TD><TD>Rat Chromosome</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -503,7 +514,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>16. Mouse/Human/Rat Oxford Grid Counts (tab-delimited)</B></TD></TR>
+        <TR><TD><B>17. Mouse/Human/Rat Oxford Grid Counts (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Species 1</TD><TD>Species 2</TD><TD>Species 1 Chromosome</TD><TD>Species 2 Chromosome</TD><TD>Number of Orthologies</TD></TABLE>
         </TD></TR>
@@ -511,7 +522,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>17. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>18. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>Mammalian Phenotype ID<BR>(space-delimited)</TD></TABLE>
         </TD></TR>
@@ -519,7 +530,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>18. Chimpanzee and Mouse Orthology</B></TD></TR>
+        <TR><TD><B>19. Chimpanzee and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Chimpanzee Chromosome</TD><TD>Chimpanzee Entrez Gene ID</TD><TD>Chimpanzee Marker Symbol</TD><TD>Mouse MGI Accession ID</TD><TD>Mouse Chromosome</TD><TD>Mouse cM Position</TD>
         <TD>Mouse Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -528,23 +539,13 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>19. Dog and Mouse Orthology</B></TD></TR>
+        <TR><TD><B>20. Dog and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Dog Chromosome</TD><TD>Dog Entrez Gene ID</TD><TD>Dog Marker Symbol</TD><TD>Mouse MGI Accession ID</TD><TD>Mouse Chromosome</TD><TD>Mouse cM Position</TD>
         <TD>Mouse Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>Data Attributes</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_Dog.rpt">HMD_Dog.rpt</A> (sorted by dog chromosome, space-delimited)</TD></TR>
     </TABLE></TD></TR>
-
-<!--
-    <TR><TD><TABLE>
-        <TR><TD><B>20. Human and Mouse Orthology with Synonyms</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Mouse MGI Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Exact Synonyms</TD><TD>Mouse Entrez Gene ID</TD><TD>Human Entrez Gene ID</TD><TD>Human Marker Symbols</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF=".rpt">.rpt</A></TD></TR>
-    </TABLE></TD></TR>
--->
 
 </TABLE><BR>
 
@@ -749,7 +750,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>6. Genotypes and Mammalian Phenotype Annotations(tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_PhenoGenoMP.rpt">MGI_PhenoGenoMP.rpt</A></TD></TR>
     </TABLE></TD></TR>

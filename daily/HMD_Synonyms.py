@@ -8,11 +8,11 @@ HMD_Synonyms.py
 # markers with type 'Gene'
 #
 # MGI ID
-# Symbol
+# Mouse Symbol
 # Mouse Entrez Gene ID
 # Human Entrez Gene ID
 # Mouse Synonyms
-# Human symbols
+# Human Symbol
 #
 # Usage:
 #       HMD_Synonyms.py
