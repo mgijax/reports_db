@@ -444,7 +444,7 @@ for r in results:
 
 	# check list
         elif r['assignedBy'] in assignedByList:
-            reportRow = reportRow + r['assignedBy']
+            reportRow = reportRow + r['assignedBy'] + TAB
 
 	# else use default
         else:

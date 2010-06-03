@@ -68,17 +68,17 @@ db.useOneConnection(1)
 # all mouse microRNA with transcripts
 #
 db.sql('''
-    select distinct mm._Marker_key, mm._Marker_Type_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
+    select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
     into #results1
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
-    and mm._Marker_Type_key = 1
+    and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615421
     union
-    select distinct mm._Marker_key, mm._Marker_Type_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
+    select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
-    and mm._Marker_Type_key = 11
+    and mc._Marker_Type_key = 11
     and mc._Qualifier_key = 615420
     ''', None)
 
@@ -93,7 +93,7 @@ db.sql('''
     into #results2
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
-    and mm._Marker_Type_key = 1
+    and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615419
     and mc._LogicalDB_key in (59,60,85)
     and mm._Marker_key not in (select _Marker_key from #results1)

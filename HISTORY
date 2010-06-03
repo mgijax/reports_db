@@ -1,3 +1,9 @@
+TAG: reports_db-4-3-4-10
+DATE: 06/03/2010
+STAFF: lec
+CHANGES: 
+1) GO_gene_association.py; fix bug in column 15/TAB
+
 TAG: reports_db-4-3-4-9
 DATE: 05/25/2010
 STAFF: lec
