@@ -38,6 +38,13 @@
 #
 # History:
 #
+# lec	06/10/2010
+#   - cleanup up cell ontology, isoform protein and protein hashes
+#
+# lec	06/03/2010
+#   - TAB not being written in between column 15/column 16
+#   - column 16/17: replace MRK_Marker with go/marker temp table
+#
 # lec	04/29/2010
 #   - TR9777/"swissload" login name changed to "uniprotload"
 #
@@ -127,37 +134,39 @@ for r in results:
 #
 # retrieve data set to process
 #
-db.sql('select a._Term_key, t.term, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
-    'e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, ' + \
-    'm.symbol, m.name, markerType = lower(mt.name) ' + \
-    'into #gomarker ' + \
-    'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m, MRK_Types mt, MGI_Synonym q ' + \
-    'where a._AnnotType_key = 1000 ' + \
-    'and a._Annot_key = e._Annot_key ' + \
-    'and a._Object_key = m._Marker_key ' + \
-    'and m._Marker_Type_key = 1 ' + \
-    'and a._Term_key = t._Term_key ' + \
-    'and a._Term_key = ta._Object_key ' + \
-    'and ta._MGIType_key = 13 ' + \
-    'and ta.preferred = 1 ' + \
-    'and m._Marker_Type_key = mt._Marker_Type_key ' + \
-    'and a._Qualifier_key = q._Object_key ' + \
-    'and q._SynonymType_key = 1023', None)
+#    and m.symbol = "Zfpm2"
+db.sql('''select a._Term_key, t.term, termID = ta.accID, qualifier = q.synonym, a._Object_key, 
+    e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, 
+    m.symbol, m.name, markerType = lower(mt.name) 
+    into #gomarker 
+    from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m, MRK_Types mt, MGI_Synonym q 
+    where a._AnnotType_key = 1000 
+    and a._Annot_key = e._Annot_key 
+    and a._Object_key = m._Marker_key 
+    and m._Marker_Type_key = 1 
+    and a._Term_key = t._Term_key 
+    and a._Term_key = ta._Object_key 
+    and ta._MGIType_key = 13 
+    and ta.preferred = 1 
+    and m._Marker_Type_key = mt._Marker_Type_key 
+    and a._Qualifier_key = q._Object_key 
+    and q._SynonymType_key = 1023''', None)
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_EvidenceTerm_key)', None)
 db.sql('create index idx3 on #gomarker(_Refs_key)', None)
 db.sql('create index idx4 on #gomarker(_ModifiedBy_key)', None)
+db.sql('create index idx5 on #gomarker(_AnnotEvidence_key)', None)
 
 #
 # retrieve synonyms for markers in data set
 #
-results = db.sql('select distinct g._Object_key, s.synonym ' + \
-    'from #gomarker g, MGI_Synonym s, MGI_SynonymType st ' + \
-    'where g._Object_key = s._Object_key ' + \
-    'and s._MGIType_key = 2 ' + \
-    'and s._SynonymType_key = st._SynonymType_key ' + \
-    'and st.synonymType = "exact" ' + \
-    'order by g._Object_key', 'auto')
+results = db.sql('''select distinct g._Object_key, s.synonym 
+    from #gomarker g, MGI_Synonym s, MGI_SynonymType st 
+    where g._Object_key = s._Object_key 
+    and s._MGIType_key = 2 
+    and s._SynonymType_key = st._SynonymType_key 
+    and st.synonymType = "exact" 
+    order by g._Object_key''', 'auto')
 syns = {}
 for r in results:
     key = r['_Object_key']
@@ -169,37 +178,38 @@ for r in results:
 #
 # resolve foreign keys
 #
-db.sql('select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, ' + \
-    'g._Object_key, g.symbol, g.name, g.markerType, ' + \
-    'mDate = convert(varchar(10), g.modification_date, 112), ' + \
-    'markerID = ma.accID, ' + \
-    'refID = b.accID, ' + \
-    'eCode = rtrim(t.abbreviation), ' + \
-    'assignedBy = u.login ' + \
-    'into #results ' + \
-    'from #gomarker g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u ' + \
-    'where g._Object_key = ma._Object_key ' + \
-    'and ma._MGIType_key = 2 ' + \
-    'and ma.prefixPart = "MGI:" ' + \
-    'and ma._LogicalDB_key = 1 ' + \
-    'and ma.preferred = 1 ' + \
-    'and g._Refs_key = b._Object_key ' + \
-    'and b._MGIType_key = 1 ' + \
-    'and b.prefixPart = "MGI:" ' + \
-    'and b._LogicalDB_key = 1 ' + \
-    'and g._EvidenceTerm_key = t._Term_key ' + \
-    'and g._ModifiedBy_key = u._User_key', None)
+db.sql('''select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
+    g._Object_key, g._AnnotEvidence_key, g.symbol, g.name, g.markerType, 
+    mDate = convert(varchar(10), g.modification_date, 112), 
+    markerID = ma.accID, 
+    refID = b.accID, 
+    eCode = rtrim(t.abbreviation), 
+    assignedBy = u.login 
+    into #results 
+    from #gomarker g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u 
+    where g._Object_key = ma._Object_key 
+    and ma._MGIType_key = 2 
+    and ma.prefixPart = "MGI:" 
+    and ma._LogicalDB_key = 1 
+    and ma.preferred = 1 
+    and g._Refs_key = b._Object_key 
+    and b._MGIType_key = 1 
+    and b.prefixPart = "MGI:" 
+    and b._LogicalDB_key = 1 
+    and g._EvidenceTerm_key = t._Term_key 
+    and g._ModifiedBy_key = u._User_key''', None)
 db.sql('create index idx1 on #results(symbol)', None)
 db.sql('create index idx2 on #results(_Refs_key)', None)
+db.sql('create index idx3 on #results(_AnnotEvidence_key)', None)
 
 #
 # resolve PubMed IDs for References
 #
 pubMed = {}
-results = db.sql('select r._Refs_key, a.accID from #results r, ACC_Accession a ' + \
-    'where r._Refs_key = a._Object_key ' + \
-    'and a._MGIType_key = 1 ' + \
-    'and a._LogicalDB_key = 29 ', 'auto')
+results = db.sql('''select r._Refs_key, a.accID from #results r, ACC_Accession a 
+    where r._Refs_key = a._Object_key 
+    and a._MGIType_key = 1 
+    and a._LogicalDB_key = 29''', 'auto')
 for r in results:
     key = r['_Refs_key']
     value = r['accID']
@@ -209,167 +219,162 @@ for r in results:
 # resolve PubMed IDs for References
 #
 pubMed = {}
-results = db.sql('select r._Refs_key, a.accID from #results r, ACC_Accession a ' + \
-        'where r._Refs_key = a._Object_key ' + \
-        'and a._MGIType_key = 1 ' + \
-        'and a._LogicalDB_key = 29 ', 'auto')
+results = db.sql('''select r._Refs_key, a.accID from #results r, ACC_Accession a 
+        where r._Refs_key = a._Object_key 
+        and a._MGIType_key = 1 
+        and a._LogicalDB_key = 29''', 'auto')
 for r in results:
     key = r['_Refs_key']
     value = r['accID']
     pubMed[key] = value
 
 #
-# Setup the cell ontology hash
+# cell ontology hash
+# resolve all "cell type:" notes
+# key = marker key:annotation/evidence key ()
+# values = [CL:0000084,CL:0000001]
 #
-#
-
-clHash = {}
-
-results = db.sql('''select distinct  mm._Marker_key as 'key', nc.note as 'gpe',
-	nc.sequenceNum, vt._Term_key as 'tk', ve._Refs_key
-	from MGI_NoteChunk nc, MGI_Note n, VOC_Evidence ve, 
-	VOC_Annot va, MRK_Marker mm, VOC_Term vt 
-	where nc.note like '%cell type%CL:%'   and nc._Note_key = n._Note_key 
-	and n._Object_key = ve._AnnotEvidence_key 
-	and ve._Annot_key = va._Annot_key 
-	and va._Object_key = mm._Marker_key 
-	and va._AnnotType_key = 1000 and va._Term_key = vt._Term_key 
-	order by mm._Marker_key, sequenceNum, vt._Term_key''', 'auto')
 
 #r1 = re.compile(r'cell.type:([^\s\\\n]*)', re.I)
 r1 = re.compile(r'(CL:[0-9]{7}?)', re.I)
 
-clPattern1 = re.compile(r'CL:', re.I)
-
-tempString = ''
-currentKey = ''
-first = 1
-workString = ''
+cellOntology = {}
+results = db.sql('''select r._Object_key, r._AnnotEvidence_key, nc.note
+	from #results r, MGI_Note n, MGI_NoteChunk nc
+	where r._AnnotEvidence_key = n._Object_key
+	and n._MGIType_key = 25
+	and n._NoteType_key = 1008
+	and n._Note_key = nc._Note_key 
+	and nc.note like '%cell type%CL:%'
+	order by r._Object_key, r._AnnotEvidence_key, nc.sequenceNum''', 'auto')
 
 for r in results:
 
-    # The key to this hash is compound in nature, if any of the marker key, term key or reference key changes
-    # we are on a new note.
+    key = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
+    value = r['note']
 
-    newKey = 'mk:' +str(r['key'])+'tk:'+str(r['tk'])+'rk:'+str(r['_Refs_key'])
+    if not cellOntology.has_key(key):
+	cellOntology[key] = []
 
-    if currentKey != newKey:
-        # Is this the first pass through the loop?
-        if first != 1:
-            temp = r1.findall(tempString)
-            for word in temp:
-                workString += word + '#'
-            if workString.strip() != '':
-                clHash[currentKey] = workString.strip()
-        else:
-            first = 0
-        workString = ''
-        tempString = r['gpe']
-        # Construct the key for the current row (The row we are about to leave behind)
-        currentKey = 'mk:' +str(r['key'])+'tk:'+str(r['tk'])+'rk:'+str(r['_Refs_key'])
-    else:        
-        tempString = tempString + r['gpe']
+    for a in r1.findall(value):
+        cellOntology[key].append(a)
 
 #
-# Setup the isoformsProtein hash.  
-# The items in this hash are seperated by a #, and are broken up later on into multiple rows.
+# isoformsProtein hash
+# select all "gene_product:" notes
+# key = marker key:annotation/evidence key ()
+# values = [UniProt:XXXXX,UniProt:XXXXX]
 #
-
-isoformsProtein = {}
-
-results = db.sql('select distinct  mm._Marker_key as "key", nc.note as "gpe", ' + \
-    'nc.sequenceNum, vt._Term_key as "tk", ve._Refs_key ' + \
-    'from MGI_NoteChunk nc, MGI_Note n, VOC_Evidence ve, ' + \
-    'VOC_Annot va, MRK_Marker mm, VOC_Term vt ' + \
-    'where nc.note like "%%gene_product:%%" and nc._Note_key = n._Note_key ' + \
-    'and n._Object_key = ve._AnnotEvidence_key ' + \
-    'and ve._Annot_key = va._Annot_key ' + \
-    'and va._Object_key = mm._Marker_key ' + \
-    'and va._AnnotType_key = 1000 and va._Term_key = vt._Term_key ' + \
-    'order by mm._Marker_key, sequenceNum, vt._Term_key', 'auto')
-
-
 
 r1 = re.compile(r'gene.product:([^\s\\\n]*)', re.I)
-
 isoformPattern1 = re.compile(r'UniProtKB:', re.I)
 isoformPattern2 = re.compile(r'protein_id', re.I)
 isoformPattern3 = re.compile(r'NCBI:NP_', re.I)
 isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
 
-tempString = ''
-currentKey = ''
-first = 1
-workString = ''
+isoformsProtein = {}
+results = db.sql('''select r._Object_key, r._AnnotEvidence_key, nc.note
+	from #results r, MGI_Note n, MGI_NoteChunk nc
+	where r._AnnotEvidence_key = n._Object_key
+	and n._MGIType_key = 25
+	and n._NoteType_key = 1008
+	and n._Note_key = nc._Note_key 
+        and nc.note like '%%gene_product:%%' 
+	order by r._Object_key, r._AnnotEvidence_key, nc.sequenceNum''', 'auto')
 
 for r in results:
 
-    # The key to this hash is compound in nature, if any of the marker key, term key or reference key changes
-    # we are on a new note.
+    key = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
+    value = r['note']
 
-    newKey = 'mk:' +str(r['key'])+'tk:'+str(r['tk'])+'rk:'+str(r['_Refs_key'])
+    for a in r1.findall(value):
+	for b in a.split('|'):
+	    b = b.strip()
 
-    if currentKey != newKey:
-        # Is this the first pass through the loop?
-        if first != 1:
-            temp = r1.findall(tempString)
-            for word in temp:
-                # Some of the entries are seperated by pipes, so we break on them as well.
-                for word2 in word.split('|'):
-                    word2 = word2.strip()
-                    # Only certain patterns actually count, they are listed above.
-                    if isoformPattern1.match(word2) != None or isoformPattern2.match(word2) != None \
-                    or isoformPattern3.match(word2) != None or isoformPattern4.match(word2) != None:
-                        workString += word2 + '#'
-            # If the resulting string isn't blank add it to the hash.                        
-            if workString.strip() != '':
-                isoformsProtein[currentKey] = workString.strip()
-        else:
-            first = 0
-        workString = ''
-        tempString = r['gpe']
-        # Construct the key for the current row (The row we are about to leave behind)
-        currentKey = 'mk:' +str(r['key'])+'tk:'+str(r['tk'])+'rk:'+str(r['_Refs_key'])
-    else:        
-        tempString = tempString + r['gpe']
+            # Only certain patterns actually count, they are listed above.
+            if isoformPattern1.match(b) != None or \
+	       isoformPattern2.match(b) != None or \
+               isoformPattern3.match(b) != None or \
+	       isoformPattern4.match(b) != None:
+
+                if not isoformsProtein.has_key(key):
+	            isoformsProtein[key] = []
+                isoformsProtein[key].append(b)
 
 #
-# Setup the protein hash
-# This is as marker key <- protein text 
+# protein hash
+# resolve sequence ids for the given marker
+# key = marker key
+# value = only one sequence id per marker
 #
-
-results = db.sql('select distinct mm._Marker_key, seqID=mc.accID, mc._LogicalDB_key ' + \
-    'from SEQ_Marker_Cache mc, MRK_Mouse_View mm ' + \
-    'where mc._Marker_key = mm._Marker_key ' + \
-    'and mm._Marker_Type_key = 1 ' + \
-    'and mc._Qualifier_key = 615421 ' + \
-    'union ' + \
-    'select distinct mm._Marker_key, seqID=mc.accID, mc._LogicalDB_key ' + \
-    'from SEQ_Marker_Cache mc, MRK_Mouse_View mm ' + \
-    'where mc._Marker_key = mm._Marker_key ' + \
-    'and mm._Marker_Type_key = 11 ' + \
-    'and mc._Qualifier_key = 615420', 'auto')
-
-
-proteins = {}
-proteinsGene = {}
+# order for sequence:
+#    1) UniProt (SwissProt or TrEMBL)
+#    2) GenBank
+#    3) NP/XP
+#    4) all else
+#
 
 proteinPattern1 = re.compile(r'NP_', re.I)
 proteinPattern2 = re.compile(r'XP_', re.I)
 
+# proteins: UniProt or NP/XP
+# used for column 12, column 17
+proteins = {}
+
+# proteins/genes: Genbank or other
+# used for column 17 only
+proteinsGene = {}
+
+#
+# select:
+#    representative polypeptide (615421)
+#    representative transcript (615420)
+#
+# then check the logicalDB as a secondary search
+#
+# polypeptide (615421) ==> proteins
+# 13  SwissProt
+# 41  TrEMBL
+# 27  RefSeq
+# 132 Vega
+# 134 Ensembl
+#
+# transcript (615420) ==> proteinsGene
+# 9   GenBank
+# 131 Vega
+# 133 Ensembl
+#
+
+results = db.sql('''select mc._Marker_key, mc.accID, mc._LogicalDB_key 
+    from #results r, SEQ_Marker_Cache mc 
+    where r._Object_key = mc._Marker_key 
+    and mc._Organism_key = 1 
+    and mc._Marker_Type_key = 1 
+    and mc._LogicalDB_key in (13,41,27,132,134,9,131,133)
+    and mc._Qualifier_key in (615420, 615421)''', 'auto')
+
 for r in results:
+
     key = r['_Marker_key']
-    
+    value = r['accID']
     logicalDB = r['_LogicalDB_key']    
-    
-    if logicalDB in [13,41]:
-        proteins[key] = 'UniProtKB:' + r['seqID']
-    elif logicalDB in [9]:
-        proteinsGene[key] = 'EMBL:' + r['seqID'] 
-    elif proteinPattern1.match(r['seqID']) != None or proteinPattern2.match(r['seqID']) != None:
-        proteins[key] = 'NCBI:' + r['seqID']   
-    else:
-        proteinsGene[key] = 'NCBI:' + r['seqID']   
+
+    # for UniProt (SwissProt, TrEMBL)
+    if not proteins.has_key(key) and logicalDB in [13,41]:
+        proteins[key] = 'UniProtKB:' + value
+
+    # for Seguence DBs (GenBank, etc.)
+    elif not proteinsGene.has_key(key) and logicalDB in [9]:
+        proteinsGene[key] = 'EMBL:' + value 
+
+    # for NP/XP
+    elif not proteins.has_key(key) and \
+	 (proteinPattern1.match(value) != None or proteinPattern2.match(value) != None):
+        proteins[key] = 'NCBI:' + value   
+
+    # for all others...
+    elif not proteinsGene.has_key(key):
+        proteinsGene[key] = 'NCBI:' + value
 
 #
 # process results
@@ -416,7 +421,7 @@ for r in results:
 
         # Calculate the key for this pass
 
-        isoformKey = 'mk:'+str(r['_Object_key'])+'tk:'+str(r['_Term_key'])+'rk:'+str(r['_Refs_key'])
+	isoformKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
 
         # column 12 is populated in a special way
         # If there is a isoform or a protein, print out protein
@@ -453,41 +458,45 @@ for r in results:
 	# column 16
         # cell ontology: 'occurs_in' or 'part_of'
 
-        if clHash.has_key(isoformKey):
-            startPart = 'occurs_in('
+        if cellOntology.has_key(isoformKey):
+
             if dag[r['_Term_key']] == 'C':
                 startPart = 'part_of('
-            row = ''
-            for word3 in clHash[isoformKey].split('#'):
-                word3 = word3.replace(';', '')
-                if word3 != '' and row == '':
-                    row = startPart + str(word3) + ')'
-                elif word3 != '': 
-                    row = row + '|' + startPart + str(word3) + ')'
+	    else:
+                startPart = 'occurs_in('
+
+	    row = ''
+            for c in cellOntology[isoformKey]:
+                c = c.replace(';', '')
+                if row == '':
+                    row = startPart + str(c) + ')'
+                else:
+                    row = row + '|' + startPart + str(c) + ')'
+
             reportRow = reportRow + row + TAB
         else:                    
-            reportRow = reportRow + '' + TAB
+            reportRow = reportRow + TAB
 
         # column 17 is populated in a special way.  
-        # If there is an isoform, use that, parsing through it to check for multiple annotations.
-        # If not, if there is a protein use that.
-        # If not, leave it blank for now.
+        # If there is an isoform, use that
+        # If not, if there is a protein use that
+        # If not, leave it blank for now
 
         if isoformsProtein.has_key(isoformKey):
-            for word3 in isoformsProtein[isoformKey].split('#'):
-                if word3 != '':
-                    row = str(word3)
-                    fp.write(reportRow + row + CRT)
+            reportRow = reportRow + string.join(isoformsProtein[isoformKey], '|') + CRT
         else:
+	    row = ''
             if proteins.has_key(r['_Object_key']):
                 row = str(proteins[r['_Object_key']])
                 #row = 'Protein: ' + str(proteins[r['_Object_key']])
+
             elif proteinsGene.has_key(r['_Object_key']):
                 row = str(proteinsGene[r['_Object_key']])
                 #row = 'Protein gene: ' +str(proteinsGene[r['_Object_key']])
-            else:
-                row = ''
-            fp.write(reportRow + row + CRT)
+
+	    reportRow = reportRow + row + CRT
+
+        fp.write(reportRow)
     
 #
 # append GOA annotations, if they exist
