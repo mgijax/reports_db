@@ -1,3 +1,9 @@
+TAG: reports_db-4-3-4-11
+DATE: 06/10/2010
+STAFF: lec
+CHANGES: 
+1) GO_gene_association.py; clean up hashes
+
 TAG: reports_db-4-3-4-10
 DATE: 06/03/2010
 STAFF: lec
