@@ -40,6 +40,7 @@
 #
 # lec	06/10/2010
 #   - cleanup up cell ontology, isoform protein and protein hashes
+#   - added TR9901/date history (see below)
 #
 # lec	06/03/2010
 #   - TAB not being written in between column 15/column 16
@@ -50,7 +51,9 @@
 #
 # lec	03/02/2010
 #   - TR10035; added RGD check for column 15
-#   note that the isoform edits have no TR # attached
+#
+# mhall 02/02/2010
+#   - TR 9901; column 12, 16, 17
 #
 # lec   07/24/2008
 #   - TR 9134; change UniProt to UniProtKB
@@ -301,80 +304,43 @@ for r in results:
 	            isoformsProtein[key] = []
                 isoformsProtein[key].append(b)
 
+
 #
-# protein hash
-# resolve sequence ids for the given marker
-# key = marker key
-# value = only one sequence id per marker
+# Setup the protein hash
+# This is as marker key <- protein text 
 #
-# order for sequence:
-#    1) UniProt (SwissProt or TrEMBL)
-#    2) GenBank
-#    3) NP/XP
-#    4) all else
-#
+
+results = db.sql('select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key ' + \
+    'from #results r, SEQ_Marker_Cache mc ' + \
+    'where r._Object_key = mc._Marker_key ' + \
+    'and mc._Marker_Type_key = 1 ' + \
+    'and mc._Qualifier_key = 615421 ' + \
+    'union ' + \
+    'select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key ' + \
+    'from #results r, SEQ_Marker_Cache mc ' + \
+    'where r._Object_key = mc._Marker_key ' + \
+    'and mc._Marker_Type_key = 11 ' + \
+    'and mc._Qualifier_key = 615420', 'auto')
+
+proteins = {}
+proteinsGene = {}
 
 proteinPattern1 = re.compile(r'NP_', re.I)
 proteinPattern2 = re.compile(r'XP_', re.I)
 
-# proteins: UniProt or NP/XP
-# used for column 12, column 17
-proteins = {}
-
-# proteins/genes: Genbank or other
-# used for column 17 only
-proteinsGene = {}
-
-#
-# select:
-#    representative polypeptide (615421)
-#    representative transcript (615420)
-#
-# then check the logicalDB as a secondary search
-#
-# polypeptide (615421) ==> proteins
-# 13  SwissProt
-# 41  TrEMBL
-# 27  RefSeq
-# 132 Vega
-# 134 Ensembl
-#
-# transcript (615420) ==> proteinsGene
-# 9   GenBank
-# 131 Vega
-# 133 Ensembl
-#
-
-results = db.sql('''select mc._Marker_key, mc.accID, mc._LogicalDB_key 
-    from #results r, SEQ_Marker_Cache mc 
-    where r._Object_key = mc._Marker_key 
-    and mc._Organism_key = 1 
-    and mc._Marker_Type_key = 1 
-    and mc._LogicalDB_key in (13,41,27,132,134,9,131,133)
-    and mc._Qualifier_key in (615420, 615421)''', 'auto')
-
 for r in results:
-
     key = r['_Marker_key']
-    value = r['accID']
+    
     logicalDB = r['_LogicalDB_key']    
-
-    # for UniProt (SwissProt, TrEMBL)
-    if not proteins.has_key(key) and logicalDB in [13,41]:
-        proteins[key] = 'UniProtKB:' + value
-
-    # for Seguence DBs (GenBank, etc.)
-    elif not proteinsGene.has_key(key) and logicalDB in [9]:
-        proteinsGene[key] = 'EMBL:' + value 
-
-    # for NP/XP
-    elif not proteins.has_key(key) and \
-	 (proteinPattern1.match(value) != None or proteinPattern2.match(value) != None):
-        proteins[key] = 'NCBI:' + value   
-
-    # for all others...
-    elif not proteinsGene.has_key(key):
-        proteinsGene[key] = 'NCBI:' + value
+    
+    if logicalDB in [13,41]:
+        proteins[key] = 'UniProtKB:' + r['seqID']
+    elif logicalDB in [9]:
+        proteinsGene[key] = 'EMBL:' + r['seqID'] 
+    elif proteinPattern1.match(r['seqID']) != None or proteinPattern2.match(r['seqID']) != None:
+        proteins[key] = 'NCBI:' + r['seqID']   
+    else:
+        proteinsGene[key] = 'NCBI:' + r['seqID']   
 
 #
 # process results
