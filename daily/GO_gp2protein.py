@@ -23,7 +23,7 @@
 # History:
 #
 # 10/21/2008	lec
-#	- TR 9325; add micoRNA marker types with transcript
+#	- TR 9325; add microRNA marker types with transcript
 #
 # 05/02/2008	jer
 #	- TR 8994; yet another rewrite; changes to selection logic
