@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	06/17/2010
+#   - check logicalDB for proteins and proteinsGene hash
+#
 # lec	06/10/2010
 #   - cleanup up cell ontology, isoform protein and protein hashes
 #   - added TR9901/date history (see below)
@@ -309,18 +312,25 @@ for r in results:
 # Setup the protein hash
 # This is as marker key <- protein text 
 #
+# representative proteins (615421)
+#   13 (SwissProt)
+#   41 (TrEMBL)
+#   27 (RefSeq)
+#   132 (VEGA)
+#   134 (ENSEMBL)
+#
 
-results = db.sql('select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key ' + \
-    'from #results r, SEQ_Marker_Cache mc ' + \
-    'where r._Object_key = mc._Marker_key ' + \
-    'and mc._Marker_Type_key = 1 ' + \
-    'and mc._Qualifier_key = 615421 ' + \
-    'union ' + \
-    'select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key ' + \
-    'from #results r, SEQ_Marker_Cache mc ' + \
-    'where r._Object_key = mc._Marker_key ' + \
-    'and mc._Marker_Type_key = 11 ' + \
-    'and mc._Qualifier_key = 615420', 'auto')
+results = db.sql('''select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key 
+    from #results r, SEQ_Marker_Cache mc 
+    where r._Object_key = mc._Marker_key 
+    and mc._Marker_Type_key = 1 
+    and mc._Qualifier_key = 615421 
+    union 
+    select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key 
+    from #results r, SEQ_Marker_Cache mc 
+    where r._Object_key = mc._Marker_key 
+    and mc._Marker_Type_key = 11
+    and mc._Qualifier_key = 615420''', 'auto')
 
 proteins = {}
 proteinsGene = {}
@@ -339,6 +349,10 @@ for r in results:
         proteinsGene[key] = 'EMBL:' + r['seqID'] 
     elif proteinPattern1.match(r['seqID']) != None or proteinPattern2.match(r['seqID']) != None:
         proteins[key] = 'NCBI:' + r['seqID']   
+    elif logicalDB in [132]:
+        proteins[key] = 'VEGA:' + r['seqID']   
+    elif logicalDB in [134]:
+        proteins[key] = 'ENSEMBL:' + r['seqID']   
     else:
         proteinsGene[key] = 'NCBI:' + r['seqID']   
 
