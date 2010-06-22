@@ -38,7 +38,7 @@
 #
 # History:
 #
-# lec	06/17/2010
+# lec	06/22/2010
 #   - check logicalDB for proteins and proteinsGene hash
 #     and fix prefix name for Vega, Ensembl
 #
