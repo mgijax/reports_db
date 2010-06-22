@@ -40,6 +40,7 @@
 #
 # lec	06/17/2010
 #   - check logicalDB for proteins and proteinsGene hash
+#     and fix prefix name for Vega, Ensembl
 #
 # lec	06/10/2010
 #   - cleanup up cell ontology, isoform protein and protein hashes
@@ -319,14 +320,19 @@ for r in results:
 #   132 (VEGA)
 #   134 (ENSEMBL)
 #
+# representative transcript (615420)
+#   9 (GenBank)
+#   27 (RefSeq)
+#
 
-results = db.sql('''select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key 
+results = db.sql('''
+    select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key, mc._Qualifier_key
     from #results r, SEQ_Marker_Cache mc 
     where r._Object_key = mc._Marker_key 
     and mc._Marker_Type_key = 1 
     and mc._Qualifier_key = 615421 
     union 
-    select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key 
+    select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key, mc._Qualifier_key
     from #results r, SEQ_Marker_Cache mc 
     where r._Object_key = mc._Marker_key 
     and mc._Marker_Type_key = 11
@@ -335,19 +341,16 @@ results = db.sql('''select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalD
 proteins = {}
 proteinsGene = {}
 
-proteinPattern1 = re.compile(r'NP_', re.I)
-proteinPattern2 = re.compile(r'XP_', re.I)
-
 for r in results:
     key = r['_Marker_key']
-    
     logicalDB = r['_LogicalDB_key']    
+    qualifier = r['_Qualifier_key']
     
     if logicalDB in [13,41]:
         proteins[key] = 'UniProtKB:' + r['seqID']
     elif logicalDB in [9]:
         proteinsGene[key] = 'EMBL:' + r['seqID'] 
-    elif proteinPattern1.match(r['seqID']) != None or proteinPattern2.match(r['seqID']) != None:
+    elif logicalDB in [27] and qualifier == 615421:
         proteins[key] = 'NCBI:' + r['seqID']   
     elif logicalDB in [132]:
         proteins[key] = 'VEGA:' + r['seqID']   
