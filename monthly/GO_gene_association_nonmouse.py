@@ -34,12 +34,12 @@
 #   15. Assigned By required (MGI)
 #
 # exclude J:88213 (olfactory load)
-# exclude J:155856 (RGD)
 #
 # History:
 #
 # 06/22/2010	lec
 #	- TR 10260; multiple start/end notes after "external ref"
+#	  exclude GOA, RGD, GOC, tbreddy
 #
 # 04/13/2010	lec
 #	- TR 10163; skip ISO/J:155856
@@ -148,23 +148,28 @@ for r in results:
 # that begins "UniProtKB"
 # and are not J:155856 (RGD)
 #
-db.sql('select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_key, ' + \
-	'e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, e.modification_date, e._Refs_key, e._ModifiedBy_key, u.login ' + \
-	'into #gomarker ' + \
-	'from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, VOC_Term et, MGI_Synonym q, MGI_User u ' + \
-	'where a._AnnotType_key = 1000 ' + \
-	'and a._Annot_key = e._Annot_key ' + \
-	'and a._Term_key = t._Term_key ' + \
-	'and a._Term_key = ta._Object_key ' + \
-	'and ta._MGIType_key = 13 ' + \
-	'and ta.preferred = 1 ' + \
-	'and e._EvidenceTerm_key = et._Term_key ' + \
-	'and et.abbreviation in ("ISS","ISO","ISM","ISA") ' + \
-	'and e.inferredFrom like "UniProtKB:%" ' + \
-	'and e._Refs_key not in (89196,156949) ' + \
-        'and a._Qualifier_key = q._Object_key ' + \
-	'and q._SynonymType_key = 1023 ' + \
-	'and e._ModifiedBy_key = u._User_key', None)
+db.sql('''select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_key, 
+	         e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, 
+	         e.modification_date, e._Refs_key, e._ModifiedBy_key, u.login 
+	into #gomarker 
+	from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, 
+	     VOC_Term et, MGI_Synonym q, MGI_User u 
+	where a._AnnotType_key = 1000 
+	and a._Annot_key = e._Annot_key 
+	and a._Term_key = t._Term_key 
+	and a._Term_key = ta._Object_key 
+	and ta._MGIType_key = 13 
+	and ta.preferred = 1 
+	and e._EvidenceTerm_key = et._Term_key 
+	and et.abbreviation in ("ISS","ISO","ISM","ISA") 
+	and e.inferredFrom like "UniProtKB:%" 
+	and e._Refs_key not in (89196) 
+        and a._Qualifier_key = q._Object_key 
+	and q._SynonymType_key = 1023 
+	and e._ModifiedBy_key = u._User_key
+	and u.login not in ('GOC', 'RGD', 'tbreddy') 
+	and u.login not like 'GOA%'
+	''', None)
 
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_Refs_key)', None)
@@ -172,14 +177,16 @@ db.sql('create index idx2 on #gomarker(_Refs_key)', None)
 #
 # resolve pub med id
 #
-db.sql('select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uniprotIDs, g._ModifiedBy_key, g.login, ' + \
-	'mDate = convert(varchar(10), g.modification_date, 112), ' + \
-	'refID = b.accID ' + \
-	'into #results ' + \
-	'from #gomarker g, ACC_Accession b ' + \
-	'where g._Refs_key *= b._Object_key ' + \
-	'and b._MGIType_key = 1 ' + \
-	'and b._LogicalDB_key = 29', None)
+db.sql('''select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, 
+		 g.uniprotIDs, g._ModifiedBy_key, g.login,
+	         mDate = convert(varchar(10), g.modification_date, 112),
+	         refID = b.accID
+	into #results
+	from #gomarker g, ACC_Accession b 
+	where g._Refs_key *= b._Object_key 
+	and b._MGIType_key = 1 
+	and b._LogicalDB_key = 29
+	''', None)
 db.sql('create index idx1 on #results(_AnnotEvidence_key)', None)
 
 #
@@ -260,7 +267,13 @@ for r in results:
     # there may be multiple instances of UniProt ids
     # write out one record per UniProt id
 
-    ids = string.split(r['uniprotIDs'], 'UniProtKB:')
+    tokens = string.split(r['uniprotIDs'], '|')
+    ids = []
+
+    for t in tokens:
+        if string.find(t, 'UniProtKB:') > -1:
+            id = string.split(t, 'UniProtKB:')
+	    ids.append(id[1])
 
     for i in ids:
 
@@ -272,11 +285,6 @@ for r in results:
         i = i.replace('|', '')
 
         eKey = r['_AnnotEvidence_key']
-
-	# if no evidence (no pub med id) and "tbreddy", skip it
-	# these are Rat Genome (J:104715)
-        if not evidence.has_key(eKey) and r['_ModifiedBy_key'] == 1095:
-	    continue
 
         # make up a bogus evidence record if there isn't one
 
