@@ -34,12 +34,15 @@
 #   15. Assigned By required (MGI)
 #
 # exclude J:88213 (olfactory load)
+# exclude J:104715 (tbreddy's Rat)
 #
 # History:
 #
 # 06/22/2010	lec
 #	- TR 10260; multiple start/end notes after "external ref"
-#	  exclude GOA, RGD, GOC, tbreddy
+#	  exclude GOA, RGD, GOC
+#	  J:88213 (olfactory load) is still exlucded (bobs)
+#	  J:104715 (tbreddy's Rat) is still excluded (tbreddy)
 #
 # 04/13/2010	lec
 #	- TR 10163; skip ISO/J:155856
@@ -163,11 +166,11 @@ db.sql('''select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Objec
 	and e._EvidenceTerm_key = et._Term_key 
 	and et.abbreviation in ("ISS","ISO","ISM","ISA") 
 	and e.inferredFrom like "UniProtKB:%" 
-	and e._Refs_key not in (89196) 
         and a._Qualifier_key = q._Object_key 
 	and q._SynonymType_key = 1023 
 	and e._ModifiedBy_key = u._User_key
-	and u.login not in ('GOC', 'RGD', 'tbreddy') 
+	and e._Refs_key not in (89196,105787) 
+	and u.login not in ('GOC', 'RGD')
 	and u.login not like 'GOA%'
 	''', None)
 
