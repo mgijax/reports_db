@@ -123,11 +123,8 @@ def writeRecord(i, r, e):
 	fp.write(r['mDate'] + TAB)
 
 	# field 15
-	modifiedBy = r['login']
-	if modifiedBy[0:4] == 'GOA_':
-		fp.write(modifiedBy[4:])
-	else:
-		fp.write(FIELD15)
+	fp.write(FIELD15)
+
 	fp.write(CRT)
 
 #
@@ -149,11 +146,10 @@ for r in results:
 # retrieve all ISS,ISO, ISM, ISA annotations 
 # that have a "with" value 
 # that begins "UniProtKB"
-# and are not J:155856 (RGD)
 #
 db.sql('''select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_key, 
 	         e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, 
-	         e.modification_date, e._Refs_key, e._ModifiedBy_key, u.login 
+	         e.modification_date, e._Refs_key
 	into #gomarker 
 	from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, 
 	     VOC_Term et, MGI_Synonym q, MGI_User u 
@@ -180,8 +176,7 @@ db.sql('create index idx2 on #gomarker(_Refs_key)', None)
 #
 # resolve pub med id
 #
-db.sql('''select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, 
-		 g.uniprotIDs, g._ModifiedBy_key, g.login,
+db.sql('''select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uniprotIDs,
 	         mDate = convert(varchar(10), g.modification_date, 112),
 	         refID = b.accID
 	into #results
