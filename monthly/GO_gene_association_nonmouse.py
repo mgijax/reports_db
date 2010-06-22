@@ -38,6 +38,9 @@
 #
 # History:
 #
+# 06/22/2010	lec
+#	- TR 10260; multiple start/end notes after "external ref"
+#
 # 04/13/2010	lec
 #	- TR 10163; skip ISO/J:155856
 #
@@ -196,45 +199,55 @@ for r in results:
 	     allnotes[key] = []
     allnotes[key].append(value)
 
+startNote = 'external ref:'
+endNote = ['dual-taxon ID:', 'text:']
+
 evidence = {}
 for n in allnotes.keys():
     value = string.join(allnotes[n], '')
+    value = value.strip()
+    value = value.replace(';', '|')
 
-    # grab all text between "external ref:" and "text:"
-    # there may be multiple instances of "external ref:"
+    #
+    # grab all text between startNote and endNote
+    # there may be multiple instances of startNote
+    #
 
-    i = string.find(value, 'external ref:')
-    j = string.find(value, 'text:')
+    for e in endNote:
 
-    # parse it for pmid, evidence code, and cross-reference
+        i = string.find(value, startNote)
+        j = string.find(value, e)
 
-    if j > i and i >= 0 and len(value) > 0:
+        # parse it for pmid, evidence code, and cross-reference
 
-	s1 = value[i + 13:j]
+        if j > i and i >= 0 and len(value) > 0:
 
-	# split by 'external ref:'
+	    s1 = value[i + 13:j]
 
-	s1tokens = string.split(s1, 'external ref:')
+	    # split by startNote
 
-	for s in s1tokens:
-	    s2tokens = string.split(s, '|')
+	    s1tokens = string.split(s1, startNote)
 
-            pmid = ''
-            ecode = ''
-            dbxref = ''
+	    for s in s1tokens:
+	        s2tokens = string.split(s, '|')
 
-	    pmid = s2tokens[0]
-	    if len(s2tokens) > 1:
-	        ecode = s2tokens[1]
-	    if len(s2tokens) > 2:
-	        dbxref = s2tokens[2]
+                pmid = ''
+                ecode = ''
+                dbxref = ''
 
-	    if len(pmid) > 0:
-	        dictvalue = (pmid, ecode, dbxref)
+	        pmid = s2tokens[0]
 
-	        if not evidence.has_key(n):
-	            evidence[n] = []
-	        evidence[n].append(dictvalue)
+	        if len(s2tokens) > 1:
+	            ecode = s2tokens[1].strip()
+	        if len(s2tokens) > 2:
+	            dbxref = s2tokens[2]
+
+	        if len(pmid) > 0 and len(ecode) <= 3:
+	            dictvalue = (pmid, ecode, dbxref)
+
+	            if not evidence.has_key(n):
+	                evidence[n] = []
+	            evidence[n].append(dictvalue)
 
 #
 # process results
