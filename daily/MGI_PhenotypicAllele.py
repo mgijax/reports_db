@@ -153,7 +153,6 @@ results = db.sql('select s._Allele_key, ss.synonym ' + \
         'where s._Allele_key = ss._Object_key ' + \
         'and ss._MGIType_key = 11 ' + \
         'and ss._SynonymType_key = st._SynonymType_key ', 'auto')
-        #'and st.synonymType = "exact"', 'auto')
 synonym = {}
 for r in results:
         key = r['_Allele_key']
