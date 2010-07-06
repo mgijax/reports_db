@@ -149,10 +149,9 @@ for r in results:
 	
 # Retrieve Synonyms
 results = db.sql('select s._Allele_key, ss.synonym ' + \
-        'from #alleles s, MGI_Synonym ss, MGI_SynonymType st ' + \
+        'from #alleles s, MGI_Synonym ss ' + \
         'where s._Allele_key = ss._Object_key ' + \
-        'and ss._MGIType_key = 11 ' + \
-        'and ss._SynonymType_key = st._SynonymType_key ', 'auto')
+        'and ss._MGIType_key = 11 ', 'auto')
 synonym = {}
 for r in results:
         key = r['_Allele_key']
