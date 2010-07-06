@@ -147,7 +147,7 @@ for r in results:
 		mpIDs[r['_Allele_key']] = []
 	mpIDs[r['_Allele_key']].append(r['accID'])
 	
-# Get Synonyms for Alleles
+# Retrieve Synonyms
 results = db.sql('select s._Allele_key, ss.synonym ' + \
         'from #alleles s, MGI_Synonym ss, MGI_SynonymType st ' + \
         'where s._Allele_key = ss._Object_key ' + \
