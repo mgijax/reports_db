@@ -19,11 +19,15 @@
 #		RefSeq ID of Gene
 #		Ensembl ID
 #		MP IDs of MP annotations
+#		Synonyms
 #
 # Usage:
 #       MGI_PhenotypicAllele.py
 #
 # History:
+#
+# lec	07/06/2010
+#	- TR 10280/add synonyms
 #
 # lec	05/04/2004
 #	- TR 5637
@@ -143,9 +147,29 @@ for r in results:
 		mpIDs[r['_Allele_key']] = []
 	mpIDs[r['_Allele_key']].append(r['accID'])
 	
+# Get Synonyms for Alleles
+results = db.sql('select s._Allele_key, ss.synonym ' + \
+        'from #alleles s, MGI_Synonym ss, MGI_SynonymType st ' + \
+        'where s._Allele_key = ss._Object_key ' + \
+        'and ss._MGIType_key = 11 ' + \
+        'and ss._SynonymType_key = st._SynonymType_key ', 'auto')
+        #'and st.synonymType = "exact"', 'auto')
+synonym = {}
+for r in results:
+        key = r['_Allele_key']
+        value = r['synonym']
+        if not synonym.has_key(key):
+                synonym[key] = []
+        synonym[key].append(value)
+
+#
+# Main
+#
+
 results = db.sql('select * from #alleles order by marker, symbol', 'auto')
 
 for r in results:
+
 	fp.write(amgiIDs[r['_Allele_key']] + reportlib.TAB + \
 		 r['symbol'] + reportlib.TAB + \
 		 r['name'] + reportlib.TAB + \
@@ -172,7 +196,10 @@ for r in results:
 
 	if mpIDs.has_key(r['_Allele_key']):
 		fp.write(string.join(mpIDs[r['_Allele_key']], ','))
+	fp.write(reportlib.TAB)
 
+	if synonym.has_key(r['_Allele_key']):
+		fp.write(string.join(synonym[r['_Allele_key']], '|'))
 	fp.write(reportlib.CRT)
 
 reportlib.finish_nonps(fp)
