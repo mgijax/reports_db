@@ -38,7 +38,12 @@
 #
 # History:
 #
-# lec	06/22/2010
+# lec
+#   - TR6839/marker types
+#   - marker type 11 (microRNA) moved to marker type 1 (gene)
+#   - changes to proteins/proteinsGene hash/column 17
+#
+# lec   06/17/2010
 #   - check logicalDB for proteins and proteinsGene hash
 #     and fix prefix name for Vega, Ensembl
 #
@@ -183,7 +188,7 @@ for r in results:
     syns[key].append(value)
 
 #
-# resolve foreign keys
+# resolve foreign keys and store in "results" table
 #
 db.sql('''select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
     g._Object_key, g._AnnotEvidence_key, g.symbol, g.name, g.markerType, 
@@ -208,6 +213,7 @@ db.sql('''select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom
 db.sql('create index idx1 on #results(symbol)', None)
 db.sql('create index idx2 on #results(_Refs_key)', None)
 db.sql('create index idx3 on #results(_AnnotEvidence_key)', None)
+db.sql('create index idx4 on #results(_Object_key)', None)
 
 #
 # resolve PubMed IDs for References
@@ -310,54 +316,81 @@ for r in results:
 
 
 #
-# Setup the protein hash
-# This is as marker key <- protein text 
+# protein hash
 #
-# representative proteins (615421)
-#   13 (SwissProt)
-#   41 (TrEMBL)
-#   27 (RefSeq)
-#   132 (VEGA)
-#   134 (ENSEMBL)
+# proteins hash
+#    representative proteins (615421) for marker type "gene" (1)
+#    13 = SwissProt
+#    41 = TrEMBL
+#    27 = RefSeq (XP, NP)
+#    132 = VEGA Protein
+#    134 = Ensembl Protein
 #
-# representative transcript (615420)
-#   9 (GenBank)
-#   27 (RefSeq)
+# proteinsGene
+#    representative transcript (615420) for marker type "gene" (1)
+#    marker symbol like 'mir%' (microRNAs)
+#    9 = GenBank
+#    27 = RefSeq
+#
+# example of counts:
+#  3935 go-uniprot.txt   proteins
+#  4519 go-npxp.txt      proteins
+#     0 go-genbank.txt   proteinsGene
+# 16946 go-all.txt       proteinsGene
 #
 
 results = db.sql('''
-    select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key, mc._Qualifier_key
+    select distinct r.symbol, mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key, mc._Qualifier_key
     from #results r, SEQ_Marker_Cache mc 
     where r._Object_key = mc._Marker_key 
     and mc._Marker_Type_key = 1 
     and mc._Qualifier_key = 615421 
     union 
-    select distinct mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key, mc._Qualifier_key
-    from #results r, SEQ_Marker_Cache mc 
+    select distinct r.symbol, mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key, mc._Qualifier_key
+    from #results r, SEQ_Marker_Cache mc, MRK_MCV_Cache mcv
     where r._Object_key = mc._Marker_key 
-    and mc._Marker_Type_key = 11
-    and mc._Qualifier_key = 615420''', 'auto')
+    and mc._Marker_Type_key = 1
+    and mc._Qualifier_key = 615420
+    and mc._Marker_key = mcv._Marker_key
+    and mcv.term = "miRNA Gene"
+    ''', 'auto')
 
 proteins = {}
 proteinsGene = {}
 
 for r in results:
     key = r['_Marker_key']
+    symbol = r['symbol']
+    seqID = r['seqID']
     logicalDB = r['_LogicalDB_key']    
     qualifier = r['_Qualifier_key']
     
+    # UniProt
     if logicalDB in [13,41]:
-        proteins[key] = 'UniProtKB:' + r['seqID']
-    elif logicalDB in [9]:
-        proteinsGene[key] = 'EMBL:' + r['seqID'] 
+	#print 'ldb 13/41: ', str(symbol), str(seqID)
+        proteins[key] = 'UniProtKB:' + seqID
+
+    # RefSeq
     elif logicalDB in [27] and qualifier == 615421:
-        proteins[key] = 'NCBI:' + r['seqID']   
+	#print 'np/xp: ', str(symbol), str(seqID)
+        proteins[key] = 'NCBI:' + seqID
+
+    # Vega
     elif logicalDB in [132]:
-        proteins[key] = 'VEGA:' + r['seqID']   
+        proteins[key] = 'VEGA:' + r['seqID']
+
+    # Ensembl
     elif logicalDB in [134]:
-        proteins[key] = 'ENSEMBL:' + r['seqID']   
+        proteins[key] = 'ENSEMBL:' + r['seqID']
+
+    # GenBank
+    elif logicalDB in [9]:
+	#print 'ldb 9: ', str(symbol), str(seqID)
+        proteinsGene[key] = 'EMBL:' + seqID
+
     else:
-        proteinsGene[key] = 'NCBI:' + r['seqID']   
+	#print 'all else: ', str(symbol), str(seqID)
+        proteinsGene[key] = 'NCBI:' + seqID
 
 #
 # process results
@@ -460,22 +493,36 @@ for r in results:
         else:                    
             reportRow = reportRow + TAB
 
-        # column 17 is populated in a special way.  
-        # If there is an isoform, use that
-        # If not, if there is a protein use that
-        # If not, leave it blank for now
+        # column 17
+	#
+	# if isoformProtein = true
+	#    then use isoformsProtein
+	#
+	# else if isoformProtein = false, proteins = true
+	#    then use proteins
+	#
+	# else if isoformProtein = false, proteins = false, proteinsGene = true
+	#    then use proteinsGene
+	#
+	# else if isoformProtein = false, proteins = false, proteinsGene = false
+	#    then leave blank
+	#
 
         if isoformsProtein.has_key(isoformKey):
+	    #print 'isoform:  ', str(r['symbol']), string.join(isoformsProtein[isoformKey])
             reportRow = reportRow + string.join(isoformsProtein[isoformKey], '|') + CRT
         else:
 	    row = ''
             if proteins.has_key(r['_Object_key']):
+	        #print 'protein:  ', str(r['symbol']), str(symbol), str(proteins[r['_Object_key']])
                 row = str(proteins[r['_Object_key']])
-                #row = 'Protein: ' + str(proteins[r['_Object_key']])
 
             elif proteinsGene.has_key(r['_Object_key']):
+	        #print 'protein/gene:  ', str(r['symbol']), str(proteinsGene[r['_Object_key']])
                 row = str(proteinsGene[r['_Object_key']])
-                #row = 'Protein gene: ' +str(proteinsGene[r['_Object_key']])
+
+            #else:
+	    #    print 'blank:  ', str(r['symbol'])
 
 	    reportRow = reportRow + row + CRT
 

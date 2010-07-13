@@ -14,13 +14,17 @@
 #
 #	A tab-delimited file in this format:
 #	field 1: MGI Marker ID
-#       field 2: Swiss-Prot sequence ('SWP:' + seqID) OR
-#                TrEMBL sequence ('TR:' + seqID) OR
-#                RefSeq sequence ('NCBI:' + seqID) OR
+#       field 2: SwissProt or TrEMBL sequences ('UniPrpt:' + seqID)
+#                RefSeq sequence ('NCBI:' + seqID)
+#                GenBank sequence ('EMBL:' + seqID)
 #
 # Used by:
 #
 # History:
+#
+# 	lec
+#       - TR6839/marker types
+#       - marker type 11 (microRNA) moved to marker type 1 (gene)
 #
 # 10/21/2008	lec
 #	- TR 9325; add microRNA marker types with transcript
@@ -65,7 +69,7 @@ db.useOneConnection(1)
 
 #
 # all mouse genes with representative protein sequence ids
-# all mouse microRNA with transcripts
+# all mouse genes that are microRNA's
 #
 db.sql('''
     select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
@@ -76,10 +80,12 @@ db.sql('''
     and mc._Qualifier_key = 615421
     union
     select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, seqID=mc.accID, mc._LogicalDB_key
-    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
+    from SEQ_Marker_Cache mc, MRK_Mouse_View mm, MRK_MCV_Cache mcv
     where mc._Marker_key = mm._Marker_key
-    and mc._Marker_Type_key = 11
+    and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615420
+    and mc._Marker_key = mcv._Marker_key
+    and mcv.term = "miRNA Gene"
     ''', None)
 
 db.sql('create index ix1 on #results1(_Marker_key)', None)
