@@ -23,6 +23,9 @@
 #
 # History:
 #
+# 07/28/2010 lec
+#	- TR 6839/added Features for marker types
+#
 # 01/23/2007 lec
 #	- created
 #
