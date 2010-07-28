@@ -10,13 +10,12 @@
 #   1. chromosome: "chr##"
 #   2. source of feature: "MGI"
 #   3. gene feature: marker type or "GeneModel"
-#   4. gene feature: from MRK_MCV_Cache
-#   5. start coordinate
-#   6. end coordinate
-#   7. empty: "."
-#   8. strand
-#   9. empty "."
-#   10. MGI ID;marker symbol" or blank
+#   4. start coordinate
+#   5. end coordinate
+#   6. empty: "."
+#   7. strand
+#   8. empty "."
+#   9. MGI ID;marker symbol" or blank
 #
 # Usage:
 #       MGI_GTGUP.py
@@ -44,7 +43,6 @@ TAB = reportlib.TAB
 field1 = 'chr%s'
 field2 = 'MGI'
 field3 = 'GeneModel'
-field4 = '.'
 field6 = '.'
 field8 = '.'
 field9 = '%s;%s'
@@ -105,18 +103,17 @@ for r in results:
     fp.write(field1 % (r['chromosome']) + TAB)
     fp.write(field2 + TAB)
     fp.write(r['markerType'] + TAB)
-
-    if mcvLookup.has_key(key):
-	fp.write(string.join(mcvLookup[key], '|') + TAB)
-    else:
-	fp.write(field4 + TAB)
-
     fp.write(str(r['startC']) + TAB)
     fp.write(str(r['endC']) + TAB)
     fp.write(field6 + TAB)
     fp.write(str(r['strand']) + TAB)
     fp.write(field8 + TAB)
     fp.write(field9 % (r['accID'], r['symbol']) + CRT)
+
+    #if mcvLookup.has_key(key):
+#	fp.write(string.join(mcvLookup[key], '|') + TAB)
+#    else:
+#	fp.write(field4 + TAB)
 
 # mapped sequence features that don't have marker associations
 
@@ -139,7 +136,6 @@ for r in results:
     fp.write(field1 % (r['chromosome']) + TAB)
     fp.write(field2 + TAB)
     fp.write(field3 + TAB)
-    fp.write(field4 + TAB)
     fp.write(str(r['startC']) + TAB)
     fp.write(str(r['endC']) + TAB)
     fp.write(field6 + TAB)
