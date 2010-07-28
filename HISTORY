@@ -1,3 +1,10 @@
+TAG: reports_db-tr6839-2
+DATE: 07/28/2010
+STAFF: lec
+CHANGES: TR6839
+1) daily/MGI_GTGUP.py
+   added Marker Features (MRK_MCV_Cache)
+
 TAG: reports_db-tr6839-1
 DATE: 07/13/2010
 STAFF: lec
