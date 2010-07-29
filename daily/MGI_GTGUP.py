@@ -15,7 +15,7 @@
 #   6. empty: "."
 #   7. strand
 #   8. empty "."
-#   9. MGI ID;marker symbol" or blank
+#   9. ID=MGI ID;Name=marker symbol" or blank
 #
 # Usage:
 #       MGI_GTGUP.py
@@ -45,7 +45,13 @@ field2 = 'MGI'
 field3 = 'GeneModel'
 field6 = '.'
 field8 = '.'
-field9 = '%s;%s'
+field9 = 'ID=%s;Name=%s'
+
+idField = 'ID='
+
+# Note=aaa,bbb,ccc
+# concatenate notes by ','
+noteField = ';Note='
 
 # Main
 #
@@ -108,12 +114,12 @@ for r in results:
     fp.write(field6 + TAB)
     fp.write(str(r['strand']) + TAB)
     fp.write(field8 + TAB)
-    fp.write(field9 % (r['accID'], r['symbol']) + CRT)
+    fp.write(field9 % (r['accID'], r['symbol']))
 
-    #if mcvLookup.has_key(key):
-#	fp.write(string.join(mcvLookup[key], '|') + TAB)
-#    else:
-#	fp.write(field4 + TAB)
+    if mcvLookup.has_key(key):
+	fp.write(noteField + string.join(mcvLookup[key], ','))
+
+    fp.write(CRT)
 
 # mapped sequence features that don't have marker associations
 
@@ -141,7 +147,7 @@ for r in results:
     fp.write(field6 + TAB)
     fp.write(str(r['strand']) + TAB)
     fp.write(field8 + TAB)
-    fp.write(r['accID'] + CRT)
+    fp.write(idField + r['accID'] + CRT)
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
