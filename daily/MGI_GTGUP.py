@@ -15,7 +15,7 @@
 #   6. empty: "."
 #   7. strand
 #   8. empty "."
-#   9. ID=MGI ID;Name=marker symbol" or blank
+#   9. ID=MGI ID;Name=marker symbol;Note=marker feature" or blank
 #
 # Usage:
 #       MGI_GTGUP.py
@@ -23,7 +23,7 @@
 # History:
 #
 # 07/28/2010 lec
-#	- TR 6839/added Features for marker types
+#	- TR 6839/added marker features to field 9 as a "note"
 #
 # 01/23/2007 lec
 #	- created
@@ -49,7 +49,7 @@ field9 = 'ID=%s;Name=%s'
 
 idField = 'ID='
 
-# Note=aaa,bbb,ccc
+# Note=feature1,feature2,feature3,...
 # concatenate notes by ','
 noteField = ';Note='
 
@@ -116,6 +116,7 @@ for r in results:
     fp.write(field8 + TAB)
     fp.write(field9 % (r['accID'], r['symbol']))
 
+    # add "note" if marker features exist
     if mcvLookup.has_key(key):
 	fp.write(noteField + string.join(mcvLookup[key], ','))
 
