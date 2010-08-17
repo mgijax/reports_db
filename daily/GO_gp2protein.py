@@ -22,6 +22,9 @@
 #
 # History:
 #
+# 08/17/2010	lec
+#	- TR 10321/fix prefixes for Ensembl and Vega
+#
 # 10/21/2008	lec
 #	- TR 9325; add microRNA marker types with transcript
 #
@@ -114,8 +117,12 @@ for r in results:
         seqID = 'UniProtKB:' + r['seqID']
     elif logicalDB in [9]:
         seqID = 'EMBL:' + r['seqID']
-    else:
+    elif logicalDB in [27]:
         seqID = 'NCBI:' + r['seqID']
+    elif logicalDB in [132]:
+        seqID = 'VEGA:' + r['seqID']
+    elif logicalDB in [134]:
+        seqID = 'ENSEMBL:' + r['seqID']
 
     fp.write(mgiID + TAB + seqID + CRT)
 
