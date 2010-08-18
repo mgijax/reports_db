@@ -159,6 +159,7 @@
         <TABLE BORDER CELLPADDING=2><TR><TD>Chromosome</TD>
         <TD>Source of Feature</TD>
         <TD>Marker Type</TD>
+        <TD>Marker Features</TD>
         <TD>Start Coordinate</TD>
         <TD>End Coordinate</TD>
         <TD>Empty Column</TD>
