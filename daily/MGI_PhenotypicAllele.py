@@ -188,8 +188,7 @@ for r in results:
 	fp.write(amgiIDs[r['_Allele_key']] + reportlib.TAB + \
 		 r['symbol'] + reportlib.TAB + \
 		 r['name'] + reportlib.TAB + \
-		 r['alleleType'] + reportlib.TAB + \
-		 str(r['_Allele_Type_key']) + reportlib.TAB)
+		 r['alleleType'] + reportlib.TAB)
 
 	if pubIDs.has_key(r['_Allele_key']):
 		fp.write(pubIDs[r['_Allele_key']])
