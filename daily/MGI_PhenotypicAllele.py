@@ -26,6 +26,9 @@
 #
 # History:
 #
+# lec	08/31/2010
+#	- TR10280 fix; _AlleleType_key was put in for testing but not removed for release
+#
 # lec	07/06/2010
 #	- TR 10280/add synonyms
 #

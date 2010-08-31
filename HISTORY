@@ -1,8 +1,11 @@
+TAG: reports_db-4-4-0-2
 TAG: reports_db-4-4-0-1
 DATE: 08/18/2010
 STAFF: lec
 CHANGES:
 1) TR6839/merge tr6829 to trunk
+2) TR10280/MGI_PhenotypicAllele.py/removed _AlleleType_key
+   that was put in for testing
 
 TAG: reports_db-4-3-4-16
 DATE: 08/17/2010
