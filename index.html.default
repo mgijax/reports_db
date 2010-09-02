@@ -159,13 +159,12 @@
         <TABLE BORDER CELLPADDING=2><TR><TD>Chromosome</TD>
         <TD>Source of Feature</TD>
         <TD>Marker Type</TD>
-        <TD>Marker Features</TD>
         <TD>Start Coordinate</TD>
         <TD>End Coordinate</TD>
         <TD>Empty Column</TD>
         <TD>Strand</TD>
         <TD>Empty Column</TD>
-        <TD>MGI Marker Accession ID:Marker Symbol</TD></TR></TABLE>
+	<TD>ID=MGI ID;Name=marker symbol;Note=marker feature</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GTGUP.gff">MGI_GTGUP.gff</A> (Build 37)</TD></TR>
         </TD></TR>
