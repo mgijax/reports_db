@@ -35,6 +35,11 @@
 #
 # History:
 #
+# lec	09/14/2010
+#	- TR 10336
+#	  include date of lthe last update
+#	  include a count of the number of genes (NOT the number of rows)
+#
 # lec	02/24/2010
 #	- created
 #
@@ -61,6 +66,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 fp.write('#\n')
 fp.write('# This report lists the Markers that have a Biotype Conflict that involves a pseudogene.\n')
 fp.write('#\n')
+fp.write('#  date report was generated:  %s\n#\n' % (mgi_utils.date()))
 fp.write('#  column 1: Symbol\n')
 fp.write('#  column 2: Source:  for gene models, this is the provider\n')
 fp.write('#                     for markers, this is "MGI"\n')
@@ -116,6 +122,8 @@ for r in results:
     if r['_Qualifier_key'] == 615419:
 	fp.write('Representative')
     fp.write(CRT)
+
+fp.write(CRT + '(%d genes affected)' % (len(markerList)) + CRT)
 
 db.useOneConnection(0)
 reportlib.finish_nonps(fp)	# non-postscript file
