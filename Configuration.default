@@ -12,7 +12,8 @@ if ( ${?MGICONFIG} == 0 ) then
 endif
 
 source ${MGICONFIG}/master.config.csh
-setenv IMSR_DBNAME imsr
+
+setenv IMSR_DBNAME		imsr
 
 # report directory
 setenv REPORTDIR		/data/reports/reports_db
@@ -23,22 +24,31 @@ setenv REPORTOUTPUTDIR		${REPORTDIR}/output
 # report logs directory
 setenv REPORTLOGSDIR		${REPORTDIR}/logs
 
+# daily reports directory
+setenv PUBDAILY			${PUBRPTS}/daily
+
+# weekly reports directory
+setenv PUBWEEKLY		${PUBRPTS}/weekly
+
+# monthly reports directory
+setenv PUBMONTHLY		${PUBRPTS}/monthly
+
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		/data/loads/mgi/vocload/runTimeMP
-setenv MPFILES                  "MPheno_OBO.ontology"
+setenv MPFILES			"MPheno_OBO.ontology"
 
 # Adult Mouse Anatomy Source
-setenv MAVOCSOURCE              /data/loads/mgi/vocload/runTimeMA
-setenv MAFILES                  "adult_mouse_anatomy.obo"
+setenv MAVOCSOURCE		/data/loads/mgi/vocload/runTimeMA
+setenv MAFILES			"adult_mouse_anatomy.obo"
 
 # InParanoid directory
-setenv INPARANOIDDIR            ${REPORTDIR}/inparanoid
+setenv INPARANOIDDIR		${REPORTDIR}/inparanoid
 
 # InParanoid files
-setenv REFSEQFASTAGZ            /data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa.gz
-setenv REFSEQFASTA              /data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa
-setenv UNIPROTDAT               /data/seqdbs/blast/uniprot.build/uniprotmus.dat
-setenv UNIPROTFASTA             ${INPARANOIDDIR}/uniprot.fasta
+setenv REFSEQFASTAGZ		/data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa.gz
+setenv REFSEQFASTA		/data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa
+setenv UNIPROTDAT		/data/seqdbs/blast/uniprot.build/uniprotmus.dat
+setenv UNIPROTFASTA		${INPARANOIDDIR}/uniprot.fasta
 
 # GOA file
 setenv GOAMGI			/data/loads/goa/goaload/output/goa.mgi
@@ -48,12 +58,12 @@ setenv KOMP_GENELIST		/data/loads/komp/kompreports/output/geneList.txt
 setenv KOMP_TARGETLIST		/data/loads/komp/kompreports/output/geneListNoKo.txt
 
 # NCBI LinkOut stuff
-setenv NCBILINKOUT_ICON         "http://www.informatics.jax.org/mgihome/other/favicon.ico"
-setenv NCBILINKOUT_BASE         "http://www.informatics.jax.org/searches/accession_report.cgi?"
-setenv NCBILINKOUT_HOST         ftp-private.ncbi.nlm.nih.gov
-setenv NCBILINKOUT_USER         mgd
-setenv NCBILINKOUT_PASSWORD     keUPdTuD
-setenv NCBILINKOUT_COUNT        10000
+setenv NCBILINKOUT_ICON		"http://www.informatics.jax.org/mgihome/other/favicon.ico"
+setenv NCBILINKOUT_BASE		"http://www.informatics.jax.org/searches/accession_report.cgi?"
+setenv NCBILINKOUT_HOST		ftp-private.ncbi.nlm.nih.gov
+setenv NCBILINKOUT_USER		mgd
+setenv NCBILINKOUT_PASSWORD	keUPdTuD
+setenv NCBILINKOUT_COUNT	10000
 
 # Setting for the InParanoid script
 setenv SP2FASTA			/usr/local/bin/sp_to_fasta
