@@ -1,18 +1,18 @@
 #!/bin/csh
 
 #
-# inparanoid.sh
+# inparanoid.csh
 #
 # Script to generate InParanoid files
 #
-# Usage: inparanoid.sh
+# Usage: inparanoid.csh
 #
 
 cd `dirname $0` && source ../Configuration
 
 umask 002
 
-setenv LOG	${REPORTLOGSDIR}/`basename $0`.log
+setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
@@ -28,6 +28,5 @@ ${SP2FASTA} ${UNIPROTDAT} > ${UNIPROTFASTA}
 
 # generate files
 foreach i (`ls *.py`)
-$i >>& ${LOG}
+    $i >>& ${LOG}
 end
-
