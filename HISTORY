@@ -1,3 +1,18 @@
+TAG: reports_db-4-4-0-5
+DATE: 09/30/2010
+STAFF: dbm
+CHANGES: TR8688
+1) renamed nightly_reports.sh to nightly_reports.csh and fixed logging
+2) renamed weekly_reports.sh to weekly_reports.csh and fixed logging
+3) renamed monthly_reports.sh to monthly_reports.csh and fixed logging
+4) renamed mgimarkerfeed_reports.sh to mgimarkerfeed_reports.cs and
+   fixed logging
+5) renamed inparanoid/inparanoid.sh to inparanoid.csh
+6) renamed ncbilinkout/ncbilinkout.sh to ncbilinkout.csh
+7) Configuration.defaults: added PUBDAILY, PUBWEEKLY and PUBMONTHLY
+   settings and fixed spacing
+
+
 TAG: reports_db-4-4-0-4
 DATE: 09/14/2010
 STAFF: lec
