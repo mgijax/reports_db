@@ -55,7 +55,6 @@ fp = reportlib.init('MGI_CloneSet_' + reportName[0], outputdir = os.environ['REP
 
 # get all clones
 
-print 'query 1 begin...%s' % (mgi_utils.date())
 db.sql('select pa._Object_key, pa._LogicalDB_key ' + \
 	'into #clone1 ' + \
 	'from ACC_Accession pa ' + \
@@ -65,7 +64,6 @@ db.sql('create index idx1 on #clone1(_Object_key)', None)
 
 for l in lKeys[1:]:
 
-    print 'query 1(%s) begin...%s' % (l, mgi_utils.date())
     cmd = 'insert into #clone1 ' + \
 	    'select pa._Object_key, pa._LogicalDB_key ' + \
 	    'from ACC_Accession pa ' + \
@@ -73,34 +71,27 @@ for l in lKeys[1:]:
 	    'and pa._LogicalDB_key = %s ' % (l) + \
 	    'and not exists (select 1 from #clone1 n where pa._Object_key = n._Object_key)'
     db.sql(cmd, None)
-    print 'query 1(%s) end...%s' % (l, mgi_utils.date())
 
 db.sql('create index idx2 on #clone1(_LogicalDB_key)', None)
-print 'query 1 end...%s' % (mgi_utils.date())
 
 # grab logical DB name
 
-print 'query 2 begin...%s' % (mgi_utils.date())
 db.sql('select n._Object_key, db = ldb.name ' + \
 	'into #clone2 ' + \
 	'from #clone1 n, ACC_LogicalDB ldb ' + \
 	'where n._LogicalDB_key = ldb._LogicalDB_key', None)
 db.sql('create index idx1 on #clone2(_Object_key)', None)
-print 'query 2 end...%s' % (mgi_utils.date())
 
 # grab all associated markers
 
-print 'query 3 begin...%s' % (mgi_utils.date())
 db.sql('select n._Object_key, pm._Marker_key ' + \
 	'into #clone3 ' + \
 	'from #clone2 n, PRB_Marker pm ' + \
 	'where n._Object_key = pm._Probe_key', None)
 db.sql('create index idx1 on #clone3(_Marker_key)', None)
-print 'query 3 end...%s' % (mgi_utils.date())
 
 # grab marker symbol, accID
 
-print 'query 4 begin...%s' % (mgi_utils.date())
 cmd = 'select n._Object_key, markerSymbol = m.symbol, markerID = ma.accID ' + \
 	'from #clone3 n, MRK_Marker m, ACC_Accession ma ' + \
 	'where n._Marker_key = m._Marker_key  ' + \
@@ -110,7 +101,6 @@ cmd = 'select n._Object_key, markerSymbol = m.symbol, markerID = ma.accID ' + \
 	'and ma.prefixPart = "MGI:" ' + \
 	'and ma.preferred = 1'
 results = db.sql(cmd, 'auto')
-print 'query 4 end...%s' % (mgi_utils.date())
 markers = {}
 for r in results:
     key = r['_Object_key']
@@ -121,7 +111,6 @@ for r in results:
 
 # grab segment name, accID
 
-print 'query 5 begin...%s' % (mgi_utils.date())
 cmd = 'select n._Object_key, n.db, segmentName = p.name, segmentID = pa.accID ' + \
 	'from #clone2 n, PRB_Probe p, ACC_Accession pa ' + \
 	'where n._Object_key = p._Probe_key  ' + \
@@ -132,7 +121,6 @@ cmd = 'select n._Object_key, n.db, segmentName = p.name, segmentID = pa.accID ' 
 	'and pa.preferred = 1 ' + \
 	'order by n.db, segmentName'
 results = db.sql(cmd, 'auto')
-print 'query 5 end...%s' % (mgi_utils.date())
 
 for r in results:
     key = r['_Object_key']
