@@ -38,6 +38,9 @@
 #
 # History:
 #
+# 10/13/2010	lec
+#	- TR 10393; exclude UniProtKB (GOA/Human)
+#
 # 06/22/2010	lec
 #	- TR 10260; multiple start/end notes after "external ref"
 #	  exclude GOA, RGD, GOC
@@ -166,7 +169,7 @@ db.sql('''select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Objec
 	and q._SynonymType_key = 1023 
 	and e._ModifiedBy_key = u._User_key
 	and e._Refs_key not in (89196,105787) 
-	and u.login not in ('GOC', 'RGD')
+	and u.login not in ('GOC', 'RGD', 'UniProtKB')
 	and u.login not like 'GOA%'
 	''', None)
 

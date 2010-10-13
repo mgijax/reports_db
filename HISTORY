@@ -1,3 +1,9 @@
+TAG: reports_db-4-4-0-6
+DATE: 10/13/2010
+STAFF: lec
+CHANGES:
+1) TR10393/GO_gene_association_nonmouse.py
+
 TAG: reports_db-4-4-0-5
 DATE: 09/30/2010
 STAFF: dbm
@@ -11,7 +17,6 @@ CHANGES: TR8688
 6) renamed ncbilinkout/ncbilinkout.sh to ncbilinkout.csh
 7) Configuration.defaults: added PUBDAILY, PUBWEEKLY and PUBMONTHLY
    settings and fixed spacing
-
 
 TAG: reports_db-4-4-0-4
 DATE: 09/14/2010
