@@ -5,7 +5,9 @@ CHANGES:
 1) archived:
    MLD_BSSBSB.py
    MLD_RHData.py
+2) these are not in the index.html but are in /logs/ftp/public/*/*/xferlog
    PRB_CloneLibrarycDNA.py
+   PRB_CloneLibrary.sql
 
 TAG: reports_db-4-4-0-6
 DATE: 10/13/2010
