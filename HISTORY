@@ -1,3 +1,9 @@
+TAG: reports_db-4-4-0-9
+STAFF: sc
+CHANGES: TR10308 biotype conflict revision
+1) daily/MGI_BioTypeConflict.py -  updated to use marker feature type
+	instead of marker type
+
 TAG: reports_db-4-4-0-8
 TAG: reports_db-4-4-0-7
 DATE: 11/03/2010

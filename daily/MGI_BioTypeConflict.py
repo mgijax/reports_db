@@ -12,28 +12,31 @@
 #
 # Report Details:
 # For Markers that have a Biotype Conflict, 
-# create a tab-delimmited report with the following columns:
+# create a tab-delimitted report with the following columns:
 # 
 # Gene Symbol
-# Source	 For gene models, use the provider; use "MGI" for the MGI Marker Type.
-# Gene ID	 For gene models, use the accID of the gene model sequence, 
-#	         for MGI Markers, use the MGI ID of the Marker. 
-#                The IDs should link out to respective gene pages, as in the mockup.
-# BioType	 For gene models, use the Raw BioType values, for MGI, use the MGI Marker Type.
-# MGI_Rep_Gene_Model enter "Representative" if gene model sequence is representative genomic, 
-#                    else, leave blank
+# Source - For gene models, use the provider; use "MGI" for the MGI Marker Type.
+# Gene ID -  For gene models, use the accID of the gene model sequence, 
+#	     for MGI Markers, use the MGI ID of the Marker. 
+#            The IDs should link out to respective gene pages, as in the mockup.
+# BioType - For gene models, use the Raw BioType values, for MGI, 
+#	    use the MGI Feature Type.
+# MGI_Rep_Gene_Model - enter "Representative" if gene model sequence 
+#	               is representative genomic, else, leave blank
 # Order by Gene Symbol
 # 
 # Example:
 # 
 # Symbol   Source    Gene ID            BioType	                MGI_Rep_Gene_Model
-# foo  	   MGI	     MGI:97511	        Gene	
-# foo  	   VEGA	     OTTMUSG00000026053	Known protein coding	Representative
-# foo  	   Ensembl   ENSMUSG00000021587	Known protein coding	
-# foo  	   Ensembl   ENSMUSG00000027419	Known protein coding	
-# foo  	   NCBI	     18548	        Pseudo	
+# 0610012G03Rik   MGI     MGI:1913301     pseudogene
+# 610012G03Rik   Ensembl Gene Model      ENSMUSG00000047112      pseudogene      Representative
+# 0610012G03Rik   NCBI Gene Model 106264  miscRNA
+
 #
 # History:
+#
+# sc	11-15-2010
+#	- TR10308 - update the biotype conflict algorithm
 #
 # lec	09/14/2010
 #	- TR 10336
@@ -64,7 +67,7 @@ db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('#\n')
-fp.write('# This report lists the Markers that have a Biotype Conflict that involves a pseudogene.\n')
+fp.write('# This report lists the Markers that have a Biotype Conflict.\n')
 fp.write('#\n')
 fp.write('#  date report was generated:  %s\n#\n' % (mgi_utils.date()))
 fp.write('#  column 1: Symbol\n')
@@ -73,15 +76,16 @@ fp.write('#                     for markers, this is "MGI"\n')
 fp.write('#  column 3: Gene ID: for gene models, this is the sequence ID\n')
 fp.write('#                     for markers, this is the MGI ID\n')
 fp.write("#  column 4: Biotype: for gene models, this is the provider's biotype value\n")
-fp.write('#                     for markers, this is the MGI marker type\n')
+fp.write('#                     for markers, this is the MGI feature type\n')
 fp.write('#  column 5: MGI_Rep_Gene_Model: "Representative" if gene model sequence is the representative genomic\n')
 fp.write('#\n\n')
 
 results = db.sql('''
 		 select s._Marker_key, s._Qualifier_key, s.accID, s.rawbiotype, 
-			m.symbol, mgiID = a.accID, markerType = t.name,
+			m.symbol, mgiID = a.accID, featureType = mcv.term,
 			provider = v.term
-		 from SEQ_Marker_Cache s, MRK_Marker m, ACC_Accession a, MRK_Types t, VOC_Term v
+		 from SEQ_Marker_Cache s, MRK_Marker m, ACC_Accession a, 
+			MRK_MCV_Cache mcv, VOC_Term v
 		 where s._BiotypeConflict_key = 5420767
 		 and s._LogicalDB_key in (59, 60, 85)
 		 and s._Marker_key = m._Marker_key
@@ -90,7 +94,8 @@ results = db.sql('''
 		 and a.prefixPart = "MGI:"
 		 and a._LogicalDB_key = 1
 		 and a.preferred = 1
-		 and s._Marker_Type_key = t._Marker_Type_key
+		 and s._Marker_key = mcv._Marker_key
+		 and mcv.qualifier = 'D'
 		 and s._SequenceProvider_key = v._Term_key
 		 order by m.symbol, m._Marker_key
 		 ''', 'auto')
@@ -108,7 +113,7 @@ for r in results:
         fp.write(r['symbol'] + TAB)
 	fp.write('MGI' + TAB)
 	fp.write(r['mgiID'] + TAB)
-	fp.write(r['markerType'] + TAB)
+	fp.write(r['featureType'] + TAB)
 	fp.write(CRT)
 	markerList[key] = value
 
