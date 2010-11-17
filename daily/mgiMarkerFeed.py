@@ -8,6 +8,7 @@
 #	TR 3137 - add MRK_Offset
 #	TR 3345 - add Strain info; incorporate marker offset into marker.bcp
 #	TR 5565 - JaxStrain additions
+#	TR 10460 - add mutant cell line accession ids
 #	MPR
 #
 # bcp files
@@ -32,40 +33,47 @@
 #	19. marker_label.bcp
 #	20. accession_marker.bcp
 #	21. allele_cellline.bcp
-#	22. allele_derivation.bcp
-#	23. allele.bcp
-#	24. allele_allele_cellline.bcp
-#	25. allele_marker.bcp
-#	26. allele_label.bcp
-#	27. allele_note.bcp
-#	28. accession_allele.bcp
-#	29. strain.bcp
-#	30. strain_marker.bcp
-#	31. strain_synonym.bcp
-#	32. strain_strain_type.bcp
-#	33. accession_strain.bcp
-#	34. strain_species.bcp
-#       35. genotype.bcp
-#       36. genotype_mpt.bcp
-#       37. genotype_header.bcp
-#       38. strain_genotype.bcp
-#       39. allele_pair.bcp
-#	40. reference.bcp
-#	41. accession_reference.bcp
-#	42. genotype_mpt_reference.bcp
-#	43. allele_reference.bcp
-#	44. strain_reference.bcp
-#	45. marker_reference.bcp
-#	46. marker_omim.bcp
+#	22. accession_allele_cellline.bcp
+#	23. allele_derivation.bcp
+#	24. allele.bcp
+#	25. allele_allele_cellline.bcp
+#	26. allele_marker.bcp
+#	27. allele_label.bcp
+#	28. allele_note.bcp
+#	29. accession_allele.bcp
+#	30. strain.bcp
+#	31. strain_marker.bcp
+#	32. strain_synonym.bcp
+#	33. strain_strain_type.bcp
+#	34. accession_strain.bcp
+#	35. strain_species.bcp
+#       36. genotype.bcp
+#       37. genotype_mpt.bcp
+#       38. genotype_header.bcp
+#       39. strain_genotype.bcp
+#       40. allele_pair.bcp
+#	41. reference.bcp
+#	42. accession_reference.bcp
+#	43. genotype_mpt_reference.bcp
+#	44. allele_reference.bcp
+#	45. strain_reference.bcp
+#	46. marker_reference.bcp
+#	47. marker_omim.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
 #
 # History:
 #
+# lec	11/17/2010; add accession ids of cell lines
+#	- TR 10460
+#	accession_allele_cellline.bcp
+#	
+#	- TR 9887/remove note duplicate check
+#
 # lec	10/13/2009
 #	- TR 9887; allele notes, check for duplicates
-#	this fix can be removed once the allmrkload issue is resolved.
+#	this fix can be removed once the alomrkload issue is resolved.
 #
 # lec	9/15/2009
 #	- TR 9838;
@@ -195,10 +203,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'marker_type.bcp', 'w')
 
-    results = db.sql('select _Marker_Type_key, name, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from MRK_Types', 'auto', execute = 1)
+    results = db.sql('''select _Marker_Type_key, name, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from MRK_Types''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Marker_Type_key']` + TAB + \
 		     r['name'] + TAB + \
@@ -212,10 +220,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'species.bcp', 'w')
 
-    results = db.sql('select _Organism_key, commonName, latinName, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from MGI_Organism_Marker_View', 'auto', execute = 1)
+    results = db.sql('''select _Organism_key, commonName, latinName, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from MGI_Organism_Marker_View''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Organism_key']` + TAB + \
 		     r['commonName'] + TAB + \
@@ -230,10 +238,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_type.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term_ALLType_View', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term_ALLType_View''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -247,10 +255,10 @@ def vocabs():
     
     fp = open(OUTPUTDIR + 'allele_inheritance_mode.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term_ALLInheritMode_View', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term_ALLInheritMode_View''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -264,10 +272,10 @@ def vocabs():
     
     fp = open(OUTPUTDIR + 'allele_pairstate.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term_ALLPairState_View', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term_ALLPairState_View''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -281,10 +289,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_transmission.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term_ALLTransmission_View', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term_ALLTransmission_View''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -298,11 +306,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_creator.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term ' + \
-	    'where _Vocab_key = 62', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term where _Vocab_key = 62''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -316,10 +323,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_celllinetype.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term where _Vocab_key = 63', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term where _Vocab_key = 63''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -333,10 +340,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_vector.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term where _Vocab_key = 72', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term where _Vocab_key = 72''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -350,10 +357,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_vectortype.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term where _Vocab_key = 64', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term where _Vocab_key = 64''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -367,10 +374,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_markerstatus.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term where _Vocab_key = 73', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term where _Vocab_key = 73''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -384,10 +391,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'allele_markerqualifier.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term where _Vocab_key = 70', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term where _Vocab_key = 70''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -401,10 +408,10 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'genotype_existsas.bcp', 'w')
 
-    results = db.sql('select _Term_key, term, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from VOC_Term where _Vocab_key = 60', 'auto', execute = 1)
+    results = db.sql('''select _Term_key, term, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from VOC_Term where _Vocab_key = 60''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -418,10 +425,10 @@ def vocabs():
     
     fp = open(OUTPUTDIR + 'strain_type.bcp', 'w')
     
-    results = db.sql('select _Term_key, term, ' + \
-          'cdate = convert(char(20), creation_date, 100), ' + \
-          'mdate = convert(char(20), modification_date, 100) ' + \
-          'from VOC_Term_StrainAttribute_View', 'auto')
+    results = db.sql('''select _Term_key, term, 
+          cdate = convert(char(20), creation_date, 100), 
+          mdate = convert(char(20), modification_date, 100) 
+          from VOC_Term_StrainAttribute_View''', 'auto')
 
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
@@ -436,11 +443,11 @@ def vocabs():
     
     fp = open(OUTPUTDIR + 'mp_term.bcp', 'w')
     
-    results = db.sql('select x._Term_key, x.sequenceNum, note = rtrim(x.note) ' + \
-          'from VOC_Term t, VOC_Text x ' + \
-	  'where t._Vocab_key = 5 ' + \
-	  'and t._Term_key = x._Term_key ' + \
-	  'order by x._Term_key, x.sequenceNum', 'auto')
+    results = db.sql('''select x._Term_key, x.sequenceNum, note = rtrim(x.note) 
+          from VOC_Term t, VOC_Text x 
+	  where t._Vocab_key = 5 
+	  and t._Term_key = x._Term_key 
+	  order by x._Term_key, x.sequenceNum''', 'auto')
 
     notes = {}
     for r in results:
@@ -454,15 +461,15 @@ def vocabs():
     # MP (5) and OMIM (44) terms
     #
 
-    results = db.sql('select a.accID, t.term, t._Term_key, v.name, ' +
-          'cdate = convert(char(20), t.creation_date, 100), ' + \
-          'mdate = convert(char(20), t.modification_date, 100) ' + \
-          'from VOC_Vocab v, VOC_Term t, ACC_Accession a ' + \
-	  'where t._Vocab_key in (5, 44) ' + \
-	  'and t._Vocab_key = v._Vocab_key ' + \
-	  'and t._Term_key = a._Object_key ' + \
-	  'and a._MGIType_key = 13 ' + \
-	  'and a.preferred = 1', 'auto')
+    results = db.sql('''select a.accID, t.term, t._Term_key, v.name, 
+          cdate = convert(char(20), t.creation_date, 100), 
+          mdate = convert(char(20), t.modification_date, 100) 
+          from VOC_Vocab v, VOC_Term t, ACC_Accession a 
+	  where t._Vocab_key in (5, 44) 
+	  and t._Vocab_key = v._Vocab_key 
+	  and t._Term_key = a._Object_key 
+	  and a._MGIType_key = 13 
+	  and a.preferred = 1''', 'auto')
 
     for r in results:
 	    key = r['_Term_key']
@@ -487,13 +494,13 @@ def vocabs():
 
     fp = open(OUTPUTDIR + 'mp_synonym.bcp', 'w')
     
-    results = db.sql('select t._Term_key, s.synonym, ' +
-          'cdate = convert(char(20), s.creation_date, 100), ' + \
-          'mdate = convert(char(20), s.modification_date, 100) ' + \
-          'from VOC_Term t, MGI_Synonym s ' + \
-	  'where t._Vocab_key in (5, 44) ' + \
-	  'and t._Term_key = s._Object_key ' + \
-	  'and s._MGIType_key = 13 ', 'auto')
+    results = db.sql('''select t._Term_key, s.synonym, 
+          cdate = convert(char(20), s.creation_date, 100), 
+          mdate = convert(char(20), s.modification_date, 100) 
+          from VOC_Term t, MGI_Synonym s 
+	  where t._Vocab_key in (5, 44) 
+	  and t._Term_key = s._Object_key 
+	  and s._MGIType_key = 13 ''', 'auto')
 
     for r in results:
 	    key = r['_Term_key']
@@ -510,9 +517,10 @@ def vocabs():
     
     fp = open(OUTPUTDIR + 'mp_closure.bcp', 'w')
 
-    results = db.sql('select c._AncestorObject_key, c._DescendentObject_key, c._AncestorLabel_key, c._DescendentLabel_key ' + \
-	'from DAG_Closure c ' + \
-	'where c._Dag_key = 4 ', 'auto')
+    results = db.sql('''select c._AncestorObject_key, c._DescendentObject_key, 
+	c._AncestorLabel_key, c._DescendentLabel_key 
+	from DAG_Closure c 
+	where c._Dag_key = 4''', 'auto')
 
     for r in results:
 	fp.write(`r['_AncestorObject_key']` + TAB + \
@@ -688,6 +696,7 @@ def alleles():
 
     #
     # allele_cellline
+    # accession_allele_cellline
     # allele
     # allele_allele_cellline
     # allele_marker
@@ -703,10 +712,10 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele_cellline.bcp', 'w')
     
-    results = db.sql('select _CellLine_key, cellLine, _CellLine_Type_key, _Strain_key, _Derivation_key, isMutant, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from ALL_CellLine', 'auto', execute = 1)
+    results = db.sql('''select _CellLine_key, cellLine, _CellLine_Type_key, _Strain_key, _Derivation_key, isMutant, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from ALL_CellLine''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_CellLine_key']` + TAB + \
 		     r['cellLine'] + TAB + \
@@ -719,18 +728,41 @@ def alleles():
     fp.close()
 
     #
+    # accession_allele_cellline.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'accession_allele_cellline.bcp', 'w')
+
+    results = db.sql('''select m.accID, LogicalDB = l.name, m._Object_key, m.preferred, 
+	    cdate = convert(char(20), m.creation_date, 100), 
+	    mdate = convert(char(20), m.modification_date, 100) 
+	    from ALL_Cellline c, ACC_Accession m, ACC_LogicalDB l 
+	    where c._CellLine_key = m._Object_key 
+	    and m._MGIType_key = 28 
+	    and m._LogicalDB_key = l._LogicalDB_key''', 'auto')
+
+    for r in results:
+	    fp.write(r['accID'] + TAB + \
+		     r['LogicalDB'] + TAB + \
+		     `r['_Object_key']` + TAB + \
+		     `r['preferred']` + TAB + \
+		     r['cdate'] + TAB + \
+		     r['mdate'] + CRT)
+    fp.close()
+
+    #
     # allele_derivation.bcp
     #
 
     fp = open(OUTPUTDIR + 'allele_derivation.bcp', 'w')
     
-    results = db.sql('select _Derivation_key, name, ' + \
-	    '_Vector_key, _VectorType_key, ' + \
-	    '_ParentCellLine_key, _DerivationType_key, ' + \
-	    '_Creator_key, _Refs_key, ' + \
-	    'cdate = convert(char(20), creation_date, 100), ' + \
-	    'mdate = convert(char(20), modification_date, 100) ' + \
-	    'from ALL_CellLine_Derivation', 'auto', execute = 1)
+    results = db.sql('''select _Derivation_key, name, 
+	    _Vector_key, _VectorType_key, 
+	    _ParentCellLine_key, _DerivationType_key, 
+	    _Creator_key, _Refs_key, 
+	    cdate = convert(char(20), creation_date, 100), 
+	    mdate = convert(char(20), modification_date, 100) 
+	    from ALL_CellLine_Derivation''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Derivation_key']` + TAB + \
 		     r['name'] + TAB + \
@@ -751,10 +783,10 @@ def alleles():
     # only include non-nomen symbols (where nomenSymbol is null)
     #
 
-    db.sql('select m._Allele_key into #alleles ' + \
-	'from ALL_Allele m, VOC_Term t ' + \
-	'where nomenSymbol is null and m._Allele_Status_key = t._Term_key ' + \
-	'and t.term in ("Approved", "Autoload") ', None)
+    db.sql('''select m._Allele_key into #alleles 
+	from ALL_Allele m, VOC_Term t 
+	where nomenSymbol is null and m._Allele_Status_key = t._Term_key 
+	and t.term in ("Approved", "Autoload") ''', None)
     db.sql('create index idx1 on #alleles(_Allele_key)', None)
 
     #
@@ -763,13 +795,13 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele.bcp', 'w')
 
-    results = db.sql('select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._Transmission_key, ' + \
-	'm._Strain_key, m.isWildType, m.isExtinct, m.isMixed, m.symbol, m.name, status = t.term, ' + \
-	'cdate = convert(char(20), m.creation_date, 100), ' + \
-	'mdate = convert(char(20), m.modification_date, 100) ' + \
-	'from #alleles a, ALL_Allele m, VOC_Term t ' + \
-	'where a._Allele_key = m._Allele_key ' + \
-	'and m._Allele_Status_key = t._Term_key', 'auto')
+    results = db.sql('''select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._Transmission_key, 
+	m._Strain_key, m.isWildType, m.isExtinct, m.isMixed, m.symbol, m.name, status = t.term, 
+	cdate = convert(char(20), m.creation_date, 100), 
+	mdate = convert(char(20), m.modification_date, 100) 
+	from #alleles a, ALL_Allele m, VOC_Term t 
+	where a._Allele_key = m._Allele_key 
+	and m._Allele_Status_key = t._Term_key''', 'auto')
 
     for r in results:
 	    fp.write(`r['_Allele_key']` + TAB + \
@@ -794,11 +826,11 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele_allele_cellline.bcp', 'w')
 
-    results = db.sql('select m._Assoc_key, m._Allele_key, m._MutantCellLine_key, ' + \
-	    'cdate = convert(char(20), m.creation_date, 100), ' + \
-	    'mdate = convert(char(20), m.modification_date, 100) ' + \
-	    'from #alleles a, ALL_Allele_Cellline m ' + \
-	    'where a._Allele_key = m._Allele_key ', 'auto')
+    results = db.sql('''select m._Assoc_key, m._Allele_key, m._MutantCellLine_key, 
+	    cdate = convert(char(20), m.creation_date, 100), 
+	    mdate = convert(char(20), m.modification_date, 100) 
+	    from #alleles a, ALL_Allele_Cellline m 
+	    where a._Allele_key = m._Allele_key ''', 'auto')
 
     for r in results:
 	    fp.write(`r['_Assoc_key']` + TAB + \
@@ -814,12 +846,12 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele_marker.bcp', 'w')
 
-    results = db.sql('select m._Assoc_key, m._Allele_key, m._Marker_key, m._Qualifier_key, ' + \
-	    '_Refs_key, _Status_key, ' + \
-	    'cdate = convert(char(20), m.creation_date, 100), ' + \
-	    'mdate = convert(char(20), m.modification_date, 100) ' + \
-	    'from #alleles a, ALL_Marker_Assoc m ' + \
-	    'where a._Allele_key = m._Allele_key ', 'auto')
+    results = db.sql('''select m._Assoc_key, m._Allele_key, m._Marker_key, m._Qualifier_key, 
+	    _Refs_key, _Status_key, 
+	    cdate = convert(char(20), m.creation_date, 100), 
+	    mdate = convert(char(20), m.modification_date, 100) 
+	    from #alleles a, ALL_Marker_Assoc m 
+	    where a._Allele_key = m._Allele_key ''', 'auto')
 
     for r in results:
 	    fp.write(`r['_Assoc_key']` + TAB + \
@@ -841,25 +873,25 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'allele_label.bcp', 'w')
 
-    results = db.sql('select m._Allele_key, m.name, labelType = "AN", status = 1, ' + \
-	    'cdate = convert(char(20), m.creation_date, 100), ' + \
-	    'mdate = convert(char(20), m.modification_date, 100) ' + \
-	    'from #alleles a, ALL_Allele m ' + \
-	    'where a._Allele_key = m._Allele_key ' + \
-	    'union ' + \
-	    'select m._Allele_key, m.symbol, labelType = "AS", status = 1, ' + \
-	    'cdate = convert(char(20), m.creation_date, 100), ' + \
-	    'mdate = convert(char(20), m.modification_date, 100) ' + \
-	    'from #alleles a, ALL_Allele m ' + \
-	    'where a._Allele_key = m._Allele_key ' + \
-	    'union ' + \
-	    'select m._Allele_key, s.synonym, labelType = "AY", status = 0, ' + \
-	    'cdate = convert(char(20), m.creation_date, 100), ' + \
-	    'mdate = convert(char(20), m.modification_date, 100) ' + \
-	    'from #alleles a, ALL_Allele m, MGI_Synonym s ' + \
-	    'where a._Allele_key = m._Allele_key ' + \
-	    'and a._Allele_key = s._Object_key ' + \
-	    'and s._MGIType_key = 11', 'auto')
+    results = db.sql('''select m._Allele_key, m.name, labelType = "AN", status = 1, 
+	    cdate = convert(char(20), m.creation_date, 100), 
+	    mdate = convert(char(20), m.modification_date, 100) 
+	    from #alleles a, ALL_Allele m 
+	    where a._Allele_key = m._Allele_key 
+	    union 
+	    select m._Allele_key, m.symbol, labelType = "AS", status = 1, 
+	    cdate = convert(char(20), m.creation_date, 100), 
+	    mdate = convert(char(20), m.modification_date, 100) 
+	    from #alleles a, ALL_Allele m 
+	    where a._Allele_key = m._Allele_key 
+	    union 
+	    select m._Allele_key, s.synonym, labelType = "AY", status = 0, 
+	    cdate = convert(char(20), m.creation_date, 100), 
+	    mdate = convert(char(20), m.modification_date, 100) 
+	    from #alleles a, ALL_Allele m, MGI_Synonym s 
+	    where a._Allele_key = m._Allele_key 
+	    and a._Allele_key = s._Object_key 
+	    and s._MGIType_key = 11''', 'auto')
 
     for r in results:
 	    fp.write(`r['_Allele_key']` + TAB + \
@@ -889,16 +921,6 @@ def alleles():
 
     notes = {}
     for r in results:
-
-	    # check duplicates by allele/sequence/note type
-	    # remove this check once the allmrkload issue is resolved
-	    key = str(r['_Allele_key']) + ':' + str(r['sequenceNum']) + ':' + str(r['noteType'])
-	    value = key
-	    if notes.has_key(key):
-		print key
-		continue
-	    notes[key] = value
-
 	    fp.write(`r['_Allele_key']` + COLDELIM + \
 		     r['noteType'] + COLDELIM + \
 		     `r['sequenceNum']` + COLDELIM + \
@@ -913,15 +935,15 @@ def alleles():
 
     fp = open(OUTPUTDIR + 'accession_allele.bcp', 'w')
 
-    results = db.sql('select m.accID, LogicalDB = l.name, m._Object_key, m.preferred, ' + \
-	    'cdate = convert(char(20), m.creation_date, 100), ' + \
-	    'mdate = convert(char(20), m.modification_date, 100) ' + \
-	    'from #alleles k, ACC_Accession m, ACC_LogicalDB l ' + \
-	    'where k._Allele_key = m._Object_key ' + \
-	    'and m._MGIType_key = 11 ' + \
-	    'and m.prefixPart = "MGI:" ' + \
-	    'and m._LogicalDB_key = 1 ' + \
-	    'and m._LogicalDB_key = l._LogicalDB_key', 'auto')
+    results = db.sql('''select m.accID, LogicalDB = l.name, m._Object_key, m.preferred, 
+	    cdate = convert(char(20), m.creation_date, 100), 
+	    mdate = convert(char(20), m.modification_date, 100) 
+	    from #alleles k, ACC_Accession m, ACC_LogicalDB l 
+	    where k._Allele_key = m._Object_key 
+	    and m._MGIType_key = 11 
+	    and m.prefixPart = "MGI:" 
+	    and m._LogicalDB_key = 1 
+	    and m._LogicalDB_key = l._LogicalDB_key''', 'auto')
 
     for r in results:
 	    fp.write(r['accID'] + TAB + \
