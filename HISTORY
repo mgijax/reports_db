@@ -1,3 +1,10 @@
+TAG: reports_db-4-4-0-11
+DATE: 12/07/2010
+STAFF: sc
+CHANGES: TR10470
+Added weekly reports:
+1) MGI_IKMC_DNA_GT.gff, MGI_IKMC_DNA_GT_info.rpt
+
 TAG: reports_db-4-4-0-10
 STAFF: lec
 CHANGES: TR10308 biotype conflict revision
