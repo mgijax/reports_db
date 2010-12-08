@@ -98,9 +98,9 @@ db.useOneConnection(1)
 
 print 'Loading lookups ...'
 sys.stdout.flush()
-
 # get dbGSSGeneTrap Collection sequence coordinates
-db.sql('SELECT mcf.startCoordinate, mcf.endCoordinate, ' + \
+db.sql('SELECT convert(int, mcf.startCoordinate) as startCoordinate, ' + \
+    'convert(int, mcf.endCoordinate) as endCoordinate, ' + \
     'mcf.strand, mcf._Object_key as _Sequence_key, chr.chromosome ' + \
     'INTO #coords ' + \
     'FROM MAP_Coord_Collection mcc, MAP_Coordinate mc, ' + \

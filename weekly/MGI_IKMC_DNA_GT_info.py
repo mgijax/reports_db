@@ -159,8 +159,10 @@ db.sql('''select m.*, smc._Sequence_key
 	    and smc._Qualifier_key = 615419''', None) 
 db.sql('''create index idx1 on #markerRepSeq(_Sequence_key)''', None)
 db.sql('''create index idx2 on #markerRepSeq(_Marker_key)''', None)
-db.sql('''select m.*, scc.chromosome, scc.startCoordinate, 
-	    scc.endCoordinate, scc.strand, v.mgiID, v.symbol, 
+db.sql('''select m.*, scc.chromosome, 
+	    convert(int, scc.startCoordinate) as startCoordinate,
+	    convert(int, scc.endCoordinate) as endCoordinate,
+	    scc.strand, v.mgiID, v.symbol, 
 	    a.accid as repSeqID, ldb.name as provider
 	    into #markerRepCoord
 	    from #markerRepSeq m, SEQ_Coord_Cache scc, MRK_Mouse_View v, 
@@ -196,7 +198,8 @@ db.sql('''select s.*, a.accid as mclID
 	    and a._MGIType_key = 28
 	    and a.preferred = 1''', None)
 db.sql('''create index idx1 on #mclIDs(_Sequence_key)''', None)
-results = db.sql('''select m.*, sgt.goodHitCount, sgt.pointCoordinate, 
+results = db.sql('''select m.*, sgt.goodHitCount, 
+	    convert(int, sgt.pointCoordinate) as pointCoordinate, 
 	    t1.term as seqTagMethod
 	    into #seqTagsAll
 	    from #mclIDs m, SEQ_GeneTrap sgt, VOC_Term t1
@@ -243,7 +246,9 @@ for r in results:
     alleleRepSeqDictByAlleleKey[alleleKey] = [allRepSeqID, strand]
 
 # Lookup of gene trap sequence tag alignments
-results = db.sql('''select c.chromosome, f.startCoordinate, f.endCoordinate,
+results = db.sql('''select c.chromosome, 
+	    convert(int, f.startCoordinate) as startCoordinate,
+            convert(int, f.endCoordinate) as endCoordinate,
             f.strand, f._Object_key as _Sequence_key
             from MAP_Coord_Collection mcc, MAP_Coordinate mc,
             MRK_Chromosome c, MAP_Coord_Feature f
