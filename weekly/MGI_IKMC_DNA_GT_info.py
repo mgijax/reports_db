@@ -271,11 +271,11 @@ for r in results:
     col5 = r['seqTagMethod']
     col6 = r['vector']
     seqKey = r['_Sequence_key']
-    col7 = 'none'	# chr
-    col8 = 'none'	# start
-    col9 = 'none'	# end
-    col10 = 'none'	# strand
-    col11 = 'none'      # reason for no location
+    col7 = ''	# chr
+    col8 = ''	# start
+    col9 = ''	# end
+    col10 = ''	# strand
+    col11 = ''      # reason for no location
     if seqTagAlignmentsBySeqKey.has_key(seqKey):
 	(col7, col8, col9, col10) = seqTagAlignmentsBySeqKey[seqKey]
     else:
@@ -284,23 +284,23 @@ for r in results:
 	    col11 = 'noGoodAlignments'
 	elif int(goodHitCount) > 1:
 	    col11 = 'multipleGoodAlignments'
-    col12 = 'none'	# gene symbol
-    col13 = 'none'	# rep gene model ID
-    col14 = 'none'	# gene model provider
-    col15 = 'none'	# gene mgi ID
-    col16 = 'none'	# chr of mgi gene
-    col17 = 'none'	# start coord of mgi gene
-    col18 = 'none' 	# end coord of mgi gene
-    col19 = 'none'	# strand of mgi gene
+    col12 = ''	# gene symbol
+    col13 = ''	# rep gene model ID
+    col14 = ''	# gene model provider
+    col15 = ''	# gene mgi ID
+    col16 = ''	# chr of mgi gene
+    col17 = ''	# start coord of mgi gene
+    col18 = '' 	# end coord of mgi gene
+    col19 = ''	# strand of mgi gene
     alleleKey = r['_Allele_key']
     if markerRepSeqDictByAlleleKey.has_key(alleleKey):
 	(col16, col17, col18, col19, col15, col12, col13, col14) = \
 	    markerRepSeqDictByAlleleKey[alleleKey]
-    col20 = 'none'	# genbank ID of allele rep seq
+    col20 = ''	# genbank ID of allele rep seq
     col21 = r['pointCoordinate']
     if col21 == None:
-	col21 = 'none'
-    col22 = 'none'	# strand of allele rep seq
+	col21 = ''
+    col22 = ''	# strand of allele rep seq
     col23 = r['isMixed']
     if int(col23) == 1:
 	col23 = 'Mixed'
@@ -310,7 +310,7 @@ for r in results:
         (col20, col22) = alleleRepSeqDictByAlleleKey[alleleKey]
     pointCoord = r['pointCoordinate']
     if pointCoord == None:
-	pointCoord = 'none'
+	pointCoord = ''
     fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (col1, TAB, col2, TAB, col3, TAB, col4, TAB, col5, TAB, col6, TAB, col7, TAB, col8, TAB, col9, TAB, col10, TAB, col11, TAB, col12, TAB, col13, TAB, col14, TAB, col15, TAB, col16, TAB, col17, TAB, col18, TAB, col19, TAB, col20, TAB, col21, TAB, col22, TAB, col23, CRT))
 
 reportlib.finish_nonps(fp)
