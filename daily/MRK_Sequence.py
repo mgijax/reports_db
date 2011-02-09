@@ -194,8 +194,10 @@ results = db.sql('select * from #markers order by symbol', 'auto')
 
 for r in results:
 	key = r['_Marker_key']
+	symbol = r['symbol']
 
 	if not gbID.has_key(key) and not ugID.has_key(key) and not rsID.has_key(key):
+	    print 'not gb', symbol
 	    continue
 
 	if r['offset'] == -1.0:
