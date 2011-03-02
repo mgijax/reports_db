@@ -1,3 +1,14 @@
+TAG: reports_db-4-4-1-?
+DATE: 03/02/2011
+STAFF: lec
+CHANGES: 
+1) TR10616/weekly/MGI_GeneOMIM.py
+   will *not* add to index.html at this time
+2) TR10605/MGI_PhenoGenoMP1 creates:
+       MGI_PhenoGenoMP1
+       MGI_PhenoGenoMPOMIM1
+       MGI_PhenoGenoMPOMIM2
+
 TAG: reports_db-4-4-1-4
 DATE: 02/23/2011
 STAFF: lec
