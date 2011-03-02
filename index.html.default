@@ -748,7 +748,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>6. Genotypes and Mammalian Phenotype Annotations(tab-delimited)</B></TD></TR>
+        <TR><TD><B>6. All Genotypes and Mammalian Phenotype Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
         </TD></TR>
@@ -770,14 +770,38 @@
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="EUCOMM_Allele.rpt">EUCOMM_Allele.rpt</A></TD></TR>
     </TABLE></TD></TR>
+
     <TR><TD><TABLE>
         <TR><TD><B>9. List of All NorCOMM Alleles (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="NorCOMM_Allele.rpt">NorCOMM_Allele.rpt</A></TD>
-</TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="NorCOMM_Allele.rpt">NorCOMM_Allele.rpt</A></TD></TR>
         </TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>10. Genotypes and Mammalian Phenotype Annotations for Marker Type Genes excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GenePheno.rpt">MGI_GenePheno.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>11. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_Disease.rpt">MGI_Geno_Disease.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>12. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_NotDisease.rpt">MGI_Geno_NotDisease.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
 </TABLE><BR>
