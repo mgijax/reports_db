@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	03/15/2011
+#   - TR10633/allow PRO ids (PR:) in column 17
+#
 # lec
 #   - TR6839/marker types
 #   - marker type 11 (microRNA) moved to marker type 1 (gene)
@@ -284,6 +287,7 @@ isoformPattern1 = re.compile(r'UniProtKB:', re.I)
 isoformPattern2 = re.compile(r'protein_id', re.I)
 isoformPattern3 = re.compile(r'NCBI:NP_', re.I)
 isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
+isoformPattern5 = re.compile(r'PR:', re.I)
 
 isoformsProtein = {}
 results = db.sql('''select r._Object_key, r._AnnotEvidence_key, nc.note
@@ -308,7 +312,8 @@ for r in results:
             if isoformPattern1.match(b) != None or \
 	       isoformPattern2.match(b) != None or \
                isoformPattern3.match(b) != None or \
-	       isoformPattern4.match(b) != None:
+	       isoformPattern4.match(b) != None or \
+	       isoformPattern5.match(b) != None:
 
                 if not isoformsProtein.has_key(key):
 	            isoformsProtein[key] = []
