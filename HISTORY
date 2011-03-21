@@ -1,3 +1,9 @@
+TAG: reports_db-4-4-1-9
+DATE: 03/21/2011
+STAFF: lec
+CHANGES: 
+1) TR9962/add 'RefGenome' to column 15:GO_gene_association.py
+
 TAG: reports_db-4-4-1-8
 DATE: 03/16/2011
 STAFF: lec

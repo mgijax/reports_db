@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	03/21/2011
+#   - TR9962/add 'RefGenome' to column 15
+#
 # lec	03/15/2011
 #   - TR10633/allow PRO ids (PR:) in column 17
 #
@@ -115,7 +118,7 @@ import mgi_utils
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 UNIPROTKB = 'uniprotload'
-assignedByList = ['RGD', 'GOC']
+assignedByList = ['RGD', 'GOC', 'RefGenome']
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
