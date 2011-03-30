@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	03/30/2011
+#   - TR10652/change 'NCBI:' to 'RefSeq:'
+#
 # lec	03/21/2011
 #   - TR9962/add 'RefGenome' to column 15
 #
@@ -288,8 +291,8 @@ for r in results:
 r1 = re.compile(r'gene.product:([^\s\\\n]*)', re.I)
 isoformPattern1 = re.compile(r'UniProtKB:', re.I)
 isoformPattern2 = re.compile(r'protein_id', re.I)
-isoformPattern3 = re.compile(r'NCBI:NP_', re.I)
-isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
+isoformPattern3 = re.compile(r'RefSeq:NP_', re.I)
+isoformPattern4 = re.compile(r'RefSeq:XP_', re.I)
 isoformPattern5 = re.compile(r'PR:', re.I)
 
 isoformsProtein = {}
@@ -381,7 +384,7 @@ for r in results:
     # RefSeq
     elif logicalDB in [27] and qualifier == 615421:
 	#print 'np/xp: ', str(symbol), str(seqID)
-        proteins[key] = 'NCBI:' + seqID
+        proteins[key] = 'RefSeq:' + seqID
 
     # Vega
     elif logicalDB in [132]:
@@ -398,7 +401,7 @@ for r in results:
 
     else:
 	#print 'all else: ', str(symbol), str(seqID)
-        proteinsGene[key] = 'NCBI:' + seqID
+        proteinsGene[key] = 'RefSeq:' + seqID
 
 #
 # process results

@@ -15,12 +15,15 @@
 #	A tab-delimited file in this format:
 #	field 1: MGI Marker ID
 #       field 2: SwissProt or TrEMBL sequences ('UniPrpt:' + seqID)
-#                RefSeq sequence ('NCBI:' + seqID)
+#                RefSeq sequence ('RefSeq:' + seqID)
 #                GenBank sequence ('EMBL:' + seqID)
 #
 # Used by:
 #
 # History:
+#
+# lec	03/30/2011
+#   - TR10652/change 'NCBI:' to 'RefSeq:'
 #
 # 08/18/2010	lec
 #       - TR6839/marker types
@@ -124,7 +127,7 @@ for r in results:
     elif logicalDB in [9]:
         seqID = 'EMBL:' + r['seqID']
     elif logicalDB in [27]:
-        seqID = 'NCBI:' + r['seqID']
+        seqID = 'RefSeq:' + r['seqID']
     elif logicalDB in [132]:
         seqID = 'VEGA:' + r['seqID']
     elif logicalDB in [134]:
