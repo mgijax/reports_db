@@ -291,8 +291,8 @@ for r in results:
 r1 = re.compile(r'gene.product:([^\s\\\n]*)', re.I)
 isoformPattern1 = re.compile(r'UniProtKB:', re.I)
 isoformPattern2 = re.compile(r'protein_id', re.I)
-isoformPattern3 = re.compile(r'RefSeq:NP_', re.I)
-isoformPattern4 = re.compile(r'RefSeq:XP_', re.I)
+isoformPattern3 = re.compile(r'NCBI:NP_', re.I)
+isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
 isoformPattern5 = re.compile(r'PR:', re.I)
 
 isoformsProtein = {}
@@ -321,9 +321,16 @@ for r in results:
 	       isoformPattern4.match(b) != None or \
 	       isoformPattern5.match(b) != None:
 
-                if not isoformsProtein.has_key(key):
-	            isoformsProtein[key] = []
-                isoformsProtein[key].append(b)
+	       # TR10652
+	       # convert 'NCBI:' to 'RefSeq'
+	       # once TR10044 is implemented and all NCBI are migrated to RefSeq,
+	       # this will no longer be necessary
+
+	       b = b.replace('NCBI:', 'RefSeq:')
+
+               if not isoformsProtein.has_key(key):
+	           isoformsProtein[key] = []
+               isoformsProtein[key].append(b)
 
 
 #
