@@ -30,9 +30,6 @@ setenv PUBDAILY			${PUBRPTS}/daily
 # weekly reports directory
 setenv PUBWEEKLY		${PUBRPTS}/weekly
 
-# monthly reports directory
-setenv PUBMONTHLY		${PUBRPTS}/monthly
-
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		/data/loads/mgi/vocload/runTimeMP
 setenv MPFILES			"MPheno_OBO.ontology"
