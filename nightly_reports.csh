@@ -20,10 +20,17 @@ echo `date`: Start nightly public reports | tee -a ${LOG}
 
 cd ${PUBDAILY}
 
-echo `date`: GO_gene_association.py | tee -a ${LOG}
-GO_gene_association.py >>& ${LOG}
+foreach i (*.py)
+    echo `date`: $i | tee -a ${LOG}
+    $i >>& ${LOG}
+end
+
+cd ${REPORTOUTPUTDIR}
 
 echo `date`: Copy reports | tee -a ${LOG}
-cp ${REPORTOUTPUTDIR}/gene_association.mgi ${FTPREPORTDIR}
+foreach i (gene_association.mgi)
+    echo `date`: $i | tee -a ${LOG}
+    cp $i ${FTPREPORTDIR}
+end
 
 echo `date`: End nightly public reports | tee -a ${LOG}
