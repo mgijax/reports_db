@@ -58,4 +58,4 @@ end
 cd ${PUBRPTS}
 chmod 664 Configuration* HISTORY *.html
 chmod 775 *.sh */*.py */*.sql Install
-chmod 775 daily monthly weekly
+chmod 775 daily weekly
