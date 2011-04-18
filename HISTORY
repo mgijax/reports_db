@@ -1,3 +1,41 @@
+TAG: reports_db-4-4-1-13
+DATE: 04/18/2011
+STAFF: dbm
+CHANGES:
+1) Merged tr10531 branch to the trunk
+
+TAG: reports_db-tr10531-2
+DATE: 04/18/2011
+STAFF: dbm
+CHANGES: TR10531 - move to weekly public release
+1) weekly_reports.csh - uncomment *.sql reports (bug fix)
+
+TAG: reports_db-tr10531-1
+DATE: 04/14/2011
+STAFF: dbm
+CHANGES: TR10531 - move to weekly public release
+1) Configuration.default - remove PUBMONTHLY setting
+2) Install - remove step that create a link to GO_gene_association.py in the
+             weekly directory
+           - do not try to copy panel docs to the FTP site - unrelated to
+             this TR, but the panel docs do not exist
+3) daily reports - move mgiMarkerFeed.py to a new mgimarkerfeed directory
+                 - move all other reports except GO_gene_association.py to
+                   the weekly directory
+4) monthly reports - move all reports to the weekly directory and remove
+                     the monthly directory
+5) mgimarkerfeed_report.csh - move to mgimarkerfeed directory and modify to
+                              run the Python script from there
+6) nightly_reports.csh - should only run *.py scripts which currently is only
+                         GO_gene_association.py
+                       - only copy the gene association file to FTP site
+7) weekly_reports.csh - add logic to run all *.slq script, clone set reports
+                        and NCBI linkout files
+                      - do NOT copy any reports to the FTP site at this time
+8) monthly_reports.csh - Remove
+9) public_rpt_release.csh - New script to handle copying of reports to the
+                            public FTP site in sync with public release
+
 TAG: reports_db-tr10531-BP
 DATE: 04/07/2011
 STAFF: dbm
