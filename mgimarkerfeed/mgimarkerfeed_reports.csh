@@ -10,7 +10,7 @@
 
 setenv TARFILE mgimarkerfeed.tar
 
-cd `dirname $0` && source ./Configuration
+cd `dirname $0` && source ../Configuration
 
 umask 002
 
@@ -20,7 +20,6 @@ touch ${LOG}
 
 echo `date`: Start MGI marker feed reports | tee -a ${LOG}
 
-cd ${PUBDAILY}
 echo `date`: MarkerFeed.py | tee -a ${LOG}
 mgiMarkerFeed.py >>& ${LOG}
 

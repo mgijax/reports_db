@@ -16,23 +16,40 @@ setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
-echo `date`: Start nightly public reports | tee -a ${LOG}
+echo `date`: Start weekly public reports | tee -a ${LOG}
 
 cd ${PUBWEEKLY}
 
-foreach i (`ls *.py`)
+foreach i (*.sql)
     echo `date`: $i | tee -a ${LOG}
-    $i >>& ${LOG}
+    reportisql.csh $i ${REPORTOUTPUTDIR}/$i.rpt ${MGD_DBSERVER} ${MGD_DBNAME} MGI >> ${LOG}
 end
 
-# Generate inparanoid files and copy them to the FTP site
+foreach i (*.py)
+    if ( $i != "MGI_CloneSet.py" ) then
+        echo `date`: $i | tee -a ${LOG}
+        $i >>& ${LOG}
+    endif
+end
+
+#
+# Generate clone set reports.
+#
+foreach i ("Image" "NIA 15K,NIA 7.4K,NIA" "RIKEN (FANTOM),RIKEN" "RPCI-23" "RPCI-24")
+    echo `date`: MGI_CloneSet.py $i | tee -a ${LOG}
+    ./MGI_CloneSet.py "$i" >>& ${LOG}
+end
+
+#
+# Generate inparanoid files.
+#
 echo `date`: inparanoid.csh | tee -a ${LOG}
-cd ${PUBRPTS}
 ${PUBRPTS}/inparanoid/inparanoid.csh >>& ${LOG}
 
-echo `date`: Copy reports | tee -a ${LOG}
-rm -f ${FTPCUSTOM}/inparanoid/Mus-musculus*
-cd ${INPARANOIDDIR}
-cp Mus-musculus* aaseq* ${FTPCUSTOM}/inparanoid
+#
+# Generate NCBI LinkOut files.
+#
+echo `date`: ncbilinkout.csh | tee -a ${LOG}
+${PUBRPTS}/ncbilinkout/ncbilinkout.csh >>& ${LOG}
 
-echo `date`: End nightly public reports | tee -a ${LOG}
+echo `date`: End weekly public reports | tee -a ${LOG}

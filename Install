@@ -13,50 +13,42 @@ rm -f index.html
 sed "s/FTPURL_GOES_HERE/$FTPURL/" index.html.default > index.html
 cp index.html ${FTPREPORTDIR}
 
-# Copy the readme docs to the reports directory.
-cp ./panelDocs/*.doc ${FTPREPORTDIR}
-
 #
 # directories
 #
 
 if ( ! -d ${REPORTDIR} ) then
-	mkdir -p ${REPORTDIR}
+    mkdir -p ${REPORTDIR}
 endif
 
 if ( ! -d ${REPORTOUTPUTDIR} ) then
-	mkdir -p ${REPORTOUTPUTDIR}
+    mkdir -p ${REPORTOUTPUTDIR}
 endif
 
 if ( ! -d ${REPORTOUTPUTDIR}/mgimarkerfeed ) then
-	mkdir -p ${REPORTOUTPUTDIR}/mgimarkerfeed
+    mkdir -p ${REPORTOUTPUTDIR}/mgimarkerfeed
 endif
 
 if ( ! -d ${REPORTLOGSDIR} ) then
-	mkdir -p ${REPORTLOGSDIR}
+    mkdir -p ${REPORTLOGSDIR}
 endif
 
 if ( ! -d ${INPARANOIDDIR} ) then
-	mkdir -p ${INPARANOIDDIR}
+    mkdir -p ${INPARANOIDDIR}
 endif
-
-# link the GO gene association file into weekly so that it runs from there as well
-
-cd ${PUBRPTS}/weekly
-ln -s ${PUBRPTS}/daily/GO_gene_association.py .
 
 # provide a link to the Mammalian Phenotype vocabulary
 cd ${REPORTOUTPUTDIR}
 foreach f (${MPFILES})
-rm -rf $f
-ln -s ${MPVOCSOURCE}/$f .
+    rm -rf $f
+    ln -s ${MPVOCSOURCE}/$f .
 end
 
 # provide a link to the Adult Mouse Anatomy vocabulary
 cd ${REPORTOUTPUTDIR}
 foreach f (${MAFILES})
-rm -rf $f
-ln -s ${MAVOCSOURCE}/$f .
+    rm -rf $f
+    ln -s ${MAVOCSOURCE}/$f .
 end
 
 #
@@ -66,5 +58,4 @@ end
 cd ${PUBRPTS}
 chmod 664 Configuration* HISTORY *.html
 chmod 775 *.sh */*.py */*.sql Install
-chmod 775 daily monthly weekly
-
+chmod 775 daily weekly

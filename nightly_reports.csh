@@ -20,32 +20,17 @@ echo `date`: Start nightly public reports | tee -a ${LOG}
 
 cd ${PUBDAILY}
 
-foreach i (*.sql)
-    echo `date`: $i | tee -a ${LOG}
-    reportisql.csh $i ${REPORTOUTPUTDIR}/$i.rpt ${MGD_DBSERVER} ${MGD_DBNAME} MGI >> ${LOG}
-end
-
-# exclude mgiMarkerFeed and clone reports 
-
 foreach i (*.py)
-    if ( $i != "mgiMarkerFeed.py" && $i != "MGI_CloneSet.py" ) then
-        echo `date`: $i | tee -a ${LOG}
-        $i >>& ${LOG}
-    endif
+    echo `date`: $i | tee -a ${LOG}
+    $i >>& ${LOG}
 end
 
-# clone reports
-
-foreach i ("Image" "NIA 15K,NIA 7.4K,NIA" "RIKEN (FANTOM),RIKEN" "RPCI-23" "RPCI-24")
-    echo `date`: MGI_CloneSet.py $i | tee -a ${LOG}
-    ./MGI_CloneSet.py "$i" >>& ${LOG}
-end
+cd ${REPORTOUTPUTDIR}
 
 echo `date`: Copy reports | tee -a ${LOG}
-foreach i (${REPORTOUTPUTDIR}/*)
-    if ( ! -d $i ) then
-        cp $i ${FTPREPORTDIR}
-    endif
+foreach i (gene_association.mgi)
+    echo `date`: $i | tee -a ${LOG}
+    cp $i ${FTPREPORTDIR}
 end
 
 echo `date`: End nightly public reports | tee -a ${LOG}
