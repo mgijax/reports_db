@@ -1,3 +1,9 @@
+TAG: reports_db-tr10531-2
+DATE: 04/18/2011
+STAFF: dbm
+CHANGES: TR10531 - move to weekly public release
+1) weekly_reports.csh - uncomment *.sql reports (bug fix)
+
 TAG: reports_db-tr10531-1
 DATE: 04/14/2011
 STAFF: dbm
