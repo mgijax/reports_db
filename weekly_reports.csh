@@ -22,7 +22,7 @@ cd ${PUBWEEKLY}
 
 foreach i (*.sql)
     echo `date`: $i | tee -a ${LOG}
-#    reportisql.csh $i ${REPORTOUTPUTDIR}/$i.rpt ${MGD_DBSERVER} ${MGD_DBNAME} MGI >> ${LOG}
+    reportisql.csh $i ${REPORTOUTPUTDIR}/$i.rpt ${MGD_DBSERVER} ${MGD_DBNAME} MGI >> ${LOG}
 end
 
 foreach i (*.py)
