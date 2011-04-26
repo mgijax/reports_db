@@ -1,3 +1,9 @@
+TAG: reports_db-4-4-1-14
+DATE: 04/26/2011
+STAFF: sc
+CHANGES: TR10336
+1) weekly/MGI_BioTypeConflict.py, added additional column
+
 TAG: reports_db-4-4-1-13
 DATE: 04/18/2011
 STAFF: dbm

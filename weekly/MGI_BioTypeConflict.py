@@ -14,6 +14,7 @@
 # For Markers that have a Biotype Conflict, 
 # create a tab-delimitted report with the following columns:
 # 
+# MGI ID 
 # Gene Symbol
 # Source - For gene models, use the provider; use "MGI" for the MGI Marker Type.
 # Gene ID -  For gene models, use the accID of the gene model sequence, 
@@ -23,17 +24,20 @@
 #	    use the MGI Feature Type.
 # MGI_Rep_Gene_Model - enter "Representative" if gene model sequence 
 #	               is representative genomic, else, leave blank
-# Order by Gene Symbol
+# Order by MGI ID
 # 
 # Example:
 # 
-# Symbol   Source    Gene ID            BioType	                MGI_Rep_Gene_Model
-# 0610012G03Rik   MGI     MGI:1913301     pseudogene
-# 610012G03Rik   Ensembl Gene Model      ENSMUSG00000047112      pseudogene      Representative
-# 0610012G03Rik   NCBI Gene Model 106264  miscRNA
-
+# MGI ID	Symbol   Source    Gene ID            BioType	                MGI_Rep_Gene_Model
+# MGI:1913301	0610012G03Rik   MGI     MGI:1913301     pseudogene
+# MGI:1913301	610012G03Rik   Ensembl Gene Model      ENSMUSG00000047112      pseudogene      Representative
+# MGI:1913301	0610012G03Rik   NCBI Gene Model 106264  miscRNA
 #
 # History:
+#
+# sc	04/26/2011
+#	- TR10336 - add new col 1 MGI ID, sort by MGI ID
+#	  note for the gene row, MGI ID is repeated in column 4
 #
 # sc	11-15-2010
 #	- TR10308 - update the biotype conflict algorithm
@@ -70,14 +74,15 @@ fp.write('#\n')
 fp.write('# This report lists the Markers that have a Biotype Conflict.\n')
 fp.write('#\n')
 fp.write('#  date report was generated:  %s\n#\n' % (mgi_utils.date()))
-fp.write('#  column 1: Symbol\n')
-fp.write('#  column 2: Source:  for gene models, this is the provider\n')
+fp.write('#  column 1: MGI ID\n')
+fp.write('#  column 2: Symbol\n')
+fp.write('#  column 3: Source:  for gene models, this is the provider\n')
 fp.write('#                     for markers, this is "MGI"\n')
-fp.write('#  column 3: Gene ID: for gene models, this is the sequence ID\n')
+fp.write('#  column 4: Gene ID: for gene models, this is the sequence ID\n')
 fp.write('#                     for markers, this is the MGI ID\n')
-fp.write("#  column 4: Biotype: for gene models, this is the provider's biotype value\n")
+fp.write("#  column 5: Biotype: for gene models, this is the provider's biotype value\n")
 fp.write('#                     for markers, this is the MGI feature type\n')
-fp.write('#  column 5: MGI_Rep_Gene_Model: "Representative" if gene model sequence is the representative genomic\n')
+fp.write('#  column 6: MGI_Rep_Gene_Model: "Representative" if gene model sequence is the representative genomic\n')
 fp.write('#\n\n')
 
 results = db.sql('''
@@ -97,19 +102,20 @@ results = db.sql('''
 		 and s._Marker_key = mcv._Marker_key
 		 and mcv.qualifier = 'D'
 		 and s._SequenceProvider_key = v._Term_key
-		 order by m.symbol, m._Marker_key
+		 order by a.accid
 		 ''', 'auto')
 
 markerList = {}
 
 for r in results:
 
-    key = r['_Marker_key']
+    key = r['mgiID']
     value = r['symbol']
 
     # print one row of the marker record
 
     if not markerList.has_key(key):
+	fp.write(r['mgiID'] + TAB)
         fp.write(r['symbol'] + TAB)
 	fp.write('MGI' + TAB)
 	fp.write(r['mgiID'] + TAB)
@@ -118,7 +124,7 @@ for r in results:
 	markerList[key] = value
 
     # print row of the gene model sequence
-
+    fp.write(r['mgiID'] + TAB)
     fp.write(r['symbol'] + TAB)
     fp.write(r['provider'] + TAB)
     fp.write(r['accID'] + TAB)
