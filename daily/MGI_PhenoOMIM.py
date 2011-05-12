@@ -68,9 +68,9 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 fp.write('# OMIM ID' + CRT)
 fp.write('# OMIM Term' + CRT)
 fp.write('# Synonyms (|-delimited)' + CRT)
-fp.write('# Mouse Gene' + CRT)
-fp.write('# Mouse Gene ID' + CRT)
-fp.write('# Human Gene' + CRT)
+fp.write('# Marker Symbol' + CRT)
+fp.write('# MGI Marker Accession ID' + CRT)
+fp.write('# Human Marker Symbol' + CRT)
 fp.write('# "Mouse only" or "Human only" or "Both"' + CRT*2)
 
 #
