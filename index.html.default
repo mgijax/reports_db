@@ -804,6 +804,14 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_NotDisease.rpt">MGI_Geno_NotDisease.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
+    <TR><TD><TABLE>
+        <TR><TD><B>13. Associations of Mouse Genes with OMIM Phenotypes</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>OMIM ID</TD><TD>OMIM Term</TD><TD>Synonyms (|-delimited)</TD><TD>Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>Human Marker Symbol</TD><TD>Mouse only/Human only/Both</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_PhenoOMIM.rpt">MGI_PhenoOMIM.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
 </TABLE><BR>
 
 <!-- -->
