@@ -22,6 +22,10 @@
 #
 # History:
 #
+# 06/09/2011	lec
+#	- add 'distinct' to mapping clause
+#	- add multiple accession ids to the same line
+#
 # 07/28/2010 lec
 #	- TR 6839/added marker features to field 9 as a "note"
 #
@@ -124,7 +128,7 @@ for r in results:
 
 # mapped sequence features that don't have marker associations
 
-results = db.sql('''select f.strand, c.chromosome, a.accID, 
+results = db.sql('''select distinct f.strand, c.chromosome, a.accID, 
         startC = convert(int, f.startCoordinate), 
         endC = convert(int, f.endCoordinate) 
         from MAP_Coordinate cc, MAP_Coord_Feature f, MRK_Chromosome c, ACC_Accession a 

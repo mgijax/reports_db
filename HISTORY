@@ -1,3 +1,9 @@
+TAG: reports_db-4-4-1-16
+DATE: 06/20/2011
+STAFF: lec
+CHANGES:
+1) TR9308/daily/MGI_PhenoOMIM.py:removed;duplicate of weekly
+
 TAG: reports_db-4-4-1-15
 DATE: 05/12/2011
 STAFF: lec
