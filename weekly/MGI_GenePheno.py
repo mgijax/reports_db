@@ -34,6 +34,9 @@
 #
 # History:
 #
+# lec	06/21/2011
+#	- TR10763/re-do single genotype query
+#
 # lec	03/01/2011
 #	- TR10605/same as MGI_PhenoGeno.py but with added restrictions
 #
@@ -157,9 +160,9 @@ results = db.sql('''select distinct m._Object_key, a.symbol
 	and ag._Allele_key = a._Allele_key 
 	and ag._Marker_key = mm._Marker_key 
 	and mm._Marker_Type_key in (1,10)
-        and exists (select 1 from GXD_AlleleGenotype a2
+        and not exists (select 1 from GXD_AllelePair a2
 	        where ag._Genotype_key = a2._Genotype_key
-		group by a2._Genotype_key having count(*) = 1)
+		and a2.sequenceNum > 1)
 	''', 'auto')
 mpAlleles = {}
 for r in results:
@@ -252,10 +255,6 @@ for r in results:
     if not mpAlleles.has_key(genotype):
        continue
 
-    # only include single allele pairs
-    if len(mpAlleles[genotype]) > 1:
-       continue
-
     fp1.write(mpDisplay[genotype] + TAB)
     fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
     fp1.write(mpStrain[genotype] + TAB)
@@ -290,7 +289,7 @@ for r in results:
         fp3.write(mpStrain[genotype] + TAB)
         fp3.write(mpID[term] + TAB)
         if mpRef.has_key(refKey):
-            fp2.write(string.join(mpRef[refKey], ','))
+            fp3.write(string.join(mpRef[refKey], ','))
         fp3.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
         fp3.write(string.join(mpOMIM2[genotype], ',') + CRT)
 
