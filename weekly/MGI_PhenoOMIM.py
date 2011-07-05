@@ -172,6 +172,15 @@ results = db.sql('''
         and a._LogicalDB_key = 1 
         and a.prefixPart = "MGI:" 
         and a.preferred = 1
+	union
+	select distinct o._Marker_key, a.accID 
+        from #omim o, ACC_Accession a 
+        where o._OrthologOrganism_key = 1
+	and o._OrthologMarker_key = a._Object_key 
+        and a._MGIType_key = 2 
+        and a._LogicalDB_key = 1 
+        and a.prefixPart = "MGI:" 
+        and a.preferred = 1
 	''', 'auto')
 mgiID = {}
 for r in results:
@@ -206,7 +215,16 @@ for r in results:
 
 	termKey = r['_Term_key']
 	markerKey = r['_Marker_key']
+	orthologSymbol = r['orthologSymbol']
 	thisType = r['type']
+
+	if orthologSymbol == None:
+	    orthologSymbol = ''
+
+	if mgiID.has_key(r['_Marker_key']):
+	    mid = mgiID[r['_Marker_key']]
+        else:
+	    mid = ''
 
 	fp.write(r['termID'] + TAB)
 	fp.write(r['term'] + TAB)
@@ -217,17 +235,19 @@ for r in results:
 
 	if thisType == 1:
 	    fp.write(r['markerSymbol'] + TAB)
-	    fp.write(mgiID[r['_Marker_key']] + TAB)
-	    fp.write(r['orthologSymbol'] + TAB)
+	    fp.write(mid + TAB)
+	    fp.write(orthologSymbol + TAB)
 	    fp.write('Both' + CRT)
 
 	elif thisType == 2:
 	    fp.write(r['markerSymbol'] + TAB)
-	    fp.write(mgiID[r['_Marker_key']] + TAB + TAB)
+	    fp.write(mid + TAB)
+	    fp.write(orthologSymbol + TAB)
 	    fp.write('Mouse only' + CRT)
 
 	else:
-	    fp.write(TAB + TAB)
+	    fp.write(orthologSymbol + TAB)
+	    fp.write(mid + TAB)
 	    fp.write(r['markerSymbol'] + TAB)
 	    fp.write('Human only' + CRT)
 
