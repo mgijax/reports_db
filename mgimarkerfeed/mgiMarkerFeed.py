@@ -428,7 +428,7 @@ def vocabs():
     results = db.sql('''select _Term_key, term, 
           cdate = convert(char(20), creation_date, 100), 
           mdate = convert(char(20), modification_date, 100) 
-          from VOC_Term_StrainAttribute_View''', 'auto')
+          from VOC_Term where _Vocab_key = 27''', 'auto')
 
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
