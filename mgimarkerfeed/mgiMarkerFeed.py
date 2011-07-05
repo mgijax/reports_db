@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+m!/usr/local/bin/python
 
 '''
 #
@@ -241,7 +241,7 @@ def vocabs():
     results = db.sql('''select _Term_key, term, 
 	    cdate = convert(char(20), creation_date, 100), 
 	    mdate = convert(char(20), modification_date, 100) 
-	    from VOC_Term_ALLType_View''', 'auto', execute = 1)
+	    from VOC_Term where _Vocab_key = 38''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -258,7 +258,7 @@ def vocabs():
     results = db.sql('''select _Term_key, term, 
 	    cdate = convert(char(20), creation_date, 100), 
 	    mdate = convert(char(20), modification_date, 100) 
-	    from VOC_Term_ALLInheritMode_View''', 'auto', execute = 1)
+	    from VOC_Term where _Vocab_key = 35''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -275,7 +275,7 @@ def vocabs():
     results = db.sql('''select _Term_key, term, 
 	    cdate = convert(char(20), creation_date, 100), 
 	    mdate = convert(char(20), modification_date, 100) 
-	    from VOC_Term_ALLPairState_View''', 'auto', execute = 1)
+	    from VOC_Term where _Vocab_key = 39''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -292,7 +292,7 @@ def vocabs():
     results = db.sql('''select _Term_key, term, 
 	    cdate = convert(char(20), creation_date, 100), 
 	    mdate = convert(char(20), modification_date, 100) 
-	    from VOC_Term_ALLTransmission_View''', 'auto', execute = 1)
+	    from VOC_Term where _Vocab_key = 61''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
 		     r['term'] + TAB + \
@@ -1112,7 +1112,7 @@ def strains():
     results = db.sql('select _Term_key, term, ' + \
           'cdate = convert(char(20), creation_date, 100), ' + \
           'mdate = convert(char(20), modification_date, 100) ' + \
-          'from VOC_Term_StrainSpecies_View', 'auto')
+          'from VOC_Term where _Vocab_key = 26', 'auto')
     
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
