@@ -39,6 +39,9 @@
 # 
 # History:
 #
+# 07/05/2011	lec
+#	- TR10770/fixed bugs
+#
 # 05/12/2011	lec
 #	- TR9308/add MGI ids/add to public reports
 #
@@ -74,20 +77,39 @@ fp.write('# Human Marker Symbol' + CRT)
 fp.write('# "Mouse only" or "Human only" or "Both"' + CRT*2)
 
 #
+# all organisms
+#
+db.sql('''
+       select distinct o._Organism_key, o._Marker_key, o._Genotype_key, o._Term_key, 
+       o._OrthologOrganism_key, o._OrthologMarker_key, o.qualifier, o.markerSymbol, 
+       o.termID, o.term, o.orthologSymbol
+       into #omimall
+       from MRK_OMIM_Cache o
+       ''', None)
+
+#
 # select mouse orthologs with human ortholog
 # type = 1
 #
 
 db.sql('''
-	select distinct o._Organism_key, o._Marker_key, o._Term_key, 
-        o._OrthologOrganism_key, o._OrthologMarker_key, o.markerSymbol, 
-        o.termID, o.term, o.orthologSymbol, type = 1
-        into #omim 
-        from MRK_OMIM_Cache o
-	where o._Organism_key = 1
-	and o._OrthologOrganism_key = 2
-	and o.qualifier = null
-	''', None)
+        select distinct m._Organism_key, m._Marker_key, m._Term_key, 
+        m._OrthologOrganism_key, m._OrthologMarker_key, m.markerSymbol, 
+        m.termID, m.term, m.orthologSymbol, type = 1
+        into #omim
+        from #omimall o, MRK_OMIM_Cache m 
+        where o._Organism_key = 2 
+        and o._OrthologMarker_key is not null 
+        and o._OrthologOrganism_key = 1 
+        and o._Term_key = m._Term_key 
+        and o._Marker_key = m._OrthologMarker_key 
+        and m._OrthologOrganism_key = 2 
+        and o._OrthologMarker_key = m._Marker_key 
+        and m._Organism_key = 1 
+        and m._Genotype_key is not null 
+        and m.qualifier is null
+
+        ''', None)
 
 #
 # select mouse orthologs only
@@ -99,10 +121,15 @@ db.sql('''
 	select distinct o._Organism_key, o._Marker_key, o._Term_key, 
         o._OrthologOrganism_key, o._OrthologMarker_key, o.markerSymbol, 
         o.termID, o.term, o.orthologSymbol, type = 2
-        from MRK_OMIM_Cache o
-	where o._Organism_key = 1
-	and o._OrthologOrganism_key = null
-	and o.qualifier = null
+	from #omimall o 
+	where o._Organism_key = 1 
+	and o._Genotype_key is not null 
+	and o.qualifier is null 
+	and not exists 
+	  (select _Term_key from MRK_OMIM_Cache m 
+	  where o._Term_key = m._Term_key 
+	  and o._OrthologMarker_key = m._Marker_key 
+	  and m._Organism_key = 2)
 	''', None)
 
 #
@@ -115,10 +142,15 @@ db.sql('''
 	select distinct o._Organism_key, o._Marker_key, o._Term_key, 
         o._OrthologOrganism_key, o._OrthologMarker_key, o.markerSymbol, 
         o.termID, o.term, o.orthologSymbol, type = 3
-        from MRK_OMIM_Cache o
-	where o._Organism_key = 2
-	and o._OrthologOrganism_key = null
-	and o.qualifier = null
+	from #omimall o
+	where o._Organism_key = 2 
+	and not exists 
+	  (select m._Marker_key from MRK_OMIM_Cache m 
+	  where o._Term_key = m._Term_key 
+	  and o._Marker_key = m._OrthologMarker_key 
+	  and m._Organism_key = 1 
+	  and m._Genotype_key is not null 
+	  and m.qualifier is null)
 	''', None)
 
 #
