@@ -1,3 +1,10 @@
+TAG: reports_db-4-4-1-21
+DATE: 07/05/2011
+STAFF: lec
+CHANGES:
+1) replaced calls to VOC_Term_XXXX_View with direct call to table
+this tag has *not* been installed and can go out with the next production tag
+
 TAG: reports_db-4-4-1-20
 DATE: 07/05/2011
 STAFF: lec
