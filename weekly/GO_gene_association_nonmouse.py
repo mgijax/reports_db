@@ -38,6 +38,9 @@
 #
 # History:
 #
+# 06/27/2011	lec
+#	- TR10044/replace notes with properties
+#
 # 10/13/2010	lec
 #	- TR 10393; exclude UniProtKB (GOA/Human)
 #
@@ -191,71 +194,41 @@ db.sql('''select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uni
 db.sql('create index idx1 on #results(_AnnotEvidence_key)', None)
 
 #
-# notes
+# properties
+# external ref = 6481778
 #
-results = db.sql('select g._AnnotEvidence_key, c.note, c.sequenceNum ' + \
-	'from #results g, MGI_Note n, MGI_NoteChunk c ' + \
-	'where g._AnnotEvidence_key = n._Object_key ' + \
-	'and n._MGIType_key = 25 ' + \
-	'and n._Note_key = c._Note_key ' + \
-	'order by g._AnnotEvidence_key, c.sequenceNum', 'auto')
-allnotes = {}
-for r in results:
-    key = r['_AnnotEvidence_key']
-    value = string.strip(re.sub('\n', '', r['note']))
-    if not allnotes.has_key(key):
-	     allnotes[key] = []
-    allnotes[key].append(value)
-
-startNote = 'external ref:'
-endNote = ['dual-taxon ID:', 'text:']
+results = db.sql('''select g._AnnotEvidence_key, p.value
+        from #results g, VOC_Evidence_Property p
+        where g._AnnotEvidence_key = p._AnnotEvidence_key
+        and p._PropertyTerm_key = 6481778
+        order by g._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
 
 evidence = {}
-for n in allnotes.keys():
-    value = string.join(allnotes[n], '')
-    value = value.strip()
+for r in results:
+
+    eKey = r['_AnnotEvidence_key']
+    value = r['value']
     value = value.replace(';', '|')
 
-    #
-    # grab all text between startNote and endNote
-    # there may be multiple instances of startNote
-    #
+    # parse it for pmid, evidence code, and cross-reference
 
-    for e in endNote:
+    tokens = string.split(value, '|')
 
-        i = string.find(value, startNote)
-        j = string.find(value, e)
+    pmid = tokens[0] 
+    ecode = ''
+    dbxref = ''
 
-        # parse it for pmid, evidence code, and cross-reference
+    if len(tokens) > 1:
+	ecode = string.strip(tokens[1])
 
-        if j > i and i >= 0 and len(value) > 0:
+    if len(tokens) > 2:
+	dbxref = string.strip(tokens[2])
 
-	    s1 = value[i + 13:j]
+    dictvalue = (pmid, ecode, dbxref)
 
-	    # split by startNote
-
-	    s1tokens = string.split(s1, startNote)
-
-	    for s in s1tokens:
-	        s2tokens = string.split(s, '|')
-
-                pmid = ''
-                ecode = ''
-                dbxref = ''
-
-	        pmid = s2tokens[0]
-
-	        if len(s2tokens) > 1:
-	            ecode = s2tokens[1].strip()
-	        if len(s2tokens) > 2:
-	            dbxref = s2tokens[2]
-
-	        if len(pmid) > 0 and len(ecode) <= 3:
-	            dictvalue = (pmid, ecode, dbxref)
-
-	            if not evidence.has_key(n):
-	                evidence[n] = []
-	            evidence[n].append(dictvalue)
+    if not evidence.has_key(eKey):
+        evidence[eKey] = []
+    evidence[eKey].append(dictvalue)
 
 #
 # process results

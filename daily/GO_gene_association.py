@@ -38,6 +38,10 @@
 #
 # History:
 #
+# lec	06/20/2011
+#   - TR10044/MGI_Notes --> VOC_Evidence_Property
+#	this affects cellOntology, isoformsProtein, column 12, 16, 17
+#
 # lec	03/30/2011
 #   - TR10652/change 'NCBI:' to 'RefSeq:'
 #
@@ -155,13 +159,13 @@ for r in results:
 #
 # retrieve data set to process
 #
+#    and m.symbol = "Zfpm2"
 db.sql('''select a._Term_key, t.term, termID = ta.accID, qualifier = q.synonym, a._Object_key, 
     e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, 
     m.symbol, m.name, markerType = lower(mt.name) 
     into #gomarker 
     from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m, MRK_Types mt, MGI_Synonym q 
     where a._AnnotType_key = 1000 
-    and m.symbol = "Bid"
     and a._Annot_key = e._Annot_key 
     and a._Object_key = m._Marker_key 
     and m._Marker_Type_key = 1 
@@ -252,43 +256,38 @@ for r in results:
 
 #
 # cell ontology hash
-# resolve all "cell type:" notes
+# resolve all "cell type" properties
 # key = marker key:annotation/evidence key ()
 # values = [CL:0000084,CL:0000001]
 #
 
-#r1 = re.compile(r'cell.type:([^\s\\\n]*)', re.I)
 r1 = re.compile(r'(CL:[0-9]{7}?)', re.I)
 
 cellOntology = {}
-results = db.sql('''select r._Object_key, r._AnnotEvidence_key, nc.note
-	from #results r, MGI_Note n, MGI_NoteChunk nc
-	where r._AnnotEvidence_key = n._Object_key
-	and n._MGIType_key = 25
-	and n._NoteType_key = 1008
-	and n._Note_key = nc._Note_key 
-	and nc.note like '%cell type%CL:%'
-	order by r._Object_key, r._AnnotEvidence_key, nc.sequenceNum''', 'auto')
+results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
+	from #results r, VOC_Evidence_Property p
+	where r._AnnotEvidence_key = p._AnnotEvidence_key
+	and p._PropertyTerm_key = 6481774
+	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
 
 for r in results:
 
     key = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
-    value = r['note']
+    value = r['value']
 
     if not cellOntology.has_key(key):
 	cellOntology[key] = []
-
     for a in r1.findall(value):
         cellOntology[key].append(a)
 
 #
 # isoformsProtein hash
-# select all "gene_product:" notes
+# select all "gene_product:" properties
 # key = marker key:annotation/evidence key ()
 # values = [UniProt:XXXXX,UniProt:XXXXX]
 #
 
-r1 = re.compile(r'gene.product:([^\s\\\n]*)', re.I)
+r1 = re.compile(r'([^\s\\\n]*)', re.I)
 isoformPattern1 = re.compile(r'UniProtKB:', re.I)
 isoformPattern2 = re.compile(r'protein_id', re.I)
 isoformPattern3 = re.compile(r'NCBI:NP_', re.I)
@@ -296,19 +295,16 @@ isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
 isoformPattern5 = re.compile(r'PR:', re.I)
 
 isoformsProtein = {}
-results = db.sql('''select r._Object_key, r._AnnotEvidence_key, nc.note
-	from #results r, MGI_Note n, MGI_NoteChunk nc
-	where r._AnnotEvidence_key = n._Object_key
-	and n._MGIType_key = 25
-	and n._NoteType_key = 1008
-	and n._Note_key = nc._Note_key 
-        and nc.note like '%%gene_product:%%' 
-	order by r._Object_key, r._AnnotEvidence_key, nc.sequenceNum''', 'auto')
+results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
+	from #results r, VOC_Evidence_Property p
+	where r._AnnotEvidence_key = p._AnnotEvidence_key
+	and p._PropertyTerm_key = 6481775
+	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
 
 for r in results:
 
     key = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
-    value = r['note']
+    value = r['value']
 
     for a in r1.findall(value):
 	for b in a.split('|'):
