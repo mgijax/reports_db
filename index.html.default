@@ -804,6 +804,7 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_NotDisease.rpt">MGI_Geno_NotDisease.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
+<!-- 
     <TR><TD><TABLE>
         <TR><TD><B>13. Associations of Mouse Genes with OMIM Phenotypes</B></TD></TR>
         <TR><TD>
@@ -811,6 +812,7 @@
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_PhenoOMIM.rpt">MGI_PhenoOMIM.rpt</A></TD></TR>
     </TABLE></TD></TR>
+-->
 
 </TABLE><BR>
 
