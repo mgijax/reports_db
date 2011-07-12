@@ -1,4 +1,4 @@
-m!/usr/local/bin/python
+#!/usr/local/bin/python
 
 '''
 #
