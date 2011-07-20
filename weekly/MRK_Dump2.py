@@ -13,6 +13,9 @@
 #
 # History:
 #
+# 07/20/2011	lec
+#	- ansi standard; change str(offst) to just offset
+#
 # 05/30/2002	lec
 #	- TR 3736; add Marker Type
 #
@@ -29,7 +32,7 @@ import reportlib
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 cmds = []
-cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, markerType = t.name, offset_str = str(o.offset,10,2) ' + \
+cmds.append('select m._Marker_key, m.symbol, m.name, m.chromosome, markerType = t.name, offset ' + \
 	'into #markers ' + \
 	'from MRK_Marker m, MRK_Types t, MRK_Offset o ' + \
 	'where m._Organism_key = 1 ' + \
@@ -41,7 +44,7 @@ cmds.append('create index idx1 on #markers(_Marker_key)')
 cmds.append('create index idx2 on #markers(symbol)')
 db.sql(cmds, None)
 
-results = db.sql('select m.symbol, m.symbol, m.name, m.chromosome, m.markerType, m.offset_str, a.accID ' + \
+results = db.sql('select m.symbol, m.symbol, m.name, m.chromosome, m.markerType, m.offset, a.accID ' + \
 	'from #markers m, ACC_Accession a ' + \
 	'where m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 ' + \
@@ -54,7 +57,7 @@ for r in results:
 	fp.write(r['accID'] + reportlib.TAB + \
 	         r['symbol'] + reportlib.TAB + \
 		 r['name'] + reportlib.TAB + \
-		 r['offset_str'] + reportlib.TAB + \
+		 str(r['offset']) + reportlib.TAB + \
 		 r['chromosome'] + reportlib.TAB + \
 		 r['markerType'] + reportlib.CRT)
 
