@@ -55,6 +55,7 @@ db.sql('''select m._Marker_key, m.symbol, m.name, a.accID, a.numericPart, marker
         and a.prefixPart = "MGI:" 
 	and a.preferred = 1
 	and m._Marker_Type_key = t._Marker_Type_key
+	and m.symbol = 't'
 	''', None)
 
 db.sql('create index idx1 on #markers(_Marker_key)', None)
@@ -95,6 +96,8 @@ for r in results:
         mgiSyn[key] = []
     mgiSyn[key].append(value)
 
+print mgiSyn
+
 # all data from ACC_Accession
 
 results = db.sql('''select distinct m._Marker_key, a.accID
@@ -128,11 +131,10 @@ for r in results:
 	fp.write(r['name'] + reportlib.TAB)
 
 	if mgiSyn.has_key(key):
-	    fp.write(string.join(mgiSyn[key], reportlib.TAB))
+	    fp.write(string.join(mgiSyn[key], reportlib.TAB) + reportlib.TAB)
 
 	if mgiID.has_key(key):
 	    fp.write(string.join(mgiID[key], reportlib.TAB))
-
 	fp.write(reportlib.CRT)
 
 reportlib.finish_nonps(fp)
