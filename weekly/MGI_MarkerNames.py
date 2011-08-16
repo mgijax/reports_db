@@ -55,7 +55,6 @@ db.sql('''select m._Marker_key, m.symbol, m.name, a.accID, a.numericPart, marker
         and a.prefixPart = "MGI:" 
 	and a.preferred = 1
 	and m._Marker_Type_key = t._Marker_Type_key
-	and m.symbol = 't'
 	''', None)
 
 db.sql('create index idx1 on #markers(_Marker_key)', None)
