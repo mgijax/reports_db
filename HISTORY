@@ -1,3 +1,10 @@
+TAG: reports_db-4-4-1-26
+DATE: 08/16/2011
+STAFF: lec
+CHANGES: 
+1) TR10591/monthly/MGI_MarkerNames.py
+   fix bug in synonym-tabbing
+
 TAG: reports_db-4-4-1-25
 DATE: 07/20/2011
 STAFF: lec
