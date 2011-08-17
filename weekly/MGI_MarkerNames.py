@@ -95,8 +95,6 @@ for r in results:
         mgiSyn[key] = []
     mgiSyn[key].append(value)
 
-print mgiSyn
-
 # all data from ACC_Accession
 
 results = db.sql('''select distinct m._Marker_key, a.accID
