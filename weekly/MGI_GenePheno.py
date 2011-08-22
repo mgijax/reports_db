@@ -54,7 +54,6 @@
 import sys 
 import os
 import db
-import re
 import string
 import reportlib
 
@@ -146,7 +145,7 @@ results = db.sql('''select distinct m._Object_key, nc.note
 mpDisplay = {}
 for r in results:
     key = r['_Object_key']
-    value = re.sub('\n', ',', string.strip(r['note']))
+    value = string.replace(string.strip(r['note']), '\n', ',')
     mpDisplay[key] = value
 
 #

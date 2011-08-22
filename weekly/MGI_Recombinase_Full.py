@@ -40,10 +40,8 @@
 import sys 
 import os
 import db
-import re
 import string
 import reportlib
-import regsub
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -120,14 +118,14 @@ def writeHTML(r):
     #
 
     key = r['_Allele_key']
-    driverNote = regsub.gsub('\n', '', r['driverNote'])
+    driverNote = string.replace(r['driverNote'], '\n', '')
 
     # superscript the symbol
 
-    symbol = regsub.gsub('<', 'beginss', r['symbol'])
-    symbol = regsub.gsub('>', 'endss', symbol)
-    symbol = regsub.gsub('beginss', '<sup>', symbol)
-    symbol = regsub.gsub('endss', '</sup>', symbol)
+    symbol = string.replace(r['symbol'], '<', 'beginss')
+    symbol = string.replace(symbol, '>', 'endss')
+    symbol = string.replace(symbol, 'beginss', '<sup>')
+    symbol = string.replace(symbol, 'endss', '</sup>')
 
     if r['name'] == r['markerName']:
 	name = r['name']
@@ -164,7 +162,7 @@ def writeTAB(r):
     #
 
     key = r['_Allele_key']
-    driverNote = regsub.gsub('\n', '', r['driverNote'])
+    driverNote = string.replace(r['driverNote'], '\n', '')
 
     if r['name'] == r['markerName']:
 	name = r['name']
@@ -303,10 +301,10 @@ for r in results:
     if value not in imsrTAB[key]:
         imsrTAB[key].append(value)
 
-    value = regsub.gsub('<', 'beginss', r['label'])
-    value = regsub.gsub('>', 'endss', value)
-    value = regsub.gsub('beginss', '<sup>', value)
-    value = regsub.gsub('endss', '</sup>', value)
+    value = string.replace(r['label'], '<', 'beginss')
+    value = string.replace(value, '>', 'endss')
+    value = string.replace(value, 'beginss', '<sup>')
+    value = string.replace(value, 'endss', '</sup>')
     value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(r['label']), value, reportlib.close_accession_anchor())
 
     if not imsrHTML.has_key(key):

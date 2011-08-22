@@ -43,9 +43,8 @@
  
 import sys 
 import os
-import db
-import regsub
 import string
+import db
 import reportlib
 import mgi_html
 
@@ -156,10 +155,10 @@ def printMarkerTAB(r):
 
 def printAlleleHTML(a):
 
-    symbol = regsub.gsub('<', 'beginss', a['symbol'])
-    symbol = regsub.gsub('>', 'endss', symbol)
-    symbol = regsub.gsub('beginss', '<sup>', symbol)
-    symbol = regsub.gsub('endss', '</sup>', symbol)
+    symbol = string.replace(a['symbol'], '<', 'beginss')
+    symbol = string.replace(symbol, '>', 'endss')
+    symbol = string.replace(symbol, 'beginss', '<sup>')
+    symbol = string.replace(symbol, 'endss', '</sup>')
 
     s = '%s%s%s<br>' % (reportlib.create_accession_anchor(a['accID']), symbol, reportlib.close_accession_anchor())
 
@@ -262,10 +261,10 @@ imsrTAB = {}
 for r in results:
 
     key = r['_Marker_key']
-    value = regsub.gsub('<', 'beginss', r['label'])
-    value = regsub.gsub('>', 'endss', value)
-    value = regsub.gsub('beginss', '<sup>', value)
-    value = regsub.gsub('endss', '</sup>', value)
+    value = string.replace(r['label'], '<', 'beginss')
+    value = string.replace(value, '>', 'endss')
+    value = string.replace(value, 'beginss', '<sup>')
+    value = string.replace(value, 'endss', '</sup>')
     value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(r['label']), value, reportlib.close_accession_anchor())
 
     if not imsrHTML.has_key(key):

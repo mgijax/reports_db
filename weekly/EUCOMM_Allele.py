@@ -38,9 +38,8 @@
  
 import sys 
 import os
-import db
-import regsub
 import string
+import db
 import reportlib
 import mgi_html
 

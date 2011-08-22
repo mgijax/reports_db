@@ -149,7 +149,6 @@
  
 import sys
 import os
-import re
 import string
 import db
 import reportlib
@@ -1171,7 +1170,7 @@ def genotypes():
 
     for r in results:
 
-	note = re.sub('\n', ' ', string.strip(r['note']))
+	note = string.replace(string.strip(r['note']), '\n', ' ')
 
 	fp.write(`r['_Genotype_key']` + TAB + \
 		r['strain'] + TAB + \

@@ -42,7 +42,6 @@
 import sys 
 import os
 import db
-import regsub
 import string
 import reportlib
 import mgi_html
