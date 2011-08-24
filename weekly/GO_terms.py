@@ -59,23 +59,23 @@ for r in results:
 reportlib.finish_nonps(fp)
 
 #
-# all GO terms
+# all GO terms: may be needed
 #
-fp = reportlib.init('go_terms_all', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-
-cmd = 'select t.term, t.accID, d.dag ' + \
-	'from VOC_Term_View t, DAG_Node_View d ' + \
-	'where t._Vocab_key = 4 ' + \
-	'and t._Vocab_key = d._Vocab_key ' + \
-	'and t._Term_key = d._Object_key ' + \
-	'order by dag, t.accID'
-
-results = db.sql(cmd, 'auto')
-
-for r in results:
-	fp.write(r['dag'] + TAB)
-	fp.write(r['accID'] + TAB)
-	fp.write(r['term'] + CRT)
-
-reportlib.finish_nonps(fp)
+#fp = reportlib.init('go_terms_all', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+#
+#cmd = 'select t.term, t.accID, d.dag ' + \
+#	'from VOC_Term_View t, DAG_Node_View d ' + \
+#	'where t._Vocab_key = 4 ' + \
+#	'and t._Vocab_key = d._Vocab_key ' + \
+#	'and t._Term_key = d._Object_key ' + \
+#	'order by dag, t.accID'
+#
+#results = db.sql(cmd, 'auto')
+#
+#for r in results:
+#	fp.write(r['dag'] + TAB)
+#	fp.write(r['accID'] + TAB)
+#	fp.write(r['term'] + CRT)
+#
+#reportlib.finish_nonps(fp)
 
