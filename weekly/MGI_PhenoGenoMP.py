@@ -23,6 +23,9 @@
 #
 # History:
 #
+# lec	08/24/2011
+#	- TR10829/check if mpMarker contains null (no marker)
+#
 # lec	05/20/2010
 #	- TR10179/add field 2/pipe-delimited list of Alleles
 #
@@ -178,7 +181,11 @@ for r in results:
         fp.write(mpID[term] + TAB)
         if mpRef.has_key(refKey):
 	    fp.write(string.join(mpRef[refKey], ','))
-	fp.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
+
+	if mpMarker.has_key(genotype):
+	    fp.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
+        else:
+	    fp.write(TAB + CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
 
