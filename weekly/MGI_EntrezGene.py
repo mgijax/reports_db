@@ -20,6 +20,9 @@
 #
 # History:
 #
+# lec	10/19/2011
+#	- TR10885/add column 11/raw biotypes, column 12/feature type per Donna Maglott/NCBI
+#
 # lec	06/18/2002
 #	- rewrote to use dictionaries for egID, other Acc IDs, other names
 #
@@ -130,8 +133,45 @@ for r in results:
 		synonym[key] = []
 	synonym[key].append(value)
 
+# Get BioType for Primary Marker
+results = db.sql('select distinct m._Marker_key, s.rawbiotype ' + \
+	'from #markers m, SEQ_Marker_Cache s ' + \
+	'where m.isPrimary = 1 ' + \
+	'and m._Marker_key = s._Marker_key ' + \
+	'and s.rawbiotype is not null', 'auto')
+bioTypes = {}
+for r in results:
+	key = r['_Marker_key']
+	value = r['rawbiotype']
+	if not bioTypes.has_key(key):
+		bioTypes[key] = []
+	bioTypes[key].append(value)
+
+# Get Feature Type for Primary Marker
+results = db.sql('select m._Marker_key, s.term ' + \
+	'from #markers m, MRK_MCV_Cache s ' + \
+	'where m.isPrimary = 1 ' + \
+	'and m._Marker_key = s._Marker_key ' + \
+	'and s.qualifier = "D"', 'auto')
+featureTypes = {}
+for r in results:
+	key = r['_Marker_key']
+	value = r['term']
+	if not featureTypes.has_key(key):
+		featureTypes[key] = []
+	featureTypes[key].append(value)
+
 results = db.sql('select * from #markers order by _Current_key, isPrimary desc', 'auto')
 for r in results:
+
+	# column 1: mgi id
+	# column 2: symbol
+	# column 3: status
+	# column 4: name
+	# column 5: offset
+	# column 6: chromosome
+	# column 7: marker type
+
 	fp.write(mgiID[r['_Current_key']] + TAB + \
 	 	r['symbol'] + TAB + \
 		r['markerStatus'] + TAB + \
@@ -141,18 +181,35 @@ for r in results:
 		r['markerType'] + TAB)
 
 	if r['isPrimary']:
+
+		# column 8: other accession ids
 		if otherAccId.has_key(r['_Marker_key']):	
-			fp.write(string.joinfields(otherAccId[r['_Marker_key']], '|'))
+			fp.write(string.join(otherAccId[r['_Marker_key']], '|'))
 		fp.write(TAB)
 
+		# column 9: entrezgene ids
 		if egID.has_key(r['_Marker_key']):	
 			fp.write(egID[r['_Marker_key']])
 		fp.write(TAB)
 
+		# column 10: synonyms
 		if synonym.has_key(r['_Marker_key']):	
-			fp.write(string.joinfields(synonym[r['_Marker_key']], '|'))
+			fp.write(string.join(synonym[r['_Marker_key']], '|'))
+		fp.write(TAB)
+
+		# column 11: biotypes
+		if bioTypes.has_key(r['_Marker_key']):	
+			fp.write(string.join(bioTypes[r['_Marker_key']], '|'))
+		fp.write(TAB)
+
+		# column 12: feature types
+		if featureTypes.has_key(r['_Marker_key']):	
+			fp.write(string.join(featureTypes[r['_Marker_key']], '|'))
 		fp.write(CRT)
 	else:
+		# column 8-12 null
+		fp.write(TAB)
+		fp.write(TAB)
 		fp.write(TAB)
 		fp.write(TAB)
 		fp.write(CRT)
