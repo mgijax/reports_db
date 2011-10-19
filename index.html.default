@@ -215,7 +215,7 @@
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>Type<BR><FONT SIZE=-1>Gene<BR>DNA Segment<BR>Other Genome Feature<BR>Complex/Cluster/Region<BR>microRNA</FONT></TD>
-        <TD>Secondary<BR>Accession IDs<BR>(|-delimited)</TD><TD>Entrez Gene ID</TD><TD>Synonyms<BR>(|-delimited)</TD></TR></TABLE>
+        <TD>Secondary<BR>Accession IDs<BR>(|-delimited)</TD><TD>Entrez Gene ID</TD><TD>Synonyms<BR>(|-delimited)</TD><TD>BioTypes<BR>(|-delimited)</TD><TD>Feature Types<BR>(|-delimited)</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_EntrezGene.rpt">MGI_EntrezGene.rpt</A></TD></TR>
         </TD></TR>
