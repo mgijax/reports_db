@@ -102,7 +102,7 @@ cmds.append('''create index idx_alleleKey on #cells (_Allele_key)''')
 cmds.append('''create table #imsrCounts(accID varchar(30), 
 	abbrevName varchar(30), cType int)''')
 	
-cmds.append('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 3
+cmds.append('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
 	    imsr..Accession ac, imsr..Facility f 
 	where ac.accID = g.alleleID 
