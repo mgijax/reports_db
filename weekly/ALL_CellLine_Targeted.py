@@ -56,77 +56,77 @@ sel=[]
 
 db.sql('''select distinct c.cellLine as mclID, c.parentCellLine, 
 	    c.vector, c.creator as mclCreator, c.derivationName as library,  
-	    c.parentCellLineStrain, avv._Allele_key, avv._Marker_key 
+	    c.parentCellLineStrain, ac._Allele_key, aa.accID as alleleID, 
+	    avv._Marker_key, ma.accID as markerID 
 	into #gt_seqs 
 	from ALL_CellLine_View c, ALL_Allele_CellLine ac, ALL_Allele_View avv, 
-	ACC_Accession cc 
+	ACC_Accession cc, ACC_Accession aa, ACC_Accession ma
 	where c.cellLine = cc.accID 
 	    and cc._MGIType_key = 28 
 	    and cc._LogicalDB_key in (108, 109, 137) 
 	    and c._CellLine_key = ac._MutantCellLine_key 
+	    and ac._Allele_key = aa._Object_key
+	    and aa._LogicalDB_key = 1 
+	    and aa._MGIType_key = 11 
+	    and aa.private = 0  
+	    and aa.preferred = 1  
 	    and ac._Allele_key = avv._Allele_key 
 	    and avv._Allele_Status_key in (847114, 3983021) 
 	    and avv._Allele_Type_key 
-		in (847116,847117,847118,847119,847120)''', None)
+		in (847116,847117,847118,847119,847120)
+	    and avv._Marker_key *= ma._Object_key
+	    and ma._LogicalDB_key = 1 
+	    and ma._MGIType_key = 2 
+	    and ma.private = 0  
+	    and ma.preferred = 1''', None)
 	
-db.sql("create index idx_mrk on #gt_seqs (_Marker_key)", None)
+	
+db.sql("create index idx_mrk on #gt_seqs (markerID)", None)
 
-db.sql("create index idx_allp on #gt_seqs (_Allele_key)", None)
+db.sql("create index idx_allp on #gt_seqs (alleleID)", None)
+
+db.sql("create index idx_gtallid on #gt_seqs (_Allele_key)", None)
+
+db.sql("create index idx_gtmrkid on #gt_seqs (_Marker_key)", None)
 
 cmds.append("create table #imsrCounts(accID varchar(30), abbrevName varchar(30), cType int)")
 
 cmds.append('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
-	    imsr..Accession ac, imsr..Facility f, ACC_Accession ma 
-	where ma._Object_key = g._Allele_key 
-	    and ma._LogicalDB_key = 1  
-	    and ma._MGIType_key = 11 
-	    and ma.private = 0  
-	    and ma.accID = ac.accID 
-	    and ac._IMSRType_key = 3 
-	    and ac._Object_key = sga._Allele_key 
-	    and sga._Strain_key = sfa._Strain_key 
-	    and sfa._StrainState_key = 2 
-	    and sfa._Facility_key = f._Facility_key''')
+	    imsr..Accession ac, imsr..Facility f 
+	where ac.accID = g.alleleID 
+	and ac._IMSRType_key = 3 
+	and ac._Object_key = sga._Allele_key 
+	and sga._Strain_key = sfa._Strain_key
+	and sfa._StrainState_key = 2 
+	and sfa._Facility_key = f._Facility_key''')
 
-cmds.append('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
+cmds.append('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1 
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
-	    imsr..Accession ac, imsr..Facility f, ACC_Accession ma 
-	where ma._Object_key = g._Marker_key 
-	    and ma._LogicalDB_key = 1  
-	    and ma._MGIType_key = 2  
-	    and ma.private = 0  
-	    and ma.accID = ac.accID 
-	    and ac._IMSRType_key = 3 
-	    and ac._Object_key = sga._Allele_key 
-	    and sga._Strain_key = sfa._Strain_key 
-	    and sfa._StrainState_key = 2 
-	    and sfa._Facility_key = f._Facility_key''')
+	    imsr..Accession ac, imsr..Facility f 
+	where ac.accID = g.markerID 
+	and ac._IMSRType_key = 2 
+	and ac._Object_key = sga._Gene_key 
+	and sga._Strain_key = sfa._Strain_key
+	and sfa._StrainState_key = 2
+	and sfa._Facility_key = f._Facility_key''')
 
 cmds.append('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
-	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
-	    imsr..Accession ac, imsr..Facility f, ACC_Accession ma 
-	where ma._Object_key = g._Allele_key 
-	    and ma._LogicalDB_key = 1  
-	    and ma._MGIType_key = 11  
-	    and ma.private = 0  
-	    and ma.accID = ac.accID 
-	    and ac._IMSRType_key = 3 
-	    and ac._Object_key = sga._Allele_key 
-	    and sga._Strain_key = sfa._Strain_key 
-	    and sfa._StrainState_key <> 2 
-	    and sfa._Facility_key = f._Facility_key''')
+	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,  
+	    imsr..Accession ac, imsr..Facility f 
+	where ac.accID = g.alleleID 
+	and ac._IMSRType_key = 3 
+	and ac._Object_key = sga._Allele_key 
+	and sga._Strain_key = sfa._Strain_key
+	and sfa._StrainState_key <> 2 
+	and sfa._Facility_key = f._Facility_key''')
 
 cmds.append('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
-	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
-	    imsr..Accession ac, imsr..Facility f, ACC_Accession ma 
-	where ma._Object_key = g._Marker_key 
-	    and ma._LogicalDB_key = 1  
-	    and ma._MGIType_key = 2  
-	    and ma.private = 0  
-	    and ma.accID = ac.accID 
-	    and ac._IMSRType_key = 3 
-	    and ac._Object_key = sga._Allele_key 
+	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,
+	    imsr..Accession ac, imsr..Facility f 
+	where ac.accID = g.markerID 
+	    and ac._IMSRType_key = 2 
+	    and ac._Object_key = sga._Gene_key 
 	    and sga._Strain_key = sfa._Strain_key 
 	    and sfa._StrainState_key <> 2 
 	    and sfa._Facility_key = f._Facility_key''')
@@ -137,23 +137,12 @@ sel.append("select distinct accID, abbrevName from #imsrCounts where cType = 2")
 	
 sel.append('''select g.mclID, g.vector, g.mclCreator, g.library, 
 	g.parentCellLine, g.parentCellLineStrain,  
-	    a.accID as alleleID, al.symbol as alleleSymbol, 
+	    g.alleleID, al.symbol as alleleSymbol, 
 	    al.name as alleleName, t.term as alleleType,  
-	    mrk.symbol as markerSymbol, m.accID as markerID 
-	from #gt_seqs g, ALL_Allele_View al, MRK_Marker mrk, VOC_Term t, 
-	    ACC_Accession a, ACC_Accession m 
+	    mrk.symbol as markerSymbol, g.markerID 
+	from #gt_seqs g, ALL_Allele_View al, MRK_Marker mrk, VOC_Term t
 	where g._Allele_key = al._Allele_key 
 	    and al._Allele_Type_key = t._Term_key 
-	    and g._Allele_key = a._Object_key 
-	    and a._LogicalDB_key = 1 
-	    and a._MGIType_key = 11 
-	    and a.private = 0 
-	    and a.preferred = 1 
-	    and g._Marker_key = m._Object_key 
-	    and m._LogicalDB_key = 1 
-	    and m._MGIType_key = 2 
-	    and m.private = 0 
-	    and m.preferred = 1
 	    and g._Marker_key = mrk._Marker_key''')
 
 db.sql(cmds, 'auto')
