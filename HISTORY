@@ -1,3 +1,9 @@
+TAG: reports_db-4-4-2-6
+DATE: 11/08/2011
+STAFF: lec
+CHANGES: TR10899
+1) add ma2ncit.obo to index.html.default
+
 TAG: reports_db-4-4-2-5
 DATE: 10/20/2011
 STAFF: sc
