@@ -1,4 +1,4 @@
-#!/bin/csh
+#!/bin/csh -f
 
 #
 # Script to generate and copy NCBI LinkOut files to NCBI FTP site
