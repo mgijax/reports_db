@@ -31,6 +31,9 @@
 #   14. strainIMSR - list of IMSR providers holding strain stock
 #       associated to the Gene/Allele
 #
+# 12/28/2011	lec
+#	- changed non-ansi-standard query to left outer join
+#
 # 10/06/2011 sc
 #       - added to public reports
 #
@@ -59,8 +62,15 @@ db.sql('''select distinct c.cellLine as mclID, c.parentCellLine,
 	    c.parentCellLineStrain, ac._Allele_key, aa.accID as alleleID, 
 	    avv._Marker_key, ma.accID as markerID 
 	into #gt_seqs 
-	from ALL_CellLine_View c, ALL_Allele_CellLine ac, ALL_Allele_View avv, 
-	ACC_Accession cc, ACC_Accession aa, ACC_Accession ma
+	from ALL_CellLine_View c, ALL_Allele_CellLine ac, 
+	ACC_Accession cc, ACC_Accession aa, 
+	ALL_Allele_View avv 
+		LEFT OUTER JOIN ACC_Accession ma on (
+	    		avv._Marker_key = ma._Object_key
+	    		and ma._LogicalDB_key = 1 
+	    		and ma._MGIType_key = 2 
+	    		and ma.private = 0  
+	    		and ma.preferred = 1)
 	where c.cellLine = cc.accID 
 	    and cc._MGIType_key = 28 
 	    and cc._LogicalDB_key in (108, 109, 137) 
@@ -72,13 +82,8 @@ db.sql('''select distinct c.cellLine as mclID, c.parentCellLine,
 	    and aa.preferred = 1  
 	    and ac._Allele_key = avv._Allele_key 
 	    and avv._Allele_Status_key in (847114, 3983021) 
-	    and avv._Allele_Type_key 
-		in (847116,847117,847118,847119,847120)
-	    and avv._Marker_key *= ma._Object_key
-	    and ma._LogicalDB_key = 1 
-	    and ma._MGIType_key = 2 
-	    and ma.private = 0  
-	    and ma.preferred = 1''', None)
+	    and avv._Allele_Type_key in (847116,847117,847118,847119,847120)
+	    ''', None)
 	
 	
 db.sql("create index idx_mrk on #gt_seqs (markerID)", None)
