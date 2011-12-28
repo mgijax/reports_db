@@ -17,6 +17,9 @@
 #
 # History:
 #
+# 12/28/2011	lec
+#	- changed non-ansi-standard query to left outer join
+#
 # mhall 04/20/2010
 # Initial version
 #
@@ -60,12 +63,12 @@ cmd.append('''select bv.jnumID, cr._Cross_key, cr._Marker_key from CRS_Reference
 
 cmd.append('''select distinct cm._Marker_key, a.accID 
 			into #tmp_accID
-			from CRS_Matrix cm, acc_accession a
-			where cm._Marker_key *= a._Object_key and a._MGIType_key = 2 and a.prefixPart = 'MGI:'
-			and a.private != 1 and a.preferred = 1''')
+			from CRS_Matrix cm LEFT OUTER JOIN ACC_Accession a on (
+			cm._Marker_key = a._Object_key and a._MGIType_key = 2 and a.prefixPart = 'MGI:'
+			and a.private != 1 and a.preferred = 1)''')
 
 cmd.append('''select mc._Marker_key, a.accID
-			from MRK_Current mc, acc_accession a
+			from MRK_Current mc, ACC_Accession a
 			where mc._Marker_key in (select _Marker_key from #tmp_accID where accID = null)
 			and mc._Current_key = a._Object_key and a.prefixPart = 'MGI:'
 			and a.private != 1 and a.preferred = 1 and a._MGIType_key = 2''')
@@ -157,15 +160,16 @@ for item in results[3]:
 for item in results[5]:
 	mergedID[item['_Marker_key']] = item['accID']
 
-cmd = '''select distinct cm.chromosome, cm._Marker_key, cm._Cross_key, cm.rowNumber, mm.symbol, cm.otherSymbol, a.accID, mm._Marker_Status_key
-		from CRS_Matrix cm, MRK_Marker mm, acc_accession a, CRS_References cr
+cmd = '''select distinct cm.chromosome, cm._Marker_key, cm._Cross_key, cm.rowNumber, 
+			 mm.symbol, cm.otherSymbol, a.accID, mm._Marker_Status_key
+		from CRS_Matrix cm
+		     LEFT OUTER JOIN MRK_Marker mm on (cm._Marker_key = mm._Marker_key)
+		     LEFT OUTER JOIN ACC_Accession a on (cm._Marker_key = a._Object_key
+		         and a.prefixPart = 'MGI:' and a.private != 1 and a.preferred = 1 and a._MGIType_key = 2)
+		     LEFT OUTER JOIN CRS_References cr on (cm._Cross_key = cr._Cross_key
+		         and cm._Marker_key = cr._Marker_key)
 		where cm._Cross_key = %s
 		and cm.chromosome = '%s'
-		and cm._Marker_key *= mm._Marker_key 
-		and cm._Marker_key *= a._Object_key
-		and a.prefixPart = 'MGI:' and a.private != 1 and a.preferred = 1 and a._MGIType_key = 2
-		and cm._Cross_key *= cr._Cross_key
-		and cm._Marker_key *= cr._Marker_key
 		order by rowNumber'''
 
 for panel in allPanels:
