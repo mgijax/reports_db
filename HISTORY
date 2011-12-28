@@ -1,3 +1,16 @@
+TAG: reports_db-4-4-2-8
+DATE: 12/28/2011
+STAFF: lec
+CHANGES:
+1) change "*=" to left outer join
+mgimarkerfeed/mgiMarkerFeed.py
+weekly/ALL_CellLine_GeneTrap.py            and a._Marker_key *= m._Object_key 
+weekly/ALL_CellLine_Targeted.py
+weekly/ALL_CRE.py
+weekly/GO_gene_association_nonmouse.py
+weekly/HMD_Synonyms.py
+weekly/MAP_Mapping.py
+
 TAG: reports_db-4-4-2-7
 DATE: 11/22/2011
 STAFF: lec

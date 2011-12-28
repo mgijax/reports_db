@@ -65,6 +65,9 @@
 #
 # History:
 #
+# lec	12/28/2011
+#	- changed non-ansi-standard query to left outer join
+#
 # lec	11/17/2010; add accession ids of cell lines
 #	- TR 10460
 #	accession_allele_cellline.bcp
@@ -1457,9 +1460,8 @@ def references():
 	    k.book_au, k.book_title, k.publisher, k.place, k.series_ed, 
 	    cdate = convert(char(20), b.creation_date, 100), 
 	    mdate = convert(char(20), b.modification_date, 100) 
-	    from #references r, BIB_Refs b, BIB_Books k 
+	    from #references r, BIB_Refs b LEFT OUTER JOIN BIB_Books k on (b._Refs_key = k._Refs_key)
 	    where r._Refs_key = b._Refs_key 
-	    and b._Refs_key *= k._Refs_key
 	    ''', 'auto')
 
     for r in results:
