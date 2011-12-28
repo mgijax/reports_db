@@ -33,6 +33,9 @@
 #   15. id.version
 #   16. tag = Tag Method
 #
+# 12/28/2011	lec
+#       - changed non-ansi-standard query to left outer join
+#
 # 10/06/2011 sc
 #	- added to public reports
 #
@@ -64,27 +67,32 @@ db.sql('''select distinct s._Object_key, s.accID, ss.version,
 	    allt.term as alleleType, a._Allele_key, t.term 
 	into #gt_seqs 
 	from SEQ_Summary_View s, SEQ_Sequence ss, SEQ_GeneTrap sg, VOC_Term t, 
-	    SEQ_Allele_Assoc sa, ALL_Allele_View a, 
-	    ACC_Accession ac, ACC_Accession m, VOC_Term allt  
+	    SEQ_Allele_Assoc sa
+                LEFT OUTER JOIN ALL_Allele_View a on (
+                            sa._Allele_key = a._Allele_key
+                            and a._Allele_Status_key in (847114, 3983021))
+                LEFT OUTER JOIN ACC_Accession ac on (
+                            a._Allele_key = ac._Object_key
+	                    and ac._LogicalDB_key = 1 
+	                    and ac._MGIType_key = 11 
+	                    and ac.private = 0 
+	                    and ac.preferred = 1
+                            )
+                LEFT OUTER JOIN VOC_Term allt on (a._Allele_Type_key = allt._Term_key)
+                LEFT OUTER JOIN ACC_Accession m on (
+                            a._Marker_key = m._Object_key
+                            and m._LogicalDB_key = 1
+                            and m._MGIType_key = 2
+                            and m.private = 0
+                            and m.preferred = 1
+                            )
 	where s._LogicalDB_key = 9  
 	    and s._MGIType_key = 19
 	    and s._Object_key = ss._Sequence_key 
 	    and s._Object_key = sg._Sequence_key 
 	    and sg._TagMethod_key = t._Term_key 
 	    and s._Object_key = sa._Sequence_key
-	    and sa._Allele_key *= a._Allele_key
-	    and a._Allele_Status_key in (847114, 3983021) 
-	    and a._Allele_key *= ac._Object_key 
-	    and a._Allele_Type_key *= allt._Term_key 
-	    and ac._LogicalDB_key = 1 
-	    and ac._MGIType_key = 11 
-	    and ac.private = 0 
-	    and ac.preferred = 1 
-	    and a._Marker_key *= m._Object_key 
-	    and m._LogicalDB_key = 1 
-	    and m._MGIType_key = 2 
-	    and m.private = 0  
-	    and m.preferred = 1''', None)
+	    ''', None)
 
 db.sql("create index idx_gtallelekey on #gt_seqs (_Allele_key)", None)
 db.sql("create index idx_gtallele on #gt_seqs (alleleID)", None)
