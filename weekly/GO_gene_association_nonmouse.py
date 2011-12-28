@@ -38,6 +38,9 @@
 #
 # History:
 #
+# 12/28/2011	lec
+#	- changed non-ansi-standard query to left outer join
+#
 # 06/27/2011	lec
 #	- TR10044/replace notes with properties
 #
@@ -185,10 +188,10 @@ db.sql('''select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uni
 	         mDate = convert(varchar(10), g.modification_date, 112),
 	         refID = b.accID
 	into #results
-	from #gomarker g, ACC_Accession b 
-	where g._Refs_key *= b._Object_key 
-	and b._MGIType_key = 1 
-	and b._LogicalDB_key = 29
+	from #gomarker g LEFT OUTER JOIN ACC_Accession b on
+		(g._Refs_key = b._Object_key 
+		and b._MGIType_key = 1 
+		and b._LogicalDB_key = 29)
 	''', None)
 db.sql('create index idx1 on #results(_AnnotEvidence_key)', None)
 

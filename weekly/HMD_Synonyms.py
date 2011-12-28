@@ -19,6 +19,9 @@ HMD_Synonyms.py
 #
 # History:
 #
+# 12/28/2011	lec
+#	- changed non-ansi-standard query to left outer join
+#
 # 05/20/2010	lec
 #	- TR10049/turn TR9283 into a public report
 #
@@ -52,11 +55,11 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 db.sql('select distinct m._Marker_key, m.mgiID, m.symbol, s.synonym, ' + \
 	'markerkey2 = 0, marker2 = "                              " ' + \
 	'into #mousehuman ' + \
-	'from MRK_Mouse_View m, MGI_Synonym_MusMarker_View s ' + \
-    'where m._Marker_Type_key = 1 ' + \
-    'and m._Marker_Status_key in (1,3) ' + \
-    'and m._Marker_key *= s._Object_key ' + \
-    'and s._SynonymType_key = 1004', None)
+	'from MRK_Mouse_View m ' + \
+	'	LEFT OUTER JOIN MGI_Synonym_MusMarker_View s on (' + \
+        '       m._Marker_key = s._Object_key ' + \
+        '       and s._SynonymType_key = 1004) ' + \
+    'where m._Marker_Type_key = 1 and m._Marker_Status_key in (1,3) ', None)
 
 db.sql('update #mousehuman ' + \
  	'set synonym = "none" ' + \
