@@ -24,6 +24,9 @@
 #
 # History:
 #
+# lec	01/11/2012
+#	- select all synonyms
+#
 # lec	02/22/2011
 #	- TR10591/new
 #
@@ -85,7 +88,6 @@ results = db.sql('''select m._Marker_key, s.synonym
 	where m._Marker_key = s._Object_key 
 	and s._MGIType_key = 2 
 	and s._SynonymType_key = st._SynonymType_key 
-	and st.synonymType = "exact"
 	''', 'auto')
 mgiSyn = {}
 for r in results:
