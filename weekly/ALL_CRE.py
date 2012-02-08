@@ -23,6 +23,10 @@
 #
 # HISTORY:
 #
+# lec   02/08/2012
+#	- add 'allele['mname'] != None' to parseAllele
+#	  because marker may be null
+#
 # lec	12/28/2011
 #	- changed non-ansi-standard query to left outer join
 #
@@ -123,7 +127,7 @@ def parseAllele( r ):
     ak = r['_Allele_key']
     if not alleles.has_key(ak):
 	allele = r.copy()
-	if not allele['alleleType'].startswith('Transgen'):
+	if not allele['alleleType'].startswith('Transgen') and allele['mname'] != None:
 	    allele['name'] = allele['mname'] + '; ' + allele['name']
 	allele['structure'] = {}
 	allele['system'] = {}
