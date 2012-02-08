@@ -1,3 +1,10 @@
+TAG: reports_db-4-4-2-11
+DATE: 02/08/2012
+STAFF: lec
+CHANGES:
+1) weekly/ALL_CRE.py
+   marker may be null
+
 TAG: reports_db-4-4-2-10
 DATE: 01/11/2012
 STAFF: lec

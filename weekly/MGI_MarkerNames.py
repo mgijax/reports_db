@@ -24,6 +24,13 @@
 #
 # History:
 #
+# lec	01/19/2012
+#	- include MRK_History + MGI_Synonym
+#
+# lec	01/18/2012
+#	- use sequence cache to select both primary and secondary accession ids
+#	- add non-mouse genes
+#
 # lec	01/11/2012
 #	- select all synonyms
 #
@@ -88,6 +95,10 @@ results = db.sql('''select m._Marker_key, s.synonym
 	where m._Marker_key = s._Object_key 
 	and s._MGIType_key = 2 
 	and s._SynonymType_key = st._SynonymType_key 
+	union
+	select distinct m._Marker_key, h.history
+	from #markers m, MRK_History_View h
+	where m._Marker_key = h._Marker_key
 	''', 'auto')
 mgiSyn = {}
 for r in results:
@@ -97,12 +108,50 @@ for r in results:
         mgiSyn[key] = []
     mgiSyn[key].append(value)
 
+#
+# non-mouse symbols
+#
+results = db.sql('''
+	select distinct m._Marker_key, h.marker2 || '|' || o.commonName as synonym
+	from #markers m, HMD_Homology_Pairs_View h, MGI_Organism o
+	where m._Marker_key = h.markerkey1
+	and h.organismkey2 in (2,40)
+	and h.organismkey2 = o._Organism_key
+	''', 'auto')
+mgiNonMouse = {}
+for r in results:
+    key = r['_Marker_key']
+    value = r['synonym']
+    if not mgiNonMouse.has_key(key):
+        mgiNonMouse[key] = []
+    mgiNonMouse[key].append(value)
+
+results = db.sql('''
+	select distinct m._Marker_key, s.synonym || '|' || o.commonName as synonym
+	from #markers m, HMD_Homology_Pairs_View h, MGI_Organism o, MGI_Synonym s
+	where m._Marker_key = h.markerkey1
+	and h.organismkey2 in (2,40)
+	and h.organismkey2 = o._Organism_key
+	and h.markerkey2 = s._Object_key
+	and s._MGIType_key = 2
+	''', 'auto')
+for r in results:
+    key = r['_Marker_key']
+    value = r['synonym']
+    if not mgiNonMouse.has_key(key):
+        mgiNonMouse[key] = []
+    mgiNonMouse[key].append(value)
+
 # all data from ACC_Accession
 
 results = db.sql('''select distinct m._Marker_key, a.accID
       from #markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
+      union
+      select distinct s._Marker_key, s.accID
+      from #markers m, SEQ_Marker_Cache s
+      where m._Marker_key = s._Marker_key 
       ''', 'auto')
 mgiID = {}
 for r in results:
@@ -131,6 +180,9 @@ for r in results:
 
 	if mgiSyn.has_key(key):
 	    fp.write(string.join(mgiSyn[key], reportlib.TAB) + reportlib.TAB)
+
+	if mgiNonMouse.has_key(key):
+	    fp.write(string.join(mgiNonMouse[key], reportlib.TAB) + reportlib.TAB)
 
 	if mgiID.has_key(key):
 	    fp.write(string.join(mgiID[key], reportlib.TAB))
