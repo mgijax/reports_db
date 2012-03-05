@@ -160,11 +160,18 @@ for r in results:
 # retrieve data set to process
 #
 #    and m.symbol = "Zfpm2"
-db.sql('''select a._Term_key, t.term, termID = ta.accID, qualifier = q.synonym, a._Object_key, 
-    e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, e._Refs_key, e._ModifiedBy_key, 
-    m.symbol, m.name, markerType = lower(mt.name) 
+db.sql('''select a._Term_key, t.term, ta.accID as termID, q.synonym as qualifier, a._Object_key, 
+    	e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
+    	e._Refs_key, e._ModifiedBy_key, 
+    	m.symbol, m.name, lower(mt.name) as markerType
     into #gomarker 
-    from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, MRK_Marker m, MRK_Types mt, MGI_Synonym q 
+    from VOC_Annot a, 
+	 ACC_Accession ta, 
+	 VOC_Term t, 
+	 VOC_Evidence e, 
+	 MRK_Marker m, 
+	 MRK_Types mt, 
+	 MGI_Synonym q 
     where a._AnnotType_key = 1000 
     and a._Annot_key = e._Annot_key 
     and a._Object_key = m._Marker_key 
@@ -204,12 +211,12 @@ for r in results:
 # resolve foreign keys and store in "results" table
 #
 db.sql('''select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
-    g._Object_key, g._AnnotEvidence_key, g.symbol, g.name, g.markerType, 
-    mDate = convert(varchar(10), g.modification_date, 112), 
-    markerID = ma.accID, 
-    refID = b.accID, 
-    eCode = rtrim(t.abbreviation), 
-    assignedBy = u.login 
+    	g._Object_key, g._AnnotEvidence_key, g.symbol, g.name, g.markerType, 
+    	mDate = convert(varchar(10), g.modification_date, 112), 
+    	markerID = ma.accID, 
+    	refID = b.accID, 
+    	eCode = rtrim(t.abbreviation), 
+    	assignedBy = u.login 
     into #results 
     from #gomarker g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u 
     where g._Object_key = ma._Object_key 
