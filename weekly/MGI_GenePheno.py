@@ -15,24 +15,28 @@
 #	and all of the references (J:) used to annotate that term.
 #
 #	field 1: Allelic Composition
-#	field 2: pipe-delimited list of Alleles
-#	field 3: Genetic Background
-#	field 4: Mammalian Phenotype ID
-#	field 5: PubMed ID
-#	field 6: MGI Marker Accession ID (comma-delimited)
+#	field 2: pipe-delimited list of Allele symbols
+#	field 3: pipe-delimited list of Allele ids
+#	field 4: Genetic Background
+#	field 5: Mammalian Phenotype ID
+#	field 6: PubMed ID
+#	field 7: MGI Marker Accession ID (comma-delimited)
 #
 #	MGI_Gene_Disease
-#	field 7: OMIM ID(s) (comma-delimited)
+#	field 8: OMIM ID(s) (comma-delimited)
 #	where OMIM annotations do not include NOT
 #
 #	MGI_Gene_NotDisease
-#	field 7: OMIM ID(s) (comma-delimited)
+#	field 9: OMIM ID(s) (comma-delimited)
 #	where OMIM annotations includes NOT
 #
 # Usage:
 #       MGI_GenePheno.py
 #
 # History:
+#
+# lec	03/06/2012
+#	- TR10998/add allele ids
 #
 # lec	06/21/2011
 #	- TR10763/re-do single genotype query
@@ -153,25 +157,37 @@ for r in results:
 # only include markers of type 'gene' (1) or complex/cluster/region (10)
 # only include single allele pairs
 #
-results = db.sql('''select distinct m._Object_key, a.symbol 
-	from #mp m, GXD_AlleleGenotype ag, ALL_Allele a, MRK_Marker mm 
+results = db.sql('''select distinct m._Object_key, a.symbol, aa.accID, a.isWildType
+	from #mp m, GXD_AlleleGenotype ag, ALL_Allele a, MRK_Marker mm, ACC_Accession aa
 	where m._Object_key = ag._Genotype_key 
 	and ag._Allele_key = a._Allele_key 
 	and ag._Marker_key = mm._Marker_key 
 	and mm._Marker_Type_key in (1,10)
+	and ag._Allele_key = aa._Object_key
+	and aa._MGIType_key = 11
+	and aa._LogicalDB_key = 1
+	and aa.prefixPart = "MGI:"
+	and aa.preferred = 1
         and not exists (select 1 from GXD_AllelePair a2
 	        where ag._Genotype_key = a2._Genotype_key
 		and a2.sequenceNum > 1)
 	''', 'auto')
 mpAlleles = {}
+mpAlleleIDs = {}
 for r in results:
     key = r['_Object_key']
     value = r['symbol']
+    value2 = r['accID']
+
     if not mpAlleles.has_key(key):
 	mpAlleles[key] = []
     mpAlleles[key].append(value)
 
-#
+    if r['isWildType'] == 0:
+        if not mpAlleleIDs.has_key(key):
+	    mpAlleleIDs[key] = []
+        mpAlleleIDs[key].append(value2)
+
 #
 # resolve Marker ID
 #
@@ -256,6 +272,11 @@ for r in results:
 
     fp1.write(mpDisplay[genotype] + TAB)
     fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
+
+    if mpAlleleIDs.has_key(genotype):
+        fp1.write(string.join(mpAlleleIDs[genotype], '|'))
+    fp1.write(TAB)
+
     fp1.write(mpStrain[genotype] + TAB)
     fp1.write(mpID[term] + TAB)
     if mpRef.has_key(refKey):
@@ -270,6 +291,9 @@ for r in results:
 
         fp2.write(mpDisplay[genotype] + TAB)
         fp2.write(string.join(mpAlleles[genotype], '|') + TAB)
+        if mpAlleleIDs.has_key(genotype):
+            fp2.write(string.join(mpAlleleIDs[genotype], '|'))
+        fp2.write(TAB)
         fp2.write(mpStrain[genotype] + TAB)
         fp2.write(mpID[term] + TAB)
         if mpRef.has_key(refKey):
@@ -285,6 +309,9 @@ for r in results:
 
         fp3.write(mpDisplay[genotype] + TAB)
         fp3.write(string.join(mpAlleles[genotype], '|') + TAB)
+        if mpAlleleIDs.has_key(genotype):
+            fp3.write(string.join(mpAlleleIDs[genotype], '|'))
+        fp3.write(TAB)
         fp3.write(mpStrain[genotype] + TAB)
         fp3.write(mpID[term] + TAB)
         if mpRef.has_key(refKey):
