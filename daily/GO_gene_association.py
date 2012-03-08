@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	03/08/2012
+#	pubMed = {} was being called/selected twice
+#
 # lec	06/20/2011
 #   - TR10044/MGI_Notes --> VOC_Evidence_Property
 #	this affects cellOntology, isoformsProtein, column 12, 16, 17
@@ -243,19 +246,6 @@ results = db.sql('''select r._Refs_key, a.accID from #results r, ACC_Accession a
     where r._Refs_key = a._Object_key 
     and a._MGIType_key = 1 
     and a._LogicalDB_key = 29''', 'auto')
-for r in results:
-    key = r['_Refs_key']
-    value = r['accID']
-    pubMed[key] = value
-
-#
-# resolve PubMed IDs for References
-#
-pubMed = {}
-results = db.sql('''select r._Refs_key, a.accID from #results r, ACC_Accession a 
-        where r._Refs_key = a._Object_key 
-        and a._MGIType_key = 1 
-        and a._LogicalDB_key = 29''', 'auto')
 for r in results:
     key = r['_Refs_key']
     value = r['accID']
