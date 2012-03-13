@@ -1,3 +1,9 @@
+TAG: reports_db-4-4-2-14
+DATE: 03/13/2012
+STAFF: lec
+CHANGES:
+1) GO_gene_association.py: pubMed portion being called twice; add distinct
+
 TAG: reports_db-4-4-2-13
 DATE: 03/06/2012
 STAFF: lec
