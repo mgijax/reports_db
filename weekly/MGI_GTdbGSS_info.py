@@ -55,7 +55,7 @@
 #
 #
 # Usage:
-#       MGI_IKMC_DNA_GT_info.py
+#      MGI_GTdbGSS_info.py
 #
 # History:
 #
@@ -97,11 +97,11 @@ seqTagAlignmentsBySeqKey = {}
 
 # report columns
 col1 = ''     # Mcl ID
-col2 = ''	 # Sequence Tag ID
-col3 = ''	 # GenBankID
+col2 = ''     # Sequence Tag ID
+col3 = ''     # GenBankID
 col4 = ''     # Creator
 col5 = ''     # Sequence Tag Method
-col6 = ''	 # Vector
+col6 = ''     # Vector
 col7 = ''     # Chromosome of Seq Tag alignment
 col8 = ''     # Start Coordinate of Seq Tag alignment
 col9 = ''     # End Coordinate of Seq Tag alignment
@@ -125,16 +125,20 @@ fp = reportlib.init(sys.argv[0], outputdir = \
    os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 # main query of 1:1 info about sequence tags
-db.sql('''select a._Allele_key, a._Marker_key, a.isMixed, ac._CellLine_key, 
-	    t1.term as creator, t2.term as vector 
-	    into #cellines
-	    from ALL_Allele a , ALL_Allele_CellLine aca, ALL_CellLine ac, 
-	    ALL_CellLine_Derivation acd, VOC_Term t1, VOC_Term t2 
-	    where a._Allele_key = aca._Allele_key 
-	    and aca._MutantCellLine_key =  ac._CellLine_key 
-	    and ac._Derivation_key = acd._Derivation_key
-	    and acd._Creator_key = t1._Term_key 
-	    and acd._Vector_key = t2._Term_key''' , None)
+db.sql('''select a._Allele_key, a._Marker_key, a.isMixed, ac._CellLine_key,
+            t1.term as creator, t2.term as vector, 
+		ac2.cellLine as parentCellLine, s.strain
+            into #cellines
+            from ALL_Allele a , ALL_Allele_CellLine aca, ALL_CellLine ac, 
+		ALL_CellLine ac2, PRB_Strain s, 
+		ALL_CellLine_Derivation acd, VOC_Term t1, VOC_Term t2
+            where a._Allele_key = aca._Allele_key
+            and aca._MutantCellLine_key =  ac._CellLine_key
+	    and ac._Strain_key = s._Strain_key
+            and ac._Derivation_key = acd._Derivation_key
+            and acd._Creator_key = t1._Term_key
+            and acd._Vector_key = t2._Term_key
+	    and acd._ParentCellLine_key = ac2._CellLine_key''' , None)
 db.sql('''create index idx1 on #cellines(_Allele_key)''', None)
 db.sql('''select distinct c._Allele_key, c._Marker_key
 	    into #alleleMarkers
@@ -257,6 +261,8 @@ results = db.sql('''select * from #seqTagsAll
 
 for r in results:
     col1 = r['mclID']
+    col24 = r['parentCellLine']
+    col25 = r['strain']
     col2 = r['seqTagID']
     col3 = r['genbankID']
     col4 = r['creator']
@@ -303,7 +309,7 @@ for r in results:
     pointCoord = r['pointCoordinate']
     if pointCoord == None:
 	pointCoord = ''
-    fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (col1, TAB, col2, TAB, col3, TAB, col4, TAB, col5, TAB, col6, TAB, col7, TAB, col8, TAB, col9, TAB, col10, TAB, col11, TAB, col12, TAB, col13, TAB, col14, TAB, col15, TAB, col16, TAB, col17, TAB, col18, TAB, col19, TAB, col20, TAB, col21, TAB, col22, TAB, col23, CRT))
+    fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (col1, TAB, col2, TAB, col3, TAB, col4, TAB, col5, TAB, col6, TAB, col7, TAB, col8, TAB, col9, TAB, col10, TAB, col11, TAB, col12, TAB, col13, TAB, col14, TAB, col15, TAB, col16, TAB, col17, TAB, col18, TAB, col19, TAB, col20, TAB, col21, TAB, col22, TAB, col23, TAB, col24, TAB, col25, CRT))
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)

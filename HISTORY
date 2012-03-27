@@ -1,3 +1,10 @@
+TAG: reports_db-4-4-2-15
+DATE: 03/27/2012
+STAFF: sc
+CHANGES: TR11021
+1) MGI_GTdbGSS_info.py - added two additional columns
+   parent cell line and strain
+
 TAG: reports_db-4-4-2-14
 DATE: 03/13/2012
 STAFF: lec
