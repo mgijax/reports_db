@@ -29,7 +29,8 @@
 #  21. Point Coordinate of Representative Sequence for the associated MGI allele
 #  22. Strand of Representative Sequence for the associated MGI allele
 #  23. Mixed/Not_Mixed *d 
-#
+#  24. Parent Cell Line
+#  25. Strain
 # Update frequency: Since allele-to-gene associations change, this file should 
 #   be updated with some regularity (weekly is probably adequate).
 # 
@@ -58,6 +59,8 @@
 #      MGI_GTdbGSS_info.py
 #
 # History:
+#
+# 3/27/2012 sc - TR11021 add Parent Cell Line and strain
 #
 # 4/4/2011 sc - created TR 10661
 #
@@ -119,7 +122,8 @@ col20 = ''    # GenBank ID of Rep Seq for the associated MGI allele
 col21 = ''    # Point Coordinate of Rep Seq for the associated MGI allele
 col22 = ''    # Strand of Rep Seq for the associated MGI allele
 col23 = ''    # Mixed/Not Mixed
-
+col24 = ''    # Parent Cell Line
+col25 = ''    # Strain
 
 fp = reportlib.init(sys.argv[0], outputdir = \
    os.environ['REPORTOUTPUTDIR'], printHeading = None)
@@ -261,8 +265,6 @@ results = db.sql('''select * from #seqTagsAll
 
 for r in results:
     col1 = r['mclID']
-    col24 = r['parentCellLine']
-    col25 = r['strain']
     col2 = r['seqTagID']
     col3 = r['genbankID']
     col4 = r['creator']
@@ -300,6 +302,8 @@ for r in results:
 	col21 = ''
     col22 = ''	# strand of allele rep seq
     col23 = r['isMixed']
+    col24 = r['parentCellLine']
+    col25 = r['strain']
     if int(col23) == 1:
 	col23 = 'Mixed'
     else: 
