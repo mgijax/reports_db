@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec   03/28/2012
+#       - TR 11027; create_accession_anchor() for MGI 5.0 
+#
 # lec	01/23/2006
 #	- created, TR 7418
 #
@@ -120,7 +123,7 @@ def printMarkerHTML(r):
 
     s = '<tr>' + \
 	'<td>' + r['accID'] + '</td>\n' + \
-        '<td>%s%s%s</td>\n' % (reportlib.create_accession_anchor(r['accID']), r['symbol'], reportlib.close_accession_anchor()) + \
+        '<td>%s%s%s</td>\n' % (reportlib.create_accession_anchor(r['accID'], 'marker'), r['symbol'], reportlib.close_accession_anchor()) + \
 	'<td>' + r['name'] + '</td>\n'
 
     if repgen.has_key(r['_Marker_key']):
@@ -209,18 +212,22 @@ printHeaderHTML(fp3, 'Genes with Knockouts that are not yet available through Pu
 #
 # select alleles
 #
+# and a.symbol = 'A2ld1<tm1(KOMP)Vlcg>'
+#
 
-db.sql('select a._Marker_key, a._Allele_key, a.symbol, a.name, t.term, aa.accID ' + \
-	'into #knockouts ' + \
-	'from ALL_Allele a, ACC_Accession aa, VOC_Term t ' + \
-	'where a._Allele_Status_key = 847114 ' + \
-	'and a._Allele_Type_key in (847116, 847119, 847120) ' + \
-	'and a._Allele_key = aa._Object_key ' + \
-	'and aa._MGIType_key = 11 ' + \
-	'and aa._LogicalDB_key = 1 ' + \
-	'and aa.prefixPart = "MGI:" ' + \
-	'and aa.preferred = 1 ' + \
-	'and a._Allele_Type_key = t._Term_key ', None)
+db.sql('''
+	select a._Marker_key, a._Allele_key, a.symbol, a.name, t.term, aa.accID 
+	into #knockouts 
+	from ALL_Allele a, ACC_Accession aa, VOC_Term t 
+	where a._Allele_Status_key = 847114 
+	and a._Allele_Type_key in (847116, 847119, 847120) 
+	and a._Allele_key = aa._Object_key 
+	and aa._MGIType_key = 11 
+	and aa._LogicalDB_key = 1 
+	and aa.prefixPart = 'MGI:' 
+	and aa.preferred = 1 
+	and a._Allele_Type_key = t._Term_key 
+	''', None)
 
 db.sql('create index idx1 on #knockouts(_Marker_key)', None)
 db.sql('create index idx2 on #knockouts(_Allele_key)', None)
@@ -229,33 +236,37 @@ db.sql('create index idx2 on #knockouts(_Allele_key)', None)
 # select unique set of markers
 #
 
-db.sql('select distinct m._Marker_key, m.symbol, name = substring(m.name,1,75), ma.accID ' + \
-	'into #markers ' + \
-	'from #knockouts k, MRK_Marker m, ACC_Accession ma ' + \
-	'where k._Marker_key = m._Marker_key ' + \
-	'and m._Marker_key = ma._Object_key ' + \
-	'and ma._MGIType_key = 2 ' + \
-	'and ma._LogicalDB_key = 1 ' + \
-	'and ma.prefixPart = "MGI:" ' + \
-	'and ma.preferred = 1 ', None)
+db.sql('''
+	select distinct m._Marker_key, m.symbol, name = substring(m.name,1,75), ma.accID 
+	into #markers 
+	from #knockouts k, MRK_Marker m, ACC_Accession ma 
+	where k._Marker_key = m._Marker_key 
+	and m._Marker_key = ma._Object_key 
+	and ma._MGIType_key = 2 
+	and ma._LogicalDB_key = 1 
+	and ma.prefixPart = 'MGI:'
+	and ma.preferred = 1 
+	''', None)
 
 db.sql('create index idx1 on #markers(symbol)', None)
 
 #
 # select those alleles that are in IMSR and that occur "alone" in a strain
 #
-results = db.sql('select distinct m._Marker_key, ac.accID, ls.label ' + \
-	'from #markers m, #knockouts k, %s..Accession ac, %s..Label ls, %s..SGAAssoc sga ' % (IMSR, IMSR, IMSR) + \
-	'where m._Marker_key = k._Marker_key ' + \
-	'and k.accID = ac.accID ' + \
-	'and sga._Strain_key = ls._Object_key ' + \
-	'and ls._IMSRType_key = 1 ' + \
-	'and ls.labelType = "N" ' + \
-	'and sga._Allele_key = ac._Object_key ' + \
-	'and ac._IMSRType_key = 3 ' + \
-	'and 1 = (select count(distinct _Allele_key) ' + \
-	'from %s..SGAAssoc ' % (IMSR) + \
-	'where sga._Strain_key = _Strain_key)', 'auto')
+results = db.sql('''
+	select distinct m._Marker_key, ac.accID, ls.label 
+	from #markers m, #knockouts k, %s..Accession ac, %s..Label ls, %s..SGAAssoc sga
+	where m._Marker_key = k._Marker_key 
+	and k.accID = ac.accID 
+	and sga._Strain_key = ls._Object_key 
+	and ls._IMSRType_key = 1 
+	and ls.labelType = 'N' 
+	and sga._Allele_key = ac._Object_key 
+	and ac._IMSRType_key = 3 
+	and 1 = (select count(distinct _Allele_key) 
+	from %s..SGAAssoc
+	where sga._Strain_key = _Strain_key)
+	''' % (IMSR, IMSR, IMSR, IMSR), 'auto')
 imsrHTML = {}
 imsrTAB = {}
 for r in results:
@@ -296,8 +307,11 @@ for r in results:
 #
 
 alleleTypes = {}
-results = db.sql('select distinct m._Marker_key, a.term from #markers m, #knockouts a ' + 
-	'where m._Marker_key = a._Marker_key', 'auto')
+results = db.sql('''
+	select distinct m._Marker_key, a.term 
+	from #markers m, #knockouts a
+	where m._Marker_key = a._Marker_key
+	''', 'auto')
 for r in results:
     key = r['_Marker_key']
     value = r['term']
@@ -309,13 +323,15 @@ for r in results:
 # representative genomic for genes
 #
 repgen = {}
-results = db.sql('select m._Marker_key, a.accID ' + \
-	'from #markers m, SEQ_Marker_Cache smc, ACC_Accession a ' + \
-	'where m._Marker_key = smc._Marker_key ' + \
-	'and smc._LogicalDB_key = 60 ' + \
-	'and smc._Sequence_key = a._Object_key ' + \
-	'and a._MGIType_key = 19 ' + \
-	'and a.preferred = 1', 'auto')
+results = db.sql('''
+	select m._Marker_key, a.accID 
+	from #markers m, SEQ_Marker_Cache smc, ACC_Accession a 
+	where m._Marker_key = smc._Marker_key 
+	and smc._LogicalDB_key = 60 
+	and smc._Sequence_key = a._Object_key 
+	and a._MGIType_key = 19 
+	and a.preferred = 1
+	''', 'auto')
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
@@ -325,13 +341,15 @@ for r in results:
 # representative transcript for genes
 #
 reptran = {}
-results = db.sql('select m._Marker_key, a.accID ' + \
-	'from #markers m, SEQ_Marker_Cache smc, ACC_Accession a ' + \
-	'where m._Marker_key = smc._Marker_key ' + \
-	'and smc._Qualifier_key = 615420 ' + \
-	'and smc._Sequence_key = a._Object_key ' + \
-	'and a._MGIType_key = 19 ' + \
-	'and a.preferred = 1', 'auto')
+results = db.sql('''
+	select m._Marker_key, a.accID 
+	from #markers m, SEQ_Marker_Cache smc, ACC_Accession a 
+	where m._Marker_key = smc._Marker_key 
+	and smc._Qualifier_key = 615420 
+	and smc._Sequence_key = a._Object_key 
+	and a._MGIType_key = 19 
+	and a.preferred = 1
+	''', 'auto')
 for r in results:
     key = r['_Marker_key']
     value = r['accID']

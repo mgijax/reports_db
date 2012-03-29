@@ -13,6 +13,9 @@ endif
 
 source ${MGICONFIG}/master.config.csh
 
+setenv DB_TYPE			sybase
+#setenv DB_TYPE			postgres
+
 setenv IMSR_DBNAME		imsr
 
 # report directory

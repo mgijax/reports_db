@@ -9,6 +9,9 @@
 #
 # History:
 #
+# lec	03/28/2012
+#	- TR 11027; create_accession_anchor() for MGI 5.0
+#
 # lec	06/25/2002
 #	- TR 3827; add Human Ortholog 
 #
@@ -152,15 +155,15 @@ for r in results[6]:
 
 	fpHTML.write('%-2s ' % (r['chromosome']))
 
-	fpHTML.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), symbol, reportlib.close_accession_anchor()))
+	fpHTML.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key], 'marker'), symbol, reportlib.close_accession_anchor()))
 
 	fpHTML.write('%-35s ' % (r['name']))
 
-	fpHTML.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID']), r['jnumID'], reportlib.close_accession_anchor()))
+	fpHTML.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID'], 'reference'), r['jnumID'], reportlib.close_accession_anchor()))
 
 	fpHTML.write('%-20s ' % (r['author']))
 
-	fpHTML.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key]), primaryID[key], reportlib.close_accession_anchor()))
+	fpHTML.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key], 'marker'), primaryID[key], reportlib.close_accession_anchor()))
 
 	fpRpt.write('%s\t%s\t%s\t%s\t%s\t%s\t' % (r['chromosome'], symbol, r['name'], r['jnumID'], r['author'], primaryID[key]))
 

@@ -164,7 +164,7 @@ for r in results:
 #
 # retrieve data set to process
 #
-#    and m.symbol = "Zfpm2"
+#    and m.symbol = 'Zfpm2'
 db.sql('''select a._Term_key, t.term, ta.accID as termID, q.synonym as qualifier, a._Object_key, 
     	e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
     	e._Refs_key, e._ModifiedBy_key, 
@@ -187,7 +187,8 @@ db.sql('''select a._Term_key, t.term, ta.accID as termID, q.synonym as qualifier
     and ta.preferred = 1 
     and m._Marker_Type_key = mt._Marker_Type_key 
     and a._Qualifier_key = q._Object_key 
-    and q._SynonymType_key = 1023''', None)
+    and q._SynonymType_key = 1023
+    ''', None)
 db.sql('create index idx1 on #gomarker(_Object_key)', None)
 db.sql('create index idx2 on #gomarker(_EvidenceTerm_key)', None)
 db.sql('create index idx3 on #gomarker(_Refs_key)', None)
@@ -202,7 +203,7 @@ results = db.sql('''select distinct g._Object_key, s.synonym
     where g._Object_key = s._Object_key 
     and s._MGIType_key = 2 
     and s._SynonymType_key = st._SynonymType_key 
-    and st.synonymType = "exact" 
+    and st.synonymType = 'exact'
     order by g._Object_key''', 'auto')
 syns = {}
 for r in results:
@@ -217,21 +218,21 @@ for r in results:
 #
 db.sql('''select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
     	g._Object_key, g._AnnotEvidence_key, g.symbol, g.name, g.markerType, 
-    	mDate = convert(varchar(10), g.modification_date, 112), 
-    	markerID = ma.accID, 
-    	refID = b.accID, 
-    	eCode = rtrim(t.abbreviation), 
-    	assignedBy = u.login 
+    	convert(varchar(10), g.modification_date, 112) as mDate, 
+    	ma.accID as markerID, 
+    	b.accID as refID, 
+    	rtrim(t.abbreviation) as eCode, 
+    	u.login as assignedBy
     into #results 
     from #gomarker g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u 
     where g._Object_key = ma._Object_key 
     and ma._MGIType_key = 2 
-    and ma.prefixPart = "MGI:" 
+    and ma.prefixPart = 'MGI:' 
     and ma._LogicalDB_key = 1 
     and ma.preferred = 1 
     and g._Refs_key = b._Object_key 
     and b._MGIType_key = 1 
-    and b.prefixPart = "MGI:" 
+    and b.prefixPart = 'MGI:' 
     and b._LogicalDB_key = 1 
     and g._EvidenceTerm_key = t._Term_key 
     and g._ModifiedBy_key = u._User_key''', None)
@@ -353,19 +354,19 @@ for r in results:
 #
 
 results = db.sql('''
-    select distinct r.symbol, mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key, mc._Qualifier_key
+    select distinct r.symbol, mc._Marker_key, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
     from #results r, SEQ_Marker_Cache mc 
     where r._Object_key = mc._Marker_key 
     and mc._Marker_Type_key = 1 
     and mc._Qualifier_key = 615421 
     union 
-    select distinct r.symbol, mc._Marker_key, seqID=mc.accID, mc._LogicalDB_key, mc._Qualifier_key
+    select distinct r.symbol, mc._Marker_key, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
     from #results r, SEQ_Marker_Cache mc, MRK_MCV_Cache mcv
     where r._Object_key = mc._Marker_key 
     and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615420
     and mc._Marker_key = mcv._Marker_key
-    and mcv.term = "miRNA Gene"
+    and mcv.term = 'miRNA Gene'
     ''', 'auto')
 
 proteins = {}

@@ -29,6 +29,9 @@
 #
 # History:
 #
+# lec   03/28/2012
+#       - TR 11027; WI_URL changes for MGI 5.0
+#
 # lec	01/19/2010
 #	- TR 10042; added JAX print header
 #
@@ -75,7 +78,7 @@ BREAK = '<br>'
 BLANKFIELD = '%s&nbsp;%s' % (BEGTD, ENDTD)
 
 ALLELE_ANCHOR = '<A HREF="%ssearches/accession_report.cgi?id=%s" target="_blank">'
-CRE_ANCHOR = '<A HREF="%sjavawi2/servlet/WIFetch?page=creSpecificity&alleleKey=%s&systemKey=%s" target="_blank">'
+CRE_ANCHOR = '<A HREF="%srecombinase/specificity?id=%s&systemKey=%s">'
 CLOSE_ANCHOR = '</A>'
 
 def printHeaderHTML():
@@ -214,7 +217,7 @@ db.sql('''
        where c._Allele_key = a._Object_key
        and a._MGIType_key = 11
        and a._LogicalDB_key = 1 
-       and a.prefixPart = "MGI:" 
+       and a.prefixPart = 'MGI:' 
        and a.preferred = 1
        and c._Allele_key = aa._Allele_key
        and aa._Marker_key = m._Marker_key
@@ -225,7 +228,7 @@ db.sql('create index idx1 on #cre(_Allele_key)', None)
 # anatomical systems of expressed structures
 
 db.sql('''
-      select distinct cc._Allele_key, cc._System_key, cc.system
+      select distinct cc._Allele_key, cc._System_key, cc.system, c.accID
       into #expressed
       from #cre c, ALL_Cre_Cache cc
       where c._Allele_key = cc._Allele_key
@@ -244,7 +247,8 @@ for r in results:
         expressedTAB[key] = []
     expressedTAB[key].append(value)
 
-    value = CRE_ANCHOR % (WI_URL, key, r['_System_key']) + r['system'] + CLOSE_ANCHOR
+    #value = CRE_ANCHOR % (WI_URL, key, r['_System_key']) + r['system'] + CLOSE_ANCHOR
+    value = CRE_ANCHOR % (WI_URL, r['accID'], r['_System_key']) + r['system'] + CLOSE_ANCHOR
     if not expressedHTML.has_key(key):
         expressedHTML[key] = []
     expressedHTML[key].append(value)
