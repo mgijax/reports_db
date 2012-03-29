@@ -1,3 +1,9 @@
+TAG: reports_db-5-0-0-1
+DATE: 03/29/2012
+STAFF: dbm
+CHANGES:
+1) public_rpt_release.csh: process control changes for 5.0 release
+
 TAG: reports_db-5-0-0-?
 DATE: 03/28/2012
 STAFF: lec
