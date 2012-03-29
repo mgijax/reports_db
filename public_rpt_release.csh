@@ -40,7 +40,8 @@
 #      This script will perform following steps:
 #
 #      1) Source the configuration file to establish the environment.
-#      2) Wait for the flag to signal that the public release may begin.
+#      2) Wait for the flag to signal that the public webshare has been
+#         swapped. This indicates that the public release is proceeding.
 #      3) Copy the non-mouse gene association file to the public FTP site.
 #      4) Copy the public reports to the public FTP site.
 #      5) Copy the inparanoid files to the public FTP site.
@@ -61,16 +62,16 @@ echo "$0" | tee -a ${LOG}
 env | sort | tee -a ${LOG}
 
 #
-# Wait for the "Public Release" flag to be set. Stop waiting if the number
+# Wait for the "Webshare Swapped" flag to be set. Stop waiting if the number
 # of retries expires or the abort flag is found.
 #
 date | tee -a ${LOG}
-echo 'Wait for the "Public Release" flag to be set' | tee -a ${LOG}
+echo 'Wait for the "Webshare Swapped" flag to be set' | tee -a ${LOG}
 
 setenv RETRY ${PROC_CTRL_RETRIES}
 while (${RETRY} > 0)
-    setenv READY `${PROC_CTRL_CMD_PROD}/getFlag ${NS_PUB_LOAD} ${FLAG_PUB_RELEASE}`
-    setenv ABORT `${PROC_CTRL_CMD_PROD}/getFlag ${NS_PUB_LOAD} ${FLAG_ABORT}`
+    setenv READY `${PROC_CTRL_CMD_PUB}/getFlag ${NS_PUB_LOAD} ${FLAG_WEBSHR_SWAPPED}`
+    setenv ABORT `${PROC_CTRL_CMD_PUB}/getFlag ${NS_PUB_LOAD} ${FLAG_ABORT}`
 
     if (${READY} == 1 || ${ABORT} == 1) then
         break
@@ -94,13 +95,6 @@ else if (${ABORT} == 1) then
    date | tee -a ${LOG}
    exit 1
 endif
-
-#
-# Clear the "Public Release" flag.
-#
-date | tee -a ${LOG}
-echo 'Clear process control flag: Public Release' | tee -a ${LOG}
-${PROC_CTRL_CMD_PROD}/clearFlag ${NS_PUB_LOAD} ${FLAG_PUB_RELEASE} ${SCRIPT_NAME}
 
 #
 # Copy the reports to the public FTP site.
