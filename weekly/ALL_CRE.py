@@ -94,26 +94,6 @@ IMSR_GENE_TYPE		= 2
 IMSR_ALLELE_TYPE	= 3
 IMSR_FACIL_TYPE		= 4
 
-''' # no need to do this...server/database are set in env.
-if len(sys.argv) == 1:
-    server = "PROD1_MGI"
-    database = "mgd"
-elif len(sys.argv) == 2:
-    server = sys.argv[1]
-    database = "mgd"
-elif len(sys.argv) == 3:
-    server = sys.argv[1]
-    database = sys.argv[2]
-else:
-    print "usage: %s [ server [ database ]]" % sys.argv[0]
-    sys.exit(-1)
-print "Server:", server
-print "Database:", database
-
-db.set_sqlServer(server)
-db.set_sqlDatabase(database)
-'''
-
 #
 # Main
 #
