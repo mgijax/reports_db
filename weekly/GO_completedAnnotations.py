@@ -38,7 +38,7 @@ fp = reportlib.init('go_complete', fileExt = '.mgi', outputdir = os.environ['REP
 
 cmd = '''
       select m.symbol, a.accID, 
-      convert(char(10), t.completion_date, 112) as "date_complete" 
+      convert(char(10), t.completion_date, 112) as date_complete
       from GO_Tracking t, MRK_Marker m, ACC_Accession a 
       where t.completion_date is not null 
       and t._Marker_key = m._Marker_key 
@@ -55,7 +55,7 @@ results = db.sql(cmd, 'auto')
 for r in results:
 	fp.write(r['accID'] + TAB)
 	fp.write(r['symbol'] + TAB)
-	fp.write(r['date_complete'] + CRT)
+	fp.write(str(r['date_complete']) + CRT)
 
 reportlib.finish_nonps(fp)
 

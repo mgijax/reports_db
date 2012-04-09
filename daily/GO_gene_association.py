@@ -155,7 +155,7 @@ fp.write('!\n')
 #
 # retrieve all dag abbrevations for each term
 #
-results = db.sql('select distinct _Object_key, dagAbbrev = rtrim(dagAbbrev) from DAG_Node_View where _Vocab_key = 4', 'auto')
+results = db.sql('select distinct _Object_key, rtrim(dagAbbrev) as dagAbbrev from DAG_Node_View where _Vocab_key = 4', 'auto')
 dag = {}
 for r in results:
     dag[r['_Object_key']] = r['dagAbbrev']
@@ -168,7 +168,7 @@ db.sql('''select a._Term_key, t.term, ta.accID as termID, q.synonym as qualifier
     	e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
     	e._Refs_key, e._ModifiedBy_key, 
     	m.symbol, m.name, lower(mt.name) as markerType
-    into #gomarker 
+    into #gomarker1 
     from VOC_Annot a, 
 	 ACC_Accession ta, 
 	 VOC_Term t, 
@@ -188,17 +188,17 @@ db.sql('''select a._Term_key, t.term, ta.accID as termID, q.synonym as qualifier
     and a._Qualifier_key = q._Object_key 
     and q._SynonymType_key = 1023
     ''', None)
-db.sql('create index idx1 on #gomarker(_Object_key)', None)
-db.sql('create index idx2 on #gomarker(_EvidenceTerm_key)', None)
-db.sql('create index idx3 on #gomarker(_Refs_key)', None)
-db.sql('create index idx4 on #gomarker(_ModifiedBy_key)', None)
-db.sql('create index idx5 on #gomarker(_AnnotEvidence_key)', None)
+db.sql('create index gomarker1_idx1 on #gomarker1(_Object_key)', None)
+db.sql('create index gomarker1_idx2 on #gomarker1(_EvidenceTerm_key)', None)
+db.sql('create index gomarker1_idx3 on #gomarker1(_Refs_key)', None)
+db.sql('create index gomarker1_idx4 on #gomarker1(_ModifiedBy_key)', None)
+db.sql('create index gomarker1_idx5 on #gomarker1(_AnnotEvidence_key)', None)
 
 #
 # retrieve synonyms for markers in data set
 #
 results = db.sql('''select distinct g._Object_key, s.synonym 
-    from #gomarker g, MGI_Synonym s, MGI_SynonymType st 
+    from #gomarker1 g, MGI_Synonym s, MGI_SynonymType st 
     where g._Object_key = s._Object_key 
     and s._MGIType_key = 2 
     and s._SynonymType_key = st._SynonymType_key 
@@ -222,8 +222,8 @@ db.sql('''select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom
     	b.accID as refID, 
     	rtrim(t.abbreviation) as eCode, 
     	u.login as assignedBy
-    into #results 
-    from #gomarker g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u 
+    into #gomarker2 
+    from #gomarker1 g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u 
     where g._Object_key = ma._Object_key 
     and ma._MGIType_key = 2 
     and ma.prefixPart = 'MGI:' 
@@ -235,16 +235,16 @@ db.sql('''select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom
     and b._LogicalDB_key = 1 
     and g._EvidenceTerm_key = t._Term_key 
     and g._ModifiedBy_key = u._User_key''', None)
-db.sql('create index idx1 on #results(symbol)', None)
-db.sql('create index idx2 on #results(_Refs_key)', None)
-db.sql('create index idx3 on #results(_AnnotEvidence_key)', None)
-db.sql('create index idx4 on #results(_Object_key)', None)
+db.sql('create index gomarker2_idx1 on #gomarker2(symbol)', None)
+db.sql('create index gomarker2_idx2 on #gomarker2(_Refs_key)', None)
+db.sql('create index gomarker2_idx3 on #gomarker2(_AnnotEvidence_key)', None)
+db.sql('create index gomarker2_idx4 on #gomarker2(_Object_key)', None)
 
 #
 # resolve PubMed IDs for References
 #
 pubMed = {}
-results = db.sql('''select distinct r._Refs_key, a.accID from #results r, ACC_Accession a 
+results = db.sql('''select distinct r._Refs_key, a.accID from #gomarker2 r, ACC_Accession a 
     where r._Refs_key = a._Object_key 
     and a._MGIType_key = 1 
     and a._LogicalDB_key = 29''', 'auto')
@@ -264,7 +264,7 @@ r1 = re.compile(r'(CL:[0-9]{7}?)', re.I)
 
 cellOntology = {}
 results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
-	from #results r, VOC_Evidence_Property p
+	from #gomarker2 r, VOC_Evidence_Property p
 	where r._AnnotEvidence_key = p._AnnotEvidence_key
 	and p._PropertyTerm_key = 6481774
 	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
@@ -295,7 +295,7 @@ isoformPattern5 = re.compile(r'PR:', re.I)
 
 isoformsProtein = {}
 results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
-	from #results r, VOC_Evidence_Property p
+	from #gomarker2 r, VOC_Evidence_Property p
 	where r._AnnotEvidence_key = p._AnnotEvidence_key
 	and p._PropertyTerm_key = 6481775
 	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
@@ -354,13 +354,13 @@ for r in results:
 
 results = db.sql('''
     select distinct r.symbol, mc._Marker_key, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
-    from #results r, SEQ_Marker_Cache mc 
+    from #gomarker2 r, SEQ_Marker_Cache mc 
     where r._Object_key = mc._Marker_key 
     and mc._Marker_Type_key = 1 
     and mc._Qualifier_key = 615421 
     union 
     select distinct r.symbol, mc._Marker_key, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
-    from #results r, SEQ_Marker_Cache mc, MRK_MCV_Cache mcv
+    from #gomarker2 r, SEQ_Marker_Cache mc, MRK_MCV_Cache mcv
     where r._Object_key = mc._Marker_key 
     and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615420
@@ -408,7 +408,7 @@ for r in results:
 #
 # process results
 #
-results = db.sql('select * from #results order by symbol', 'auto')
+results = db.sql('select * from #gomarker2 order by symbol', 'auto')
 for r in results:
 
     reportRow = ''    
