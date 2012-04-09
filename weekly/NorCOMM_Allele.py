@@ -37,10 +37,10 @@
  
 import sys 
 import os
-import db
 import string
-import reportlib
+import db
 import mgi_html
+import reportlib
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE

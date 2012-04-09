@@ -31,10 +31,9 @@ HMD_Synonyms.py
 
 import sys
 import os
+import string
 import db
 import reportlib
-import string
-
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE

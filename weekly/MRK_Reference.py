@@ -26,9 +26,9 @@
  
 import sys 
 import os
+import string
 import db
 import reportlib
-import string
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT

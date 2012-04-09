@@ -123,9 +123,8 @@ import os
 import string
 import re
 import db
-import reportlib
 import mgi_utils
-
+import reportlib
 
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'

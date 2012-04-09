@@ -3,8 +3,7 @@ DATE: 04/09/2012
 STAFF: lec
 CHANGES:
 1) convert to using one db.sql() per sql command in preparation for postgres
-ALL_CellLine_GeneTrap.py 
-ALL_CellLine_Targeted.py
+2) re-order import statements in prep for postgres changes
 
 TAG: reports_db-5-0-0-1
 DATE: 03/29/2012

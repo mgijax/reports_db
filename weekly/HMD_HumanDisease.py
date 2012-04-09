@@ -32,10 +32,9 @@
  
 import os
 import sys
-import reportlib
-import db
 import string
-
+import db
+import reportlib
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE

@@ -42,8 +42,8 @@
  
 import sys 
 import os
-import db
 import string
+import db
 import reportlib
 
 CRT = reportlib.CRT
