@@ -131,7 +131,9 @@ def main():
 	order by moc.term, moc._genotype_key
 	'''
 
-    db.sql(cmd, generate)
+    results = db.sql(cmd, 'auto')
+    for r in results:
+	generate(r)
 
     reportlib.finish_nonps(fp)
 
