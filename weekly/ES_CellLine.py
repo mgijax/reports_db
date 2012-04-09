@@ -34,12 +34,14 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 # Get the cell lines and strains
 #
-results = db.sql('select a.cellLine, p.strain ' + \
-                 'from ALL_CellLine a, PRB_Strain p ' + \
-                 'where a.isMutant = 0 and ' + \
-                       'a.cellLine not in ("Not Applicable","Not Specified","Other (see notes)") and ' + \
-                       'a._Strain_key = p._Strain_key ' + \
-                 'order by a.cellLine','auto')
+results = db.sql('''
+		select a.cellLine, p.strain 
+                from ALL_CellLine a, PRB_Strain p 
+                where a.isMutant = 0 
+                      and a.cellLine not in ("Not Applicable","Not Specified","Other (see notes)") 
+                      and a._Strain_key = p._Strain_key
+                order by a.cellLine
+		''', 'auto')
 
 # Create the report
 #
