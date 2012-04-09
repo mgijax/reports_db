@@ -40,11 +40,11 @@
 #
 '''
  
-import os
 import sys
-import reportlib
-import db
+import os
 import re
+import db
+import reportlib
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE

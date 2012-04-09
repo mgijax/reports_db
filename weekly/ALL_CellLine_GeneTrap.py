@@ -122,10 +122,9 @@ db.sql('''select g._Allele_key, cv.vector, cv.parentCellLine, s2.strain
 	where g._Allele_key = cv._Allele_key  
 	    and cv.isMutant = 1  
 	    and cv.parentCellLine_key = p._CellLine_key 
-	    and p._Strain_key = s2._Strain_key''')
-db.sql('''create index idx_alleleKey on #cells (_Allele_key)''')
-db.sql('''create table #imsrCounts(accID varchar(30), 
-	abbrevName varchar(30), cType int)''')
+	    and p._Strain_key = s2._Strain_key''', None)
+db.sql('''create index idx_alleleKey on #cells (_Allele_key)''', None)
+db.sql('''create table #imsrCounts(accID varchar(30), abbrevName varchar(30), cType int)''', None)
 	
 db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 

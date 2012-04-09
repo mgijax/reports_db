@@ -29,42 +29,42 @@
 import sys
 import os
 import db
-import reportlib
 import mgi_utils
+import reportlib
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
 fp = reportlib.init('go_refs', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-cmds = []
+db.sql('''
+       select distinct e._Refs_key, b.accID 
+       into #gorefs 
+       from VOC_Annot a, VOC_Evidence e, ACC_Accession b 
+       where a._AnnotType_key = 1000 
+       and a._Annot_key = e._Annot_key 
+       and e._Refs_key = b._Object_key 
+       and b._MGIType_key = 1 
+       and b.prefixPart = "MGI:" 
+       and b._LogicalDB_key = 1
+       ''', None)
 
-cmds.append('select distinct e._Refs_key, b.accID ' + \
-	'into #gorefs ' + \
-	'from VOC_Annot a, VOC_Evidence e, ACC_Accession b ' + \
-	'where a._AnnotType_key = 1000 ' + \
-	'and a._Annot_key = e._Annot_key ' + \
-	'and e._Refs_key = b._Object_key ' + \
-	'and b._MGIType_key = 1 ' + \
-	'and b.prefixPart = "MGI:" ' + \
-	'and b._LogicalDB_key = 1')
+results = db.sql('''
+	select g.*, pubMedID = b.accID 
+	from #gorefs g, ACC_Accession b 
+	where g._Refs_key = b._Object_key 
+	and b._MGIType_key = 1 
+	and b._LogicalDB_key = 29 
+        union 
+        select g.*, null 
+	from #gorefs g 
+	where not exists (select 1 from ACC_Accession b 
+	where g._Refs_key = b._Object_key 
+	and b._MGIType_key = 1 
+	and b._LogicalDB_key = 29)
+	''', 'auto')
 
-cmds.append('select g.*, pubMedID = b.accID ' + \
-	'from #gorefs g, ACC_Accession b ' + \
-	'where g._Refs_key = b._Object_key ' + \
-	'and b._MGIType_key = 1 ' + \
-	'and b._LogicalDB_key = 29 ' + \
-        'union ' + \
-        'select g.*, null ' + \
-	'from #gorefs g ' + \
-	'where not exists (select 1 from ACC_Accession b ' + \
-	'where g._Refs_key = b._Object_key ' + \
-	'and b._MGIType_key = 1 ' + \
-	'and b._LogicalDB_key = 29)')
-
-results = db.sql(cmds, 'auto')
-
-for r in results[-1]:
+for r in results:
 	fp.write(r['accID'] + TAB)
 	fp.write(mgi_utils.prvalue(r['pubMedID']) + CRT)
 

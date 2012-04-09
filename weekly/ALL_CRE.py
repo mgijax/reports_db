@@ -67,14 +67,12 @@
 
 import sys
 import os
+import types
+import urllib
 import db
 import reportlib
 
-import types
-import urllib
-
 eUtilUrl = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
-
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
