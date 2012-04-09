@@ -42,33 +42,39 @@ def processOrganism(organismKey):
 
     # select all markers of given organism which have a homology
 
-    db.sql('select distinct m._Marker_key, m.chromosome, m._Organism_key, hm._Class_key, s.commonName, c.sequenceNum ' + \
-        'into #markers ' + \
-	'from MRK_Marker m, MRK_Homology_Cache hm, MGI_Organism s, MRK_Chromosome c ' + \
-	'where m._Organism_key = %s ' % (organismKey) + \
-	'and m._Marker_key = hm._Marker_key ' + \
-	'and m._Organism_key = s._Organism_key ' + \
-	'and m._Organism_key = c._Organism_key ' + \
-	'and m.chromosome = c.chromosome', None)
+    db.sql('''
+        select distinct m._Marker_key, m.chromosome, m._Organism_key, hm._Class_key, s.commonName, c.sequenceNum
+        into #markers
+        from MRK_Marker m, MRK_Homology_Cache hm, MGI_Organism s, MRK_Chromosome c
+        where m._Organism_key = %s
+        and m._Marker_key = hm._Marker_key
+        and m._Organism_key = s._Organism_key
+        and m._Organism_key = c._Organism_key
+        and m.chromosome = c.chromosome
+        ''' % (organismKey), None)
 
-    db.sql('create nonclustered index idx_key on #markers(_Class_key)', None)
+    db.sql('create index idx_key on #markers(_Class_key)', None)
 
     # select all distinct homology occurences for primary organism
     # verify numbers by checking Oxford Grid
     # sort by secondary organism, chromosome of primary organism, chromosome of secondary organism
 
-    results = db.sql('select distinct m._Class_key, ' + \
-	'organismA = m.commonName, chrA = m.chromosome, organismAKey = m._Organism_key, ' + \
-	'organismB = s2.commonName, chrB = m2.chromosome, organismBKey = m2._Organism_key  ' + \
-	'from #markers m, ' + \
-	'MRK_Homology_Cache hm, MRK_Marker m2, MGI_Organism s2, MRK_Chromosome c2 ' + \
-	'where m._Class_key = hm._Class_key ' + \
-	'and hm._Marker_key = m2._Marker_key ' + \
-	'and m2._Organism_key != %s ' % (organismKey) + \
-	'and m2._Organism_key = s2._Organism_key ' + \
-	'and m2._Organism_key = c2._Organism_key ' + \
-	'and m2.chromosome = c2.chromosome ' + \
-	'order by m2._Organism_key, m.sequenceNum, c2.sequenceNum', 'auto')
+    results = db.sql('''
+        select distinct m._Class_key, 
+        m.commonName as organismA, m.chromosome as chrA, m._Organism_key as organismAKey, 
+        s2.commonName as organismB, m2.chromosome as chrB, m2._Organism_key as organismBKey,
+        m.sequenceNum as msequenceNum,
+        c2.sequenceNum as c2sequenceNum
+        from #markers m, 
+        MRK_Homology_Cache hm, MRK_Marker m2, MGI_Organism s2, MRK_Chromosome c2 
+        where m._Class_key = hm._Class_key 
+        and hm._Marker_key = m2._Marker_key 
+        and m2._Organism_key != %s 
+        and m2._Organism_key = s2._Organism_key 
+        and m2._Organism_key = c2._Organism_key 
+        and m2.chromosome = c2.chromosome 
+        order by m2._Organism_key, msequenceNum, c2sequenceNum
+        ''' % (organismKey), 'auto')
 
     # drop the temp table so the next call to this method can recreate it
     # for the next organism.

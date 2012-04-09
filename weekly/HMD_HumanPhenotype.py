@@ -82,9 +82,9 @@ db.sql('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' + \
 		'and h1._Marker_key = m1._Marker_key ' + \
 		'and h2._Marker_key = m2._Marker_key ', None)
 
-db.sql('create nonclustered index index_mouseKey on #homology(mouseKey)', None)
-db.sql('create nonclustered index index_humanKey on #homology(humanKey)', None)
-db.sql('create nonclustered index index_humanSym on #homology(humanSym)', None)
+db.sql('create index index_mouseKey on #homology(mouseKey)', None)
+db.sql('create index index_humanKey on #homology(humanKey)', None)
+db.sql('create index index_humanSym on #homology(humanSym)', None)
 
 #
 # Get the MGI IDs for the mouse markers

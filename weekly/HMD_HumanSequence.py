@@ -79,9 +79,9 @@ cmds.append('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' 
 	'and h1._Homology_key = ha._Homology_key ' + \
 	'and ha._Assay_key = a._Assay_key')
 
-cmds.append('create nonclustered index index_mouseKey on #homology(mouseKey)')
-cmds.append('create nonclustered index index_humanKey on #homology(humanKey)')
-cmds.append('create nonclustered index index_humanSym on #homology(humanSym)')
+cmds.append('create index homology_index_mouseKey on #homology(mouseKey)')
+cmds.append('create index homology_index_humanKey on #homology(humanKey)')
+cmds.append('create index homology_index_humanSym on #homology(humanSym)')
 
 cmds.append('select distinct h.mouseKey, mr.jnumID, mr.pubMedID ' + \
 	'into #homologyRef ' + \
@@ -91,7 +91,7 @@ cmds.append('select distinct h.mouseKey, mr.jnumID, mr.pubMedID ' + \
       	'hc._Marker_key = mr._Marker_key and ' + \
       	'hc._Refs_key = mr._Refs_key')
 
-cmds.append('create nonclustered index index_mouseKey on #homologyRef(mouseKey)')
+cmds.append('create index homologyRef_index_mouseKey on #homologyRef(mouseKey)')
 
 db.sql(cmds, None)
 

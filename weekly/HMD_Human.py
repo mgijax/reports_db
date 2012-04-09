@@ -160,13 +160,13 @@ def runQueries():
 	       'and h1._Class_key = h2._Class_key ' + \
 	       'and h2._Organism_key = 1', None)
 
-	db.sql('create nonclustered index idx_hkey on #allhomologies(humanMarkerKey)', None)
-	db.sql('create nonclustered index idx_mkey on #allhomologies(mouseMarkerKey)', None)
+	db.sql('create index idx_hkey on #allhomologies(humanMarkerKey)', None)
+	db.sql('create index idx_mkey on #allhomologies(mouseMarkerKey)', None)
 
 	db.sql('select h.humanMarkerKey, h.mouseMarkerKey, ' + \
 		'humanOrganism = m1._Organism_key, ' + \
 		'humanSymbol = m1.symbol, ' + \
-		'humanChr = m1.chromosome + m1.cytogeneticOffset, ' + \
+		'humanChr = m1.chromosome || m1.cytogeneticOffset, ' + \
 		'm1.chromosome, ' + \
 		'm1.cytogeneticOffset, ' + \
 		'mouseOrganism = m2._Organism_key, ' + \
@@ -188,10 +188,10 @@ def runQueries():
 		'and h.mouseMarkerKey = o._Marker_key ' + \
 		'and o.source = 0 ', None)
 
-	db.sql('create nonclustered index idx_hkey1 on #homologies(humanOrganism)', None)
-	db.sql('create nonclustered index idx_mkey1 on #homologies(mouseOrganism)', None)
-	db.sql('create nonclustered index idx_hkey2 on #homologies(humanSymbol)', None)
-	db.sql('create nonclustered index idx_mkey2 on #homologies(mouseSymbol)', None)
+	db.sql('create index idx_hkey1 on #homologies(humanOrganism)', None)
+	db.sql('create index idx_mkey1 on #homologies(mouseOrganism)', None)
+	db.sql('create index idx_hkey2 on #homologies(humanSymbol)', None)
+	db.sql('create index idx_mkey2 on #homologies(mouseSymbol)', None)
 
 	##
 
@@ -725,7 +725,6 @@ def processSort5(results):
 #
 
 db.useOneConnection(1)
-db.set_sqlLogFunction(db.sqlLogAll)
 sortOption = None
 
 if len(sys.argv) > 1:

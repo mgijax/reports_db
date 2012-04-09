@@ -158,29 +158,28 @@ def runQueries():
 	       'and h1._Class_key = h2._Class_key ' + \
 	       'and h2._Organism_key = 2', None)
 
-	db.sql('create nonclustered index idx_hkey on #allhomologies(ratMarkerKey)', None)
-	db.sql('create nonclustered index idx_mkey on #allhomologies(humanMarkerKey)', None)
+	db.sql('create index idx_hkey on #allhomologies(ratMarkerKey)', None)
+	db.sql('create index idx_mkey on #allhomologies(humanMarkerKey)', None)
 
-	db.sql('select h.ratMarkerKey, h.humanMarkerKey, ' + \
-		'ratOrganism = m1._Organism_key, ' + \
-		'ratSymbol = m1.symbol, ' + \
-		'ratChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-		'ratChrOnly = m1.chromosome, ' + \
-		'ratCyto = m1.cytogeneticOffset, ' + \
-		'humanOrganism = m2._Organism_key, ' + \
-		'humanSymbol = m2.symbol, ' + \
-		'humanChr = m2.chromosome + m2.cytogeneticOffset, ' + \
-		'humanChrOnly = m2.chromosome, ' + \
-		'humanCyto = m2.cytogeneticOffset ' + \
-		'into #homologies ' + \
-		'from #allhomologies h, MRK_Marker m1, MRK_Marker m2 ' + \
-		'where h.ratMarkerKey = m1._Marker_key ' + \
-		'and h.humanMarkerKey = m2._Marker_key ', None)
+        db.sql('select h.ratMarkerKey, h.humanMarkerKey, ' + \
+                'm1._Organism_key as ratOrganism, ' + \
+                'm1.symbol as ratSymbol, ' + \
+                'm1.chromosome || m1.cytogeneticOffset as ratChr, ' + \
+                'm1.chromosome as ratChrOnly, ' + \
+                'm1.cytogeneticOffset as ratCyto, ' + \
+                'm2._Organism_key as humanOrganism, ' + \
+                'm2.symbol as humanSymbol, ' + \
+                'm2.chromosome || m2.cytogeneticOffset as humanChr, ' + \
+                'm2.chromosome as humanChrOnly, ' + \
+                'm2.cytogeneticOffset as humanCyto ' + \
+                'into #homologies ' + \
+                'from #allhomologies h, MRK_Marker m1, MRK_Marker m2 ' + \
+                'where h.ratMarkerKey = m1._Marker_key ' + \
 
-	db.sql('create nonclustered index idx_hkey1 on #homologies(ratOrganism)', None)
-	db.sql('create nonclustered index idx_mkey1 on #homologies(humanOrganism)', None)
-	db.sql('create nonclustered index idx_hkey2 on #homologies(ratSymbol)', None)
-	db.sql('create nonclustered index idx_mkey2 on #homologies(humanSymbol)', None)
+	db.sql('create index idx_hkey1 on #homologies(ratOrganism)', None)
+	db.sql('create index idx_mkey1 on #homologies(humanOrganism)', None)
+	db.sql('create index idx_hkey2 on #homologies(ratSymbol)', None)
+	db.sql('create index idx_mkey2 on #homologies(humanSymbol)', None)
 
 	# rat entrezgene ids
 
@@ -307,7 +306,7 @@ def processSort1(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(string.ljust(str(r['ratChr']), 15))
 		fp.write(SPACE)
 
 		if ratEG.has_key(r['ratMarkerKey']):
@@ -318,7 +317,7 @@ def processSort1(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 25))
+		fp.write(string.ljust(str(r['humanChr']), 25))
 		fp.write(SPACE)
 
 		if humanEG.has_key(r['humanMarkerKey']):
@@ -407,7 +406,7 @@ def processSort2(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(string.ljust(r['humanChr'], 25))
+		fp.write(string.ljust(str(r['humanChr']), 25))
 		fp.write(SPACE)
 
 		if humanEG.has_key(r['humanMarkerKey']):
@@ -418,7 +417,7 @@ def processSort2(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(string.ljust(str(r['ratChr']), 15))
 		fp.write(SPACE)
 
 		if ratEG.has_key(r['ratMarkerKey']):
@@ -486,7 +485,7 @@ def processSort3(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(string.ljust(str(r['ratChr']), 15))
 		fp.write(SPACE)
 
 		if humanEG.has_key(r['humanMarkerKey']):
@@ -497,7 +496,7 @@ def processSort3(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 25))
+		fp.write(string.ljust(str(r['humanChr']), 25))
 		fp.write(SPACE)
 		printDataAttributes(fp, r['ratMarkerKey'])
 		fp.write(CRT)
@@ -557,7 +556,7 @@ def processSort4(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 25))
+		fp.write(string.ljust(str(r['humanChr']), 25))
 		fp.write(SPACE)
 
 		if ratEG.has_key(r['ratMarkerKey']):
@@ -568,7 +567,7 @@ def processSort4(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(string.ljust(str(r['ratChr']), 15))
 		fp.write(SPACE)
 		printDataAttributes(fp, r['ratMarkerKey'])
 		fp.write(CRT)
@@ -623,14 +622,14 @@ def processSort5(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(r['ratChr'] + TAB)
+		fp.write(str(r['ratChr']) + TAB)
 
 		if ratEG.has_key(r['ratMarkerKey']):
 			fp.write(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]))
 		fp.write(TAB)
 
 		fp.write(r['ratSymbol'] + TAB)
-		fp.write(r['humanChr'] + TAB)
+		fp.write(str(r['humanChr']) + TAB)
 
 		if humanEG.has_key(r['humanMarkerKey']):
 			fp.write(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]))

@@ -135,8 +135,8 @@ def runQueries(organismKey):
 	       'and h1._Class_key = h2._Class_key ' + \
 	       'and h2._Organism_key = 1', None)
 
-	db.sql('create nonclustered index idx_hkey on #allhomologies(otherMarkerKey)', None)
-	db.sql('create nonclustered index idx_mkey on #allhomologies(mouseMarkerKey)', None)
+	db.sql('create index idx_hkey on #allhomologies(otherMarkerKey)', None)
+	db.sql('create index idx_mkey on #allhomologies(mouseMarkerKey)', None)
 
 	db.sql('select h.otherMarkerKey, h.mouseMarkerKey, ' + \
 		'otherOrganism = m1._Organism_key, ' + \
@@ -163,10 +163,10 @@ def runQueries(organismKey):
 		'and h.mouseMarkerKey = o._Marker_key ' + \
 		'and o.source = 0 ', None)
 
-	db.sql('create nonclustered index idx_hkey1 on #homologies(otherOrganism)', None)
-	db.sql('create nonclustered index idx_mkey1 on #homologies(mouseOrganism)', None)
-	db.sql('create nonclustered index idx_hkey2 on #homologies(otherSymbol)', None)
-	db.sql('create nonclustered index idx_mkey2 on #homologies(mouseSymbol)', None)
+	db.sql('create index idx_hkey1 on #homologies(otherOrganism)', None)
+	db.sql('create index idx_mkey1 on #homologies(mouseOrganism)', None)
+	db.sql('create index idx_hkey2 on #homologies(otherSymbol)', None)
+	db.sql('create index idx_mkey2 on #homologies(mouseSymbol)', None)
 
 	# other entrezgene ids
 
@@ -293,8 +293,6 @@ def process(organismKey, results):
 #
 # Main
 #
-
-db.set_sqlLogFunction(db.sqlLogAll)
 
 for organismKey in organismLookup.keys():
     db.useOneConnection(1)

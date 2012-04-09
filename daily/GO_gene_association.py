@@ -465,7 +465,7 @@ for r in results:
         reportRow = reportRow + SPECIES + TAB
 
 	# column 14
-        reportRow = reportRow + r['mDate'] + TAB
+        reportRow = reportRow + str(r['mDate']) + TAB
 
 	# column 15; assigned by
         if r['assignedBy'] == UNIPROTKB:

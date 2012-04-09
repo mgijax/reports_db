@@ -66,9 +66,9 @@ db.sql('select distinct mouseKey = h1._Marker_key, mouseSymbol = m1.symbol, ' +
         'and h1._Marker_key = m1._Marker_key ' + \
         'and h2._Marker_key = m2._Marker_key ', None)
 
-db.sql('create nonclustered index idx1 on #homology(mouseKey)', None)
-db.sql('create nonclustered index idx2 on #homology(humanKey)', None)
-db.sql('create nonclustered index idx3 on #homology(mouseSymbol)', None)
+db.sql('create index idx1 on #homology(mouseKey)', None)
+db.sql('create index idx2 on #homology(humanKey)', None)
+db.sql('create index idx3 on #homology(mouseSymbol)', None)
 
 ##
 
