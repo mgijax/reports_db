@@ -90,6 +90,7 @@ db.sql('create index markersAll_idx2 on #markersAll(symbol)', None)
 db.sql('create index markersAll_idx3 on #markersAll(sequenceNum)', None)
 
 db.sql('''
+    (
     select a.accID, m.chromosome, m.cmPosition, m.symbol, 
 	   m.markerStatus, m.name, m.markerType, m.sequenceNum
     into #markersPrint
@@ -105,7 +106,8 @@ db.sql('''
 	   m.name, m.markerType, m.sequenceNum
     from #markersAll m
     where m._Marker_Status_key = 2
-    order by m.sequenceNum, m.symbol
+    )
+    order by sequenceNum, symbol
     ''', None)
 
 results = db.sql('''
