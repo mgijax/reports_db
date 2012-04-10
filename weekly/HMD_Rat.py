@@ -173,30 +173,31 @@ def runQueries():
 	db.sql('create index idx_hkey on #allhomologies(ratMarkerKey)', None)
 	db.sql('create index idx_mkey on #allhomologies(mouseMarkerKey)', None)
 
-	db.sql('select h.ratMarkerKey, h.mouseMarkerKey, ' + \
-		'ratOrganism = m1._Organism_key, ' + \
-		'ratSymbol = m1.symbol, ' + \
-		'ratChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-		'm1.chromosome, ' + \
-		'm1.cytogeneticOffset, ' + \
-		'mouseOrganism = m2._Organism_key, ' + \
-		'mouseSymbol = m2.symbol, ' + \
-		'mouseChr = m2.chromosome, ' + \
-		'mouseBand = m2.cytogeneticOffset, ' + \
-		'mouseName = substring(m2.name, 1, 75), ' + \
-                'mouseCm = ' + \
-        	'case ' + \
-        	'when o.offset >= 0 then str(o.offset, 10, 2) ' + \
-        	'when o.offset = -999.0 then "       N/A" ' + \
-        	'when o.offset = -1.0 then "  syntenic" ' + \
-        	'end,' + \
-		'mouseOffset = o.offset ' + \
-		'into #homologies ' + \
-		'from #allhomologies h, MRK_Marker m1, MRK_Marker m2, MRK_Offset o ' + \
-		'where h.ratMarkerKey = m1._Marker_key ' + \
-		'and h.mouseMarkerKey = m2._Marker_key ' + \
-		'and h.mouseMarkerKey = o._Marker_key ' + \
-		'and o.source = 0 ', None)
+	db.sql('''
+		select h.ratMarkerKey, h.mouseMarkerKey, 
+		m1._Organism_key as ratOrganism, 
+		m1.symbol as ratSymbol, 
+		m1.chromosome || m1.cytogeneticOffset as ratChr, 
+		m1.chromosome, 
+		m1.cytogeneticOffset, 
+		m2._Organism_key as mouseOrganism, 
+		m2.symbol as mouseSymbol, 
+		m2.chromosome as mouseChr, 
+		m2.cytogeneticOffset as mouseBand, 
+		substring(m2.name, 1, 75) as mouseName, 
+		o.offset as mouseOffset,
+        	case 
+        	when o.offset >= 0 then str(o.offset, 10, 2) 
+        	when o.offset = -999.0 then "       N/A" 
+        	when o.offset = -1.0 then "  syntenic" 
+        	end as mouseCm
+		into #homologies 
+		from #allhomologies h, MRK_Marker m1, MRK_Marker m2, MRK_Offset o 
+		where h.ratMarkerKey = m1._Marker_key 
+		and h.mouseMarkerKey = m2._Marker_key 
+		and h.mouseMarkerKey = o._Marker_key 
+		and o.source = 0 
+		''', None)
 
 	db.sql('create index idx_hkey1 on #homologies(ratOrganism)', None)
 	db.sql('create index idx_mkey1 on #homologies(mouseOrganism)', None)
@@ -353,7 +354,7 @@ def processSort1(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(string.ljust(str(r['ratChr']), 15))
 		fp.write(SPACE)
 
 		if ratEG.has_key(r['ratMarkerKey']):
@@ -457,7 +458,7 @@ def processSort2(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(string.ljust(str(r['ratChr']), 15))
 		fp.write(SPACE)
 
 		if ratEG.has_key(r['ratMarkerKey']):
@@ -540,7 +541,7 @@ def processSort3(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(string.ljust(str(r['ratChr']), 15))
 		fp.write(SPACE)
 		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
@@ -647,7 +648,7 @@ def processSort4(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['ratChr'], 15))
+		fp.write(string.ljust(str(r['ratChr']), 15))
 		fp.write(SPACE)
 		printDataAttributes(fp, r['ratMarkerKey'])
 		fp.write(CRT)
@@ -707,7 +708,7 @@ def processSort5(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(r['ratChr'] + TAB)
+		fp.write(str(r['ratChr']) + TAB)
 
 		if ratEG.has_key(r['ratMarkerKey']):
 			fp.write(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]))
