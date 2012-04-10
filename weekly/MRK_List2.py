@@ -22,7 +22,6 @@
 import sys 
 import os
 import string
-import mgi_utils
 import reportlib
 
 try:
@@ -98,7 +97,7 @@ results = db.sql('''
     order by m.symbol
     ''', 'auto')
 for r in results:
-    fp.write(mgi_utils.prvalue(r['accID']) + TAB)
+    fp.write(r['accID'] + TAB)
     fp.write(r['cmPosition'] + TAB)
     fp.write(r['symbol'] + TAB)
     fp.write(r['markerType'] + CRT)
