@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for i in postgres/*.py
+for i in */*.py
 do
 ed $i <<END
 /import db

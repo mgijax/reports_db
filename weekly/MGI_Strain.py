@@ -30,9 +30,20 @@
 import sys
 import os
 import string
-import db
 import mgi_utils
 import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 
 #
 # Main
@@ -43,15 +54,17 @@ fp2 = reportlib.init('MGI_Strain2', outputdir = os.environ['REPORTOUTPUTDIR'], p
 
 # Retrieve all Strains w/ Standard = true, Private = false
 
-db.sql('select s.strain, s.strainType, a.accID ' + \
-	'into #strain ' + \
-	'from PRB_Strain_View s, ACC_Accession a ' + \
-	'where s.standard = 1 ' + \
-	'and s.private = 0 ' + \
-	'and s._Strain_key = a._Object_key ' + \
-	'and a._MGIType_key = 10 ' + \
-	'and a.prefixPart = "MGI:" ' +
-	'and a.preferred = 1', None)
+db.sql('''
+	select s.strain, s.strainType, a.accID 
+	into #strain 
+	from PRB_Strain_View s, ACC_Accession a 
+	where s.standard = 1 
+	and s.private = 0 
+	and s._Strain_key = a._Object_key 
+	and a._MGIType_key = 10 
+	and a.prefixPart = "MGI:" 
+	and a.preferred = 1
+	''', None)
 
 results = db.sql('select * from #strain order by strain', 'auto')
 for r in results:

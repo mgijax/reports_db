@@ -35,9 +35,20 @@
 import sys
 import os
 import string
-import db
 import mgi_utils
 import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -63,16 +74,18 @@ fp.write('#\n')
 # select RIKEN clones
 #
 
-db.sql('select a1._Object_key, cloneID = a1.accID, mgiID = a2.accID ' + \
-	'into #riken ' + \
-	'from ACC_Accession a1, ACC_Accession a2 ' + \
-	'where a1._MGIType_key = 3 ' + \
-	'and a1._LogicalDB_key = 26 ' + \
-	'and a1._Object_key = a2._Object_key ' + \
-	'and a2._MGIType_key = 3 ' + \
-	'and a2._LogicalDB_key = 1 ' + \
-	'and a2.prefixPart = "MGI:" ' + \
-	'and a2.preferred = 1', None)
+db.sql('''
+	select a1._Object_key, cloneID = a1.accID, mgiID = a2.accID 
+	into #riken 
+	from ACC_Accession a1, ACC_Accession a2 
+	where a1._MGIType_key = 3 
+	and a1._LogicalDB_key = 26 
+	and a1._Object_key = a2._Object_key 
+	and a2._MGIType_key = 3 
+	and a2._LogicalDB_key = 1 
+	and a2.prefixPart = "MGI:" 
+	and a2.preferred = 1
+	''', None)
 
 db.sql('create index idx_key on #riken(_Object_key)', None)
 
@@ -82,14 +95,16 @@ db.sql('create index idx_key on #riken(_Object_key)', None)
 # there should be at most one per RIKEN clone
 #
 
-results = db.sql('select r._Object_key, a.accID ' + \
-    'from #riken r, SEQ_Probe_Cache p, SEQ_Sequence s, ACC_Accession a ' + \
-    'where r._Object_key = p._Probe_key ' + \
-    'and p._Sequence_key = s._Sequence_key ' + \
-    'and s._SequenceProvider_key in (316375, 316380) ' + \
-    'and p._Sequence_key = a._Object_key ' + \
-    'and a._MGIType_key = 19 ' + \
-    'and a._LogicalDB_key = 9', 'auto')
+results = db.sql('''
+	select r._Object_key, a.accID 
+    	from #riken r, SEQ_Probe_Cache p, SEQ_Sequence s, ACC_Accession a 
+    	where r._Object_key = p._Probe_key 
+    	and p._Sequence_key = s._Sequence_key 
+    	and s._SequenceProvider_key in (316375, 316380) 
+    	and p._Sequence_key = a._Object_key 
+    	and a._MGIType_key = 19 
+    	and a._LogicalDB_key = 9
+	''', 'auto')
 
 seqIDs = {}
 for r in results:
@@ -101,10 +116,12 @@ for r in results:
 # problem sequences
 #
 
-results = db.sql('select distinct r._Object_key ' + \
-	'from #riken r, PRB_Notes n ' + \
-	'where r._Object_key = n._Probe_key ' + \
-	'and n.note like "%curatorial staff have found evidence of artifact in the sequence of this molecular%"', 'auto')
+results = db.sql('''
+	select distinct r._Object_key 
+	from #riken r, PRB_Notes n 
+	where r._Object_key = n._Probe_key 
+	and n.note like "%curatorial staff have found evidence of artifact in the sequence of this molecular%"
+	''', 'auto')
 
 problemClones = []
 for r in results:
@@ -114,21 +131,25 @@ for r in results:
 # final results
 #
 
-results = db.sql('select r.*, markerID = ma.accID, m.symbol, m.name ' + \
-	'from #riken r, PRB_Marker pm, ACC_Accession ma, MRK_Marker m ' + \
-	'where r._Object_key = pm._Probe_key ' + \
-	'and pm._Marker_key = ma._Object_key ' + \
-	'and ma._MGIType_key = 2 ' + \
-	'and ma._LogicalDB_key = 1 ' + \
-	'and ma.prefixPart = "MGI:" ' + \
-	'and ma.preferred = 1 ' + \
-	'and pm._Marker_key = m._Marker_key ' + \
-	'union ' + \
-        'select r.*, markerID = null, symbol = null, name = null ' + \
-	'from #riken r ' + \
-	'where not exists (select 1 from PRB_Marker pm ' + \
-	'where r._Object_key = pm._Probe_key) ' + \
-	'order by r.cloneID', 'auto')
+results = db.sql('''
+	(
+	select r.*, ma.accID as markerID, m.symbol, m.name 
+	from #riken r, PRB_Marker pm, ACC_Accession ma, MRK_Marker m 
+	where r._Object_key = pm._Probe_key 
+	and pm._Marker_key = ma._Object_key 
+	and ma._MGIType_key = 2 
+	and ma._LogicalDB_key = 1 
+	and ma.prefixPart = "MGI:" 
+	and ma.preferred = 1 
+	and pm._Marker_key = m._Marker_key 
+	union 
+        select r.*, null as markerID, null as symbol, null as name
+	from #riken r 
+	where not exists (select 1 from PRB_Marker pm 
+	where r._Object_key = pm._Probe_key) 
+	)
+	order by cloneID
+	''', 'auto')
 
 for r in results:
 

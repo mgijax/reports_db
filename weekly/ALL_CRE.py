@@ -69,8 +69,19 @@ import sys
 import os
 import types
 import urllib
-import db
 import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 
 eUtilUrl = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
 

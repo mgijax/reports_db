@@ -47,9 +47,19 @@
 import sys 
 import os
 import string
-import db
-import mgi_html
 import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -229,15 +239,15 @@ db.sql('''
 	and a._Allele_Type_key = t._Term_key 
 	''', None)
 
-db.sql('create index idx1 on #knockouts(_Marker_key)', None)
-db.sql('create index idx2 on #knockouts(_Allele_key)', None)
+db.sql('create index knockouts_idx1 on #knockouts(_Marker_key)', None)
+db.sql('create index knockouts_idx2 on #knockouts(_Allele_key)', None)
 
 #
 # select unique set of markers
 #
 
 db.sql('''
-	select distinct m._Marker_key, m.symbol, name = substring(m.name,1,75), ma.accID 
+	select distinct m._Marker_key, m.symbol, substring(m.name,1,75) as name, ma.accID 
 	into #markers 
 	from #knockouts k, MRK_Marker m, ACC_Accession ma 
 	where k._Marker_key = m._Marker_key 
@@ -248,7 +258,7 @@ db.sql('''
 	and ma.preferred = 1 
 	''', None)
 
-db.sql('create index idx1 on #markers(symbol)', None)
+db.sql('create index markers_idx1 on #markers(symbol)', None)
 
 #
 # select those alleles that are in IMSR and that occur "alone" in a strain

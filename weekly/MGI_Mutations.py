@@ -30,9 +30,20 @@
  
 import sys 
 import os
-import db
 import string
 import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -165,12 +176,14 @@ def process():
     # lookup of Marker Detail Allele Categories-to-Allele Type key mappings
     #
 
-    results = db.sql('select categoryKey = vt1._Term_key, vt1.term, alleleTypeKey = vt2._Term_key ' + \
-           'from MGI_VocAssociationType mvat, MGI_VocAssociation mva, VOC_Term vt1, VOC_Term vt2 ' + \
-           'where mvat._AssociationType_key = 1001 ' + \
-	   'and mvat._AssociationType_key = mva._AssociationType_key ' + \
-	   'and mva._Term_key_1 = vt1._Term_key ' + \
-           'and mva._Term_key_2 = vt2._Term_key', 'auto')
+    results = db.sql('''
+	select vt1._Term_key as categoryKey, vt1.term, vt2._Term_key as alleleTypeKey
+        from MGI_VocAssociationType mvat, MGI_VocAssociation mva, VOC_Term vt1, VOC_Term vt2 
+        where mvat._AssociationType_key = 1001 
+	and mvat._AssociationType_key = mva._AssociationType_key 
+	and mva._Term_key_1 = vt1._Term_key
+        and mva._Term_key_2 = vt2._Term_key
+	''', 'auto')
     for r in results:
 	alleleCategories[r['alleleTypeKey']] = r
 
@@ -184,21 +197,23 @@ def process():
     #  VEGA
     #
 
-    db.sql('select m._Marker_key, m.symbol, name = substring(m.name,1,75), ma.accID ' + \
-	    'into #markers1 ' + \
-	    'from MRK_Marker m, ACC_Accession ma ' + \
-	    'where m._Organism_key = 1 ' + \
-	    'and m._Marker_Type_key = 1 ' + \
-	    'and m._Marker_Status_key in (1,3) ' + \
-	    'and m.chromosome != "MT" ' + \
-	    'and m._Marker_key = ma._Object_key ' + \
-	    'and ma._MGIType_key = 2 ' + \
-	    'and ma._LogicalDB_key = 1 ' + \
-	    'and ma.prefixPart = "MGI:" ' + \
-	    'and ma.preferred = 1 ' + \
-	    'and exists (select 1 from SEQ_Marker_Cache c where m._Marker_key = c._Marker_key ' + \
-	    'and c._LogicalDB_key in (59, 60, 85))', None)
-    db.sql('create index idx1 on #markers1(_Marker_key)', None)
+    db.sql('''
+	select m._Marker_key, m.symbol, substring(m.name,1,75) as name, ma.accID 
+	into #markers1 
+	from MRK_Marker m, ACC_Accession ma 
+	where m._Organism_key = 1 
+	and m._Marker_Type_key = 1 
+	and m._Marker_Status_key in (1,3) 
+	and m.chromosome != "MT" 
+	and m._Marker_key = ma._Object_key 
+	and ma._MGIType_key = 2 
+	and ma._LogicalDB_key = 1 
+	and ma.prefixPart = "MGI:" 
+	and ma.preferred = 1 
+	and exists (select 1 from SEQ_Marker_Cache c where m._Marker_key = c._Marker_key 
+	and c._LogicalDB_key in (59, 60, 85))
+	''', None)
+    db.sql('create index markers1_idx1 on #markers1(_Marker_key)', None)
 
     #
     # select all genes with mutations
@@ -207,15 +222,17 @@ def process():
     # include Approved (public) Alleles only
     #
 
-    db.sql('select m.*, a._Allele_Type_key ' + \
-	    'into #markers2 ' + \
-	    'from #markers1 m, ALL_Allele a ' + \
-	    'where m._Marker_key = a._Marker_key ' + \
-	    'and a.isWildType = 0 ' + \
-	    'and a._Allele_Type_key != 847130 ' + \
-	    'and a._Allele_Status_key = 847114 ' + \
-	    'order by m.symbol', None)
-    db.sql('create index idx1 on #markers2(_Marker_key)', None)
+    db.sql('''
+	select m.*, a._Allele_Type_key 
+	into #markers2 
+	from #markers1 m, ALL_Allele a 
+	where m._Marker_key = a._Marker_key 
+	and a.isWildType = 0 
+	and a._Allele_Type_key != 847130 
+	and a._Allele_Status_key = 847114 
+	order by m.symbol
+	''', None)
+    db.sql('create index markers2_idx1 on #markers2(_Marker_key)', None)
 
     results = db.sql('select * from #markers2', 'auto')
 

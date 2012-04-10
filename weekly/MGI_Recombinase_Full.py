@@ -43,8 +43,19 @@
 import sys 
 import os
 import string
-import db
 import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -211,7 +222,8 @@ printHeaderTAB()
 #
 
 db.sql('''
-       select distinct c._Allele_key, c.symbol, c.name, c.driverNote, a.accID, markerName = rtrim(m.name)
+       select distinct c._Allele_key, c.symbol, c.name, c.driverNote, 
+		a.accID, rtrim(m.name) as markerName
        into #cre
        from ALL_Cre_Cache c, ACC_Accession a, ALL_Allele aa, MRK_Marker m
        where c._Allele_key = a._Object_key

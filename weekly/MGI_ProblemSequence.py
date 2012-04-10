@@ -40,9 +40,20 @@
 import sys
 import os
 import string
-import db
 import mgi_utils
 import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 
 #
 # Main
@@ -50,63 +61,67 @@ import reportlib
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-cmds = []
-
 # Select probes w/ problem note
-cmds.append('select p._Probe_key, p.name ' + \
-      'into #probes ' + \
-      'from PRB_Notes n, PRB_Probe p ' + \
-      'where n.note like "%staff have found evidence of artifact in the sequence of this molecular%" ' + \
-      'and n._Probe_key = p._Probe_key')
+db.sql('''
+	select p._Probe_key, p.name 
+        into #probes 
+        from PRB_Notes n, PRB_Probe p 
+        where n.note like "%staff have found evidence of artifact in the sequence of this molecular%" 
+        and n._Probe_key = p._Probe_key
+	''', None)
 
 # Select probes w/ Seq IDs and without Seq IDs
-cmds.append('select distinct p._Probe_key, p.name, a.accID ' + \
-'into #probeseqs ' + \
-'from #probes p, ACC_Accession a ' + \
-'where p._Probe_key = a._Object_key  ' + \
-'and a._MGIType_key = 3 ' + \
-'and a._LogicalDB_key = 9 ' + \
-'union ' + \
-'select distinct p._Probe_key, p.name, null ' + \
-'from #probes p, ACC_Accession pa ' + \
-'where p._Probe_key = pa._Object_key ' + \
-'and pa._MGIType_key = 3 ' + \
-'and pa.prefixPart = "MGI:" ' + \
-'and pa._LogicalDB_key = 1 ' + \
-'and not exists (select 1 from ACC_Accession a ' + \
-'where p._Probe_key = a._Object_key  ' + \
-'and a._MGIType_key = 3 ' + \
-'and a._LogicalDB_key = 9) ' + \
-'order by p._Probe_key')
+db.sql('''
+	(
+	select distinct p._Probe_key, p.name, a.accID 
+	into #probeseqs 
+	from #probes p, ACC_Accession a 
+	where p._Probe_key = a._Object_key  
+	and a._MGIType_key = 3 
+	and a._LogicalDB_key = 9 
+	union 
+	select distinct p._Probe_key, p.name, null as accID
+	from #probes p, ACC_Accession pa 
+	where p._Probe_key = pa._Object_key 
+	and pa._MGIType_key = 3 
+	and pa.prefixPart = "MGI:" 
+	and pa._LogicalDB_key = 1 
+	and not exists (select 1 from ACC_Accession a 
+	where p._Probe_key = a._Object_key  
+	and a._MGIType_key = 3 
+	and a._LogicalDB_key = 9) 
+	)
+	order by _Probe_key
+	''', None)
 
 # Select probes w/ only one Seq ID
-cmds.append('select * into #forncbi from #probeseqs group by _Probe_key having count(*) = 1')
+db.sql('select * into #forncbi from #probeseqs p group by p._Probe_key having count(*) = 1', None)
 
 # Select probe's markers which hybridizie
-cmds.append('select n.*, markerID = ma.accID ' + \
-'from #forncbi n, PRB_Marker m, ACC_Accession ma ' + \
-'where n._Probe_key = m._Probe_key ' + \
-'and m.relationship = "H" ' + \
-'and m._Marker_key = ma._Object_key ' + \
-'and ma._MGIType_key = 2 ' + \
-'and ma.prefixPart = "MGI:" ' + \
-'and ma._LogicalDB_key = 1 ' + \
-'and ma.preferred = 1 ' + \
-'order by n.accID')
+results = db.sql('''
+	select n.*,ma.accID as markerID
+	from #forncbi n, PRB_Marker m, ACC_Accession ma 
+	where n._Probe_key = m._Probe_key 
+	and m.relationship = "H" 
+	and m._Marker_key = ma._Object_key 
+	and ma._MGIType_key = 2 
+	and ma.prefixPart = "MGI:" 
+	and ma._LogicalDB_key = 1 
+	and ma.preferred = 1 
+	order by n.accID
+	''', 'auto')
 
-results = db.sql(cmds, 'auto')
-
-prevProbe = ''
+prevProbe = 0
 markers = []
 
-for r in results[-1]:
+for r in results:
 
 	if prevProbe != r['_Probe_key']:
 		if len(markers) > 0:
 			fp.write(string.join(markers, ','))
 		markers = ''
 
-		if prevProbe != '':
+		if prevProbe > 0:
 			fp.write(reportlib.CRT)
 
 		fp.write(mgi_utils.prvalue(r['accID']) + reportlib.TAB)

@@ -64,8 +64,20 @@
 import sys 
 import os
 import string
-import db
+import mgi_utils
 import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -95,25 +107,28 @@ def init():
     global genomicToTranscript, genomicToProtein
 
     # Transcript ID lookup by Genomic ID
-    db.sql('select sa._Sequence_key_1 as transcriptKey, ' + \
-	    'sa._Sequence_key_2 as genomicKey ' + \
-	    'into #transGen ' + \
-	    'from SEQ_Sequence_Assoc sa ' + \
-	    'where sa._Qualifier_key = 5445464', None)  # transcribed from qualifier
-    db.sql('create index idx1 on ' + \
-	    '#transGen(transcriptKey)', None)
-    db.sql('create index idx2  on ' + \
-	    '#transGen(genomicKey)', None)
-    results = db.sql('select a1.accID as genomicID, a2.accID as transcriptID ' + \
-	    'from  #transGen t, ACC_Accession a1, ACC_Accession a2 ' + \
-	    'where t.genomicKey = a1._Object_key ' + \
-	    'and a1._MGIType_key = 19 ' + \
-	    'and a1.preferred = 1 ' + \
-	    'and t.transcriptKey = a2._Object_key ' + \
-	    'and a2._MGIType_key = 19 ' + \
-	    'and a2.preferred = 1 ' + \
-	    'order by a1.accID', 'auto')
+    # transcribed from qualifier
+    db.sql('''
+	select sa._Sequence_key_1 as transcriptKey, 
+	sa._Sequence_key_2 as genomicKey 
+	into #transGen 
+	from SEQ_Sequence_Assoc sa 
+	where sa._Qualifier_key = 5445464
+	''', None)  
+    db.sql('create index transGene_idx1 on transGen(transcriptKey)', None)
+    db.sql('create index transGene_idx2 on #transGen(genomicKey)', None)
 
+    results = db.sql('''
+	    select a1.accID as genomicID, a2.accID as transcriptID 
+	    from  #transGen t, ACC_Accession a1, ACC_Accession a2 
+	    where t.genomicKey = a1._Object_key 
+	    and a1._MGIType_key = 19 
+	    and a1.preferred = 1 
+	    and t.transcriptKey = a2._Object_key 
+	    and a2._MGIType_key = 19 
+	    and a2.preferred = 1 
+	    order by a1.accID
+	    ''', 'auto')
     genomicToTranscript = {}
     for r in results:
 	#print 'r:%s' % r
@@ -122,23 +137,28 @@ def init():
 	if not genomicToTranscript.has_key(key):
 	    genomicToTranscript[key] = []
 	genomicToTranscript[key].append(value)
-    # Protein ID lookup by Genomic ID
-    db.sql('select tg.genomicKey, ' + \
-	'sa._Sequence_key_1 as proteinKey ' + \
-	'into #protGen ' + \
-	'from #transGen tg, SEQ_Sequence_Assoc sa ' + \
-	'where sa._Qualifier_key = 5445465 ' + \
-	'and tg.transcriptKey =  sa._Sequence_key_2', None)
 
-    results = db.sql('select a1.accID as genomicID, a2.accID as proteinID ' + \
-	    'from  #protGen t, ACC_Accession a1, ACC_Accession a2 ' + \
-	    'where t.genomicKey = a1._Object_key ' + \
-	    'and a1._MGIType_key = 19 ' + \
-	    'and a1.preferred = 1 ' + \
-	    'and t.proteinKey = a2._Object_key ' + \
-	    'and a2._MGIType_key = 19 ' + \
-	    'and a2.preferred = 1 ' + \
-	    'order by a1.accID', 'auto')
+    # Protein ID lookup by Genomic ID
+    db.sql('''
+	select tg.genomicKey, 
+	sa._Sequence_key_1 as proteinKey 
+	into #protGen 
+	from #transGen tg, SEQ_Sequence_Assoc sa 
+	where sa._Qualifier_key = 5445465 
+	and tg.transcriptKey =  sa._Sequence_key_2
+	''', None)
+
+    results = db.sql('''
+	    select a1.accID as genomicID, a2.accID as proteinID 
+	    from  #protGen t, ACC_Accession a1, ACC_Accession a2 
+	    where t.genomicKey = a1._Object_key 
+	    and a1._MGIType_key = 19 
+	    and a1.preferred = 1 
+	    and t.proteinKey = a2._Object_key 
+	    and a2._MGIType_key = 19 
+	    and a2.preferred = 1 
+	    order by a1.accID
+	    ''', 'auto')
     genomicToProtein = {}
     for r in results:
 	key = r['genomicID']
@@ -155,15 +175,16 @@ def getCoords(logicalDBkey):
 
     tempCoords = {}
 
-    results = db.sql('select m._Marker_key, mc._Qualifier_key, mc.accID, ' + \
-	    'c.chromosome, c.strand, ' + \
-	    'startC = convert(int, c.startCoordinate), ' + \
-	    'endC = convert(int, c.endCoordinate) ' + \
-	        'from #repmarkers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c ' + \
-	        'where m._Marker_key = mc._Marker_key ' + \
-	        'and mc._Sequence_key = c._Sequence_key ' + \
-	        'and mc._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
-
+    results = db.sql('''
+	    select m._Marker_key, mc._Qualifier_key, mc.accID, 
+	    c.chromosome, c.strand, 
+	    convert(int, c.startCoordinate) as startC, 
+	    convert(int, c.endCoordinate) as endC 
+	        from #repmarkers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c 
+	        where m._Marker_key = mc._Marker_key 
+	        and mc._Sequence_key = c._Sequence_key 
+	        and mc._LogicalDB_key = %d
+		''' % (logicalDBkey) , 'auto')
     for r in results:
         key = r['_Marker_key']
         value = r
@@ -184,24 +205,26 @@ init()
 # select all mouse markers
 #
 
-db.sql('select m._Marker_key, m.symbol, m.name ' + \
-	'into #markers ' + \
-	'from MRK_Marker m ' + \
-	'where m._Organism_key = 1 and m._Marker_Status_key in (1,3)', None)
-
-db.sql('create index idx1 on #markers(_Marker_key)', None)
+db.sql('''
+	select m._Marker_key, m.symbol, m.name 
+	into #markers 
+	from MRK_Marker m 
+	where m._Organism_key = 1 and m._Marker_Status_key in (1,3)
+	''', None)
+db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
 
 #
 # select markers that have genomic coordinates
 #
 
-db.sql('select m._Marker_key, m._Sequence_key, c.version into #repmarkers ' + \
-	'from SEQ_Marker_Cache m, SEQ_Coord_Cache c ' + \
-	'where m._Qualifier_key = %d ' % (repGenomicKey) + \
-	'and m._Sequence_key = c._Sequence_key', None)
-
-db.sql('create index idx1 on #repmarkers(_Marker_key)', None)
-db.sql('create index idx2 on #repmarkers(_Sequence_key)', None)
+db.sql('''
+	select m._Marker_key, m._Sequence_key, c.version into #repmarkers 
+	from SEQ_Marker_Cache m, SEQ_Coord_Cache c 
+	where m._Qualifier_key = %d 
+	and m._Sequence_key = c._Sequence_key
+	''' % (repGenomicKey), None)
+db.sql('create index repmarkers_idx1 on #repmarkers(_Marker_key)', None)
+db.sql('create index repmarkers_idx2 on #repmarkers(_Sequence_key)', None)
 
 # NCBI, Ensembl and VEGA coordinates
 
@@ -213,37 +236,44 @@ vegaCoords = getCoords(vega)
 # select markers that have human orthologs
 #
 
-db.sql('select distinct mouseKey = m._Marker_key, ' +
-	'humanKey = h2._Marker_key, humanSym = m2.symbol, humanName = m2.name, ' + \
-	'humanChr = m2.chromosome + m2.cytogeneticOffset ' + \
-	'into #homology ' +
-        'from #markers m, MRK_Homology_Cache h1, MRK_Homology_Cache h2, MRK_Marker m2 ' + \
-        'where m._Marker_key = h1._Marker_key ' + \
-        'and h1._Class_key = h2._Class_key ' + \
-        'and h2._Organism_key = 2 ' + \
-        'and h2._Marker_key = m2._Marker_key ', None)
-
+db.sql('''
+	select distinct m._Marker_key as mouseKey, 
+	h2._Marker_key as humanKey, 
+	m2.symbol as humanSym, 
+	m2.name as humanName, 
+	m2.chromosome || m2.cytogeneticOffset as humanChr
+	into #homology 
+        from #markers m, MRK_Homology_Cache h1, MRK_Homology_Cache h2, MRK_Marker m2 
+        where m._Marker_key = h1._Marker_key 
+        and h1._Class_key = h2._Class_key 
+        and h2._Organism_key = 2 
+        and h2._Marker_key = m2._Marker_key 
+	''', None)
 db.sql('create index index_mouseKey on #homology(mouseKey)', None)
 db.sql('create index index_humanKey on #homology(humanKey)', None)
 db.sql('create index index_humanSym on #homology(humanSym)', None)
 
 # cm for Mouse
-results = db.sql('select o._Marker_key, o.offset ' + \
-	'from #markers m, MRK_Offset o ' + \
-	'where m._Marker_key = o._Marker_key ' + \
-	'and o.source = 0 ', 'auto') 
+results = db.sql('''
+	select o._Marker_key, o.offset 
+	from #markers m, MRK_Offset o 
+	where m._Marker_key = o._Marker_key 
+	and o.source = 0 
+	''', 'auto') 
 mCM = {}
 for r in results:
 	mCM[r['_Marker_key']] = r['offset']
 
 # MGI for Mouse
-results = db.sql('select a._Object_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-	'where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 1 ' + \
-	'and a.prefixPart = "MGI:" ' + \
-	'and a.preferred = 1', 'auto')
+results = db.sql('''
+	select a._Object_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 1 
+	and a.prefixPart = "MGI:" 
+	and a.preferred = 1
+	''', 'auto')
 mgiID = {}
 for r in results:
 	mgiID[r['_Object_key']] = r['accID']
@@ -251,21 +281,25 @@ for r in results:
 # EntrezGene for Mouse is included in NCBI Coordinates
 
 # EntrezGene for Human
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.humanKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 55 ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.humanKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 55 
+	''', 'auto')
 hegID = {}
 for r in results:
 	hegID[r['_Object_key']] = r['accID']
 
 # RefSeq for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-	'where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 27 ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 27 
+	''', 'auto')
 mrefseqID = {}
 for r in results:
 	if not mrefseqID.has_key(r['_Object_key']):
@@ -273,11 +307,13 @@ for r in results:
 	mrefseqID[r['_Object_key']].append(r['accID'])
 
 # RefSeq for Human
-results = db.sql('select distinct _Object_key = h.humanKey, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.humanKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 27 ', 'auto')
+results = db.sql('''
+	select distinct h.humanKey as _Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.humanKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 27 
+	''', 'auto')
 hrefseqID = {}
 for r in results:
 	if not hrefseqID.has_key(r['_Object_key']):
@@ -285,11 +321,13 @@ for r in results:
 	hrefseqID[r['_Object_key']].append(r['accID'])
 
 # SWISSPROT for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-	'where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key in (13, 41) ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key in (13, 41) 
+	''', 'auto')
 mspID = {}
 for r in results:
 	if not mspID.has_key(r['_Object_key']):
@@ -297,11 +335,13 @@ for r in results:
 	mspID[r['_Object_key']].append(r['accID'])
 
 # GenBank for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-	'where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 9 ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 9 
+	''', 'auto')
 gbID = {}
 for r in results:
 	if not gbID.has_key(r['_Object_key']):
@@ -309,11 +349,13 @@ for r in results:
 	gbID[r['_Object_key']].append(r['accID'])
 
 # UniGene for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-	'where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 23 ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 23 
+	''', 'auto')
 ugID = {}
 for r in results:
 	if not ugID.has_key(r['_Object_key']):
@@ -321,11 +363,13 @@ for r in results:
 	ugID[r['_Object_key']].append(r['accID'])
 
 # InterPro for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-	'where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 28 ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 28 
+	''', 'auto')
 ipID = {}
 for r in results:
 	if not ipID.has_key(r['_Object_key']):
@@ -334,10 +378,12 @@ for r in results:
 
 # synonyms for Mouse
 
-results = db.sql('select distinct m._Marker_key, s.synonym ' + \
-	'from #markers m, MGI_Synonym s  ' + \
-	'where m._Marker_key = s._Object_key ' + \
-	'and s._MGIType_key = 2 ', 'auto')
+results = db.sql('''
+	select distinct m._Marker_key, s.synonym 
+	from #markers m, MGI_Synonym s  
+	where m._Marker_key = s._Object_key 
+	and s._MGIType_key = 2 
+	''', 'auto')
 mSyn = {}
 for r in results:
 	if not mSyn.has_key(r['_Marker_key']):
@@ -346,10 +392,12 @@ for r in results:
 
 # synonyms for Human
 
-results = db.sql('select distinct h.mouseKey, s.synonym ' + \
-	'from #homology h, MGI_Synonym s ' + \
-	'where h.humanKey = s._Object_key ' + \
-	'and s._MGIType_key = 2 ', 'auto')
+results = db.sql('''
+	select distinct h.mouseKey, s.synonym 
+	from #homology h, MGI_Synonym s 
+	where h.humanKey = s._Object_key 
+	and s._MGIType_key = 2 
+	''', 'auto')
 hSyn = {}
 for r in results:
 	if not hSyn.has_key(r['mouseKey']):
@@ -360,15 +408,19 @@ for r in results:
 # write results
 #
 
-results = db.sql('select m._Marker_key, m.symbol, m.name, h.humanKey, h.humanSym, h.humanName, h.humanChr ' + \
-	'from #markers m, #homology h ' + \
-	'where m._Marker_key = h.mouseKey ' + \
-	'union ' + \
-	'select m._Marker_key, m.symbol, m.name, null, null, null, null ' + \
-	'from #markers m ' + \
-	'where not exists (select 1 from #homology h ' + \
-	'where m._Marker_key = h.mouseKey) ' + \
-	'order by m.symbol', 'auto')
+results = db.sql('''
+	(
+	select m._Marker_key, m.symbol, m.name, h.humanKey, h.humanSym, h.humanName, h.humanChr 
+	from #markers m, #homology h 
+	where m._Marker_key = h.mouseKey 
+	union 
+	select m._Marker_key, m.symbol, m.name, null, null, null, null 
+	from #markers m 
+	where not exists (select 1 from #homology h 
+	where m._Marker_key = h.mouseKey) 
+	)
+	order by symbol
+	''', 'auto')
 
 for r in results:
 
@@ -506,7 +558,7 @@ for r in results:
 
 		fp.write(r['humanSym'] + TAB)
 		fp.write(r['humanName'] + TAB)
-		fp.write(r['humanChr'] + TAB)
+		fp.write(mgi_utils.prvalue(r['humanChr']) + TAB)
 
 #		34. Human RefSeq Ids
 
