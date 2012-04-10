@@ -149,30 +149,31 @@ def runQueries(organismKey):
 	db.sql('create index idx_hkey on #allhomologies(otherMarkerKey)', None)
 	db.sql('create index idx_mkey on #allhomologies(mouseMarkerKey)', None)
 
-	db.sql('select h.otherMarkerKey, h.mouseMarkerKey, ' + \
-		'otherOrganism = m1._Organism_key, ' + \
-		'otherSymbol = m1.symbol, ' + \
-		'otherChr = m1.chromosome + m1.cytogeneticOffset, ' + \
-		'm1.chromosome, ' + \
-		'm1.cytogeneticOffset, ' + \
-		'mouseOrganism = m2._Organism_key, ' + \
-		'mouseSymbol = m2.symbol, ' + \
-		'mouseChr = m2.chromosome, ' + \
-		'mouseBand = m2.cytogeneticOffset, ' + \
-		'mouseName = substring(m2.name, 1, 75), ' + \
-                'mouseCm = ' + \
-        	'case ' + \
-        	'when o.offset >= 0 then str(o.offset, 10, 2) ' + \
-        	'when o.offset = -999.0 then "       N/A" ' + \
-        	'when o.offset = -1.0 then "  syntenic" ' + \
-        	'end,' + \
-		'mouseOffset = o.offset ' + \
-		'into #homologies ' + \
-		'from #allhomologies h, MRK_Marker m1, MRK_Marker m2, MRK_Offset o ' + \
-		'where h.otherMarkerKey = m1._Marker_key ' + \
-		'and h.mouseMarkerKey = m2._Marker_key ' + \
-		'and h.mouseMarkerKey = o._Marker_key ' + \
-		'and o.source = 0 ', None)
+	db.sql('''
+		select h.otherMarkerKey, h.mouseMarkerKey, 
+		m1._Organism_key as otherOrganism, 
+		m1.symbol as otherSymbol, 
+		m1.chromosome || m1.cytogeneticOffset as otherChr, 
+		m1.chromosome, 
+		m1.cytogeneticOffset, 
+		m2._Organism_key as mouseOrganism, 
+		m2.symbol as mouseSymbol, 
+		m2.chromosome as mouseChr, 
+		m2.cytogeneticOffset as mouseBand, 
+		substring(m2.name, 1, 75) as mouseName, 
+		o.offset as mouseOffset, 
+        	case 
+        	when o.offset >= 0 then str(o.offset, 10, 2) 
+        	when o.offset = -999.0 then "       N/A" 
+        	when o.offset = -1.0 then "  syntenic" 
+        	end as mouseCm 
+		into #homologies 
+		from #allhomologies h, MRK_Marker m1, MRK_Marker m2, MRK_Offset o 
+		where h.otherMarkerKey = m1._Marker_key 
+		and h.mouseMarkerKey = m2._Marker_key 
+		and h.mouseMarkerKey = o._Marker_key 
+		and o.source = 0 
+		''', None)
 
 	db.sql('create index idx_hkey1 on #homologies(otherOrganism)', None)
 	db.sql('create index idx_mkey1 on #homologies(mouseOrganism)', None)
@@ -214,6 +215,9 @@ def runQueries(organismKey):
 		'from #homologies h, MRK_Chromosome c ' + \
 		'where h.otherOrganism = c._Organism_key ' + \
 		'and h.chromosome = c.chromosome ', 'auto')
+
+	db.sql('drop table allhomologies', None)
+	db.sql('drop table homologies', None)
 
 	return results
 
@@ -279,7 +283,7 @@ def process(organismKey, results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(r['otherChr'] + TAB)
+		fp.write(str(r['otherChr']) + TAB)
 
 		if otherEG.has_key(r['otherMarkerKey']):
 			fp.write(mgi_utils.prvalue(otherEG[r['otherMarkerKey']]))
