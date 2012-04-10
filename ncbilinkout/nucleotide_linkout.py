@@ -29,9 +29,10 @@ try:
         db.setAutoTranslateBE()
     else:
         import db
+	db.set_sqlLogFunction(db.sqlLogAll)
 except:
     import db
-
+    db.set_sqlLogFunction(db.sqlLogAll)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -39,7 +40,6 @@ maxfileCounter = int(os.environ['NCBILINKOUT_COUNT'])
 fileName = 'nucleotide-mgd-'
 
 db.useOneConnection(1)
-db.set_sqlLogFunction(db.sqlLogAll)
 
 # remove old file names
 os.system('rm -rf ' + os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
@@ -47,13 +47,13 @@ os.system('rm -rf ' + os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
 # deleted sequences
 
 db.sql('select s._Sequence_key into #deleted from SEQ_Sequence s where s._SequenceStatus_key = 316343', None)
-db.sql('create index idx1 on #deleted(_Sequence_key)', None)
+db.sql('create index deleted_idx1 on #deleted(_Sequence_key)', None)
 
 db.sql('select a.accID, a._LogicalDB_key into #deletedIDs from #deleted d, ACC_Accession a ' + \
     'where d._Sequence_key = a._Object_key ' + \
     'and a._MGIType_key = 19', None)
-db.sql('create index idx1 on #deletedIDs(accID)', None)
-db.sql('create index idx2 on #deletedIDs(_LogicalDB_key)', None)
+db.sql('create index deletedIDs_idx1 on #deletedIDs(accID)', None)
+db.sql('create index deletedIDs_idx2 on #deletedIDs(_LogicalDB_key)', None)
 
 # all official/interim mouse markers that have at least one Sequence ID
 
@@ -64,8 +64,8 @@ db.sql('select m._Marker_key, m.symbol ' + \
 	'and m._Marker_Status_key in (1,3) ' + \
 	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
 	'and a._MGIType_key = 2 and a._LogicalDB_key in (9))', None)
-db.sql('create index idx1 on #markers(_Marker_key)', None)
-db.sql('create index idx2 on #markers(symbol)', None)
+db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
+db.sql('create index markers_idx2 on #markers(symbol)', None)
 
 # MGI ids
 

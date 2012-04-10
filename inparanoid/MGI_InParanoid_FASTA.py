@@ -92,14 +92,14 @@ def initialize():
     db.sql('select s._Sequence_key into #deletedsequences ' + \
 	    'from SEQ_Sequence s ' + \
 	    'where s._SequenceStatus_key = 316343', None)
-    db.sql('create index idx1 on #deletedsequences(_Sequence_key)', None)
+    db.sql('create index deletedsequences_idx1 on #deletedsequences(_Sequence_key)', None)
 
     # markers with deleted sequences
     db.sql('select distinct m._Marker_key into #excludemarkers ' + \
 	    'from #deletedsequences d, SEQ_Marker_Cache m ' + \
 	    'where d._Sequence_key = m._Sequence_key ' + \
 	    'and m._Organism_key = 1 ', None)
-    db.sql('create index idx1 on #excludemarkers(_Marker_key)', None)
+    db.sql('create index excludedmarkers_idx1 on #excludemarkers(_Marker_key)', None)
 
     #
     # marker/polypeptide sequences that are not excluded
@@ -114,8 +114,8 @@ def initialize():
 	    'and m._Marker_Status_key in (1,3) '+ \
 	    'and not exists (select 1 from #excludemarkers x where ' + \
 		's._Marker_key = x._Marker_key)', None)
-    db.sql('create index idx1 on #sequences(accID)', None)
-    db.sql('create index idx2 on #sequences(_Marker_key)', None)
+    db.sql('create index sequences_idx1 on #sequences(accID)', None)
+    db.sql('create index sequences_idx2 on #sequences(_Marker_key)', None)
 
     #
     # cache the representative polypeptide

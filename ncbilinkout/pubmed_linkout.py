@@ -29,8 +29,10 @@ try:
         db.setAutoTranslateBE()
     else:
         import db
+	db.set_sqlLogFunction(db.sqlLogAll)
 except:
     import db
+    db.set_sqlLogFunction(db.sqlLogAll)
 
 
 CRT = reportlib.CRT
@@ -40,14 +42,13 @@ maxfileCounter = int(os.environ['NCBILINKOUT_COUNT'])
 fileName = 'pubmed-mgd-'
 
 db.useOneConnection(1)
-db.set_sqlLogFunction(db.sqlLogAll)
 
 # remove old file names
 os.system('rm -rf ' + os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
 
 # retrieve all PubMed Ids
 
-results = db.sql('select a.accID, pubMedID = b.accID ' + \
+results = db.sql('select a.accID, b.accID as pubMedID ' + \
        'from ACC_Accession a, ACC_Accession b ' + \
        'where a._MGIType_key = 1 ' + \
        'and a._LogicalDB_key = 1 ' + \
