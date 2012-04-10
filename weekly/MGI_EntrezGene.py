@@ -60,29 +60,31 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # 2. all Withdrawn Marker records
 #
 
-db.sql('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, ' + \
-  'offset = str(o.offset,10,2), m.chromosome, markerType = t.name, isPrimary = 1, ' + \
-  'markerStatus = upper(substring(s.status, 1, 1)) ' + \
-  'into #markers ' + \
-  'from MRK_Marker m, MRK_Offset o, MRK_Types t, MRK_Status s ' + \
-  'where m._Organism_key = 1 ' + \
-  'and m._Marker_Status_key in (1,3) ' + \
-  'and m._Marker_key = o._Marker_key ' + \
-  'and o.source = 0 ' + \
-  'and m._Marker_Type_key = t._Marker_Type_key ' + \
-  'and m._Marker_Status_key = s._Marker_Status_key ' + \
-  'union '  + \
-  'select m._Marker_key, m.symbol, m.name, c._Current_key, ' + \
-  'offset = str(o.offset,10,2), m.chromosome, markerType = t.name, isPrimary = 0, ' + \
-  'markerStatus = upper(substring(s.status, 1, 1)) ' + \
-  'from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Types t, MRK_Status s ' + \
-  'where m._Organism_key = 1 ' + \
-  'and m._Marker_Status_key = 2 ' + \
-  'and m._Marker_key = o._Marker_key ' + \
-  'and o.source = 0 ' + \
-  'and m._Marker_key = c._Marker_key ' + \
-  'and m._Marker_Type_key = t._Marker_Type_key ' + \
-  'and m._Marker_Status_key = s._Marker_Status_key ', None)
+db.sql('''
+  select m._Marker_key, m.symbol, m.name, m._Marker_key as _Current_key, 
+  	str(o.offset,10,2) as offset, m.chromosome, t.name as markerType, 1 as isPrimary, 
+  	upper(substring(s.status, 1, 1)) as markerStatus
+  into #markers 
+  from MRK_Marker m, MRK_Offset o, MRK_Types t, MRK_Status s 
+  where m._Organism_key = 1 
+  and m._Marker_Status_key in (1,3) 
+  and m._Marker_key = o._Marker_key 
+  and o.source = 0 
+  and m._Marker_Type_key = t._Marker_Type_key 
+  and m._Marker_Status_key = s._Marker_Status_key 
+  union 
+  select m._Marker_key, m.symbol, m.name, c._Current_key, 
+  str(o.offset,10,2) as offset, m.chromosome, t.name as markerType, 0 as isPrimary, 
+  upper(substring(s.status, 1, 1)) as markerStatus 
+  from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Types t, MRK_Status s 
+  where m._Organism_key = 1 
+  and m._Marker_Status_key = 2 
+  and m._Marker_key = o._Marker_key 
+  and o.source = 0 
+  and m._Marker_key = c._Marker_key 
+  and m._Marker_Type_key = t._Marker_Type_key 
+  and m._Marker_Status_key = s._Marker_Status_key 
+  ''', None)
 db.sql('create index idx_key on #markers(_Marker_key)', None)
 
 # MGI ids

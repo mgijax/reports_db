@@ -357,7 +357,7 @@ def process():
 	    'and ma.preferred = 1 ' + \
 	    'and exists (select 1 from SEQ_Marker_Cache c where m._Marker_key = c._Marker_key ' + \
 	    'and c._LogicalDB_key in (59, 60, 85))', None)
-    db.sql('create index idx1 on #markers(_Marker_key)', None)
+    db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
 
     #
     # retrieve location information
@@ -371,8 +371,8 @@ def process():
 	    'where m._Marker_key = l._Marker_key ' + \
 	    'and l.chromosome = c.chromosome ' + \
 	    'and c._Organism_key = 1', None)
-    db.sql('create index idx1 on #location(_Marker_key)', None)
-    db.sql('create index idx2 on #location(sequenceNum)', None)
+    db.sql('create index location_idx1 on #location(_Marker_key)', None)
+    db.sql('create index location_idx2 on #location(sequenceNum)', None)
 
     #
     # retrieve gene model information
