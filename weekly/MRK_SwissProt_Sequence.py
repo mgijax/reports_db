@@ -49,53 +49,53 @@ except:
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-cmds = []
-
 # Retrieve all Gene Markers which have MGI Acc IDs
 # Union
 # Retrieve all withdrawn Gene Markers (which don't have MGI Acc IDs, except for splits)
 
-cmds.append('select m._Marker_key, mgiID = a.accID, m.symbol, m.name, m.chromosome ' +
-      'into #markers ' +
-      'from MRK_Marker m, ACC_Accession a ' +
-      'where m._Marker_Type_key = 1 ' +
-      'and m._Organism_key = 1 ' +
-      'and m._Marker_key = a._Object_key ' +
-      'and a._MGIType_key = 2 ' +
-      'and a._LogicalDB_key = 1 ' +
-      'and a.prefixPart = "MGI:" ' +
-      'and a.preferred = 1 ' +
-      'union ' +
-      'select m._Marker_key, mgiID = null, m.symbol, m.name, m.chromosome ' +
-      'from MRK_Marker m ' +
-      'where m._Marker_Type_key = 1 ' +
-      'and m._Organism_key = 1 ' +
-      'and m._Marker_Status_key = 2 ' +
-      'and not exists (select 1 from ACC_Accession a ' +
-      'where m._Marker_key = a._Object_key ' +
-      'and a._MGIType_key = 2) ' +
-      'order by m.symbol, a.accID')
+db.sql('''
+      (
+      select m._Marker_key, a.accID as mgiID, m.symbol, m.name, m.chromosome 
+      into #markers 
+      from MRK_Marker m, ACC_Accession a 
+      where m._Marker_Type_key = 1 
+      and m._Organism_key = 1 
+      and m._Marker_key = a._Object_key 
+      and a._MGIType_key = 2 
+      and a._LogicalDB_key = 1 
+      and a.prefixPart = "MGI:" 
+      and a.preferred = 1 
+      union 
+      select m._Marker_key, null as mgiID, m.symbol, m.name, m.chromosome 
+      from MRK_Marker m 
+      where m._Marker_Type_key = 1 
+      and m._Organism_key = 1 
+      and m._Marker_Status_key = 2 
+      and not exists (select 1 from ACC_Accession a 
+      where m._Marker_key = a._Object_key 
+      and a._MGIType_key = 2) 
+      )
+      order by symbol, mgiID
+      ''', None)
 
 # Retrieve any Nucleotide Seq IDs which exist for Markers
 
-cmds.append('select m._Marker_key, a.accID ' +
-	'from #markers m, ACC_Accession a ' +
-        'where m._Marker_key = a._Object_key ' +
-        'and a._MGIType_key = 2 ' +
-        'and a._LogicalDB_key = 9 ' +
-	'order by m._Marker_key, a.accID')
-
-cmds.append('select * from #markers order by symbol, mgiID')
-
-results = db.sql(cmds, 'auto')
-
+results = db.sql('''
+	select m._Marker_key, a.accID 
+	from #markers m, ACC_Accession a 
+        where m._Marker_key = a._Object_key 
+        and a._MGIType_key = 2 
+        and a._LogicalDB_key = 9 
+	order by m._Marker_key, a.accID
+	''', 'auto')
 seqIDs = {}
-for r in results[-2]:
+for r in results:
     if not seqIDs.has_key(r['_Marker_key']):
 	seqIDs[r['_Marker_key']] = []
     seqIDs[r['_Marker_key']].append(r['accID'])
 
-for r in results[-1]:
+results = db.sql('select * from #markers order by symbol, mgiID', 'auto')
+for r in results:
 
 	fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
 	         mgi_utils.prvalue(r['name']) + reportlib.TAB + \
