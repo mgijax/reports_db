@@ -1,0 +1,53 @@
+
+Edits for Sybase-to-Postgres support:
+
+1) lib_py_postgres
+
+2) lib_py_report
+
+3) mgiconfig
+
+4) to add:
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+	import pg_db
+	db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
+5) the lindon/postgres version will also need a 'imsr' schema copy
+	ALL_CellLine_GeneTrap.py
+	ALL_CellLine_Targeted.py
+	ALL_CRE.py
+	MGI_Knockout.py
+	MGI_Recombinase_Full.py
+
+6) reports that contain both SQL and Python (tab-delimited) versions
+
+7) date/time
+
+8) issues
+
+	HMD_Synonyms.py
+		updating temporary table
+
+	MGI_CloneSet.py
+
+	MGI_ElsevierDOI.py
+	MGI_PhenoOMIM.py
+		mulitple inserts into temporary table
+
+	MGI_GTRNA.py
+		MASTER_GFF_FILE
+
+	MRK_NomenUpdates.py
+		needs translation
+
+	mgimarkerfeed
+		mainly translations
+
