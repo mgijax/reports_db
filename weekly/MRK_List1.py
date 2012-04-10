@@ -59,7 +59,7 @@ fp.write(TAB.join(headers) + CRT)
 
 cmd = '''
     select _Marker_key, _Marker_Status_key, _Marker_Type_key, 
-	   symbol, name = substring(name,1,150), chromosome
+	   symbol, substring(name,1,150) as name, chromosome
     into #markers
     from MRK_Marker
     where _Organism_key = 1
@@ -67,20 +67,19 @@ cmd = '''
 db.sql(cmd, 'auto')
 
 cmd = '''
-    create index idx1 on #markers(_Marker_key)
+    create index markers_idx1 on #markers(_Marker_key)
     '''
 db.sql(cmd, 'auto')
 
 cmd = '''
     select m.*, 
-    markerStatus = upper(substring(s.status, 1, 1)),
-    markerType = substring(t.name,1,25),
-    cmPosition =
+    upper(substring(s.status, 1, 1)) as markerStatus,
+    substring(t.name,1,25) as markerType,
         case
         when o.offset >= 0 then str(o.offset,10,2)
         when o.offset = -999.0 then "       N/A"
         when o.offset = -1.0 then "  syntenic"
-        end
+        end as cmPosition
     into #markersAll
     from #markers m, MRK_Status s, MRK_Types t, MRK_Offset o
     where m._Marker_key = o._Marker_key
@@ -91,12 +90,12 @@ cmd = '''
 db.sql(cmd, 'auto')
 
 cmd = '''
-    create index idx1 on #markersAll(_Marker_key)
+    create index markersAll_idx1 on #markersAll(_Marker_key)
     '''
 db.sql(cmd, 'auto')
 
 cmd = '''
-    create index idx2 on #markersAll(symbol)
+    create index markersAll_idx2 on #markersAll(symbol)
     '''
 db.sql(cmd, 'auto')
 

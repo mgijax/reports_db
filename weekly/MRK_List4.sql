@@ -19,7 +19,7 @@ markerStatus = upper(substring(s.status, 1, 1)),
 markerType = substring(t.name,1,25),
 cmPosition =
         case
-        when o.offset >= 0 then str(o.offset, 10, 2)
+        when o.offset >= 0 then str(o.offset,10,2)
         when o.offset = -999.0 then "       N/A"
         when o.offset = -1.0 then "  syntenic"
         end
