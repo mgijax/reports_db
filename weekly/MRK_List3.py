@@ -22,6 +22,7 @@
 import sys 
 import os
 import string
+import mgi_utils
 import reportlib
 
 try:
@@ -57,57 +58,38 @@ headers = [
 
 fp.write(TAB.join(headers) + CRT)
 
-cmd = '''
+db.sql('''
     select m._Marker_key, m._Marker_Status_key, m._Marker_Type_key, 
-	m.symbol, name = substring(name,1,150), m.chromosome, c.sequenceNum
+	m.symbol, substring(name,1,150) as name, m.chromosome, c.sequenceNum
     into #markers
     from MRK_Marker m, MRK_Chromosome c
     where m._Organism_key = 1
     and m._Organism_key = c._Organism_key
     and m.chromosome = c.chromosome
-    '''
-db.sql(cmd, 'auto')
+    ''', None)
+db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
 
-cmd = '''
-    create index idx1 on #markers(_Marker_key)
-    '''
-db.sql(cmd, 'auto')
-
-cmd = '''
+db.sql('''
     select m.*, 
-    markerStatus = upper(substring(s.status, 1, 1)),
-    markerType = substring(t.name,1,25),
-    cmPosition =
+    upper(substring(s.status, 1, 1)) as markerStatus,
+    substring(t.name,1,25) as markerType,
         case
         when o.offset >= 0 then str(o.offset,10,2)
         when o.offset = -999.0 then "       N/A"
         when o.offset = -1.0 then "  syntenic"
-        end
+        end as cmPosition
     into #markersAll
     from #markers m, MRK_Status s, MRK_Types t, MRK_Offset o
     where m._Marker_key = o._Marker_key
     and o.source = 0
     and m._Marker_Type_key = t._Marker_Type_key
     and m._Marker_Status_key = s._Marker_Status_key
-    '''
-db.sql(cmd, 'auto')
+    ''', None)
+db.sql('create index markersAll_idx1 on #markersAll(_Marker_key)', None)
+db.sql('create index markersAll_idx2 on #markersAll(symbol)', None)
+db.sql('create index markersAll_idx3 on #markersAll(sequenceNum)', None)
 
-cmd = '''
-    create index idx1 on #markersAll(_Marker_key)
-    '''
-db.sql(cmd, 'auto')
-
-cmd = '''
-    create index idx2 on #markersAll(symbol)
-    '''
-db.sql(cmd, 'auto')
-
-cmd = '''
-    create index idx3 on #markersAll(sequenceNum)
-    '''
-db.sql(cmd, 'auto')
-
-cmd = '''
+db.sql('''
     select a.accID, m.chromosome, m.cmPosition, m.symbol, 
 	   m.markerStatus, m.name, m.markerType, m.sequenceNum
     into #markersPrint
@@ -124,25 +106,21 @@ cmd = '''
     from #markersAll m
     where m._Marker_Status_key = 2
     order by m.sequenceNum, m.symbol
-    '''
-db.sql(cmd, 'auto')
+    ''', None)
 
-cmd = '''
-    select accID "MGI Accession ID", chromosome "Chr", cmPosition "cM Position", 
-	symbol "Symbol", markerStatus "Status", name "Name", markerType "Type"
-    from #markersPrint
-    '''
-results = db.sql(cmd, 'auto')
+results = db.sql('''
+	select accID, chromosome, cmPosition, symbol, markerStatus, name, markerType
+    	from #markersPrint
+    ''', 'auto')
 
 for r in results:
-    line = []
-    for h in headers:
-	val = r[h]
-	if val is None:
-	    line.append("NULL")
-	else:
-	    line.append(str(r[h]))
-    fp.write(TAB.join(line)+CRT)
+    fp.write(mgi_utils.prvalue(r['accID']) + TAB)
+    fp.write(r['chromosome'] + TAB)
+    fp.write(r['cmPosition'] + TAB)
+    fp.write(r['symbol'] + TAB)
+    fp.write(r['markerStatus'] + TAB)
+    fp.write(r['name'] + TAB)
+    fp.write(r['markerType'] + CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
 db.useOneConnection(0)
