@@ -100,9 +100,9 @@ def init():
 	    'into #transGen ' + \
 	    'from SEQ_Sequence_Assoc sa ' + \
 	    'where sa._Qualifier_key = 5445464', None)  # transcribed from qualifier
-    db.sql('create nonclustered index idx1 on ' + \
+    db.sql('create index idx1 on ' + \
 	    '#transGen(transcriptKey)', None)
-    db.sql('create nonclustered index idx2  on ' + \
+    db.sql('create index idx2  on ' + \
 	    '#transGen(genomicKey)', None)
     results = db.sql('select a1.accID as genomicID, a2.accID as transcriptID ' + \
 	    'from  #transGen t, ACC_Accession a1, ACC_Accession a2 ' + \
@@ -223,9 +223,9 @@ db.sql('select distinct mouseKey = m._Marker_key, ' +
         'and h2._Organism_key = 2 ' + \
         'and h2._Marker_key = m2._Marker_key ', None)
 
-db.sql('create nonclustered index index_mouseKey on #homology(mouseKey)', None)
-db.sql('create nonclustered index index_humanKey on #homology(humanKey)', None)
-db.sql('create nonclustered index index_humanSym on #homology(humanSym)', None)
+db.sql('create index index_mouseKey on #homology(mouseKey)', None)
+db.sql('create index index_humanKey on #homology(humanKey)', None)
+db.sql('create index index_humanSym on #homology(humanSym)', None)
 
 # cm for Mouse
 results = db.sql('select o._Marker_key, o.offset ' + \

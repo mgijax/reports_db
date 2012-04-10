@@ -51,9 +51,9 @@ db.sql('select sa._Sequence_key_1 as transcriptKey, ' + \
         'into #transGen ' + \
         'from SEQ_Sequence_Assoc sa ' + \
         'where sa._Qualifier_key = 5445464', None)  # transcribed from qualifier
-db.sql('create nonclustered index idx1 on ' + \
+db.sql('create index idx1 on ' + \
         '#transGen(transcriptKey)', None)
-db.sql('create nonclustered index idx2  on ' + \
+db.sql('create index idx2  on ' + \
 	'#transGen(genomicKey)', None)
 results = db.sql('select a1.accID as genomicID, a2.accID as transcriptID ' + \
 	'from  #transGen t, ACC_Accession a1, ACC_Accession a2 ' + \

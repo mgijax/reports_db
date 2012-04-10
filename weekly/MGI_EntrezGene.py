@@ -72,7 +72,7 @@ db.sql('select m._Marker_key, m.symbol, m.name, _Current_key = m._Marker_key, ' 
   'and m._Marker_key = c._Marker_key ' + \
   'and m._Marker_Type_key = t._Marker_Type_key ' + \
   'and m._Marker_Status_key = s._Marker_Status_key ', None)
-db.sql('create nonclustered index idx_key on #markers(_Marker_key)', None)
+db.sql('create index idx_key on #markers(_Marker_key)', None)
 
 # MGI ids
 

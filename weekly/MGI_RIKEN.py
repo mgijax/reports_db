@@ -74,7 +74,7 @@ db.sql('select a1._Object_key, cloneID = a1.accID, mgiID = a2.accID ' + \
 	'and a2.prefixPart = "MGI:" ' + \
 	'and a2.preferred = 1', None)
 
-db.sql('create nonclustered index idx_key on #riken(_Object_key)', None)
+db.sql('create index idx_key on #riken(_Object_key)', None)
 
 #
 # select GenBank/EMBL/DDBJ:HTC Riken Sequence

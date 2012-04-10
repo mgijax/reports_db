@@ -52,7 +52,7 @@ db.sql('select a.accID, m._Marker_key, m.symbol, m.name ' + \
 	'and a._MGIType_key = 2 ' + \
 	'and a.prefixPart = "MGI:" ' + \
 	'and a.preferred = 1', None)
-db.sql('create nonclustered index idx_marker on #markers(_Marker_key)', None)
+db.sql('create index idx_marker on #markers(_Marker_key)', None)
 
 #
 # references
@@ -61,7 +61,7 @@ db.sql('select distinct m._Marker_key, r._Refs_key ' + \
 	'into #references ' + \
 	'from #markers m, MRK_Reference r ' + \
 	'where m._Marker_key = r._Marker_key', None)
-db.sql('create nonclustered index idx_refs on #references(_Refs_key)', None)
+db.sql('create index idx_refs on #references(_Refs_key)', None)
 
 #
 # pub med ids

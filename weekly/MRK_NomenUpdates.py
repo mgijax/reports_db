@@ -84,7 +84,7 @@ cmd.append('select h._Marker_key, m.symbol, name = substring(m.name,1,35), ' + \
 'and m._Organism_key = c._Organism_key ' + \
 'and h._Refs_key = b._Refs_key')
 
-cmd.append('create nonclustered index idx_key on #markers(_Marker_key)')
+cmd.append('create index idx_key on #markers(_Marker_key)')
 
 # get primary MGI ids (2)
 cmd.append('select distinct m._Marker_key, a.accID ' + \

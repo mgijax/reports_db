@@ -143,18 +143,18 @@ db.sql('''select a._Allele_key, a._Marker_key, a.isMixed, ac._CellLine_key,
             and acd._Creator_key = t1._Term_key
             and acd._Vector_key = t2._Term_key
 	    and acd._ParentCellLine_key = ac2._CellLine_key''' , None)
-db.sql('''create index idx1 on #cellines(_Allele_key)''', None)
+db.sql('''create index cellines_idx1 on #cellines(_Allele_key)''', None)
 db.sql('''select distinct c._Allele_key, c._Marker_key
 	    into #alleleMarkers
 	    from #cellines c''', None)
-db.sql('''create index idx1 on #alleleMarkers(_Marker_key)''', None)
+db.sql('''create index alleleMarkers_idx1 on #alleleMarkers(_Marker_key)''', None)
 db.sql('''select m.*, smc._Sequence_key
 	    into #markerRepSeq
 	    from #alleleMarkers m, SEQ_Marker_Cache smc
 	    where m._Marker_key = smc._Marker_key
 	    and smc._Qualifier_key = 615419''', None) 
-db.sql('''create index idx1 on #markerRepSeq(_Sequence_key)''', None)
-db.sql('''create index idx2 on #markerRepSeq(_Marker_key)''', None)
+db.sql('''create index markerRepSeq_idx1 on #markerRepSeq(_Sequence_key)''', None)
+db.sql('''create index markerRepSeq_idx2 on #markerRepSeq(_Marker_key)''', None)
 db.sql('''select m.*, scc.chromosome, 
 	    convert(int, scc.startCoordinate) as startCoordinate,
 	    convert(int, scc.endCoordinate) as endCoordinate,
@@ -169,7 +169,7 @@ db.sql('''select m.*, scc.chromosome,
 	    and a._MGIType_key = 19
 	    and a.preferred = 1
 	    and a._LogicalDB_key = ldb._LogicalDB_key''', None)
-db.sql('''create index  idx1 on #markerRepCoord(_Marker_key)''', None)
+db.sql('''create index markerRepCoord_idx1 on #markerRepCoord(_Marker_key)''', None)
 db.sql('''select c.*, saa._Sequence_key, a.accid as seqTagID
 	    into #seqTags
 	    from #cellines c, SEQ_Allele_Assoc saa, ACC_Accession a
@@ -178,7 +178,7 @@ db.sql('''select c.*, saa._Sequence_key, a.accid as seqTagID
 	    and a._MGIType_key = 19
 	    and a._LogicalDB_key != 9
 	    and a.preferred = 1''', None)
-db.sql('''create index idx1 on #seqTags(_Allele_key)''', None)
+db.sql('''create index seqTags_idx1 on #seqTags(_Allele_key)''', None)
 db.sql('''select s.*, a.accid as genbankID
 	    into #seqGB
 	    from #seqTags s, ACC_Accession a
@@ -186,14 +186,14 @@ db.sql('''select s.*, a.accid as genbankID
 	    and a._MGIType_key = 19
 	    and a._LogicalDB_key = 9
 	    and a.preferred = 1''', None)
-db.sql('''create index idx1 on #seqGB(_CellLine_key)''', None)
+db.sql('''create index seqGB_idx1 on #seqGB(_CellLine_key)''', None)
 db.sql('''select s.*, a.accid as mclID
 	    into #mclIDs
 	    from #seqGB s, ACC_Accession a
 	    where s._CellLine_key = a._Object_key
 	    and a._MGIType_key = 28
 	    and a.preferred = 1''', None)
-db.sql('''create index idx1 on #mclIDs(_Sequence_key)''', None)
+db.sql('''create index mclIDs_idx1 on #mclIDs(_Sequence_key)''', None)
 results = db.sql('''select m.*, sgt.goodHitCount, 
 	    convert(int, sgt.pointCoordinate) as pointCoordinate, 
 	    t1.term as seqTagMethod
@@ -229,7 +229,7 @@ db.sql('''select distinct saa._Sequence_key, saa._Allele_key,
             and a._MGIType_key = 19
             and a._LogicalDB_key = 9
             and a.preferred = 1''', None)
-db.sql('''create index idx1 on #alleleRepSeq(_Sequence_key)''', None)
+db.sql('''create index alleleRepSeq_idx1 on #alleleRepSeq(_Sequence_key)''', None)
 results = db.sql('''select s.*, f.strand
         from #alleleRepSeq s, MAP_Coord_feature f
         where s._Sequence_key = f._Object_key

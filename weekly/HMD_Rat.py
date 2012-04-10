@@ -159,8 +159,8 @@ def runQueries():
 	       'and h1._Class_key = h2._Class_key ' + \
 	       'and h2._Organism_key = 1', None)
 
-	db.sql('create nonclustered index idx_hkey on #allhomologies(ratMarkerKey)', None)
-	db.sql('create nonclustered index idx_mkey on #allhomologies(mouseMarkerKey)', None)
+	db.sql('create index idx_hkey on #allhomologies(ratMarkerKey)', None)
+	db.sql('create index idx_mkey on #allhomologies(mouseMarkerKey)', None)
 
 	db.sql('select h.ratMarkerKey, h.mouseMarkerKey, ' + \
 		'ratOrganism = m1._Organism_key, ' + \
@@ -187,10 +187,10 @@ def runQueries():
 		'and h.mouseMarkerKey = o._Marker_key ' + \
 		'and o.source = 0 ', None)
 
-	db.sql('create nonclustered index idx_hkey1 on #homologies(ratOrganism)', None)
-	db.sql('create nonclustered index idx_mkey1 on #homologies(mouseOrganism)', None)
-	db.sql('create nonclustered index idx_hkey2 on #homologies(ratSymbol)', None)
-	db.sql('create nonclustered index idx_mkey2 on #homologies(mouseSymbol)', None)
+	db.sql('create index idx_hkey1 on #homologies(ratOrganism)', None)
+	db.sql('create index idx_mkey1 on #homologies(mouseOrganism)', None)
+	db.sql('create index idx_hkey2 on #homologies(ratSymbol)', None)
+	db.sql('create index idx_mkey2 on #homologies(mouseSymbol)', None)
 
 	# rat entrezgene ids
 
