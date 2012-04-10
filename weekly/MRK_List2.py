@@ -87,7 +87,7 @@ db.sql('create index markersAll_idx1 on #markersAll(_Marker_key)', None)
 db.sql('create index markersAll_idx2 on #markersAll(symbol)', None)
 
 results = db.sql('''
-    select a.accID, m.cmPosition, m.symbol, m.markerType
+    select a.accID, m.chromosome, m.cmPosition, m.symbol, m.markerStatus, m.name, m.markerType
     from #markersAll m, ACC_Accession a
     where m._Marker_key = a._Object_key
     and a._MGIType_key = 2
@@ -98,8 +98,11 @@ results = db.sql('''
     ''', 'auto')
 for r in results:
     fp.write(r['accID'] + TAB)
+    fp.write(r['chromosome'] + TAB)
     fp.write(r['cmPosition'] + TAB)
     fp.write(r['symbol'] + TAB)
+    fp.write(r['markerStatus'] + TAB)
+    fp.write(r['name'] + TAB)
     fp.write(r['markerType'] + CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file

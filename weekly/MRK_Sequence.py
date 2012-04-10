@@ -76,40 +76,47 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # deleted sequences
 
 db.sql('select s._Sequence_key into #deleted from SEQ_Sequence s where s._SequenceStatus_key = 316343', None)
-db.sql('create index idx1 on #deleted(_Sequence_key)', None)
+db.sql('create index deleted_idx1 on #deleted(_Sequence_key)', None)
 
-db.sql('select a.accID, a._LogicalDB_key into #deletedIDs from #deleted d, ACC_Accession a ' + \
-    'where d._Sequence_key = a._Object_key ' + \
-    'and a._MGIType_key = 19', None)
-db.sql('create index idx1 on #deletedIDs(accID)', None)
-db.sql('create index idx2 on #deletedIDs(_LogicalDB_key)', None)
+db.sql('''
+    select a.accID, a._LogicalDB_key 
+    into #deletedIDs from #deleted d, ACC_Accession a 
+    where d._Sequence_key = a._Object_key 
+    and a._MGIType_key = 19
+    ''', None)
+db.sql('create index deletedIDS_idx1 on #deletedIDs(accID)', None)
+db.sql('create index deletedIDS_idx2 on #deletedIDs(_LogicalDB_key)', None)
 
 # all official/interim mouse markers that have at least one Sequence ID
 
-db.sql('select m._Marker_key, m.symbol, m.name, m.chromosome, ' + \
-	'o.offset, markerStatus = upper(substring(s.status, 1, 1)), markerType = t.name ' + \
-	'into #markers ' + \
-	'from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t ' + \
-	'where m._Organism_key = 1 ' + \
-	'and m._Marker_Status_key in (1,3) ' + \
-	'and m._Marker_key = o._Marker_key ' + \
-	'and o.source = 0 ' + \
-	'and m._Marker_Status_key = s._Marker_Status_key ' + \
-	'and m._Marker_Type_key = t._Marker_Type_key ' + \
-	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27, 131, 133) and a.prefixPart not in ("XP_", "NP_"))', None)
-db.sql('create index idx1 on #markers(_Marker_key)', None)
-db.sql('create index idx2 on #markers(symbol)', None)
+db.sql('''
+	select m._Marker_key, m.symbol, m.name, m.chromosome, 
+	o.offset, upper(substring(s.status, 1, 1)) as markerStatus, t.name as markerType
+	into #markers 
+	from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t 
+	where m._Organism_key = 1 
+	and m._Marker_Status_key in (1,3) 
+	and m._Marker_key = o._Marker_key 
+	and o.source = 0 
+	and m._Marker_Status_key = s._Marker_Status_key 
+	and m._Marker_Type_key = t._Marker_Type_key 
+	and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27, 131, 133) and a.prefixPart not in ("XP_", "NP_"))
+	''', None)
+db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
+db.sql('create index markers_idx2 on #markers(symbol)', None)
 
 # MGI ids
 
-results = db.sql('select distinct m._Marker_key, a.accID ' + \
-      'from #markers m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 1 ' + \
-      'and a.prefixPart = "MGI:" ' + \
-      'and a.preferred = 1', 'auto')
+results = db.sql('''
+      select distinct m._Marker_key, a.accID 
+      from #markers m, ACC_Accession a 
+      where m._Marker_key = a._Object_key 
+      and a._MGIType_key = 2 
+      and a._LogicalDB_key = 1 
+      and a.prefixPart = "MGI:" 
+      and a.preferred = 1
+      ''', 'auto')
 mgiID = {}
 for r in results:
     key = r['_Marker_key']
@@ -118,12 +125,14 @@ for r in results:
 
 # GenBank ids
 
-results = db.sql('select distinct m._Marker_key, a.accID ' + \
-      'from #markers m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 9 ' + \
-      'and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
+results = db.sql('''
+      select distinct m._Marker_key, a.accID 
+      from #markers m, ACC_Accession a 
+      where m._Marker_key = a._Object_key 
+      and a._MGIType_key = 2 
+      and a._LogicalDB_key = 9 
+      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      ''', 'auto')
 gbID = {}
 for r in results:
     key = r['_Marker_key']
@@ -134,12 +143,14 @@ for r in results:
 
 # UniGene ids
 
-results = db.sql('select distinct m._Marker_key, a.accID ' + \
-      'from #markers m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 23 ' + \
-      'and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
+results = db.sql('''
+      select distinct m._Marker_key, a.accID 
+      from #markers m, ACC_Accession a 
+      where m._Marker_key = a._Object_key 
+      and a._MGIType_key = 2 
+      and a._LogicalDB_key = 23 
+      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      ''', 'auto')
 ugID = {}
 for r in results:
     key = r['_Marker_key']
@@ -150,13 +161,15 @@ for r in results:
 
 # RefSeq ids
 
-results = db.sql('select distinct m._Marker_key, a.accID ' + \
-      'from #markers m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 27 ' + \
-      'and a.prefixPart not in ("XP_", "NP_") ' + \
-      'and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
+results = db.sql('''
+      select distinct m._Marker_key, a.accID 
+      from #markers m, ACC_Accession a 
+      where m._Marker_key = a._Object_key 
+      and a._MGIType_key = 2 
+      and a._LogicalDB_key = 27 
+      and a.prefixPart not in ("XP_", "NP_") 
+      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      ''', 'auto')
 rsID = {}
 for r in results:
     key = r['_Marker_key']
@@ -166,14 +179,16 @@ for r in results:
     rsID[key].append(value)
 
 # Ensembl transript IDs
-results = db.sql('select distinct m._Marker_key, a.accID ' + \
-      'from #markers m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 133 ' + \
-      'and not exists (select 1 from #deletedIDs d ' + \
-      'where a.accID = d.accID ' + \
-      'and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
+results = db.sql('''
+      select distinct m._Marker_key, a.accID 
+      from #markers m, ACC_Accession a 
+      where m._Marker_key = a._Object_key 
+      and a._MGIType_key = 2 
+      and a._LogicalDB_key = 133 
+      and not exists (select 1 from #deletedIDs d 
+      where a.accID = d.accID 
+      and a._LogicalDB_key = d._LogicalDB_key)
+      ''', 'auto')
 ensID = {}
 for r in results:
     key = r['_Marker_key']
@@ -183,14 +198,16 @@ for r in results:
     ensID[key].append(value)
 
 # VEGA transcript IDs
-results = db.sql('select distinct m._Marker_key, a.accID ' + \
-      'from #markers m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 131 ' + \
-      'and not exists (select 1 from #deletedIDs d ' + \
-      'where a.accID = d.accID ' + \
-      'and a._LogicalDB_key = d._LogicalDB_key)', 'auto')
+results = db.sql('''
+      select distinct m._Marker_key, a.accID 
+      from #markers m, ACC_Accession a 
+      where m._Marker_key = a._Object_key 
+      and a._MGIType_key = 2 
+      and a._LogicalDB_key = 131 
+      and not exists (select 1 from #deletedIDs d 
+      where a.accID = d.accID 
+      and a._LogicalDB_key = d._LogicalDB_key)
+      ''', 'auto')
 vegaID = {}
 for r in results:
     key = r['_Marker_key']
@@ -247,3 +264,4 @@ for r in results:
 	fp.write(reportlib.CRT)
 
 reportlib.finish_nonps(fp)
+
