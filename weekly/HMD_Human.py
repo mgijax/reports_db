@@ -142,62 +142,67 @@ def runQueries():
 
 	global curated, calculated, humanEG, mouseEG, mouseMGI
 
-	cmd = 'select distinct h1._Marker_key ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-		'where h1._Refs_key = 91485 ' + \
-		'and h1._Organism_key = 2 ' + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 1'
-
+	cmd = '''
+		select distinct h1._Marker_key 
+		from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+		where h1._Refs_key = 91485 
+		and h1._Organism_key = 2 
+		and h1._Class_key = h2._Class_key 
+		and h2._Organism_key = 1
+		'''
 	results = db.sql(cmd, 'auto')
 	for r in results:
 		calculated.append(r['_Marker_key'])
 
-	cmd = 'select distinct h1._Marker_key ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-		'where h1._Refs_key != 91485 ' + \
-		'and h1._Organism_key = 2 ' + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 1'
-
+	cmd = '''
+		select distinct h1._Marker_key 
+		from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+		where h1._Refs_key != 91485 
+		and h1._Organism_key = 2 
+		and h1._Class_key = h2._Class_key 
+		and h2._Organism_key = 1
+		'''
 	results = db.sql(cmd, 'auto')
 	for r in results:
     		curated.append(r['_Marker_key'])
 
-	db.sql('select distinct humanMarkerKey = h1._Marker_key, mouseMarkerKey = h2._Marker_key ' + \
-	       'into #allhomologies ' + \
-	       'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-	       'where h1._Organism_key = 2 ' + \
-	       'and h1._Class_key = h2._Class_key ' + \
-	       'and h2._Organism_key = 1', None)
+	db.sql('''
+	       select distinct h1._Marker_key as humanMarkerKey, h2._Marker_key as mouseMarkerKey
+	       into #allhomologies 
+	       from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+	       where h1._Organism_key = 2 
+	       and h1._Class_key = h2._Class_key 
+	       and h2._Organism_key = 1
+	       ''', None)
 
 	db.sql('create index idx_hkey on #allhomologies(humanMarkerKey)', None)
 	db.sql('create index idx_mkey on #allhomologies(mouseMarkerKey)', None)
 
-	db.sql('select h.humanMarkerKey, h.mouseMarkerKey, ' + \
-		'humanOrganism = m1._Organism_key, ' + \
-		'humanSymbol = m1.symbol, ' + \
-		'humanChr = m1.chromosome || m1.cytogeneticOffset, ' + \
-		'm1.chromosome, ' + \
-		'm1.cytogeneticOffset, ' + \
-		'mouseOrganism = m2._Organism_key, ' + \
-		'mouseSymbol = m2.symbol, ' + \
-		'mouseChr = m2.chromosome, ' + \
-		'mouseBand = m2.cytogeneticOffset, ' + \
-		'mouseName = substring(m2.name, 1, 75), ' + \
-                'mouseCm = ' + \
-        	'case ' + \
-        	'when o.offset >= 0 then str(o.offset, 10, 2) ' + \
-        	'when o.offset = -999.0 then "       N/A" ' + \
-        	'when o.offset = -1.0 then "  syntenic" ' + \
-        	'end,' + \
-		'mouseOffset = o.offset ' + \
-		'into #homologies ' + \
-		'from #allhomologies h, MRK_Marker m1, MRK_Marker m2, MRK_Offset o ' + \
-		'where h.humanMarkerKey = m1._Marker_key ' + \
-		'and h.mouseMarkerKey = m2._Marker_key ' + \
-		'and h.mouseMarkerKey = o._Marker_key ' + \
-		'and o.source = 0 ', None)
+	db.sql('''
+		select h.humanMarkerKey, h.mouseMarkerKey, 
+		       m1._Organism_key as humanOrganism, 
+		       m1.symbol as humanSymbol, 
+		       m1.chromosome || m1.cytogeneticOffset as humanChr, 
+		       m1.chromosome, 
+		       m1.cytogeneticOffset, 
+		       m2._Organism_key as mouseOrganism, 
+		       m2.symbol as mouseSymbol, 
+		       m2.chromosome as mouseChr, 
+		       m2.cytogeneticOffset as mouseBand, 
+		       substring(m2.name, 1, 75) as mouseName, 
+		       o.offset as mouseOffset,
+        	       case 
+        	       when o.offset >= 0 then str(o.offset, 10, 2) 
+        	       when o.offset = -999.0 then "       N/A" 
+        	       when o.offset = -1.0 then "  syntenic" 
+        	       end as mouseCm
+		into #homologies 
+		from #allhomologies h, MRK_Marker m1, MRK_Marker m2, MRK_Offset o 
+		where h.humanMarkerKey = m1._Marker_key 
+		      and h.mouseMarkerKey = m2._Marker_key 
+		      and h.mouseMarkerKey = o._Marker_key 
+		      and o.source = 0 
+		''', None)
 
 	db.sql('create index idx_hkey1 on #homologies(humanOrganism)', None)
 	db.sql('create index idx_mkey1 on #homologies(mouseOrganism)', None)
@@ -355,7 +360,7 @@ def processSort1(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(string.ljust(r['humanChr'], 25))
+		fp.write(string.ljust(str(r['humanChr']), 25))
 		fp.write(SPACE)
 
 		if humanEG.has_key(r['humanMarkerKey']):
@@ -459,7 +464,7 @@ def processSort2(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 25))
+		fp.write(string.ljust(str(r['humanChr']), 25))
 		fp.write(SPACE)
 
 		if humanEG.has_key(r['humanMarkerKey']):
@@ -542,7 +547,7 @@ def processSort3(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 25))
+		fp.write(string.ljust(str(r['humanChr']), 25))
 		fp.write(SPACE)
 		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
@@ -649,7 +654,7 @@ def processSort4(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['humanSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(r['humanChr'], 25))
+		fp.write(string.ljust(str(r['humanChr']), 25))
 		fp.write(SPACE)
 		printDataAttributes(fp, r['humanMarkerKey'])
 		fp.write(CRT)
@@ -709,7 +714,7 @@ def processSort5(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(r['humanChr'] + TAB)
+		fp.write(str(r['humanChr']) + TAB)
 
 		if humanEG.has_key(r['humanMarkerKey']):
 			fp.write(mgi_utils.prvalue(humanEG[r['humanMarkerKey']]))
