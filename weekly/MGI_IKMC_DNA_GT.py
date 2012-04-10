@@ -58,7 +58,7 @@ collection = 'dbGSS Gene Trap'
 # and other dna methods may be discovered
 # note: we do not use sequence type because some are incorrect in 
 # our database and in genbank
-rnaMethods = '''"5' RACE", "3' RACE"'''
+rnaMethods = '''"5'' RACE", "3'' RACE"'''
 
 #
 # data structures
@@ -109,7 +109,7 @@ db.sql('SELECT convert(int, mcf.startCoordinate) as startCoordinate, ' + \
     'AND mc._Map_key = mcf._Map_key ' + \
     'AND mc._Object_key = chr._Chromosome_key', None)
 
-db.sql('CREATE INDEX idx1 on #coords(_Sequence_key)', None)
+db.sql('CREATE INDEX coords_idx1 on #coords(_Sequence_key)', None)
 
 # reduce to just DNA
 db.sql('SELECT c.* ' + \
@@ -118,7 +118,7 @@ db.sql('SELECT c.* ' + \
     'WHERE c._Sequence_key = s._Sequence_key ' + \
     'AND s._TagMethod_key = v._Term_key ' + 
     'AND v.term not in (%s)' % rnaMethods, None)
-db.sql('CREATE INDEX idx1 on #dnaCoords(_Sequence_key)', None)
+db.sql('CREATE INDEX dnaCoords_idx1 on #dnaCoords(_Sequence_key)', None)
 
 # get seqID
 db.sql('SELECT c.*, a.accID as seqId ' + \
@@ -129,7 +129,7 @@ db.sql('SELECT c.*, a.accID as seqId ' + \
     'AND a._LogicalDB_key = 9 ' + \
     'AND a.preferred = 1 ', None)
 
-db.sql('CREATE INDEX idx1 on #dcSeqs(_Sequence_key)', None)
+db.sql('CREATE INDEX dcSeqs_idx1 on #dcSeqs(_Sequence_key)', None)
 
 results = db.sql('SELECT * from #dcSeqs', 'auto')
 
@@ -170,7 +170,7 @@ db.sql('SELECT c._Sequence_key, sa._Allele_key, a.accID as mgiID ' + \
     'and a.preferred = 1 ' + \
     'and a.prefixPart = "MGI:"', None)
 
-db.sql('CREATE INDEX idx1 on #mgiIDs(_Allele_key)', None)
+db.sql('CREATE INDEX mgiIDs_idx1 on #mgiIDs(_Allele_key)', None)
 
 results = db.sql('SELECT * from #mgiIDs', 'auto')
 

@@ -80,26 +80,26 @@ for r in results:
 # mapped features that have marker associations
 # exclude DNA Segments and QTLs
 
-results = db.sql('''select l.chromosome, l.strand, m.symbol, m._Marker_key,
-	markerType = mt.name, a.accID, 
-        startC = convert(int, l.startCoordinate), 
-        endC = convert(int, l.endCoordinate) 
-        from MRK_Location_Cache l, MRK_Marker m,
-	     MRK_Types mt, ACC_Accession a, MRK_Chromosome c
+results = db.sql('''select c.chromosome, c.strand, m.symbol, m._Marker_key,
+	mt.name as markerType, a.accID, 
+        convert(int, c.startCoordinate) as startC, 
+        convert(int, c.endCoordinate) as endC 
+        from MRK_Location_Cache c, MRK_Marker m,
+	     MRK_Types mt, ACC_Accession a, MRK_Chromosome cc
         where m._Organism_key = 1 
-	and l.startCoordinate is not null 
-	and l._Marker_key = m._Marker_key 
+	and c.startCoordinate is not null 
+	and c._Marker_key = m._Marker_key 
 	and m._Marker_Status_key in (1,3) 
-	and l._Marker_Type_key not in (2,6) 
-	and l._Marker_Type_key = mt._Marker_Type_key 
-	and l._Marker_key = a._Object_key 
+	and c._Marker_Type_key not in (2,6) 
+	and c._Marker_Type_key = mt._Marker_Type_key 
+	and c._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 
 	and a._LogicalDB_key = 1 
 	and a.prefixPart = "MGI:" 
 	and a.preferred = 1 
-	and m.chromosome = c.chromosome 
-	and m._Organism_key = c._Organism_key 
-	order by c.sequenceNum, l.startCoordinate, l.endCoordinate
+	and m.chromosome = cc.chromosome 
+	and m._Organism_key = cc._Organism_key 
+	order by cc.sequenceNum, c.startCoordinate, c.endCoordinate
 	''', 'auto')
 
 for r in results:
@@ -125,8 +125,8 @@ for r in results:
 # mapped sequence features that don't have marker associations
 
 results = db.sql('''select f.strand, c.chromosome, a.accID, 
-        startC = convert(int, f.startCoordinate), 
-        endC = convert(int, f.endCoordinate) 
+        convert(int, f.startCoordinate) as startC, 
+        convert(int, f.endCoordinate) as endC 
         from MAP_Coordinate cc, MAP_Coord_Feature f, MRK_Chromosome c, ACC_Accession a 
         where f._MGIType_key = 19 
 	and f._Object_key = a._Object_key 

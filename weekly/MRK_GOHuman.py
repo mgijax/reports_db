@@ -64,7 +64,7 @@ db.sql('select distinct h1._Marker_key, humanMarker = h2._Marker_key ' + \
 	'and m._Marker_Status_key in (1,3) ' + \
 	'and h1._Class_key = h2._Class_key ' + \
 	'and h2._Organism_key = 2 ', None)
-db.sql('create index idx1 on #ortholog(_Marker_key)', None)
+db.sql('create index orthology_idx1 on #ortholog(_Marker_key)', None)
 print 'query 1 end...%s' % (mgi_utils.date())
 
 #
@@ -82,8 +82,8 @@ db.sql('select o._Marker_key, o.humanMarker, a._Annot_key, e._Refs_key, ' + \
 	'and e._EvidenceTerm_key != 115 ' + \
 	'and e._Refs_key not in (61933, 73199) ' + \
 	'and e._EvidenceTerm_key = t._Term_key', None)
-db.sql('create index idx1 on #temp1(_Marker_key)', None)
-db.sql('create index idx2 on #temp1(_Annot_key)', None)
+db.sql('create index temp1_idx1 on #temp1(_Marker_key)', None)
+db.sql('create index temp1_idx2 on #temp1(_Annot_key)', None)
 print 'query 2 end...%s' % (mgi_utils.date())
 
 # and the GO ID is not in (GO:0008150,GO:0003674,GO:0005575)
@@ -93,7 +93,7 @@ db.sql('select t.*, a.term, goID = a.accID ' + \
 	'from #temp1 t, VOC_Annot_View a ' + \
 	'where t._Annot_key = a._Annot_key ' + \
 	'and a.accID not in ("GO:0008150", "GO:0003674", "GO:0005575")', None)
-db.sql('create index idx1 on #temp2(_Marker_key)', None)
+db.sql('create index temp2_idx1 on #temp2(_Marker_key)', None)
 print 'query 3 end...%s' % (mgi_utils.date())
 
 # marker attributes
@@ -102,9 +102,9 @@ db.sql('select t.*, m.symbol, m.name ' + \
 	'into #temp3 ' + \
 	'from #temp2 t, MRK_Marker m ' + \
 	'where t._Marker_key = m._Marker_key', None)
-db.sql('create index idx1 on #temp3(_Marker_key)', None)
-db.sql('create index idx2 on #temp3(_Refs_key)', None)
-db.sql('create index idx3 on #temp3(humanMarker)', None)
+db.sql('create index temp3_idx1 on #temp3(_Marker_key)', None)
+db.sql('create index temp3_idx2 on #temp3(_Refs_key)', None)
+db.sql('create index temp3_idx3 on #temp3(humanMarker)', None)
 print 'query 4 end...%s' % (mgi_utils.date())
 
 # marker accession ids

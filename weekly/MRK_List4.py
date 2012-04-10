@@ -48,7 +48,7 @@ fp.write(TAB.join(headers) + CRT)
 
 cmd = '''
     select m._Marker_key, m._Marker_Status_key, m._Marker_Type_key, 
-	m.symbol, name = substring(name,1,150), m.chromosome, c.sequenceNum
+	m.symbol, substring(name,1,150) as name, m.chromosome, c.sequenceNum
     into #markers
     from MRK_Marker m, MRK_Chromosome c
     where m._Organism_key = 1
@@ -65,8 +65,8 @@ db.sql(cmd, 'auto')
 
 cmd = '''
     select m.*, 
-    markerStatus = upper(substring(s.status, 1, 1)),
-    markerType = substring(t.name,1,25),
+    upper(substring(s.status, 1, 1)) as markerStatus,
+    substring(t.name,1,25) as markerType,
     cmPosition =
         case
         when o.offset >= 0 then str(o.offset, 10, 2)
