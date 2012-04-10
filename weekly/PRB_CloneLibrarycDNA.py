@@ -49,19 +49,24 @@ fp.write(string.ljust('------------', 95))
 fp.write(string.ljust('----------------', 50))
 fp.write('----------------' + CRT)
 
-db.sql('select _Source_key, name = substring(ps.name, 1, 90), cloneCollection = s.name ' + \
-    'into #libraries ' + \
-    'from MGI_Set s, MGI_SetMember sm, PRB_Source ps ' + \
-    'where s._MGIType_key = 5 ' + \
-    'and s.name in ("IMAGE", "NIA", "RIKEN", "RIKEN (FANTOM)") ' + \
-    'and s._Set_key = sm._Set_key ' + \
-    'and sm._Object_key = ps._Source_key ', None)
+db.sql('''
+    select _Source_key, substring(ps.name, 1, 90) as name, s.name as cloneCollection
+    into #libraries 
+    from MGI_Set s, MGI_SetMember sm, PRB_Source ps 
+    where s._MGIType_key = 5 
+    and s.name in ("IMAGE", "NIA", "RIKEN", "RIKEN (FANTOM)") 
+    and s._Set_key = sm._Set_key 
+    and sm._Object_key = ps._Source_key 
+    ''', None)
 
 accIDs = {}
-results = db.sql('select distinct l._Source_key, a.accID, ll.name from #libraries l, ACC_Accession a, ACC_LogicalDB ll ' + \
-	'where l._Source_key = a._Object_key ' + \
-	'and a._MGIType_key = 5 ' + \
-	'and a._LogicalDB_key = ll._LogicalDB_key', 'auto')
+results = db.sql('''
+	select distinct l._Source_key, a.accID, ll.name 
+	from #libraries l, ACC_Accession a, ACC_LogicalDB ll 
+	where l._Source_key = a._Object_key 
+	and a._MGIType_key = 5 
+	and a._LogicalDB_key = ll._LogicalDB_key
+	''', 'auto')
 for r in results:
     key = r['_Source_key']
     tokens = string.split(r['name'], ' ')

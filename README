@@ -21,33 +21,41 @@ except:
     import db
 
 5) the lindon/postgres version will also need a 'imsr' schema copy
-	ALL_CellLine_GeneTrap.py
-	ALL_CellLine_Targeted.py
-	ALL_CRE.py
-	MGI_Knockout.py
-	MGI_Recombinase_Full.py
+ALL_CellLine_GeneTrap.py
+ALL_CellLine_Targeted.py
+ALL_CRE.py
+MGI_Knockout.py
+MGI_Recombinase_Full.py
 
 6) reports that contain both SQL and Python (tab-delimited) versions
 
 7) date/time
 
-8) issues
+8) SQL only
+MGI_InterProDomains.sql
+MRK_List1.sql
+MRK_List2.sql
+MRK_List3.sql
+MRK_List4.sql
+MRK_Synonym.sql
+PRB_CloneLibrary.sql
+PRB_TissueMouse.sql
 
-	HMD_Synonyms.py
-		updating temporary table
+9) issues
 
-	MGI_CloneSet.py
+HMD_Synonyms.py
+MGI_ElsevierDOI.py
+MGI_PhenoOMIM.py
+	temporary table
 
-	MGI_ElsevierDOI.py
-	MGI_PhenoOMIM.py
-		mulitple inserts into temporary table
+MGI_CloneSet.py
 
-	MGI_GTRNA.py
-		MASTER_GFF_FILE
+MGI_GTRNA.py
+	MASTER_GFF_FILE
 
-	MRK_NomenUpdates.py
-		needs translation
+MRK_NomenUpdates.py
+	needs translation
 
-	mgimarkerfeed
+mgimarkerfeed
 		mainly translations
 

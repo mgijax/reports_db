@@ -354,7 +354,7 @@ def processSort1(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(string.ljust(str(r['ratChr']), 15))
+		fp.write(string.ljust(mgi_utils.prvalue(r['ratChr']), 15))
 		fp.write(SPACE)
 
 		if ratEG.has_key(r['ratMarkerKey']):
@@ -458,7 +458,7 @@ def processSort2(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['mouseSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(str(r['ratChr']), 15))
+		fp.write(string.ljust(mgi_utils.prvalue(r['ratChr']), 15))
 		fp.write(SPACE)
 
 		if ratEG.has_key(r['ratMarkerKey']):
@@ -541,7 +541,7 @@ def processSort3(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(str(r['ratChr']), 15))
+		fp.write(string.ljust(mgi_utils.prvalue(r['ratChr']), 15))
 		fp.write(SPACE)
 		fp.write(string.ljust(mouseMGI[r['mouseMarkerKey']], 30))
 		fp.write(SPACE)
@@ -648,7 +648,7 @@ def processSort4(results):
 		fp.write(SPACE)
 		fp.write(string.ljust(r['ratSymbol'], 25))
 		fp.write(SPACE)
-		fp.write(string.ljust(str(r['ratChr']), 15))
+		fp.write(string.ljust(mgi_utils.prvalue(r['ratChr']), 15))
 		fp.write(SPACE)
 		printDataAttributes(fp, r['ratMarkerKey'])
 		fp.write(CRT)
@@ -708,7 +708,7 @@ def processSort5(results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(str(r['ratChr']) + TAB)
+		fp.write(mgi_utils.prvalue(r['ratChr']) + TAB)
 
 		if ratEG.has_key(r['ratMarkerKey']):
 			fp.write(mgi_utils.prvalue(ratEG[r['ratMarkerKey']]))

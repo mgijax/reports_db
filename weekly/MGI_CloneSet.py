@@ -83,7 +83,7 @@ for l in lKeys[1:]:
 	    'and not exists (select 1 from #clone1 n where pa._Object_key = n._Object_key)'
     db.sql(cmd, None)
 
-db.sql('create index idx2 on #clone1(_LogicalDB_key)', None)
+db.sql('create index clone1_idx2 on #clone1(_LogicalDB_key)', None)
 
 # grab logical DB name
 
@@ -91,7 +91,7 @@ db.sql('select n._Object_key, db = ldb.name ' + \
 	'into #clone2 ' + \
 	'from #clone1 n, ACC_LogicalDB ldb ' + \
 	'where n._LogicalDB_key = ldb._LogicalDB_key', None)
-db.sql('create index idx1 on #clone2(_Object_key)', None)
+db.sql('create index clone2_idx1 on #clone2(_Object_key)', None)
 
 # grab all associated markers
 
@@ -99,7 +99,7 @@ db.sql('select n._Object_key, pm._Marker_key ' + \
 	'into #clone3 ' + \
 	'from #clone2 n, PRB_Marker pm ' + \
 	'where n._Object_key = pm._Probe_key', None)
-db.sql('create index idx1 on #clone3(_Marker_key)', None)
+db.sql('create index clone3_idx1 on #clone3(_Marker_key)', None)
 
 # grab marker symbol, accID
 

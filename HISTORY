@@ -5,7 +5,7 @@ CHANGES:
 1) convert to using one db.sql() per sql command in preparation for postgres
 2) re-order import statements in prep for postgres changes
 3) convert 'create index idx' to unique index name
-4) postgres options with "try/except" block
+4) postgres options with "try/except" block added to all python reports
 
 TAG: reports_db-5-0-0-1
 DATE: 03/29/2012

@@ -283,7 +283,7 @@ def process(organismKey, results):
 	keys.sort()
 	for key in keys:
 		r = rows[key]
-		fp.write(str(r['otherChr']) + TAB)
+		fp.write(mgi_utils.prvalue(r['otherChr']) + TAB)
 
 		if otherEG.has_key(r['otherMarkerKey']):
 			fp.write(mgi_utils.prvalue(otherEG[r['otherMarkerKey']]))
