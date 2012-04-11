@@ -67,6 +67,8 @@ if os.path.isfile('%s/%s' % (reportDir, currentReport + '.rpt')):
 os.system('mv %s/Nomenclature-*.html %s/archive/nomen' % (reportDir, reportDir))
 os.system('mv %s/Nomenclature-*.rpt %s/archive/nomen' % (reportDir, reportDir))
 
+db.useOneConnection(1)
+
 results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
 bdate = results[0]['']
 
@@ -78,105 +80,111 @@ fpHTML = reportlib.init(reportName, title, os.environ['FTPREPORTDIR'], isHTML = 
 fpRpt = reportlib.init(reportName, outputdir = os.environ['FTPREPORTDIR'], printHeading = None)
 
 fpHTML.write('J:23000 generally indicates gene family nomenclature revision event.\n\n')
-
-cmd = []
-
-cmd.append('select h._Marker_key, m.symbol, name = substring(m.name,1,35), ' + \
-'chromosome = substring(m.chromosome,1,2), ' + \
-'c.sequenceNum, ' + \
-'b.jnumID, author = substring(b._primary,1,16) ' + \
-'into #markers ' + \
-'from MRK_Marker m, MRK_History h, MRK_Chromosome c, BIB_All_View b ' + \
-'where m._Organism_key = 1 ' + \
-'and m._Marker_key = h._History_key ' + \
-'and h.event_date between dateadd(day, -7, "%s") ' % (currentDate) + \
-'and dateadd(day, 1, "%s") ' % (currentDate) + \
-'and m.chromosome = c.chromosome ' + \
-'and m._Organism_key = c._Organism_key ' + \
-'and h._Refs_key = b._Refs_key')
-
-cmd.append('create index idx_key on #markers(_Marker_key)')
-
-# get primary MGI ids (2)
-cmd.append('select distinct m._Marker_key, a.accID ' + \
-'from #markers m, ACC_Accession a ' + \
-'where m._Marker_key = a._Object_key ' + \
-'and a._MGIType_key = 2 ' + \
-'and a.prefixPart = "MGI:" ' + \
-'and a._LogicalDB_key = 1 ' + \
-'and a.preferred = 1')
-
-# other MGI ids (3)
-cmd.append('select distinct m._Marker_key, a.accID ' + \
-'from #markers m, ACC_Accession a ' + \
-'where m._Marker_key = a._Object_key ' + \
-'and a._MGIType_key = 2 ' + \
-'and a.prefixPart = "MGI:" ' + \
-'and a._LogicalDB_key = 1 ' + \
-'and a.preferred = 0')
-
-# get sequence ids (4)
-cmd.append('select distinct m._Marker_key, a.accID ' + \
-'from #markers m, ACC_Accession a ' + \
-'where m._Marker_key = a._Object_key ' + \
-'and a._MGIType_key = 2 ' + \
-'and a._LogicalDB_key = 9')
-
-# get human ortholog (5)
-cmd.append('select distinct m._Marker_key, humanSymbol = h.symbol ' + \
-'from #markers m, MRK_Marker h, MRK_Homology_Cache hm1, MRK_Homology_Cache hm2 ' + \
-'where m._Marker_key = hm1._Marker_key ' + \
-'and hm1._Homology_key = hm2._Homology_key ' + \
-'and hm2._Marker_key = h._Marker_key ' + \
-'and hm2._Organism_key = 1')
-
-# retrieve markers, sort (6)
-cmd.append('select distinct * from #markers order by sequenceNum, symbol')
-
-results = db.sql(cmd, 'auto')
-
 fpHTML.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Human Ortholog', 'Other MGI IDs'))
 fpHTML.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '--------------', '-------------'))
 
+db.sql('''
+	select h._Marker_key, m.symbol, substring(m.name,1,35) as name, 
+		substring(m.chromosome,1,2) as chromosome, 
+		c.sequenceNum, 
+		b.jnumID, 
+		substring(b._primary,1,25) as author
+	into #markers 
+	from MRK_Marker m, MRK_History h, MRK_Chromosome c, BIB_All_View b 
+	where m._Organism_key = 1 
+	and m._Marker_key = h._History_key 
+	and h.event_date between dateadd(day,-7,"%s") and dateadd(day,1,"%s") 
+	and m.chromosome = c.chromosome 
+	and m._Organism_key = c._Organism_key 
+	and h._Refs_key = b._Refs_key
+	''' % (currentDate, currentDate), None)
+db.sql('create index idx_key on #markers(_Marker_key)', None)
+
+# get primary MGI ids (2)
+results = db.sql('''
+	select distinct m._Marker_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a.prefixPart = "MGI:" 
+	and a._LogicalDB_key = 1 
+	and a.preferred = 1
+	''', 'auto')
 primaryID = {}
-for r in results[2]:
+for r in results:
 	primaryID[r['_Marker_key']] = r['accID']
 
+# other MGI ids (3)
+results = db.sql('''
+	select distinct m._Marker_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a.prefixPart = "MGI:" 
+	and a._LogicalDB_key = 1 
+	and a.preferred = 0
+	''', 'auto')
 otherIDs = {}
-for r in results[3]:
+for r in results:
 	if not otherIDs.has_key(r['_Marker_key']):
 		otherIDs[r['_Marker_key']] = []
 	otherIDs[r['_Marker_key']].append(r['accID'])
 
+# get sequence ids (4)
+results = db.sql('''
+	select distinct m._Marker_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 9
+	''', 'auto')
 seqIDs = {}
-for r in results[4]:
+for r in results:
 	if not seqIDs.has_key(r['_Marker_key']):
 		seqIDs[r['_Marker_key']] = []
 	seqIDs[r['_Marker_key']].append(r['accID'])
 
+# get human ortholog (5)
+results = db.sql('''
+	select distinct m._Marker_key, humanSymbol = h.symbol 
+	from #markers m, MRK_Marker h, MRK_Homology_Cache hm1, MRK_Homology_Cache hm2 
+	where m._Marker_key = hm1._Marker_key 
+	and hm1._Homology_key = hm2._Homology_key 
+	and hm2._Marker_key = h._Marker_key 
+	and hm2._Organism_key = 1
+	''', 'auto')
 human = {}
-for r in results[5]:
+for r in results:
 	human[r['_Marker_key']] = r['humanSymbol']
 
+# retrieve markers, sort (6)
+results = db.sql('select distinct * from #markers order by sequenceNum, symbol', 'auto')
 rows = 0
-for r in results[6]:
+for r in results:
 
 	key = r['_Marker_key']
 	symbol = mgi_html.escape(r['symbol'])
 
 	fpHTML.write('%-2s ' % (r['chromosome']))
 
-	fpHTML.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key], 'marker'), symbol, reportlib.close_accession_anchor()))
+	fpHTML.write('%s%-25s%s ' \
+		% (reportlib.create_accession_anchor(primaryID[key], 'marker'), symbol, \
+			reportlib.close_accession_anchor()))
 
 	fpHTML.write('%-35s ' % (r['name']))
 
-	fpHTML.write('%s%-10s%s ' % (reportlib.create_accession_anchor(r['jnumID'], 'reference'), r['jnumID'], reportlib.close_accession_anchor()))
+	fpHTML.write('%s%-10s%s ' \
+		% (reportlib.create_accession_anchor(r['jnumID'], 'reference'), r['jnumID'], \
+			reportlib.close_accession_anchor()))
 
 	fpHTML.write('%-20s ' % (r['author']))
 
-	fpHTML.write('%s%-25s%s ' % (reportlib.create_accession_anchor(primaryID[key], 'marker'), primaryID[key], reportlib.close_accession_anchor()))
+	fpHTML.write('%s%-25s%s ' \
+		% (reportlib.create_accession_anchor(primaryID[key], 'marker'), primaryID[key], \
+			reportlib.close_accession_anchor()))
 
-	fpRpt.write('%s\t%s\t%s\t%s\t%s\t%s\t' % (r['chromosome'], symbol, r['name'], r['jnumID'], r['author'], primaryID[key]))
+	fpRpt.write('%s\t%s\t%s\t%s\t%s\t%s\t' \
+		% (r['chromosome'], symbol, r['name'], r['jnumID'], r['author'], primaryID[key]))
 
 	if seqIDs.has_key(key):
 		fpHTML.write('%-75s ' % (string.join(seqIDs[key], ',')))
@@ -204,8 +212,10 @@ for r in results[6]:
 fpHTML.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
 reportlib.finish_nonps(fpHTML, isHTML = 1)	# non-postscript file
 reportlib.finish_nonps(fpRpt)			# non-postscript file
+db.useOneConnection(0)
 
 # re-create a symbolic link between the new file and the current file
 os.chdir(reportDir)
 os.symlink(reportName + '.html', currentReport + '.html')
 os.symlink(reportName + '.rpt', currentReport + '.rpt')
+
