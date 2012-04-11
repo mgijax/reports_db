@@ -13,8 +13,8 @@ endif
 
 source ${MGICONFIG}/master.config.csh
 
+# temporary...until this is moved into mgconfig
 setenv DB_TYPE			sybase
-#setenv DB_TYPE			postgres
 
 setenv IMSR_DBNAME		imsr
 

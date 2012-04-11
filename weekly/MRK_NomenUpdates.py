@@ -47,7 +47,6 @@ try:
 except:
     import db
 
-
 #
 # Main
 #
@@ -69,19 +68,40 @@ os.system('mv %s/Nomenclature-*.rpt %s/archive/nomen' % (reportDir, reportDir))
 
 db.useOneConnection(1)
 
-results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
-bdate = results[0]['']
+#
+# purposely did not add this to lib_py_postgres/pg_db.py/translate_be() (for now)
+#
 
-results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
-edate = results[0]['']
+if os.environ['DB_TYPE'] == 'postgres':
+	results = db.sql('select to_char(now() - interval \'7 days\', \'YYYY-MM-DD\')', 'auto')
+	bdate = results[0]['to_char']
+
+	results = db.sql('select to_char(now(), \'YYYY-MM-DD\')', 'auto')
+	edate = results[0]['to_char']
+
+	datequery = '\'%s\' and \'%s\'' \
+		% (bdate, edate)
+else:
+	results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
+	bdate = results[0]['']
+
+	results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
+	edate = results[0]['']
+
+	datequery = 'dateadd(day,-7,"%s") and dateadd(day,1,"%s")' \
+		% (currentDate, currentDate)
 
 title = 'Updates to Mouse Nomenclature from %s to %s' % (bdate, edate)
 fpHTML = reportlib.init(reportName, title, os.environ['FTPREPORTDIR'], isHTML = 1, printHeading = "MGI")
 fpRpt = reportlib.init(reportName, outputdir = os.environ['FTPREPORTDIR'], printHeading = None)
 
 fpHTML.write('J:23000 generally indicates gene family nomenclature revision event.\n\n')
-fpHTML.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author    ', 'MGI ID', 'Sequence ID', 'Human Ortholog', 'Other MGI IDs'))
-fpHTML.write('%-2s %-25s %-35s %-10s %-20s %-25s %-75s %-15s %-25s\n' % ('--', '------', '---------', '--', '----------------', '------', '-----------', '--------------', '-------------'))
+
+fpHTML.write('%-2s %-30s %-35s %-10s %-30s %-25s %-75s %-15s %-25s\n' \
+	% ('Ch', 'Symbol', 'Gene Name', 'J#', 'First Author', 'MGI ID', 'Sequence ID', 'Human Ortholog', 'Other MGI IDs'))
+
+fpHTML.write('%-2s %-30s %-35s %-10s %-30s %-25s %-75s %-15s %-25s\n' \
+	% ('--', '------', '---------', '--', '------------', '------', '-----------', '--------------', '-------------'))
 
 db.sql('''
 	select h._Marker_key, m.symbol, substring(m.name,1,35) as name, 
@@ -93,11 +113,11 @@ db.sql('''
 	from MRK_Marker m, MRK_History h, MRK_Chromosome c, BIB_All_View b 
 	where m._Organism_key = 1 
 	and m._Marker_key = h._History_key 
-	and h.event_date between dateadd(day,-7,"%s") and dateadd(day,1,"%s") 
+	and h.event_date between %s
 	and m.chromosome = c.chromosome 
 	and m._Organism_key = c._Organism_key 
 	and h._Refs_key = b._Refs_key
-	''' % (currentDate, currentDate), None)
+	''' % (datequery), None)
 db.sql('create index idx_key on #markers(_Marker_key)', None)
 
 # get primary MGI ids (2)
@@ -167,7 +187,7 @@ for r in results:
 
 	fpHTML.write('%-2s ' % (r['chromosome']))
 
-	fpHTML.write('%s%-25s%s ' \
+	fpHTML.write('%s%-30s%s ' \
 		% (reportlib.create_accession_anchor(primaryID[key], 'marker'), symbol, \
 			reportlib.close_accession_anchor()))
 
@@ -177,7 +197,7 @@ for r in results:
 		% (reportlib.create_accession_anchor(r['jnumID'], 'reference'), r['jnumID'], \
 			reportlib.close_accession_anchor()))
 
-	fpHTML.write('%-20s ' % (r['author']))
+	fpHTML.write('%-30s ' % (r['author']))
 
 	fpHTML.write('%s%-25s%s ' \
 		% (reportlib.create_accession_anchor(primaryID[key], 'marker'), primaryID[key], \

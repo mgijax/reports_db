@@ -10,6 +10,7 @@ TR11035/Postgres Cleanup
 5) PRB_TissueMouse.sql moved to PRB_TissueMouse.py
 6) MGI_InterProDomains.sql moved to MGI_InterProDomains.py
 7) PRB_CloneLibrary.sql moved to PRB_CloneLibrary.py
+8) MRK_NomenUpdates.py; first author needed to be increased
 
 TAG: reports_db-5-0-0-1
 DATE: 03/29/2012
