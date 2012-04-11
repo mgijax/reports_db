@@ -40,13 +40,8 @@ MRK_Synonym.sql
 
 9) issues
 
-HMD_Synonyms.py
-MGI_ElsevierDOI.py
 MGI_PhenoOMIM.py
 	temporary table
-
-MRK_NomenUpdates.py
-	needs translation
 
 MGI_ProblemSequence.py
 	group by clause
