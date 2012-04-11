@@ -56,7 +56,6 @@ try:
 except:
     import db
 
-
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
 TAB = reportlib.TAB
@@ -140,53 +139,57 @@ def runQueries():
 
 	global curated, calculated, ratEG, humanEG
 
-	cmd = 'select distinct h1._Marker_key ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-		'where h1._Refs_key = 91485 ' + \
-		'and h1._Organism_key = 40 ' + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 2'
-
+	cmd = '''
+		select distinct h1._Marker_key 
+		from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+		where h1._Refs_key = 91485 
+		and h1._Organism_key = 40 
+		and h1._Class_key = h2._Class_key 
+		and h2._Organism_key = 2
+		'''
 	results = db.sql(cmd, 'auto')
 	for r in results:
 		calculated.append(r['_Marker_key'])
 
-	cmd = 'select distinct h1._Marker_key ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-		'where h1._Refs_key != 91485 ' + \
-		'and h1._Organism_key = 40 ' + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 2'
-
-	results = db.sql(cmd, 'auto')
+	results = db.sql('''
+		select distinct h1._Marker_key 
+		from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+		where h1._Refs_key != 91485 
+		and h1._Organism_key = 40 
+		and h1._Class_key = h2._Class_key 
+		and h2._Organism_key = 2
+		''', 'auto')
 	for r in results:
     		curated.append(r['_Marker_key'])
 
-	db.sql('select distinct ratMarkerKey = h1._Marker_key, humanMarkerKey = h2._Marker_key ' + \
-	       'into #allhomologies ' + \
-	       'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-	       'where h1._Organism_key = 40 ' + \
-	       'and h1._Class_key = h2._Class_key ' + \
-	       'and h2._Organism_key = 2', None)
-
+	db.sql('''
+	       select distinct ratMarkerKey = h1._Marker_key, humanMarkerKey = h2._Marker_key 
+	       into #allhomologies 
+	       from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+	       where h1._Organism_key = 40 
+	       and h1._Class_key = h2._Class_key 
+	       and h2._Organism_key = 2
+	       ''', None)
 	db.sql('create index idx_hkey on #allhomologies(ratMarkerKey)', None)
 	db.sql('create index idx_mkey on #allhomologies(humanMarkerKey)', None)
 
-        db.sql('select h.ratMarkerKey, h.humanMarkerKey, ' + \
-                'm1._Organism_key as ratOrganism, ' + \
-                'm1.symbol as ratSymbol, ' + \
-                'm1.chromosome || m1.cytogeneticOffset as ratChr, ' + \
-                'm1.chromosome as ratChrOnly, ' + \
-                'm1.cytogeneticOffset as ratCyto, ' + \
-                'm2._Organism_key as humanOrganism, ' + \
-                'm2.symbol as humanSymbol, ' + \
-                'm2.chromosome || m2.cytogeneticOffset as humanChr, ' + \
-                'm2.chromosome as humanChrOnly, ' + \
-                'm2.cytogeneticOffset as humanCyto ' + \
-                'into #homologies ' + \
-                'from #allhomologies h, MRK_Marker m1, MRK_Marker m2 ' + \
-                'where h.ratMarkerKey = m1._Marker_key ' + \
-
+	db.sql('''
+		select h.ratMarkerKey, h.humanMarkerKey, 
+		m1._Organism_key as ratOrganism, 
+		m1.symbol as ratSymbol, 
+		m1.chromosome || m1.cytogeneticOffset as ratChr, 
+		m1.chromosome as ratChrOnly, 
+		m1.cytogeneticOffset as ratCyto, 
+		m2._Organism_key as humanOrganism, 
+		m2.symbol as humanSymbol, 
+		m2.chromosome || m2.cytogeneticOffset as humanChr, 
+		m2.chromosome as humanChrOnly, 
+		m2.cytogeneticOffset as humanCyto
+		into #homologies 
+		from #allhomologies h, MRK_Marker m1, MRK_Marker m2 
+		where h.ratMarkerKey = m1._Marker_key 
+		and h.humanMarkerKey = m2._Marker_key 
+		''', None)
 	db.sql('create index idx_hkey1 on #homologies(ratOrganism)', None)
 	db.sql('create index idx_mkey1 on #homologies(humanOrganism)', None)
 	db.sql('create index idx_hkey2 on #homologies(ratSymbol)', None)
@@ -194,37 +197,43 @@ def runQueries():
 
 	# rat entrezgene ids
 
-	results = db.sql('select h.ratMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
-		'where h.ratMarkerKey = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 55 ', 'auto')
-
+	results = db.sql('''
+		select h.ratMarkerKey, a.accID from #homologies h, ACC_Accession a 
+		where h.ratMarkerKey = a._Object_key 
+		and a._MGIType_key = 2 
+		and a._LogicalDB_key = 55 
+		''', 'auto')
 	for r in results:
 		ratEG[r['ratMarkerKey']] = r['accID']
 
 	# human entrezgene ids
 
-	results = db.sql('select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
-		'where h.humanMarkerKey = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 55 ', 'auto')
-
+	results = db.sql('''
+		select h.humanMarkerKey, a.accID from #homologies h, ACC_Accession a 
+		where h.humanMarkerKey = a._Object_key 
+		and a._MGIType_key = 2 
+		and a._LogicalDB_key = 55 
+		''', 'auto')
 	for r in results:
 		humanEG[r['humanMarkerKey']] = r['accID']
 
 	# sorted by rat chromosome
 
-	results1 = db.sql('select h.*, c.sequenceNum ' + \
-		'from #homologies h, MRK_Chromosome c ' + \
-		'where h.ratOrganism = c._Organism_key ' + \
-		'and h.ratChrOnly = c.chromosome ', 'auto')
+	results1 = db.sql('''
+		select h.*, c.sequenceNum
+		from #homologies h, MRK_Chromosome c
+		where h.ratOrganism = c._Organism_key 
+		and h.ratChrOnly = c.chromosome 
+		''', 'auto')
 
 	# sorted by human chromosome
 
-	results2 = db.sql('select h.*, c.sequenceNum ' + \
-		'from #homologies h, MRK_Chromosome c ' + \
-		'where h.humanOrganism = c._Organism_key ' + \
-		'and h.humanChrOnly = c.chromosome ', 'auto')
+	results2 = db.sql('''
+		select h.*, c.sequenceNum 
+		from #homologies h, MRK_Chromosome c 
+		where h.humanOrganism = c._Organism_key 
+		and h.humanChrOnly = c.chromosome 
+		''', 'auto')
 
 	# sorted by rat symbol
 
