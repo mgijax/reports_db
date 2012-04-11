@@ -1645,12 +1645,12 @@ def omim():
 #
 
 db.useOneConnection(1)
-#vocabs()
+vocabs()
 alleles()
-#markers()
+markers()
 strains()
 genotypes()
-#references()
-#omim()
+references()
+omim()
 db.useOneConnection(0)
 
