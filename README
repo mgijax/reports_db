@@ -39,7 +39,6 @@ MRK_List3.sql
 MRK_List4.sql
 MRK_Synonym.sql
 PRB_CloneLibrary.sql
-PRB_TissueMouse.sql
 
 9) issues
 
@@ -47,8 +46,6 @@ HMD_Synonyms.py
 MGI_ElsevierDOI.py
 MGI_PhenoOMIM.py
 	temporary table
-
-MGI_CloneSet.py
 
 MRK_NomenUpdates.py
 	needs translation

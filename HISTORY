@@ -2,10 +2,13 @@ TAG: reports_db-5-0-0-?
 DATE: 04/10/2012
 STAFF: lec
 CHANGES:
+TR11035/Postgres Cleanup
 1) convert to using one db.sql() per sql command in preparation for postgres
 2) re-order import statements in prep for postgres changes
 3) convert 'create index idx' to unique index name
 4) postgres options with "try/except" block added to all python reports
+5) PRB_TissueMouse.sql moved to PRB_TissueMouse.py
+6) MGI_InterProDomains.sql moved to MGI_InterProDomains.py
 
 TAG: reports_db-5-0-0-1
 DATE: 03/29/2012
