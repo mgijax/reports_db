@@ -179,8 +179,8 @@ db.sql('''select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Objec
 	and ta._MGIType_key = 13 
 	and ta.preferred = 1 
 	and e._EvidenceTerm_key = et._Term_key 
-	and et.abbreviation in ("ISS","ISO","ISM","ISA") 
-	and e.inferredFrom like "UniProtKB:%" 
+	and et.abbreviation in ('ISS','ISO','ISM','ISA') 
+	and e.inferredFrom like 'UniProtKB:%' 
         and a._Qualifier_key = q._Object_key 
 	and q._SynonymType_key = 1023 
 	and e._ModifiedBy_key = u._User_key
@@ -189,8 +189,8 @@ db.sql('''select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Objec
 	and u.login not like 'GOA%'
 	''', None)
 
-db.sql('create go_marker1_index idx1 on #gomarker1(_Object_key)', None)
-db.sql('create go_marker1_index idx2 on #gomarker1(_Refs_key)', None)
+db.sql('create index gomarker1_idx1 on #gomarker1(_Object_key)', None)
+db.sql('create index gomarker1_idx2 on #gomarker1(_Refs_key)', None)
 
 #
 # resolve pub med id
@@ -204,7 +204,7 @@ db.sql('''select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uni
 		and b._MGIType_key = 1 
 		and b._LogicalDB_key = 29)
 	''', None)
-db.sql('create go_marker2_index idx1 on #gomarker2(_AnnotEvidence_key)', None)
+db.sql('create index gomarker2_idx1 on #gomarker2(_AnnotEvidence_key)', None)
 
 #
 # properties
