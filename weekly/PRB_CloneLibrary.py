@@ -2,13 +2,13 @@
 
 '''
 #
-# PRB_TissueMouse.py
+# PRB_CloneLibrary.py
 #
 # Report:
-#       Tab-delimited file of Probe/Tissues
+#       Tab-delimited file of Clone Libraires
 #
 # Usage:
-#       PRB_TissueMouse.py
+#       PRB_CloneLibrary.py
 #
 # History:
 #
@@ -32,7 +32,6 @@ try:
 except:
     import db
 
-
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
@@ -42,25 +41,15 @@ CRT = reportlib.CRT
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-db.sql('''
-	select distinct _Tissue_key
-	into #tissues
-	from PRB_Probe p, PRB_Source s, VOC_Term t
-	where p._SegmentType_key = t._Term_key
-	and t.term = 'cDNA'
-	and p._Source_key = s._Source_key
-	and s._Organism_key = 1
-	''', None)
-
 results = db.sql('''
-	select p.tissue 
-	from #tissues t, PRB_Tissue p
-	where t._Tissue_key = p._Tissue_key
-	order by tissue
+	select substring(name, 1, 100) as name
+	from PRB_Source
+	where name is not null
+	order by name
 	''', 'auto')
 
 for r in results:
-	fp.write(r['tissue'] + CRT)
+	fp.write(r['name'] + CRT)
 
 reportlib.finish_nonps(fp)
 

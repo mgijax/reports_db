@@ -9,6 +9,7 @@ TR11035/Postgres Cleanup
 4) postgres options with "try/except" block added to all python reports
 5) PRB_TissueMouse.sql moved to PRB_TissueMouse.py
 6) MGI_InterProDomains.sql moved to MGI_InterProDomains.py
+7) PRB_CloneLibrary.sql moved to PRB_CloneLibrary.py
 
 TAG: reports_db-5-0-0-1
 DATE: 03/29/2012

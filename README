@@ -32,13 +32,11 @@ MGI_Recombinase_Full.py
 7) date/time
 
 8) SQL only
-MGI_InterProDomains.sql
 MRK_List1.sql
 MRK_List2.sql
 MRK_List3.sql
 MRK_List4.sql
 MRK_Synonym.sql
-PRB_CloneLibrary.sql
 
 9) issues
 
