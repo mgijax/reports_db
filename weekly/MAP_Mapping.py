@@ -306,4 +306,5 @@ for panel in allPanels:
 #	print 'data: ' + typings[item]
 		
 reportlib.finish_nonps(fp)
+reportlib.finish_nonps(fp2)
 db.useOneConnection(0)

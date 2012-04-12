@@ -1533,14 +1533,14 @@ def references():
     db.sql('create index omimreferences_idx1 on #omimreferences(_Refs_key)', None)
 
     db.sql('''
-	   select distinct _Refs_key into #references from #genoreferences 
+	   select distinct _Refs_key into #refs from #genoreferences 
 	   union select distinct _Refs_key from #allrefs 
 	   union select distinct _Refs_key from #allrefs2 
 	   union select distinct _Refs_key from #strainreferences 
 	   union select distinct _Refs_key from #mrkreferences 
 	   union select distinct _Refs_key from #omimreferences
 	   ''', None)
-    db.sql('create index references_idx1 on #references(_Refs_key)', None)
+    db.sql('create index references_idx1 on #refs(_Refs_key)', None)
 
     results = db.sql('''
 	    select r._Refs_key, b.refType, b.authors, b.authors2, 
@@ -1549,7 +1549,7 @@ def references():
 	    k.book_au, k.book_title, k.publisher, k.place, k.series_ed, 
 	    convert(char(20), b.creation_date, 100) as cdate, 
 	    convert(char(20), b.modification_date, 100) as mdate 
-	    from #references r, BIB_Refs b LEFT OUTER JOIN BIB_Books k on (b._Refs_key = k._Refs_key)
+	    from #refs r, BIB_Refs b LEFT OUTER JOIN BIB_Books k on (b._Refs_key = k._Refs_key)
 	    where r._Refs_key = b._Refs_key 
 	    ''', 'auto')
 
@@ -1582,7 +1582,7 @@ def references():
 	    select a.accID, LogicalDB = l.name, a._Object_key, a.preferred, 
 	    convert(char(20), a.creation_date, 100) as cdate, 
 	    convert(char(20), a.modification_date, 100) as mdate 
-	    from #references r, ACC_Accession a, ACC_LogicalDB l 
+	    from #refs r, ACC_Accession a, ACC_LogicalDB l 
 	    where r._Refs_key = a._Object_key 
 	    and a._MGIType_key = 1 
 	    and a._LogicalDB_key = l._LogicalDB_key

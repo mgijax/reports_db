@@ -84,7 +84,8 @@ fp.write('markerSymbol' + TAB)
 fp.write('esIMSR' + TAB)
 fp.write('strainIMSR' + CRT)
 		
-db.sql('''select distinct c.cellLine as mclID, c.parentCellLine, 
+db.sql('''
+	select distinct c.cellLine as mclID, c.parentCellLine, 
 	    c.vector, c.creator as mclCreator, c.derivationName as library,  
 	    c.parentCellLineStrain, ac._Allele_key, aa.accID as alleleID, 
 	    avv._Marker_key, ma.accID as markerID 
@@ -112,17 +113,14 @@ db.sql('''select distinct c.cellLine as mclID, c.parentCellLine,
 	    and avv._Allele_Type_key in (847116,847117,847118,847119,847120)
 	    ''', None)
 	
-db.sql("create index idx_mrk on #gt_seqs (markerID)", None)
+db.sql('create index idx_mrk on #gt_seqs (markerID)', None)
+db.sql('create index idx_allp on #gt_seqs (alleleID)', None)
+db.sql('create index idx_gtallid on #gt_seqs (_Allele_key)', None)
+db.sql('create index idx_gtmrkid on #gt_seqs (_Marker_key)', None)
+db.sql('create table #imsrCounts(accID varchar(30), abbrevName varchar(30), cType int)', None)
 
-db.sql("create index idx_allp on #gt_seqs (alleleID)", None)
-
-db.sql("create index idx_gtallid on #gt_seqs (_Allele_key)", None)
-
-db.sql("create index idx_gtmrkid on #gt_seqs (_Marker_key)", None)
-
-db.sql("create table #imsrCounts(accID varchar(30), abbrevName varchar(30), cType int)", None)
-
-db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
+db.sql('''
+	insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
 	    imsr..Accession ac, imsr..Facility f 
 	where ac.accID = g.alleleID 
@@ -130,9 +128,11 @@ db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
 	and ac._Object_key = sga._Allele_key 
 	and sga._Strain_key = sfa._Strain_key
 	and sfa._StrainState_key = 2 
-	and sfa._Facility_key = f._Facility_key''', None)
+	and sfa._Facility_key = f._Facility_key
+	''', None)
 
-db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1 
+db.sql('''
+	insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1 
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
 	    imsr..Accession ac, imsr..Facility f 
 	where ac.accID = g.markerID 
@@ -140,9 +140,11 @@ db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
 	and ac._Object_key = sga._Gene_key 
 	and sga._Strain_key = sfa._Strain_key
 	and sfa._StrainState_key = 2
-	and sfa._Facility_key = f._Facility_key''', None)
+	and sfa._Facility_key = f._Facility_key
+	''', None)
 
-db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
+db.sql('''
+	insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,  
 	    imsr..Accession ac, imsr..Facility f 
 	where ac.accID = g.alleleID 
@@ -150,9 +152,11 @@ db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
 	and ac._Object_key = sga._Allele_key 
 	and sga._Strain_key = sfa._Strain_key
 	and sfa._StrainState_key <> 2 
-	and sfa._Facility_key = f._Facility_key''', None)
+	and sfa._Facility_key = f._Facility_key
+	''', None)
 
-db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
+db.sql('''
+	insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,
 	    imsr..Accession ac, imsr..Facility f 
 	where ac.accID = g.markerID 
@@ -160,9 +164,10 @@ db.sql('''insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
 	    and ac._Object_key = sga._Gene_key 
 	    and sga._Strain_key = sfa._Strain_key 
 	    and sfa._StrainState_key <> 2 
-	    and sfa._Facility_key = f._Facility_key''', None)
+	    and sfa._Facility_key = f._Facility_key
+	    ''', None)
 
-results = db.sql("select distinct accID, abbrevName from #imsrCounts where cType = 1", 'auto')
+results = db.sql('select distinct accID, abbrevName from #imsrCounts where cType = 1', 'auto')
 es = {}
 for c in results:
 	accID = c['accID']
@@ -171,7 +176,7 @@ for c in results:
 	else:
 		es[accID].append(c['abbrevName'])
 	
-results = db.sql("select distinct accID, abbrevName from #imsrCounts where cType = 2", 'auto')
+results = db.sql('select distinct accID, abbrevName from #imsrCounts where cType = 2', 'auto')
 strain = {}
 for c in results:
 	accID = c['accID']
@@ -180,7 +185,8 @@ for c in results:
 	else:
 		strain[accID].append(c['abbrevName'])
 
-results = db.sql('''select g.mclID, g.vector, g.mclCreator, g.library, 
+results = db.sql('''
+	select g.mclID, g.vector, g.mclCreator, g.library, 
 	g.parentCellLine, g.parentCellLineStrain,  
 	    g.alleleID, al.symbol as alleleSymbol, 
 	    al.name as alleleName, t.term as alleleType,  
@@ -188,7 +194,8 @@ results = db.sql('''select g.mclID, g.vector, g.mclCreator, g.library,
 	from #gt_seqs g, ALL_Allele_View al, MRK_Marker mrk, VOC_Term t
 	where g._Allele_key = al._Allele_key 
 	    and al._Allele_Type_key = t._Term_key 
-	    and g._Marker_key = mrk._Marker_key''', 'auto')
+	    and g._Marker_key = mrk._Marker_key
+	    ''', 'auto')
 for row in results:
 	
 	esProviders = set()

@@ -44,7 +44,8 @@ CRT = reportlib.CRT
 #
 
 db.useOneConnection(1)
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+#fp2 = reportlib.init(sys.argv[0], fileExt = '.sql.rpt', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 'MGI')
 
 headers = [
     "MGI Accession ID",
@@ -55,7 +56,8 @@ headers = [
     "Name", 
     "Type"]
 
-fp.write(TAB.join(headers) + CRT)
+fp1.write(TAB.join(headers) + CRT)
+#fp2.write(''.join(headers) + CRT)
 
 db.sql('''
     select _Marker_key, _Marker_Status_key, _Marker_Type_key, 
@@ -64,6 +66,7 @@ db.sql('''
     from MRK_Marker
     where _Organism_key = 1
     and _Marker_Status_key in (1, 3)
+    and symbol = 'Kit'
     ''', None)
 db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
 
@@ -96,15 +99,25 @@ results = db.sql('''
     and a.preferred = 1
     order by m.symbol
     ''', 'auto')
-for r in results:
-    fp.write(r['accID'] + TAB)
-    fp.write(r['chromosome'] + TAB)
-    fp.write(r['cmPosition'] + TAB)
-    fp.write(r['symbol'] + TAB)
-    fp.write(r['markerStatus'] + TAB)
-    fp.write(r['name'] + TAB)
-    fp.write(r['markerType'] + CRT)
 
-reportlib.finish_nonps(fp)	# non-postscript file
+for r in results:
+    fp1.write(r['accID'] + TAB)
+    fp1.write(r['chromosome'] + TAB)
+    fp1.write(r['cmPosition'] + TAB)
+    fp1.write(r['symbol'] + TAB)
+    fp1.write(r['markerStatus'] + TAB)
+    fp1.write(r['name'] + TAB)
+    fp1.write(r['markerType'] + CRT)
+
+    #fp2.write(r['accID'].ljust(30+5))
+    #fp2.write(r['chromosome'].ljust(8+5))
+    #fp2.write(r['cmPosition'].ljust(10+5))
+    #fp2.write(r['symbol'].ljust(50+5))
+    #fp2.write(r['markerStatus'].ljust(1+5))
+    #fp2.write(r['name'].ljust(150+5))
+    #fp2.write(r['markerType'].ljust(25) + CRT)
+
+reportlib.finish_nonps(fp1)	# non-postscript file
+#reportlib.finish_nonps(fp2)	# non-postscript file
 db.useOneConnection(0)
 
