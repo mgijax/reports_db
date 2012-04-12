@@ -68,9 +68,11 @@ preheader = {}
 preheader2 = {}
 mergedID = {}
 
-results = db.sql('''select _Cross_key, rowNumber, colNumber, data 
-			from CRS_Typings
-			order by _Cross_key, rowNumber, colNumber''', 'auto')
+results = db.sql('''
+	select _Cross_key, rowNumber, colNumber, data 
+	from CRS_Typings
+	order by _Cross_key, rowNumber, colNumber
+	''', 'auto')
 for item in results:
 	key = 'cross_key' + str(item['_Cross_key']) + 'rowNumber' + str(item['rowNumber'])
 	itemList = item['data'].rstrip().split(' ')
@@ -95,14 +97,27 @@ for key in typings:
 	# Increadibly finicky formatting.  There has to be a better way to do this, but I've come
 	# too far now
 	
-	preheader2[crsKey] = 'CHR'.ljust(8) + 'MGI ID'.ljust(12) + 'SYMBOL'.ljust(20) + 'ANIMAL#'.ljust(11) + ' '*6*(len(temp3)-2) + ' J:NUMBER'
-	preheader2[crsKey] = preheader2[crsKey] + '\n' + '-'*7 + ' ' + '-'*11 + ' ' + '-'*19 + ' '*6*len(temp3)+ ' ' + '-'*16
+	preheader2[crsKey] = \
+		'CHR'.ljust(8) + \
+		'MGI ID'.ljust(12) + \
+		'SYMBOL'.ljust(20) + \
+		'ANIMAL#'.ljust(11) + \
+		' '*6*(len(temp3)-2) + \
+		' J:NUMBER'
+	preheader2[crsKey] = \
+		preheader2[crsKey] + '\n' + \
+		'-'*7 + ' ' + \
+		'-'*11 + ' ' + \
+		'-'*19 + ' '*6*len(temp3) + \
+		' ' + '-'*16
 	
-
-results = db.sql('''select _Cross_key, whoseCross, femaleStrain, maleStrain,
-			convert(char(20), modification_date, 100) as modification_date, abbrevHT, abbrevHO, strainHT, strainHO 
-			from crs_cross_view
-			where _Cross_key in (1839, 8, 7, 2944, 3241, 4867, 4868, 4377, 4378, 2941, 3383, 4347, 6, 4869)''', 'auto')
+results = db.sql('''
+	select _Cross_key, whoseCross, femaleStrain, maleStrain,
+		convert(char(20), modification_date, 100) as modification_date, 
+		abbrevHT, abbrevHO, strainHT, strainHO 
+	from crs_cross_view
+	where _Cross_key in (1839, 8, 7, 2944, 3241, 4867, 4868, 4377, 4378, 2941, 3383, 4347, 6, 4869)
+	''', 'auto')
 for item in results:
 	key = str(item['_Cross_key'])
 	cross[key] = item['whoseCross']
@@ -118,9 +133,11 @@ for item in results:
 	strainHT[key] = item['strainHT']
 	strainHO[key] = item['strainHO']
 
-results = db.sql('''select _Cross_key, sequenceNum, name 
-			from CRS_Progeny
-			order by _Cross_key, sequenceNum''', 'auto')
+results = db.sql('''
+	select _Cross_key, sequenceNum, name 
+	from CRS_Progeny
+	order by _Cross_key, sequenceNum
+	''', 'auto')
 for item in results:
 	key = 'cross_key' + str(item['_Cross_key'])
 	if key in header:
@@ -130,10 +147,13 @@ for item in results:
 		header[key] = TAB + TAB + TAB + item['name'] + TAB
 		header2[key] = ' '*40 + str(item['name']) + ' '*(6-len(item['name']))	
 
-results = db.sql('''select bv.jnumID, cr._Cross_key, cr._Marker_key from CRS_References cr, BIB_View bv
-			where cr._Refs_key != null
-			and cr._Refs_key = bv._Refs_key
-			order by cr._Cross_key, cr._Marker_key, bv.jnumID''', 'auto')
+results = db.sql('''
+	select bv.jnumID, cr._Cross_key, cr._Marker_key 
+	from CRS_References cr, BIB_View bv
+	where cr._Refs_key != null
+	and cr._Refs_key = bv._Refs_key
+	order by cr._Cross_key, cr._Marker_key, bv.jnumID
+	''', 'auto')
 for item in results:
 	key = 'cross_key' + str(item['_Cross_key']) + 'marker_key' + str(item['_Marker_key'])
 	if key in refs: 
@@ -142,43 +162,65 @@ for item in results:
 		refs[key] = item['jnumID']
 
 
-db.sql('''select distinct cm._Marker_key, a.accID 
-			into #tmp_accID
-			from CRS_Matrix cm LEFT OUTER JOIN ACC_Accession a on (
-			cm._Marker_key = a._Object_key and a._MGIType_key = 2 and a.prefixPart = 'MGI:'
-			and a.private = 0 and a.preferred = 1)''', None)
+db.sql('''
+	select distinct cm._Marker_key, a.accID 
+	into #tmp_accID
+	from CRS_Matrix cm 
+		LEFT OUTER JOIN ACC_Accession a on (
+			cm._Marker_key = a._Object_key 
+			and a._MGIType_key = 2 
+			and a.prefixPart = 'MGI:'
+			and a.private = 0 and a.preferred = 1)
+	''', None)
 
-results = db.sql('''select mc._Marker_key, a.accID
-			from MRK_Current mc, ACC_Accession a
-			where mc._Marker_key in (select _Marker_key from #tmp_accID where accID = null)
-			and mc._Current_key = a._Object_key and a.prefixPart = 'MGI:'
-			and a.private = 0 and a.preferred = 1 and a._MGIType_key = 2''', 'auto')
+results = db.sql('''
+	select mc._Marker_key, a.accID
+	from MRK_Current mc, ACC_Accession a
+	where mc._Marker_key in (select _Marker_key from #tmp_accID where accID = null)
+	and mc._Current_key = a._Object_key 
+	and a.prefixPart = 'MGI:'
+	and a.private = 0 
+	and a.preferred = 1 
+	and a._MGIType_key = 2
+	''', 'auto')
 for item in results:
 	mergedID[item['_Marker_key']] = item['accID']
 
-cmd = '''select distinct cm.chromosome, cm._Marker_key, cm._Cross_key, cm.rowNumber, 
-			 mm.symbol, cm.otherSymbol, a.accID, mm._Marker_Status_key
-		from CRS_Matrix cm
-		     LEFT OUTER JOIN MRK_Marker mm on (cm._Marker_key = mm._Marker_key)
-		     LEFT OUTER JOIN ACC_Accession a on (cm._Marker_key = a._Object_key
-		         and a.prefixPart = 'MGI:' and a.private = 0 and a.preferred = 1 and a._MGIType_key = 2)
-		     LEFT OUTER JOIN CRS_References cr on (cm._Cross_key = cr._Cross_key
-		         and cm._Marker_key = cr._Marker_key)
-		where cm._Cross_key = %s
-		and cm.chromosome = '%s'
-		order by rowNumber'''
+cmd = '''
+	select distinct cm.chromosome, cm._Marker_key, cm._Cross_key, cm.rowNumber, 
+		mm.symbol, cm.otherSymbol, a.accID, mm._Marker_Status_key
+	from CRS_Matrix cm
+	     LEFT OUTER JOIN MRK_Marker mm on (cm._Marker_key = mm._Marker_key)
+	     LEFT OUTER JOIN ACC_Accession a on (cm._Marker_key = a._Object_key
+	         and a.prefixPart = 'MGI:' 
+		 and a.private = 0 
+		 and a.preferred = 1 and a._MGIType_key = 2)
+	     LEFT OUTER JOIN CRS_References cr on (cm._Cross_key = cr._Cross_key
+	         and cm._Marker_key = cr._Marker_key)
+	where cm._Cross_key = %s
+	and cm.chromosome = '%s'
+	order by rowNumber
+	'''
 
 for panel in allPanels:
 
-	fp = reportlib.init('MGI_' + cross[panel].replace(' ', '_'	).replace('(', '').replace(')', '') + '_Panel', fileExt = '.rpt', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-	fp2 = reportlib.init('MGI_' + cross[panel].replace(' ', '_'	).replace('(', '').replace(')', '') + '_Panel', fileExt = '.sql.rpt', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 'MGI')
+	fp = reportlib.init('MGI_' + \
+		cross[panel].replace(' ', '_'	).replace('(', '').replace(')', '') + \
+		'_Panel', fileExt = '.rpt', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+
+	fp2 = reportlib.init('MGI_' + \
+		cross[panel].replace(' ', '_'	).replace('(', '').replace(')', '') + \
+		'_Panel', fileExt = '.sql.rpt', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 'MGI')
 
 	fp.write('Mapping Panel: ' + cross[panel] + '\n')
 	fp2.write('\n\nMapping Panel: ' + cross[panel] + '\n')
+
 	fp.write('Cross designation: ' + strain[panel] + '\n')
 	fp2.write('Cross designation: ' + strain[panel] + '\n')
+
 	fp.write('Last Modified: ' + lastMod[panel] + '\n')
 	fp2.write('Last Modified: ' + lastMod[panel] + '\n')
+
 	if panel != '3383':
 		fp.write('Legend:\n')
 		fp2.write('Legend:\n')

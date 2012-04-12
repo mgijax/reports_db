@@ -29,16 +29,16 @@ MGI_Recombinase_Full.py
 
 6) reports that contain both SQL and Python (tab-delimited) versions
 
-7) date/time
+7) SQL only
 
-8) SQL only
 MRK_List1.sql
 MRK_List2.sql
 MRK_List3.sql
 MRK_List4.sql
 MRK_Synonym.sql
+MAP_Mapping.py (creates .sql files)
 
-9) issues
+8) issues
 
 mgimarkerfeed
 	mainly translations
