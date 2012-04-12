@@ -40,12 +40,6 @@ MRK_Synonym.sql
 
 9) issues
 
-MGI_PhenoOMIM.py
-	temporary table
-
-MGI_ProblemSequence.py
-	group by clause
-
 mgimarkerfeed
 	mainly translations
 

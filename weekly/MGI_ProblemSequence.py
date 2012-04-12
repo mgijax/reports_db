@@ -69,6 +69,7 @@ db.sql('''
         where n.note like "%staff have found evidence of artifact in the sequence of this molecular%" 
         and n._Probe_key = p._Probe_key
 	''', None)
+db.sql('create index probes_idx1 on #probes(_Probe_key)', None)
 
 # Select probes w/ Seq IDs and without Seq IDs
 db.sql('''
@@ -93,22 +94,25 @@ db.sql('''
 	)
 	order by _Probe_key
 	''', None)
+db.sql('create index probeseqs_idx1 on #probeseqs(_Probe_key)', None)
 
 # Select probes w/ only one Seq ID
-db.sql('select * into #forncbi from #probeseqs p group by p._Probe_key having count(*) = 1', None)
+db.sql('select _Probe_key into #forncbi from #probeseqs group by _Probe_key having count(*) = 1', None)
+db.sql('create index forncbi_idx1 on #forncbi(_Probe_key)', None)
 
 # Select probe's markers which hybridizie
 results = db.sql('''
-	select n.*,ma.accID as markerID
-	from #forncbi n, PRB_Marker m, ACC_Accession ma 
-	where n._Probe_key = m._Probe_key 
+	select p._Probe_key, p.name, p.accID, ma.accID as markerID
+	from #forncbi n, #probeseqs p, PRB_Marker m, ACC_Accession ma 
+	where n._Probe_key = p._Probe_key
+	and p._Probe_key = m._Probe_key 
 	and m.relationship = "H" 
 	and m._Marker_key = ma._Object_key 
 	and ma._MGIType_key = 2 
 	and ma.prefixPart = "MGI:" 
 	and ma._LogicalDB_key = 1 
 	and ma.preferred = 1 
-	order by n.accID
+	order by p.accID
 	''', 'auto')
 
 prevProbe = 0

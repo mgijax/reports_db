@@ -1100,11 +1100,11 @@ def strains():
     fp = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
 
     results = db.sql('''
-	  select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.private, qualifier = t.term, ' + \
-          	convert(char(20), m.creation_date, 100) as cdate, ' + \
-          	convert(char(20), m.modification_date, 100) as mdate ' + \
-          from #strains s, PRB_Strain_Marker m, VOC_Term t ' + \
-          where s._Strain_key = m._Strain_key ' + \
+	  select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.private, qualifier = t.term, 
+          	convert(char(20), m.creation_date, 100) as cdate, 
+          	convert(char(20), m.modification_date, 100) as mdate 
+          from #strains s, PRB_Strain_Marker m, VOC_Term t 
+          where s._Strain_key = m._Strain_key 
 	  and m._Qualifier_key = t._Term_key
 	  ''', 'auto')
 
@@ -1150,8 +1150,8 @@ def strains():
     fp = open(OUTPUTDIR + 'strain_strain_type.bcp', 'w')
 
     results = db.sql('''
-	select m._Strain_key, m._Term_key, s.private, s.cdate, s.mdate ' + \
-        from #strains s, PRB_Strain_Attribute_View m ' + \
+	select m._Strain_key, m._Term_key, s.private, s.cdate, s.mdate 
+        from #strains s, PRB_Strain_Attribute_View m 
         where s._Strain_key = m._Strain_key
 	''', 'auto')
 
@@ -1171,12 +1171,12 @@ def strains():
     fp = open(OUTPUTDIR + 'accession_strain.bcp', 'w')
     
     results = db.sql('''
-	select distinct a.accID, LogicalDB = l.name, a._Object_key, a.preferred, s.private, ' + \
-          convert(char(20), a.creation_date, 100) as cdate, ' + \
-          convert(char(20), a.modification_date, 100) as mdate ' + \
-          from #strains s, ACC_Accession a, ACC_LogicalDB l ' + \
-          where s._Strain_key = a._Object_key ' + \
-          and a._MGIType_key = 10 ' + \
+	select distinct a.accID, LogicalDB = l.name, a._Object_key, a.preferred, s.private, 
+          convert(char(20), a.creation_date, 100) as cdate, 
+          convert(char(20), a.modification_date, 100) as mdate 
+          from #strains s, ACC_Accession a, ACC_LogicalDB l 
+          where s._Strain_key = a._Object_key 
+          and a._MGIType_key = 10 
           and a._LogicalDB_key = l._LogicalDB_key
 	  ''', 'auto')
 
@@ -1197,9 +1197,9 @@ def strains():
     fp = open(OUTPUTDIR + 'strain_species.bcp', 'w')
 
     results = db.sql('''
-	select _Term_key, term, ' + \
-          convert(char(20), creation_date, 100) as cdate, ' + \
-          convert(char(20), modification_date, 100) as mdate ' + \
+	select _Term_key, term, 
+          convert(char(20), creation_date, 100) as cdate, 
+          convert(char(20), modification_date, 100) as mdate 
           from VOC_Term where _Vocab_key = 26
 	  ''', 'auto')
     
@@ -1393,7 +1393,7 @@ def genotypes():
 	    where a._Allele_key = p._Allele_key_2 
 	    and g._Genotype_key = p._Genotype_key 
 	    )
-	    order by p._Genotype_key, p.sequenceNum
+	    order by _Genotype_key, sequenceNum
 	    ''', 'auto')
 
     for r in results:
