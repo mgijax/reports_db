@@ -13,7 +13,7 @@
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF">
 <TR><TH>Table of Contents</TR></TH>
 <TR><TD><A HREF="#ftp">FTP Server</A></TD></TR>
-<TR><TD><A HREF="#marker">Lists of all mouse genetic markers</A></TD></TR>
+<TR><TD><A HREF="#marker">Mouse Genetic Markers</A></TD></TR>
 <TR><TD><A HREF="#seq">Sequence Data</A></TD></TR>
 <TR><TD><A HREF="#orthology">Mammalian Orthology</A></TD></TR>
 <TR><TD><A HREF="#go">Gene Ontology Data</A></TD></TR>
@@ -50,53 +50,14 @@
 <!-- -->
 
 <A NAME="marker"></A><BR>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Lists of all mouse genetic Markers</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Mouse Genetic Markers</TH></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>1. Sorted alphabetically by marker symbol</B></TD></TR>
+        <TR><TD><B>1. List of Mouse Genetic Markers (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Chromosome</TD><TD>cM Position</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD></TR></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Chromosome</TD><TD>cM Position</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Genome Strand</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>Marker Type</TD><TD>Feature Types (|-delimted)</TD><TD>Marker Synonyms (|-delimited)</TD></TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List1.sql.rpt">MRK_List1.sql.rpt</A> (including withdrawn marker symbols)</TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List1.rpt">MRK_List1.rpt</A> (including withdrawn marker symbols); tab-delimited</TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List2.sql.rpt">MRK_List2.sql.rpt</A> (excluding withdrawn marker symbols)</A></TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List2.rpt">MRK_List2.rpt</A> (excluding withdrawn marker symbols; tab-delimited)</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>2. Sorted numerically by chromosome</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Chromosome</TD><TD>cM Position</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List3.sql.rpt">MRK_List3.sql.rpt</A> (including withdrawn marker symbols)</TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List3.rpt">MRK_List3.rpt</A> (including withdrawn marker symbols; tab-delimited)</TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List4.sql.rpt">MRK_List4.sql.rpt</A> (excluding withdrawn marker symbols)</TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List4.rpt">MRK_List4.rpt</A> (excluding withdrawn marker symbols); tab-delimited</TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>3. Including synonyms</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Chromosome</TD><TD>cM Position</TD><TD>Marker Symbol</TD><TD>Synonym</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Synonym.sql.rpt">MRK_Synonym.sql.rpt</A></TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Synonym.rpt">MRK_Synonym.rpt</A> (tab-delimited)</TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>4. Sorted by Marker Symbol (tab delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Dump1.rpt">MRK_Dump1.rpt</A> (excluding withdrawn marker symbols)</TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>5. Sorted by Marker Symbol (tab delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD><TD>Marker Type</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Dump2.rpt">MRK_Dump2.rpt</A> (excluding withdrawn marker symbols)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List.rpt">MRK_List.rpt</A> (including withdrawn marker symbols)</TD></TR>
     </TABLE></TD></TR>
 
 </TABLE><BR>
@@ -215,7 +176,7 @@
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>Type<BR><FONT SIZE=-1>Gene<BR>DNA Segment<BR>Other Genome Feature<BR>Complex/Cluster/Region<BR>microRNA</FONT></TD>
-        <TD>Secondary<BR>Accession IDs<BR>(|-delimited)</TD><TD>Entrez Gene ID</TD><TD>Synonyms<BR>(|-delimited)</TD><TD>BioTypes<BR>(|-delimited)</TD><TD>Feature Types<BR>(|-delimited)</TD></TR></TABLE>
+        <TD>Secondary<BR>Accession IDs<BR>(|-delimited)</TD><TD>Entrez Gene ID</TD><TD>Synonyms<BR>(|-delimited)</TD><TD>Feature Types (|-delimited)</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Strand</TD><TD>BioTypes<BR>(|-delimited)</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_EntrezGene.rpt">MGI_EntrezGene.rpt</A></TD></TR>
         </TD></TR>
@@ -268,69 +229,15 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>13. InterPro Domains</B></TD></TR>
+        <TR><TD><B>13. InterPro Domains (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>InterPro ID</TD><TD>Domain Marker Name</TD></TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_InterProDomains.sql.rpt">MGI_InterProDomains.sql.rpt</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_InterProDomains.rpt">MGI_InterProDomains.rpt</A></TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE>
-        <TR><TD><B>14. MGI Marker associations to RIKEN Clones (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>RIKEN Clone ID</TD><TD>MGI Clone ID</TD><TD>GenBank Sequence ID</TD><TD>Problem Sequence?</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_RIKEN.rpt">MGI_RIKEN.rpt</A></TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>15. MGI Marker associations to All Sequences and Human Orthology (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR>
-        <TD>MGI Marker Accession ID</TD>
-        <TD>Mouse Symbol</TD>
-        <TD>Mouse Name</TD>
-        <TD>cM Position</TD>
-        <TD>Mouse Entrez Gene ID</TD>
-        <TD>NCBI Gene Chromosome</TD>
-        <TD>NCBI Gene Start</TD>
-        <TD>NCBI Gene End</TD>
-        <TD>NCBI Gene Strand</TD>
-        <TD>Ensembl Gene ID</TD>
-        <TD>Ensembl Gene Chromosome</TD>
-        <TD>Ensembl Gene Start</TD>
-        <TD>Ensembl Gene End</TD>
-        <TD>Ensembl Gene Strand</TD>
-        <TD>VEGA Gene ID</TD>
-        <TD>VEGA Gene Chromosome</TD>
-        <TD>VEGA Gene Start</TD>
-        <TD>VEGA Gene End</TD>
-        <TD>VEGA Gene Strand</TD>
-        <TD>GenBank IDs<BR>(comma-delimited)</TD>
-        <TD>Unigene IDs<BR>(comma-delimited)</TD>
-        <TD>RefSeq IDs<BR>(comma-delimited)</TD>
-	<TD>Ensembl Transcript IDs<BR>(comma-delimited)</TD>
-	<TD>Ensembl Protein IDs<BR>(comma-delimited)</TD>
-	<TD>VEGA Transcript IDs<BR>(comma-delimited)</TD>
-	<TD>VEGA Protein IDs<BR>(comma-delimited)</TD>
-        <TD>SwissProt IDs<BR>(comma-delimited)</TD>
-        <TD>InterPro IDs<BR>(comma-delimited)</TD>
-        <TD>Mouse Synonyms<BR>(comma-delimited)</TD>
-        <TD>Human Entrez Gene ID</TD>
-        <TD>Human Symbol</TD>
-        <TD>Human Name</TD>
-        <TD>Human Chr</TD>
-        <TD>Human RefSeq IDs<BR>(comma-delimited)</TD>
-        <TD>Human Synonyms<BR>(comma-delimited)</TD>
-        </TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_MouseHumanSequence.rpt">MGI_MouseHumanSequence.rpt</A> (Build 37)</TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE><B>16. MGI-DoTS and MGI-DFCI mouse gene index Associations (tab-delimited)</B></TD></TR>
+    <TR><TD><TABLE><B>14. MGI-DoTS and MGI-DFCI mouse gene index Associations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>DT/TC ID</TD><TD>GenBank Sequence IDs (comma-delimited)</TD></TABLE>
         </TD></TR>
@@ -343,9 +250,6 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="DFCI/MGI_TC_via_GB_many_one">MGI_TC_via_GB_many_one</A> (many MGI Markers to one DFCI gene index)</TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="DFCI/MGI_TC_via_GB_many_many">MGI_TC_via_GB_many_many</A> (many MGI Markers to many DFCI gene indexes)</TD></TR>
         </TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE><B>17. <A HREF="../sequence_dbs/seq_dbs.current/index.html">MouseBLAST Sequence Databases</A></B> (a link to the MouseBLAST Sequence Databases page)</TD></TR>
     </TABLE></TD></TR>
 
 </TABLE><BR>
@@ -652,11 +556,11 @@
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Gene Expression</TH></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>1. List of mouse tissues (origin of cDNAs)</B></TD></TR>
+        <TR><TD><B>1. List of mouse tissues (origin of cDNAs, tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>tissue</TD></TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="PRB_TissueMouse.sql.rpt">PRB_TissueMouse.sql.rpt</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="PRB_TissueMouse.rpt">PRB_TissueMouse.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
@@ -739,7 +643,7 @@
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Allele Accession ID</TD><TD>Allele Symbol</TD><TD>Allele Name</TD><TD>Allele Type</TD>
         <TD>PubMed ID for original reference</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker RefSeq ID</TD>
-        <TD>Marker Ensembl ID</TD><TD>High-level Mammalian Phenotype ID (comma-delimited)</TD><TD>Synonyms (pipe-delimited)</TD></TABLE>
+        <TD>Marker Ensembl ID</TD><TD>High-level Mammalian Phenotype ID (comma-delimited)</TD><TD>Synonyms (|-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_PhenotypicAllele.rpt">MGI_PhenotypicAllele.rpt</A></TD></TR>
     </TABLE></TD></TR>
@@ -790,7 +694,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>10. Genotypes and Mammalian Phenotype Annotations for Marker Type Genes excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GenePheno.rpt">MGI_GenePheno.rpt</A></TD></TR>
     </TABLE></TD></TR>
@@ -798,7 +702,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>11. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_Disease.rpt">MGI_Geno_Disease.rpt</A></TD></TR>
     </TABLE></TD></TR>
@@ -806,7 +710,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>12. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_NotDisease.rpt">MGI_Geno_NotDisease.rpt</A></TD></TR>
     </TABLE></TD></TR>

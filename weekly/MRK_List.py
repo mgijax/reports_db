@@ -1,0 +1,212 @@
+#!/usr/local/bin/python
+
+'''
+#
+# MRK_List.py
+#
+# Report:
+#       TR 9120 (original)
+#
+#	Tab-delimited version of existing report, MRK_List.sql
+#	"Genetic Marker List (sorted alphabetically/includes withdrawns)"
+#
+# Usage:
+#       MRK_List.py
+#
+# History:
+#
+# lec	04/23/2012
+#	- TR11035/Postgres cleanup; merge 
+#		MRK_List1, MRK_List2, MRK_List3, MRK_List4,
+#		MRK_Synonym, MRK_Dump1, MRK_Dump2 into one report
+#
+# jer	07/01/2008
+#	- created
+#
+'''
+ 
+import sys 
+import os
+import string
+import mgi_utils
+import reportlib
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
+TAB = reportlib.TAB
+CRT = reportlib.CRT
+
+db.useOneConnection(1)
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+
+headers = [
+    "MGI Accession ID",
+    "Chr", 
+    "cM Position", 
+    "genome coordinate start",
+    "genome coordinate end",
+    "strand",
+    "Marker Symbol", 
+    "Status", 
+    "Marker Name", 
+    "Marker Type",
+    "Feature Type",
+    "Marker Synonyms (pipe-separated)"]
+
+fp.write(TAB.join(headers) + CRT)
+
+#
+# select all mouse markers
+#
+#    and symbol = 'Kit'
+db.sql('''
+    select m.*, 
+    upper(substring(s.status, 1, 1)) as markerstatus,
+    t.name as markertype,
+        case
+        when o.offset >= 0 then str(o.offset,10,2)
+        when o.offset = -999.0 then "       N/A"
+        when o.offset = -1.0 then "  syntenic"
+        end as cmposition
+    into #markers
+    from MRK_Marker m, MRK_Status s, MRK_Types t, MRK_Offset o
+    where m._organism_key = 1
+    and m._marker_key = o._marker_key
+    and o.source = 0
+    and m._marker_type_key = t._marker_type_key
+    and m._marker_status_key = s._marker_status_key
+    ''', None)
+db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
+db.sql('create index markers_idx2 on #markers(symbol)', None)
+
+#
+# coordinates
+#
+results = db.sql('''	
+    select m._marker_key,
+           c.strand, 
+	   convert(int, c.startCoordinate) as startC,
+	   convert(int, c.endCoordinate) as endC
+    from #markers m, MRK_Location_Cache c
+    where m._marker_key = c._marker_key
+	''', 'auto')
+coords = {}
+for r in results:
+    key = r['_marker_key']
+    value = r
+    if not coords.has_key(key):
+	coords[key] = []
+    coords[key].append(value)
+
+#
+# feature types
+#
+results = db.sql('''
+	select m._marker_key, s.term 
+        from #markers m, MRK_MCV_Cache s 
+        where m._marker_key = s._marker_key 
+        and s.qualifier = "D"
+	''', 'auto')
+featureTypes = {}
+for r in results:
+        key = r['_marker_key']
+        value = r['term']
+        if not featureTypes.has_key(key):
+                featureTypes[key] = []
+        featureTypes[key].append(value)
+
+#
+# synonyms
+#
+results = db.sql('''	
+    select m._marker_key, s.synonym
+    from #markers m, MGI_Synonym s, MGI_SynonymType st
+    where m._marker_key = s._object_key
+    and s._mgitype_key = 2
+    and s._synonymtype_key = st._synonymtype_key
+    and st.synonymtype = "exact"
+	''', 'auto')
+synonyms = {}
+for r in results:
+    key = r['_marker_key']
+    value = r['synonym']
+    if not synonyms.has_key(key):
+	synonyms[key] = []
+    synonyms[key].append(value)
+
+#
+# main report
+#
+
+results = db.sql('''
+    (
+    select a.accid, 
+	   m._marker_key, 
+	   m.chromosome, 
+	   m.cmposition, 
+	   m.symbol, 
+	   m.markerstatus, 
+	   m.name, 
+	   m.markertype
+    from #markers m, ACC_Accession a
+    where m._marker_status_key in (1, 3)
+    and m._marker_key = a._object_key
+    and a._mgitype_key = 2
+    and a.prefixpart = "MGI:"
+    and a._logicaldb_key = 1
+    and a.preferred = 1
+    union
+    select null, 
+	   m._marker_key, 
+	   m.chromosome, 
+	   m.cmposition, 
+	   m.symbol, 
+	   m.markerstatus, 
+	   m.name, 
+	   m.markertype
+    from #markers m
+    where m._marker_status_key = 2
+    )
+    order by symbol
+    ''', 'auto')
+
+for r in results:
+
+    key = r['_marker_key']
+
+    fp.write(mgi_utils.prvalue(r['accid']) + TAB)
+    fp.write(r['chromosome'] + TAB)
+    fp.write(r['cmposition'] + TAB)
+
+    if coords.has_key(key):
+	fp.write(mgi_utils.prvalue(coords[key][0]['startC']) + TAB)
+	fp.write(mgi_utils.prvalue(coords[key][0]['endC']) + TAB)
+	fp.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
+    else:
+	fp.write(TAB + TAB + TAB)
+
+    fp.write(r['symbol'] + TAB)
+    fp.write(r['markerstatus'] + TAB)
+    fp.write(r['name'] + TAB)
+    fp.write(r['markertype'] + TAB)
+
+    if featureTypes.has_key(key):
+	fp.write(string.join(featureTypes[key],'|'))
+    fp.write(TAB)
+
+    if synonyms.has_key(key):
+	fp.write(string.join(synonyms[key],'|'))
+    fp.write(CRT)
+
+reportlib.finish_nonps(fp)	# non-postscript file
+db.useOneConnection(0)
+

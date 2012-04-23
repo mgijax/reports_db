@@ -20,6 +20,9 @@
 #
 # History:
 #
+# lec   04/23/2012
+#       - TR11035/postgres cleanup; added feature type, coordinates & biotype
+#
 # lec	10/19/2011
 #	- TR10885/add column 11/raw biotypes, column 12/feature type per Donna Maglott/NCBI
 #
@@ -89,13 +92,15 @@ db.sql('create index idx_key on #markers(_Marker_key)', None)
 
 # MGI ids
 
-results = db.sql('select m._Current_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-  	'where m._Current_key = a._Object_key ' + \
-  	'and a._MGIType_key = 2 ' + \
-  	'and a.prefixPart = "MGI:" ' + \
-  	'and a._LogicalDB_key = 1 ' + \
-  	'and a.preferred = 1 ', 'auto')
+results = db.sql('''
+	select m._Current_key, a.accID 
+	from #markers m, ACC_Accession a 
+  	where m._Current_key = a._Object_key 
+  	and a._MGIType_key = 2 
+  	and a.prefixPart = "MGI:" 
+  	and a._LogicalDB_key = 1 
+  	and a.preferred = 1 
+	''', 'auto')
 mgiID = {}
 for r in results:
     key = r['_Current_key']
@@ -103,12 +108,14 @@ for r in results:
     mgiID[key] = value
 
 # Get EntrezGene ID for Primary Markers
-results = db.sql('select m._Marker_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key = a._Object_key ' + \
-        'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 55 ', 'auto')
+results = db.sql('''
+	select m._Marker_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m.isPrimary = 1 
+	and m._Marker_key = a._Object_key 
+        and a._MGIType_key = 2 
+	and a._LogicalDB_key = 55 
+	''', 'auto')
 egID = {}
 for r in results:
     key = r['_Marker_key']
@@ -116,14 +123,16 @@ for r in results:
     egID[key] = value
 
 # Get Secondary MGI Ids for Primary Marker
-results = db.sql('select m._Marker_key, a.accID ' + \
-	'from #markers m, ACC_Accession a ' + \
-	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key = a._Object_key ' + \
-        'and a._MGIType_key = 2 ' + \
-	'and a.prefixPart = "MGI:" ' + \
-        'and a._LogicalDB_key = 1 ' + \
-	'and a.preferred = 0', 'auto')
+results = db.sql('''
+	select m._Marker_key, a.accID 
+	from #markers m, ACC_Accession a 
+	where m.isPrimary = 1 
+	and m._Marker_key = a._Object_key 
+        and a._MGIType_key = 2 
+	and a.prefixPart = "MGI:" 
+        and a._LogicalDB_key = 1 
+	and a.preferred = 0
+	''', 'auto')
 otherAccId = {}
 for r in results:
 	if not otherAccId.has_key(r['_Marker_key']):
@@ -131,13 +140,15 @@ for r in results:
 	otherAccId[r['_Marker_key']].append(r['accID'])
 
 # Get Synonyms for Primary Marker
-results = db.sql('select m._Marker_key, s.synonym ' + \
-	'from #markers m, MGI_Synonym s, MGI_SynonymType st ' + \
-	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key = s._Object_key ' + \
-	'and s._MGIType_key = 2 ' + \
-	'and s._SynonymType_key = st._SynonymType_key ' + 
-	'and st.synonymType = "exact"', 'auto')
+results = db.sql('''
+	select m._Marker_key, s.synonym 
+	from #markers m, MGI_Synonym s, MGI_SynonymType st 
+	where m.isPrimary = 1 
+	and m._Marker_key = s._Object_key 
+	and s._MGIType_key = 2 
+	and s._SynonymType_key = st._SynonymType_key 
+	and st.synonymType = "exact"
+	''', 'auto')
 synonym = {}
 for r in results:
 	key = r['_Marker_key']
@@ -147,11 +158,13 @@ for r in results:
 	synonym[key].append(value)
 
 # Get BioType for Primary Marker
-results = db.sql('select distinct m._Marker_key, s.rawbiotype ' + \
-	'from #markers m, SEQ_Marker_Cache s ' + \
-	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key = s._Marker_key ' + \
-	'and s.rawbiotype is not null', 'auto')
+results = db.sql('''
+	select distinct m._Marker_key, s.rawbiotype 
+	from #markers m, SEQ_Marker_Cache s 
+	where m.isPrimary = 1 
+	and m._Marker_key = s._Marker_key 
+	and s.rawbiotype is not null
+	''', 'auto')
 bioTypes = {}
 for r in results:
 	key = r['_Marker_key']
@@ -161,11 +174,13 @@ for r in results:
 	bioTypes[key].append(value)
 
 # Get Feature Type for Primary Marker
-results = db.sql('select m._Marker_key, s.term ' + \
-	'from #markers m, MRK_MCV_Cache s ' + \
-	'where m.isPrimary = 1 ' + \
-	'and m._Marker_key = s._Marker_key ' + \
-	'and s.qualifier = "D"', 'auto')
+results = db.sql('''
+	select m._Marker_key, s.term
+	from #markers m, MRK_MCV_Cache s 
+	where m.isPrimary = 1 
+	and m._Marker_key = s._Marker_key 
+	and s.qualifier = "D"
+	''', 'auto')
 featureTypes = {}
 for r in results:
 	key = r['_Marker_key']
@@ -174,6 +189,28 @@ for r in results:
 		featureTypes[key] = []
 	featureTypes[key].append(value)
 
+#
+# coordinates
+#
+results = db.sql('''	
+    select m._marker_key,
+           c.strand, 
+	   convert(int, c.startCoordinate) as startC,
+	   convert(int, c.endCoordinate) as endC
+    from #markers m, MRK_Location_Cache c
+    where m._marker_key = c._marker_key
+	''', 'auto')
+coords = {}
+for r in results:
+    key = r['_marker_key']
+    value = r
+    if not coords.has_key(key):
+	coords[key] = []
+    coords[key].append(value)
+
+#
+# final query
+#
 results = db.sql('select * from #markers order by _Current_key, isPrimary desc', 'auto')
 for r in results:
 
@@ -210,17 +247,29 @@ for r in results:
 			fp.write(string.join(synonym[r['_Marker_key']], '|'))
 		fp.write(TAB)
 
-		# column 11: biotypes
-		if bioTypes.has_key(r['_Marker_key']):	
-			fp.write(string.join(bioTypes[r['_Marker_key']], '|'))
-		fp.write(TAB)
-
-		# column 12: feature types
+		# column 11: feature types
 		if featureTypes.has_key(r['_Marker_key']):	
 			fp.write(string.join(featureTypes[r['_Marker_key']], '|'))
+		fp.write(TAB)
+
+		# column 12-13-14
+                if coords.has_key(key):
+                    fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['startC']) + TAB)
+                    fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['endC']) + TAB)
+                    fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['strand']) + TAB)
+                else:
+                    fp.write(TAB + TAB + TAB)
+
+		# column 15: biotypes
+		if bioTypes.has_key(r['_Marker_key']):	
+			fp.write(string.join(bioTypes[r['_Marker_key']], '|'))
 		fp.write(CRT)
+
 	else:
-		# column 8-12 null
+		# column 8-15 null
+		fp.write(TAB)
+		fp.write(TAB)
+		fp.write(TAB)
 		fp.write(TAB)
 		fp.write(TAB)
 		fp.write(TAB)

@@ -1,3 +1,34 @@
+TAG: reports-db-?
+DATE: 04/23/2012
+STAFF: lec
+CHANGES:
+
+TR11035/Postgres Cleanup
+add:
+MRK_List.py
+
+update:
+MGI_EntrezGene.py
+MRK_VEGA.py
+MRK_ENSEMBL.py
+
+remove:
+MRK_List1.py --> replace with MRK_List.py
+MRK_List1.sql
+MRK_List2.py
+MRK_List2.sql
+MRK_List3.py
+MRK_List3.sql
+MRK_List4.py
+MRK_List4.sql
+MRK_Synonym.py
+MRK_Synonym.sql
+MRK_Dump1.py
+MRK_Dump2.py
+
+MGI_RIKEN.py
+MGI_MouseHuman_Sequence.py
+
 TAG: reports_db-5-0-0-2
 DATE: 04/12/2012
 STAFF: lec
