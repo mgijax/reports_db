@@ -1379,14 +1379,16 @@ def genotypes():
 
     results = db.sql('''
 	    (
-	    select p.*, 
+            select p._AllelePair_key, p._Allele_key_1, p._Allele_key_2, 
+            p._Marker_key, p._Genotype_key, p._PairState_key, p.sequenceNum,
 	    convert(char(20), p.creation_date, 100) as cdate, 
 	    convert(char(20), p.modification_date, 100) as mdate 
 	    from #alleles a, #genotypes g, GXD_AllelePair p 
 	    where a._Allele_key = p._Allele_key_1 
 	    and g._Genotype_key = p._Genotype_key 
 	    union 
-            select p.*, 
+            select p._AllelePair_key, p._Allele_key_1, p._Allele_key_2, 
+            p._Marker_key, p._Genotype_key, p._PairState_key, p.sequenceNum,
 	    convert(char(20), p.creation_date, 100) as cdate, 
 	    convert(char(20), p.modification_date, 100) as mdate 
 	    from #alleles a, #genotypes g, GXD_AllelePair p 
