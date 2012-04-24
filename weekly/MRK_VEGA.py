@@ -193,7 +193,9 @@ for r in results:
 	coords[key] = []
     coords[key].append(value)
 
-# Get BioType for Primary Marker
+#
+# biotype
+#
 results = db.sql('''
 	select distinct m._Marker_key, s.rawbiotype 
 	from #markers m, SEQ_Marker_Cache s 

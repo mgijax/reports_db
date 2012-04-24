@@ -10,7 +10,6 @@
 #	Dislay fields: MGI ID, Strain Name, Strain Types
 #
 #	Report A: sorted by alpha by strain name
-#	Report B: sorted by strain type, then by strain name
 #
 # Usage:
 #       MGI_Strain.py
@@ -22,6 +21,9 @@
 #
 # History:
 #
+# lec	04/24/2012
+#	- TR11035/postgres cleanup/remove report b (sorted by strain type)
+#
 # lec	05/06/2008
 #	- TR 8511
 #
@@ -29,8 +31,6 @@
  
 import sys
 import os
-import string
-import mgi_utils
 import reportlib
 
 try:
@@ -50,7 +50,6 @@ except:
 #
 
 fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-fp2 = reportlib.init('MGI_Strain2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 # Retrieve all Strains w/ Standard = true, Private = false
 
@@ -73,13 +72,5 @@ for r in results:
 	fp1.write(r['strain'] + reportlib.TAB)
 	fp1.write(r['strainType'] + reportlib.CRT)
 
-results = db.sql('select * from #strain order by strainType, strain', 'auto')
-for r in results:
-
-	fp2.write(r['accID'] + reportlib.TAB)
-	fp2.write(r['strain'] + reportlib.TAB)
-	fp2.write(r['strainType'] + reportlib.CRT)
-
 reportlib.finish_nonps(fp1)
-reportlib.finish_nonps(fp2)
 
