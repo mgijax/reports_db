@@ -664,7 +664,7 @@ def markers():
 
     results = db.sql('''
 	    select distinct m._Marker_key, m.label, m.labelType, 1 as status, 
-	    convert(char(20), getdate(), 100) 
+	    convert(char(20), getdate(), 100) as cdate
 	    from #markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
 	    and m.labelType = "MS"
@@ -681,7 +681,7 @@ def markers():
 
     results = db.sql('''
 	    select distinct m._Marker_key, m.label, m.labelType, 1 as status, 
-	    	convert(char(20), getdate(), 100) 
+	    	convert(char(20), getdate(), 100) as cdate
 	    from #markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
 	    and m.labelType = "MN" 
@@ -698,7 +698,7 @@ def markers():
 
     results = db.sql('''
 	    select distinct m._Marker_key, m.label, m.labelType, 0 as status, 
-	    	convert(char(20), getdate(), 100) 
+	    	convert(char(20), getdate(), 100) as cdate
 	    from #markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
 	    and m.labelType in ("MS", "MN", "MY") 

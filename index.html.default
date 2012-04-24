@@ -186,7 +186,7 @@
         <TR><TD><B>8. MGI Marker associations to VEGA sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
-        <TD>VEGA Accession ID</TD><TD>VEGA Transcript ID<BR>(space-delimited, if any)</TD><TD>VEGA Protein ID<BR>(space-delimited, if any)</TD></TR></TABLE>
+        <TD>VEGA Accession ID</TD><TD>VEGA Transcript ID<BR>(space-delimited, if any)</TD><TD>VEGA Protein ID<BR>(space-delimited, if any)</TD><TD>Feature Types (|-delimited)</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Strand</TD><TD>BioTypes<BR>(|-delimited)</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_VEGA.rpt">MRK_VEGA.rpt</A></TD></TR>
         </TD></TR>
@@ -196,7 +196,7 @@
         <TR><TD><B>9. MGI Marker associations to Ensembl sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
-        <TD>Ensembl Accession ID</TD><TD>Ensembl Transcript ID<BR>(space-delimited, if any)</TD><TD>Ensembl Protein ID<BR>(space-delimited, if any)</TD></TR></TABLE>
+        <TD>Ensembl Accession ID</TD><TD>Ensembl Transcript ID<BR>(space-delimited, if any)</TD><TD>Ensembl Protein ID<BR>(space-delimited, if any)</TD><TD>Feature Types (|-delimited)</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Strand</TD><TD>BioTypes<BR>(|-delimited)</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_ENSEMBL.rpt">MRK_ENSEMBL.rpt</A></TD></TR>
         </TD></TR>
