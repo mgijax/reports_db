@@ -54,65 +54,34 @@ CRT = reportlib.CRT
 # Main
 #
 
-l1 = string.split(sys.argv[1], ',')
-lKeys = []
-for l in l1:
-    results = db.sql('select _LogicalDB_key from ACC_LogicalDB where name = "%s"' % (l), 'auto')
-    for r in results:
-        lKeys.append(r['_LogicalDB_key'])
-
-reportName = string.split(l1[0], ' ')
-fp = reportlib.init('MGI_CloneSet_' + reportName[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-
-# get all clones
+fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 db.sql('''
-	select pa._Object_key, pa._LogicalDB_key 
+	select pa._Object_key, pa._LogicalDB_key, ldb.name as db
 	into #clone1 
-	from ACC_Accession pa 
+	from ACC_Accession pa, ACC_LogicalDB ldb
 	where pa._MGIType_key = 3 
-	and pa._LogicalDB_key = %s
-	''' % (lKeys[0]), None)
-db.sql('create index idx1 on #clone1(_Object_key)', None)
-
-for l in lKeys[1:]:
-
-    db.sql(''''
-	insert into #clone1 
-	select pa._Object_key, pa._LogicalDB_key 
-	from ACC_Accession pa 
-	where pa._MGIType_key = 3 
-	and pa._LogicalDB_key = %s
-	and not exists (select 1 from #clone1 n where pa._Object_key = n._Object_key)
-	''' % (l), None)
-
-db.sql('create index clone1_idx2 on #clone1(_LogicalDB_key)', None)
-
-# grab logical DB name
-
-db.sql('''
-	select n._Object_key, db = ldb.name 
-	into #clone2 
-	from #clone1 n, ACC_LogicalDB ldb 
-	where n._LogicalDB_key = ldb._LogicalDB_key
+	and pa._LogicalDB_key = ldb._LogicalDB_key
+	and ldb.name in ('Image', 'NIA 15K,NIA 7.4K,NIA', 'RIKEN (FANTOM),RIKEN', 'RPCI-23', 'RPCI-24')
 	''', None)
-db.sql('create index clone2_idx1 on #clone2(_Object_key)', None)
+db.sql('create index clone1_idx1 on #clone1(_Object_key)', None)
+db.sql('create index clone1_idx2 on #clone1(_LogicalDB_key)', None)
 
 # grab all associated markers
 
 db.sql('''
-	select n._Object_key, pm._Marker_key 
-	into #clone3 
-	from #clone2 n, PRB_Marker pm 
+	select n._Object_key, n.db, pm._Marker_key 
+	into #clone2 
+	from #clone1 n, PRB_Marker pm 
 	where n._Object_key = pm._Probe_key
 	''', None)
-db.sql('create index clone3_idx1 on #clone3(_Marker_key)', None)
+db.sql('create index clone2_idx1 on #clone2(_Marker_key)', None)
 
 # grab marker symbol, accID
 
 results = db.sql('''
 	select n._Object_key, m.symbol, ma.accID as markerID
-	from #clone3 n, MRK_Marker m, ACC_Accession ma 
+	from #clone2 n, MRK_Marker m, ACC_Accession ma 
 	where n._Marker_key = m._Marker_key  
 	and n._Marker_key = ma._Object_key 
 	and ma._MGIType_key = 2 
@@ -159,5 +128,5 @@ for r in results:
 	         TAB + \
 		 r['db'] + CRT)
 
-reportlib.finish_nonps(fp)
+reportlib.finish_nonps(fp
 

@@ -418,15 +418,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>17. Mouse/Human/Rat Oxford Grid Counts (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Species 1</TD><TD>Species 2</TD><TD>Species 1 Chromosome</TD><TD>Species 2 Chromosome</TD><TD>Number of Orthologies</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_OxfordGrid.rpt">HMD_OxfordGrid.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>18. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>17. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>Mammalian Phenotype ID<BR>(space-delimited)</TD></TABLE>
         </TD></TR>
@@ -434,7 +426,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>19. Chimpanzee and Mouse Orthology</B></TD></TR>
+        <TR><TD><B>18. Chimpanzee and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Chimpanzee Chromosome</TD><TD>Chimpanzee Entrez Gene ID</TD><TD>Chimpanzee Marker Symbol</TD><TD>Mouse MGI Accession ID</TD><TD>Mouse Chromosome</TD><TD>Mouse cM Position</TD>
         <TD>Mouse Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -443,7 +435,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>20. Dog and Mouse Orthology</B></TD></TR>
+        <TR><TD><B>19. Dog and Mouse Orthology</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Dog Chromosome</TD><TD>Dog Entrez Gene ID</TD><TD>Dog Marker Symbol</TD><TD>Mouse MGI Accession ID</TD><TD>Mouse Chromosome</TD><TD>Mouse cM Position</TD>
         <TD>Mouse Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>Data Attributes</TD></TR></TABLE>
@@ -460,7 +452,6 @@
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Gene Ontology (GO) Annotations of Mouse Markers (tab-delimited)
-        <BR>(<I>see also</I> <A HREF="go_terms.mgi">go_terms.mgi</A> to translate GO IDs to GO terms)<br><br>
 	Notice: as of  21-Aug-2009, MGI will be providing this daily gene_association.mgi file in GAF 2.0 format. This file has two additional columns, 16 and 17, explained in detail <a href="http://wiki.geneontology.org/index.php/GAF_2.0">here</a>. 
 	<br><br>A GAF 2.0 file can be easily converted to GAF 1 by the removal of the last two columns. Additionally, a GAF 1 version of this file which is updated weekly is available <a href="http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.mgi.gz?rev=HEAD">here</a>.</B></TD></TR>
         <TR><TD>
@@ -472,33 +463,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>2. References used in GO annotations to mouse Markers (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Reference Accession ID</TD><TD>PubMed ID</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_refs.mgi">go_refs.mgi</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>3. GO terms and GO IDs for all three ontologies (Biological Process, Cellular Component, Molecular Function) (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Ontology</TD><TD>GO ID</TD><TD>GO Term</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_terms.mgi">go_terms.mgi</A> (only those terms annotated to MGI markers are included)</TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>4. GO annotations to mouse Markers that have human orthologs (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>GO ID</TD><TD>GO Term</TD>
-        <TD>GO Evidence Code</TD><TD>PubMed ID</TD><TD>SWISS-PROT</TD><TD>GenBank ID<BR>EMBL ID<BR>DDBJ ID</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_GOHuman.rpt">MRK_GOHuman.rpt</A></TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>5. Marker/SWISS-PROT Associations for Markers with GO Annotations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>2. Marker/SWISS-PROT Associations for Markers with GO Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>SWISS-PROT ID (;-delimited)</TD></TABLE>
         </TD></TR>
@@ -506,23 +471,6 @@
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE>
-        <TR><TD><B>6. MGI genes that have been selected for comprehensive annotation as part of the GO Consortium Reference Genome Annotation Project (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
-        </TD></TR>
-            <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_ref_genome.mgi">go_ref_genome.mgi</A></TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>7. MGI genes for which curation is considered complete. Curation includes annotations derived from the biomedical literature as of the date listed (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Date Completed</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_complete.mgi">go_complete.mgi</A></TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
 </TABLE><BR>
 
 <!-- -->
@@ -536,8 +484,6 @@
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Strain.rpt">MGI_Strain.rpt</A>
         <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(sorted alphabetically by strain name)</TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Strain2.rpt">MGI_Strain2.rpt</A>
-        <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(sorted by strain type)</TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
@@ -630,16 +576,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>3. MGI Marker associations to Phenotype Annotations and Ensembl sequence information (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>Ensembl Accession ID</TD>
-        <TD>High-level Mammalian Phenotype ID</TD><TD>Mammalian Phenotype Term</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Ensembl_Pheno.rpt">MRK_Ensembl_Pheno.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>4. List of All Mouse Phenotypic Alleles (tab-delimited)</B></TD></TR>
+        <TR><TD><B>3. List of All Mouse Phenotypic Alleles (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Allele Accession ID</TD><TD>Allele Symbol</TD><TD>Allele Name</TD><TD>Allele Type</TD>
         <TD>PubMed ID for original reference</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker RefSeq ID</TD>
@@ -649,7 +586,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>5. List of All Mouse QTL Alleles (tab-delimited)</B></TD></TR>
+        <TR><TD><B>4. List of All Mouse QTL Alleles (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Allele Accession ID</TD><TD>Allele Symbol</TD><TD>Allele Name</TD><TD>Allele Type</TD>
         <TD>PubMed ID for original reference</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker RefSeq ID</TD>
@@ -659,7 +596,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>6. All Genotypes and Mammalian Phenotype Annotations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>5. All Genotypes and Mammalian Phenotype Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
         </TD></TR>
@@ -667,40 +604,15 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>7. List of All KOMP Alleles (tab-delimited)</B></TD></TR>
+        <TR><TD><B>6. List of All Project Alleles (KOMP, EUCOMM, NorCOMM) (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Project generating allele</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="KOMP_Allele.rpt">KOMP_Allele.rpt</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Project_Allele.rpt">MGI_Project_Allele.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>8. List of All EUCOMM Alleles (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="EUCOMM_Allele.rpt">EUCOMM_Allele.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>9. List of All NorCOMM Alleles (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="NorCOMM_Allele.rpt">NorCOMM_Allele.rpt</A></TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>10. Genotypes and Mammalian Phenotype Annotations for Marker Type Genes excluding conditional mutations (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GenePheno.rpt">MGI_GenePheno.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>11. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>7. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
         </TD></TR>
@@ -708,7 +620,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>12. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>8. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
         </TD></TR>
@@ -716,7 +628,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>13. Associations of Mouse Genes with OMIM Phenotypes</B></TD></TR>
+        <TR><TD><B>9. Associations of Mouse Genes with OMIM Diseases</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>OMIM ID</TD><TD>OMIM Term</TD><TD>Synonyms (|-delimited)</TD><TD>Mouse Gene</TD><TD>Mouse Gene ID</TD><TD>Human Gene</TD><TD>Mouse only/Human only/Both</TD></TABLE>
         </TD></TR>

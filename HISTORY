@@ -6,14 +6,16 @@ CHANGES:
 TR11035/Postgres Cleanup
 add:
 MRK_List.py
+MGI_Project_Allele.py
 
 update:
 MGI_EntrezGene.py
 MRK_VEGA.py
 MRK_ENSEMBL.py
+MGI_Strain.py
 
-remove:
-MRK_List1.py --> replace with MRK_List.py
+replace with MRK_List.py:
+MRK_List1.py
 MRK_List1.sql
 MRK_List2.py
 MRK_List2.sql
@@ -26,8 +28,22 @@ MRK_Synonym.sql
 MRK_Dump1.py
 MRK_Dump2.py
 
+replace by MGI_Project_Allele.py:
+EUCOMM_Allele.py
+KOMP_Allele.py
+NorCOMM_Allele.py
+
+remove:
 MGI_RIKEN.py
-MGI_MouseHuman_Sequence.py
+MGI_MouseHumanSequence.py
+HMD_OxfordGrid.py
+MRK_GOHuman.py
+GO_completedAnnotations.py
+GO_refs.py
+GO_refGenomeGenes.py
+GO_terms.py
+MRK_Ensembl_Pheno.py
+MGI_GenePheno.py
 
 TAG: reports_db-5-0-0-2
 DATE: 04/12/2012
