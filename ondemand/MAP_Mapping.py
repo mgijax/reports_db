@@ -17,6 +17,10 @@
 #
 # History:
 #
+# 04/25/2012
+#	- TR11035/postgres cleanup/PI cleanup
+#	- move to 'ondemand' directory
+#
 # 12/28/2011	lec
 #	- changed non-ansi-standard query to left outer join
 #
@@ -208,36 +212,22 @@ for panel in allPanels:
 		cross[panel].replace(' ', '_'	).replace('(', '').replace(')', '') + \
 		'_Panel', fileExt = '.rpt', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-	fp2 = reportlib.init('MGI_' + \
-		cross[panel].replace(' ', '_'	).replace('(', '').replace(')', '') + \
-		'_Panel', fileExt = '.sql.rpt', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = 'MGI')
-
 	fp.write('Mapping Panel: ' + cross[panel] + '\n')
-	fp2.write('\n\nMapping Panel: ' + cross[panel] + '\n')
 
 	fp.write('Cross designation: ' + strain[panel] + '\n')
-	fp2.write('Cross designation: ' + strain[panel] + '\n')
 
 	fp.write('Last Modified: ' + lastMod[panel] + '\n')
-	fp2.write('Last Modified: ' + lastMod[panel] + '\n')
 
 	if panel != '3383':
 		fp.write('Legend:\n')
-		fp2.write('Legend:\n')
 		fp.write('    ' + abbrevHT[panel] + ' indicates allele from ' + strainHT[panel] + '\n')
-		fp2.write('    ' + abbrevHT[panel] + ' indicates allele from ' + strainHT[panel] + '\n')
 		fp.write('    ' + abbrevHO[panel] + ' indicates allele from ' + strainHO[panel] + '\n')
-		fp2.write('    ' + abbrevHO[panel] + ' indicates allele from ' + strainHO[panel] + '\n')
 		fp.write('    . indicates animal was not typed.\n\n')	
-		fp2.write('    . indicates animal was not typed.\n\n')	
 	else:
 		fp.write('\n\n')
-		fp2.write('\n\n')
-	fp.write(preheader[panel] + '\n')
-	fp2.write(preheader2[panel] + '\n')
 
+	fp.write(preheader[panel] + '\n')
 	fp.write(header['cross_key' +panel] + '\n')
-	fp2.write(header2['cross_key' + panel] + '\n')
 
 	for chr in allChromosomes:
 		#print 'Panel: ' + panel + ' Chr: ' + chr
@@ -297,7 +287,6 @@ for panel in allPanels:
 			# Finally print the line
 			
 			fp.write(line + '\n')
-			fp2.write(line2 + '\n')
 			
 	fp.close()
 		
@@ -306,5 +295,4 @@ for panel in allPanels:
 #	print 'data: ' + typings[item]
 		
 reportlib.finish_nonps(fp)
-reportlib.finish_nonps(fp2)
 db.useOneConnection(0)
