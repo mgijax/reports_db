@@ -110,6 +110,7 @@ results = db.sql('''
 	and pa.preferred = 1 
 	order by n.db, name
 	''', 'auto')
+
 for r in results:
     key = r['_Object_key']
 
@@ -128,5 +129,5 @@ for r in results:
 	         TAB + \
 		 r['db'] + CRT)
 
-reportlib.finish_nonps(fp
+reportlib.finish_nonps(fp)
 

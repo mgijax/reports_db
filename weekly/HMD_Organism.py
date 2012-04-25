@@ -216,8 +216,8 @@ def runQueries(organismKey):
 		'where h.otherOrganism = c._Organism_key ' + \
 		'and h.chromosome = c.chromosome ', 'auto')
 
-	db.sql('drop table allhomologies', None)
-	db.sql('drop table homologies', None)
+	db.sql('drop table #allhomologies', None)
+	db.sql('drop table #homologies', None)
 
 	return results
 
