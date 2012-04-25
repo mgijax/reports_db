@@ -24,6 +24,7 @@ MRK_VEGA.py
 MRK_ENSEMBL.py
 MGI_Strain.py
 MGI_CloneSet.py
+MGI_GenePheno.py
 
 replace with MRK_List.py:
 MRK_List1.py
@@ -54,7 +55,6 @@ GO_refs.py
 GO_refGenomeGenes.py
 GO_terms.py
 MRK_Ensembl_Pheno.py
-MGI_GenePheno.py
 PRB_CloneLibrary.py
 PRB_CloneLibrarycDNA.py
 
