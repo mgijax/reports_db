@@ -1,3 +1,4 @@
+TAG: reports_db-5-0-0-?
 TAG: reports_db-5-0-0-3
 DATE: 04/24/2012
 STAFF: lec
@@ -8,6 +9,10 @@ TR11035/Postgres Cleanup
 added:
 ondemand directory
 ondemand_reports.csh
+
+move to ondemand:
+MGI_CloneSet.py
+MAP_Mapping.py
 
 add:
 MRK_List.py
@@ -50,6 +55,8 @@ GO_refGenomeGenes.py
 GO_terms.py
 MRK_Ensembl_Pheno.py
 MGI_GenePheno.py
+PRB_CloneLibrary.py
+PRB_CloneLibrarycDNA.py
 
 TAG: reports_db-5-0-0-2
 DATE: 04/12/2012
