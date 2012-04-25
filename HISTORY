@@ -12,7 +12,7 @@ ondemand_reports.csh
 
 move to ondemand:
 MGI_CloneSet.py
-MAP_Mapping.py
+MAP_Mapping.py (removed sql versions)
 
 add:
 MRK_List.py
