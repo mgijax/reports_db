@@ -20,25 +20,11 @@ echo `date`: Start weekly public reports | tee -a ${LOG}
 
 cd ${PUBWEEKLY}
 
-foreach i (*.sql)
-    echo `date`: $i | tee -a ${LOG}
-    reportisql.csh $i ${REPORTOUTPUTDIR}/$i.rpt ${MGD_DBSERVER} ${MGD_DBNAME} MGI >> ${LOG}
-end
-
 foreach i (*.py)
-    if ( $i != "MGI_CloneSet.py" ) then
-        echo `date`: $i | tee -a ${LOG}
-        $i >>& ${LOG}
-    endif
+    echo `date`: $i | tee -a ${LOG}
+    $i >>& ${LOG}
 end
-
-#
-# Generate clone set reports.
-#
-foreach i ("Image" "NIA 15K,NIA 7.4K,NIA" "RIKEN (FANTOM),RIKEN" "RPCI-23" "RPCI-24")
-    echo `date`: MGI_CloneSet.py $i | tee -a ${LOG}
-    ./MGI_CloneSet.py "$i" >>& ${LOG}
-end
+exit 0
 
 #
 # Generate inparanoid files.

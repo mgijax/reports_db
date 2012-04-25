@@ -4,6 +4,11 @@ STAFF: lec
 CHANGES:
 
 TR11035/Postgres Cleanup
+
+added:
+ondemand directory
+ondemand_reports.csh
+
 add:
 MRK_List.py
 MGI_Project_Allele.py
@@ -13,6 +18,7 @@ MGI_EntrezGene.py
 MRK_VEGA.py
 MRK_ENSEMBL.py
 MGI_Strain.py
+MGI_CloneSet.py
 
 replace with MRK_List.py:
 MRK_List1.py
