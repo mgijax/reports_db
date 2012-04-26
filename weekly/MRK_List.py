@@ -46,7 +46,8 @@ TAB = reportlib.TAB
 CRT = reportlib.CRT
 
 db.useOneConnection(1)
-fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp1 = reportlib.init('MRK_List1', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2 = reportlib.init('MRK_List2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 headers = [
     "MGI Accession ID",
@@ -62,7 +63,8 @@ headers = [
     "Feature Type",
     "Marker Synonyms (pipe-separated)"]
 
-fp.write(TAB.join(headers) + CRT)
+fp1.write(TAB.join(headers) + CRT)
+fp2.write(TAB.join(headers) + CRT)
 
 #
 # select all mouse markers
@@ -147,8 +149,7 @@ for r in results:
 # main report
 #
 
-results = db.sql('''
-    (
+query1 = '''
     select a.accid, 
 	   m._marker_key, 
 	   m.chromosome, 
@@ -164,49 +165,88 @@ results = db.sql('''
     and a.prefixpart = "MGI:"
     and a._logicaldb_key = 1
     and a.preferred = 1
-    union
+    '''
+
+query2 = '''
     select null, 
-	   m._marker_key, 
-	   m.chromosome, 
-	   m.cmposition, 
-	   m.symbol, 
-	   m.markerstatus, 
-	   m.name, 
-	   m.markertype
+           m._marker_key, 
+           m.chromosome, 
+           m.cmposition, 
+           m.symbol, 
+           m.markerstatus, 
+           m.name, 
+           m.markertype
     from #markers m
     where m._marker_status_key = 2
-    )
-    order by symbol
-    ''', 'auto')
+    '''
 
+#
+# include withdrawns
+#
+results = db.sql('(%s union %s) order by symbol' % (query1, query2), 'auto')
 for r in results:
 
     key = r['_marker_key']
 
-    fp.write(mgi_utils.prvalue(r['accid']) + TAB)
-    fp.write(r['chromosome'] + TAB)
-    fp.write(r['cmposition'] + TAB)
+    fp1.write(mgi_utils.prvalue(r['accid']) + TAB)
+    fp1.write(r['chromosome'] + TAB)
+    fp1.write(r['cmposition'] + TAB)
 
     if coords.has_key(key):
-	fp.write(mgi_utils.prvalue(coords[key][0]['startC']) + TAB)
-	fp.write(mgi_utils.prvalue(coords[key][0]['endC']) + TAB)
-	fp.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
+	fp1.write(mgi_utils.prvalue(coords[key][0]['startC']) + TAB)
+	fp1.write(mgi_utils.prvalue(coords[key][0]['endC']) + TAB)
+	fp1.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
     else:
-	fp.write(TAB + TAB + TAB)
+	fp1.write(TAB + TAB + TAB)
 
-    fp.write(r['symbol'] + TAB)
-    fp.write(r['markerstatus'] + TAB)
-    fp.write(r['name'] + TAB)
-    fp.write(r['markertype'] + TAB)
+    fp1.write(r['symbol'] + TAB)
+    fp1.write(r['markerstatus'] + TAB)
+    fp1.write(r['name'] + TAB)
+    fp1.write(r['markertype'] + TAB)
 
     if featureTypes.has_key(key):
-	fp.write(string.join(featureTypes[key],'|'))
-    fp.write(TAB)
+	fp1.write(string.join(featureTypes[key],'|'))
+    fp1.write(TAB)
 
     if synonyms.has_key(key):
-	fp.write(string.join(synonyms[key],'|'))
-    fp.write(CRT)
+	fp1.write(string.join(synonyms[key],'|'))
+    fp1.write(CRT)
 
-reportlib.finish_nonps(fp)	# non-postscript file
+reportlib.finish_nonps(fp1)	# non-postscript file
+
+#
+# do not include withdrawns
+#
+results = db.sql('(%s order by symbol' % (query1), 'auto')
+for r in results:
+
+    key = r['_marker_key']
+
+    fp2.write(mgi_utils.prvalue(r['accid']) + TAB)
+    fp2.write(r['chromosome'] + TAB)
+    fp2.write(r['cmposition'] + TAB)
+
+    if coords.has_key(key):
+	fp2.write(mgi_utils.prvalue(coords[key][0]['startC']) + TAB)
+	fp2.write(mgi_utils.prvalue(coords[key][0]['endC']) + TAB)
+	fp2.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
+    else:
+	fp2.write(TAB + TAB + TAB)
+
+    fp2.write(r['symbol'] + TAB)
+    fp2.write(r['markerstatus'] + TAB)
+    fp2.write(r['name'] + TAB)
+    fp2.write(r['markertype'] + TAB)
+
+    if featureTypes.has_key(key):
+	fp2.write(string.join(featureTypes[key],'|'))
+    fp2.write(TAB)
+
+    if synonyms.has_key(key):
+	fp2.write(string.join(synonyms[key],'|'))
+    fp2.write(CRT)
+
+reportlib.finish_nonps(fp2)	# non-postscript file
+
 db.useOneConnection(0)
 
