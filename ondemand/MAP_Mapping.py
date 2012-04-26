@@ -218,6 +218,8 @@ for panel in allPanels:
 
 	fp.write('Last Modified: ' + lastMod[panel] + '\n')
 
+	fp.write('WARNING:  The MGI IDs and/or SYMBOL may be outdated\n')
+
 	if panel != '3383':
 		fp.write('Legend:\n')
 		fp.write('    ' + abbrevHT[panel] + ' indicates allele from ' + strainHT[panel] + '\n')
