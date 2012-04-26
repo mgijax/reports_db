@@ -604,15 +604,32 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>6. List of All Project Alleles (KOMP, EUCOMM, NorCOMM) (tab-delimited)</B></TD></TR>
+        <TR><TD><B>6. List of All KOMP Alleles (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Project generating allele</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Project_Allele.rpt">MGI_Project_Allele.rpt</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="KOMP_Allele.rpt">KOMP_Allele.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>7. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>7. List of All EUCOMM Alleles (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="EUCOMM_Allele.rpt">EUCOMM_Allele.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>8. List of All NorCOMM Alleles (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Mutant Cell Line ID</TD><TD>Logical DB Name</TD><TD>MGI Allele Accession ID</TD><TD>Allele Symbol<TD>Allele Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="NorCOMM_Allele.rpt">NorCOMM_Allele.rpt</A></TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>9. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
         </TD></TR>
@@ -620,7 +637,15 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>8. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>10. Genotypes and Mammalian Phenotype Annotations for Marker Type Genes excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GenePheno.rpt">MGI_GenePheno.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>11. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
         </TD></TR>
@@ -628,7 +653,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>9. Associations of Mouse Genes with OMIM Diseases</B></TD></TR>
+        <TR><TD><B>12. Associations of Mouse Genes with OMIM Diseases</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>OMIM ID</TD><TD>OMIM Term</TD><TD>Synonyms (|-delimited)</TD><TD>Mouse Gene</TD><TD>Mouse Gene ID</TD><TD>Human Gene</TD><TD>Mouse only/Human only/Both</TD></TABLE>
         </TD></TR>

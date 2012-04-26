@@ -1,3 +1,4 @@
+TAG: reports_db-5-0-0-5
 TAG: reports_db-5-0-0-4
 TAG: reports_db-5-0-0-3
 DATE: 04/24/2012
@@ -16,7 +17,6 @@ MAP_Mapping.py (removed sql versions)
 
 add:
 MRK_List.py
-MGI_Project_Allele.py
 
 update:
 MGI_EntrezGene.py
@@ -24,7 +24,6 @@ MRK_VEGA.py
 MRK_ENSEMBL.py
 MGI_Strain.py
 MGI_CloneSet.py
-MGI_GenePheno.py
 
 replace with MRK_List.py:
 MRK_List1.py
@@ -39,11 +38,6 @@ MRK_Synonym.py
 MRK_Synonym.sql
 MRK_Dump1.py
 MRK_Dump2.py
-
-replace by MGI_Project_Allele.py:
-EUCOMM_Allele.py
-KOMP_Allele.py
-NorCOMM_Allele.py
 
 remove:
 MGI_RIKEN.py
