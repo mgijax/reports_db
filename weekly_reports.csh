@@ -24,7 +24,6 @@ foreach i (*.py)
     echo `date`: $i | tee -a ${LOG}
     $i >>& ${LOG}
 end
-exit 0
 
 #
 # Generate inparanoid files.
