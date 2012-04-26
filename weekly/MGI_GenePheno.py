@@ -14,7 +14,7 @@
 #	represents a Genotype annotation to a MP term
 #	and all of the references (J:) used to annotate that term.
 #
-#	MGI_GenePheno (removed)
+#	MGI_GenePheno
 #
 #	field 1: Allelic Composition
 #	field 2: pipe-delimited list of Allele symbols
@@ -38,7 +38,7 @@
 # History:
 #
 # lec	04/25/2012
-#	- TR11035/remove MGI_GenePheno (fp1)
+#	- TR11035/removed and then put back in
 #
 # lec	03/06/2012
 #	- TR10998/add allele ids
@@ -86,7 +86,7 @@ PAGE = reportlib.PAGE
 # Main
 #
 
-#fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp2 = reportlib.init('MGI_Geno_Disease', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp3 = reportlib.init('MGI_Geno_NotDisease', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
@@ -286,18 +286,18 @@ for r in results:
     if not mpAlleles.has_key(genotype):
        continue
 
-    #fp1.write(mpDisplay[genotype] + TAB)
-    #fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
+    fp1.write(mpDisplay[genotype] + TAB)
+    fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
 
-    #if mpAlleleIDs.has_key(genotype):
-    #    fp1.write(string.join(mpAlleleIDs[genotype], '|'))
-    #fp1.write(TAB)
+    if mpAlleleIDs.has_key(genotype):
+        fp1.write(string.join(mpAlleleIDs[genotype], '|'))
+    fp1.write(TAB)
 
-    #fp1.write(mpStrain[genotype] + TAB)
-    #fp1.write(mpID[term] + TAB)
-    #if mpRef.has_key(refKey):
-    #    fp1.write(string.join(mpRef[refKey], ','))
-    #fp1.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
+    fp1.write(mpStrain[genotype] + TAB)
+    fp1.write(mpID[term] + TAB)
+    if mpRef.has_key(refKey):
+        fp1.write(string.join(mpRef[refKey], ','))
+    fp1.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
 
     #
     # OMIM report 1
@@ -335,7 +335,7 @@ for r in results:
         fp3.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
         fp3.write(string.join(mpOMIM2[genotype], ',') + CRT)
 
-#reportlib.finish_nonps(fp1)	# non-postscript file
+reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file
 reportlib.finish_nonps(fp3)	# non-postscript file
 
