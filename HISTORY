@@ -1,3 +1,4 @@
+TAG: reports_db-5-0-0-6
 TAG: reports_db-5-0-0-5
 TAG: reports_db-5-0-0-4
 TAG: reports_db-5-0-0-3
@@ -24,6 +25,7 @@ MRK_VEGA.py
 MRK_ENSEMBL.py
 MGI_Strain.py
 MGI_CloneSet.py
+ALL_CellLine_GeneTrap.py (reorganized/from 30 minutes to 8 minutes)
 
 replace with MRK_List.py:
 MRK_List1.py
