@@ -168,7 +168,7 @@ query1 = '''
     '''
 
 query2 = '''
-    select null, 
+    select 'NULL', 
            m._marker_key, 
            m.chromosome, 
            m.cmposition, 
