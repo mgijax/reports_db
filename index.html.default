@@ -631,7 +631,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>9. Genotypes and Mammalian Phenotype Annotations for Marker Type Genes excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GenePheno.rpt">MGI_GenePheno.rpt</A></TD></TR>
     </TABLE></TD></TR>

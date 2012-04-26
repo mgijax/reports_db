@@ -33,6 +33,13 @@ setenv PUBDAILY			${PUBRPTS}/daily
 # weekly reports directory
 setenv PUBWEEKLY		${PUBRPTS}/weekly
 
+# on-demand reports directory
+setenv ONDEMAND			${PUBRPTS}/ondemand
+
+# Settings for on-demand reports:  0 is off, 1 is on
+# if set to 1, then the ondemand reports will be run
+setenv RUN_ONDEMAND         	0
+
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		/data/loads/mgi/vocload/runTimeMP
 setenv MPFILES			"MPheno_OBO.ontology"
