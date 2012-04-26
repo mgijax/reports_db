@@ -212,12 +212,10 @@ for r in results:
 	fp1.write(string.join(synonyms[key],'|'))
     fp1.write(CRT)
 
-reportlib.finish_nonps(fp1)	# non-postscript file
-
 #
 # do not include withdrawns
 #
-results = db.sql('(%s order by symbol' % (query1), 'auto')
+results = db.sql('%s order by symbol' % (query1), 'auto')
 for r in results:
 
     key = r['_marker_key']
@@ -246,7 +244,7 @@ for r in results:
 	fp2.write(string.join(synonyms[key],'|'))
     fp2.write(CRT)
 
+reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file
-
 db.useOneConnection(0)
 
