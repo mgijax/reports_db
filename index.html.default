@@ -753,8 +753,6 @@
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 205 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Copeland-Jenkins_Panel.sql.rpt">MGI_Copeland-Jenkins_Panel.sql.rpt</a> (space-delimited)</td></tr>
-
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Copeland-Jenkins_Panel.rpt">MGI_Copeland-Jenkins_Panel.rpt</a> (tab-delimited)</td></tr>
     </tbody></table></td></tr>
 
@@ -764,7 +762,6 @@
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 482 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
 
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_EUCIB_BSB_Panel.sql.rpt">MGI_EUCIB_BSB_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_EUCIB_BSB_Panel.rpt">MGI_EUCIB_BSB_Panel.rpt</a> (tab-delimited)</td></tr>
     </tbody></table></td></tr>
 
@@ -774,7 +771,6 @@
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 501 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_EUCIB_BSS_Panel.sql.rpt">MGI_EUCIB_BSS_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_EUCIB_BSS_Panel.rpt">MGI_EUCIB_BSS_Panel.rpt</a> (tab-delimited)</td></tr>
 
     </tbody></table></td></tr>
@@ -785,7 +781,6 @@
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 94 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
 
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_JAX_BSB_Panel.sql.rpt">MGI_JAX_BSB_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_JAX_BSB_Panel.rpt">MGI_JAX_BSB_Panel.rpt</a> (tab-delimited)</td></tr>
     </tbody></table></td></tr>
 
@@ -795,7 +790,6 @@
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 94 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_JAX_BSS_Panel.sql.rpt">MGI_JAX_BSS_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_JAX_BSS_Panel.rpt">MGI_JAX_BSS_Panel.rpt</a> (tab-delimited)</td></tr>
 
     </tbody></table></td></tr>
@@ -806,7 +800,6 @@
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 144 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
 
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_JAX_Mouse_Mutant_Resource_BCB_Panel.sql.rpt">MGI_JAX_Mouse_Mutant_Resource_BCB_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_JAX_Mouse_Mutant_Resource_BCB_Panel.rpt">MGI_JAX_Mouse_Mutant_Resource_BCB_Panel.rpt</a> (tab-delimited)</td></tr>
     </tbody></table></td></tr>
 
@@ -816,7 +809,6 @@
 
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 139 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_JAX_Mouse_Mutant_Resource_BSS_Panel.sql.rpt">MGI_JAX_Mouse_Mutant_Resource_BSS_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_JAX_Mouse_Mutant_Resource_BSS_Panel.rpt">MGI_JAX_Mouse_Mutant_Resource_BSS_Panel.rpt</a> (tab-delimited)</td></tr>
 
     </tbody></table></td></tr>
@@ -827,7 +819,6 @@
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 93 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
 
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Kozak_FvC58_Panel.sql.rpt">MGI_Kozak_FvC58_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Kozak_FvC58_Panel.rpt">MGI_Kozak_FvC58_Panel.rpt</a> (tab-delimited)</td></tr>
     </tbody></table></td></tr>
 
@@ -837,7 +828,6 @@
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 24 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Kozak_FvSpr_Panel.sql.rpt">MGI_Kozak_FvSpr_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Kozak_FvSpr_Panel.rpt">MGI_Kozak_FvSpr_Panel.rpt</a> (tab-delimited)</td></tr>
 
     </tbody></table></td></tr>
@@ -848,7 +838,6 @@
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 94 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
 
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Kozak_Skive_Panel.sql.rpt">MGI_Kozak_Skive_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Kozak_Skive_Panel.rpt">MGI_Kozak_Skive_Panel.rpt</a> (tab-delimited)</td></tr>
     </tbody></table></td></tr>
 
@@ -858,7 +847,6 @@
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 46 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_MIT_Panel.sql.rpt">MGI_MIT_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_MIT_Panel.rpt">MGI_MIT_Panel.rpt</a> (tab-delimited)</td></tr>
 
     </tbody></table></td></tr>
@@ -869,7 +857,6 @@
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 707 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
 
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Reeves_Chr_16_Panel.sql.rpt">MGI_Reeves_Chr_16_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Reeves_Chr_16_Panel.rpt">MGI_Reeves_Chr_16_Panel.rpt</a> (tab-delimited)</td></tr>
     </tbody></table></td></tr>
 
@@ -879,7 +866,6 @@
         <tr><td>
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 849 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Seldin_Panel.sql.rpt">MGI_Seldin_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_Seldin_Panel.rpt">MGI_Seldin_Panel.rpt</a> (tab-delimited)</td></tr>
 
     </tbody></table></td></tr>
@@ -890,7 +876,6 @@
         <table border="1" cellpadding="2"><tbody><tr><td>Chromosome</td><td>MGI Marker Accession ID</td><td>Marker Symbol</td><td>Allele data for 67 animals (1 column per animal)</td><td>J Number</td></tr></tbody></table>
 
         </td></tr>
-        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_UCLA_BSB_Panel.sql.rpt">MGI_UCLA_BSB_Panel.sql.rpt</a> (space-delimited)</td></tr>
         <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="MGI_UCLA_BSB_Panel.rpt">MGI_UCLA_BSB_Panel.rpt</a> (tab-delimited)</td></tr>
     </tbody></table></td></tr>
 

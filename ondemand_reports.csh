@@ -18,7 +18,7 @@ touch ${LOG}
 
 echo `date`: Start on-demand public reports | tee -a ${LOG}
 
-cd ${PUBWEEKLY}
+cd ${ONDEMAND}
 
 foreach i (*.py)
     echo `date`: $i | tee -a ${LOG}
