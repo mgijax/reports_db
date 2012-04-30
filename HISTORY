@@ -1,3 +1,4 @@
+TAG: reports_db-5-0-0-12
 TAG: reports_db-5-0-0-11
 TAG: reports_db-5-0-0-10
 TAG: reports_db-5-0-0-9
@@ -60,6 +61,8 @@ MRK_Ensembl_Pheno.py
 PRB_CloneLibrary.py
 PRB_CloneLibrarycDNA.py
 PRB_TissueMouse.py
+ncbilinkout/omim_linkout
+MRK_InterPro.py
 
 obsolete directories:
 panelDocs
