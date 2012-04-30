@@ -55,7 +55,6 @@ cd ${REPORTOUTPUTDIR}
 ftp -in ${NCBILINKOUT_HOST} <<END | tee -a ${LOG}
 user ${NCBILINKOUT_USER} ${NCBILINKOUT_PASSWORD}
 cd holdings
-mput omim-mgi.xml
 mput protein-mgd.xml
 mput providerinfo.xml
 mput pubmed-mgd-*.xml
