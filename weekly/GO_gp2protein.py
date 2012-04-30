@@ -143,7 +143,8 @@ for r in results:
         seqID = 'VEGA:' + r['seqID']
     elif logicalDB in [134]:
         seqID = 'ENSEMBL:' + r['seqID']
-
+    else:
+	continue
     fp.write(mgiID + TAB + seqID + CRT)
 
 #
