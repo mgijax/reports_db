@@ -26,6 +26,9 @@
 #
 # History:
 #
+# lec	04/30/2012
+#	- TR11055/add Status = Autoload
+#
 # lec	08/31/2010
 #	- TR10280 fix; _AlleleType_key was put in for testing but not removed for release
 #
@@ -73,7 +76,7 @@ db.sql('''
        into #alleles 
        from ALL_Allele a, VOC_Term t1, VOC_Term t2, MRK_Marker m 
        where a._Allele_Status_key = t1._Term_key 
-       and t1.term = "Approved" 
+       and t1.term in ('Approved', 'Autoload')
        and a.isWildType = 0 
        and a._Transmission_key != 3982953 
        and a._Allele_Type_key = t2._Term_key 
@@ -90,14 +93,13 @@ results = db.sql('''
 	where s._Allele_key = a._Object_key 
 	and a._MGIType_key = 11 
 	and a._LogicalDB_key = 1 
-	and a.prefixPart = "MGI:" 
+	and a.prefixPart = 'MGI:'
 	and a.preferred = 1
 	''', 'auto')
 amgiIDs = {}
 for r in results:
 	amgiIDs[r['_Allele_key']] = r['accID']
 	
-
 # Retrieve MGI Accession number for Marker
 
 results = db.sql('''
@@ -106,7 +108,7 @@ results = db.sql('''
 	where s._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 
 	and a._LogicalDB_key = 1 
-	and a.prefixPart = "MGI:" 
+	and a.prefixPart = 'MGI:'
 	and a.preferred = 1
 	''', 'auto')
 mmgiIDs = {}
@@ -121,7 +123,7 @@ results = db.sql('''
 	where s._Allele_key = r._Object_key 
 	and r._MGIType_key = 11 
 	and r._RefAssocType_key = rt._RefAssocType_key 
-	and rt.assocType = "Original" 
+	and rt.assocType = 'Original' 
 	and r._Refs_key = b._Object_key 
 	and b._MGIType_key = 1 
 	and b._LogicalDB_key = 29
@@ -138,7 +140,7 @@ results = db.sql('''
 	where s._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 
 	and a._LogicalDB_key = 27 
-	and a.prefixPart in ("NM_", "XM_")
+	and a.prefixPart in ('NM_', 'XM_')
 	''', 'auto')
 refIDs = {}
 for r in results:
