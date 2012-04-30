@@ -11,8 +11,6 @@ STAFF: lec
 CHANGES:
 
 TR11057/fix to gp2protein script (sc)
-TR11055/MGI_PhenotypicAllele.py: add status = Autoload
-
 TR11035/Postgres Cleanup
 
 added:

@@ -182,7 +182,7 @@ results = db.sql('''select distinct m._Object_key, a.symbol, aa.accID, a.isWildT
 	and ag._Allele_key = aa._Object_key
 	and aa._MGIType_key = 11
 	and aa._LogicalDB_key = 1
-	and aa.prefixPart = "MGI:"
+	and aa.prefixPart = 'MGI:'
 	and aa.preferred = 1
         and not exists (select 1 from GXD_AllelePair a2
 	        where ag._Genotype_key = a2._Genotype_key
@@ -213,7 +213,7 @@ results = db.sql('''select distinct m._Object_key, a.accID
 	and g._Marker_key = a._Object_key
 	and a._MGIType_key = 2
 	and a._LogicalDB_key = 1
-	and a.prefixPart = "MGI:"
+	and a.prefixPart = 'MGI:'
 	and a.preferred = 1
 	''', 'auto')
 mpMarker = {}

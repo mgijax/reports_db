@@ -144,16 +144,16 @@ db.sql('''
 	     a2.accID as vegaID
       into #markers
       from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Offset o 
-      where a1._Object_key = a2._Object_key and 
-            a1._Object_key = m._Marker_key and 
-            m._Marker_key = o._Marker_key and 
-            a1._LogicalDB_key = 1 and 
-            a1._MGIType_key = 2 and 
-            a1.prefixPart = "MGI:" and 
-            a1.preferred = 1 and 
-            a2._LogicalDB_key = 85 and 
-            a2._MGIType_key = 2 and 
-            o.source = 0 
+      where a1._Object_key = a2._Object_key 
+            and a1._Object_key = m._Marker_key 
+            and m._Marker_key = o._Marker_key 
+            and a1._LogicalDB_key = 1 
+            and a1._MGIType_key = 2 
+            and a1.prefixPart = 'MGI:' 
+            and a1.preferred = 1 
+            and a2._LogicalDB_key = 85 
+            and a2._MGIType_key = 2 
+            and o.source = 0 
       ''', None)
 db.sql('create index marker_idx1 on #markers(_Marker_key)', None)
 
@@ -164,7 +164,7 @@ results = db.sql('''
 	select m._marker_key, s.term 
         from #markers m, MRK_MCV_Cache s 
         where m._marker_key = s._marker_key 
-        and s.qualifier = "D"
+        and s.qualifier = 'D'
 	''', 'auto')
 featureTypes = {}
 for r in results:

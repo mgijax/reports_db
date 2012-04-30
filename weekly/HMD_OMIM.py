@@ -67,15 +67,19 @@ fp.write(string.ljust('------------', 12))
 fp.write(SPACE)
 fp.write(CRT)
 
-db.sql('select distinct mouseKey = h1._Marker_key, mouseSymbol = m1.symbol, ' +
-	'humanKey = h2._Marker_key, humanSymbol = m2.symbol ' + \
-	'into #homology ' +
-        'from MRK_Homology_Cache h1, MRK_Homology_Cache h2, ' + \
-        'MRK_Marker m1, MRK_Marker m2 ' + \
-        'where h1._Organism_key = 1 ' + \
-        'and h1._Class_key = h2._Class_key ' + \
-        'and h1._Marker_key = m1._Marker_key ' + \
-        'and h2._Marker_key = m2._Marker_key ', None)
+db.sql('''
+	select distinct h1._Marker_key as mouseKey, 
+			m1.symbol as mouseSymbol, 
+	                h2._Marker_key as humanKey, 
+			m2.symbol as humanSymbol
+	into #homology 
+        from MRK_Homology_Cache h1, MRK_Homology_Cache h2, 
+        MRK_Marker m1, MRK_Marker m2 
+        where h1._Organism_key = 1 
+        and h1._Class_key = h2._Class_key 
+        and h1._Marker_key = m1._Marker_key 
+        and h2._Marker_key = m2._Marker_key 
+	''', None)
 
 db.sql('create index idx1 on #homology(mouseKey)', None)
 db.sql('create index idx2 on #homology(humanKey)', None)
@@ -83,24 +87,28 @@ db.sql('create index idx3 on #homology(mouseSymbol)', None)
 
 ##
 
-results = db.sql('select h.mouseKey, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.mouseKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a.prefixPart = "MGI:" ' + \
-	'and a._LogicalDB_key = 1 ' + \
-	'and a.preferred = 1 ', 'auto')
+results = db.sql('''
+	select h.mouseKey, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.mouseKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a.prefixPart = 'MGI:' 
+	and a._LogicalDB_key = 1 
+	and a.preferred = 1 
+	''', 'auto')
 mgiIDs = {}
 for r in results:
     key = r['mouseKey']
     value = r['accID']
     mgiIDs[key] = value
 
-results = db.sql('select h.humanKey, accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.humanKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 15 ', 'auto')
+results = db.sql('''
+	select h.humanKey, accID 
+	from #homology h, ACC_Accession a 
+	where h.humanKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 15 
+	''', 'auto')
 mimIDs = {}
 for r in results:
     key = r['humanKey']

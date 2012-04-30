@@ -74,79 +74,90 @@ PAGE = reportlib.PAGE
 db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
-cmds = []
+db.sql('''
+	select distinct h1._Marker_key as mouseKey, 
+			m1.symbol as mouseSym, 
+	                h2._Marker_key as humanKey, 
+			m2.symbol as humanSym, 
+			a.abbrev 
+	into #homology 
+        from MRK_Homology_Cache h1, HMD_Homology_Assay ha, HMD_Assay a, 
+        MRK_Homology_Cache h2, 
+        MRK_Marker m1, MRK_Marker m2 
+        where h1._Organism_key = 1 
+        and h1._Class_key = h2._Class_key 
+        and h2._Organism_key = 2 
+        and h1._Marker_key = m1._Marker_key 
+        and h2._Marker_key = m2._Marker_key 
+	and h1._Homology_key = ha._Homology_key 
+	and ha._Assay_key = a._Assay_key
+	''', None)
 
-cmds.append('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' +
-	'humanKey = h2._Marker_key, humanSym = m2.symbol, a.abbrev ' + \
-	'into #homology ' +
-        'from MRK_Homology_Cache h1, HMD_Homology_Assay ha, HMD_Assay a, ' + \
-        'MRK_Homology_Cache h2, ' + \
-        'MRK_Marker m1, MRK_Marker m2 ' + \
-        'where h1._Organism_key = 1 ' + \
-        'and h1._Class_key = h2._Class_key ' + \
-        'and h2._Organism_key = 2 ' + \
-        'and h1._Marker_key = m1._Marker_key ' + \
-        'and h2._Marker_key = m2._Marker_key ' + \
-	'and h1._Homology_key = ha._Homology_key ' + \
-	'and ha._Assay_key = a._Assay_key')
+db.sql('create index homology_index_mouseKey on #homology(mouseKey)', None)
+db.sql('create index homology_index_humanKey on #homology(humanKey)', None)
+db.sql('create index homology_index_humanSym on #homology(humanSym)', None)
 
-cmds.append('create index homology_index_mouseKey on #homology(mouseKey)')
-cmds.append('create index homology_index_humanKey on #homology(humanKey)')
-cmds.append('create index homology_index_humanSym on #homology(humanSym)')
+db.sql('''
+	select distinct h.mouseKey, mr.jnumID, mr.pubMedID 
+	into #homologyRef 
+	from #homology h, MRK_Homology_Cache hc, MRK_Reference mr 
+	where h.mouseKey = hc._Marker_key 
+      	and hc._Organism_key = 1 
+      	and hc._Marker_key = mr._Marker_key 
+      	and hc._Refs_key = mr._Refs_key
+	''', None)
 
-cmds.append('select distinct h.mouseKey, mr.jnumID, mr.pubMedID ' + \
-	'into #homologyRef ' + \
-	'from #homology h, MRK_Homology_Cache hc, MRK_Reference mr ' + \
-	'where h.mouseKey = hc._Marker_key and ' + \
-      	'hc._Organism_key = 1 and ' + \
-      	'hc._Marker_key = mr._Marker_key and ' + \
-      	'hc._Refs_key = mr._Refs_key')
-
-cmds.append('create index homologyRef_index_mouseKey on #homologyRef(mouseKey)')
-
-db.sql(cmds, None)
+db.sql('create index homologyRef_index_mouseKey on #homologyRef(mouseKey)', None)
 
 ##
 
 # MGI for Mouse
-results = db.sql('select a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.mouseKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a.prefixPart = "MGI:" ' + \
-	'and a.preferred = 1', 'auto')
+results = db.sql('''
+	select a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.mouseKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a.prefixPart = 'MGI:' 
+	and a.preferred = 1
+	''', 'auto')
 mgiID = {}
 for r in results:
 	mgiID[r['_Object_key']] = r['accID']
 
 # EntrezGene for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.mouseKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 55 ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.mouseKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 55 
+	''', 'auto')
 megID = {}
 for r in results:
 	megID[r['_Object_key']] = r['accID']
 
 
 # EntrezGene for Human
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.humanKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 55 ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.humanKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 55 
+	''', 'auto')
 hegID = {}
 for r in results:
 	hegID[r['_Object_key']] = r['accID']
 
 # nucleotide RefSeqs for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.mouseKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 27 ' + \
-	'and a.prefixPart in ("NM_", "XM_")', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.mouseKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 27 
+	and a.prefixPart in ('NM_', 'XM_')
+	''', 'auto')
 mNrefseqID = {}
 for r in results:
 	if not mNrefseqID.has_key(r['_Object_key']):
@@ -154,12 +165,14 @@ for r in results:
 	mNrefseqID[r['_Object_key']].append(r['accID'])
 
 # nucleotide RefSeqs for Human
-results = db.sql('select distinct _Object_key = h.humanKey, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.humanKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 27 ' + \
-	'and a.prefixPart in ("NM_", "XM_")', 'auto')
+results = db.sql('''
+	select distinct _Object_key = h.humanKey, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.humanKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 27 
+	and a.prefixPart in ('NM_', 'XM_')
+	''', 'auto')
 hNrefseqID = {}
 for r in results:
 	if not hNrefseqID.has_key(r['_Object_key']):
@@ -167,12 +180,14 @@ for r in results:
 	hNrefseqID[r['_Object_key']].append(r['accID'])
 
 # protein RefSeqs for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.mouseKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 27 ' + \
-	'and a.prefixPart in ("NP_", "XP_")', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.mouseKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 27 
+	and a.prefixPart in ('NP_', 'XP_')
+	''', 'auto')
 mPrefseqID = {}
 for r in results:
 	if not mPrefseqID.has_key(r['_Object_key']):
@@ -180,12 +195,14 @@ for r in results:
 	mPrefseqID[r['_Object_key']].append(r['accID'])
 
 # protein RefSeqs for Human
-results = db.sql('select distinct _Object_key = h.humanKey, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.humanKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 27 ' + \
-	'and a.prefixPart in ("NP_", "XP_")', 'auto')
+results = db.sql('''
+	select distinct _Object_key = h.humanKey, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.humanKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 27 
+	and a.prefixPart in ('NP_', 'XP_')
+	''', 'auto')
 hPrefseqID = {}
 for r in results:
 	if not hPrefseqID.has_key(r['_Object_key']):
@@ -193,11 +210,13 @@ for r in results:
 	hPrefseqID[r['_Object_key']].append(r['accID'])
 
 # SWISSPROT for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.mouseKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 13', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.mouseKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 13
+	''', 'auto')
 mspID = {}
 for r in results:
 	if not mspID.has_key(r['_Object_key']):
@@ -205,11 +224,13 @@ for r in results:
 	mspID[r['_Object_key']].append(r['accID'])
 
 # SWISSPROT for Human
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.humanKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 13', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.humanKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 13
+	''', 'auto')
 hspID = {}
 for r in results:
 	if not hspID.has_key(r['_Object_key']):
@@ -217,11 +238,13 @@ for r in results:
 	hspID[r['_Object_key']].append(r['accID'])
 
 # GenBank for Mouse
-results = db.sql('select distinct a._Object_key, a.accID ' + \
-	'from #homology h, ACC_Accession a ' + \
-	'where h.mouseKey = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 9 ', 'auto')
+results = db.sql('''
+	select distinct a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where h.mouseKey = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 9 
+	''', 'auto')
 gbID = {}
 for r in results:
 	if not gbID.has_key(r['_Object_key']):
@@ -245,9 +268,11 @@ for r in results:
 
 # Pubmed IDs
 pubMedID = {}
-results = db.sql('select distinct mouseKey, pubMedID ' + \
-	'from #homologyRef ' + \
-	'where pubMedID is not null', 'auto')
+results = db.sql('''
+	select distinct mouseKey, pubMedID 
+	from #homologyRef 
+	where pubMedID is not null
+	''', 'auto')
 for r in results:
 	if not pubMedID.has_key(r['mouseKey']):
 		pubMedID[r['mouseKey']] = []

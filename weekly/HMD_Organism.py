@@ -117,34 +117,40 @@ def runQueries(organismKey):
 
 	global curated, calculated, otherEG, mouseEG, mouseMGI
 
-	cmd = 'select distinct h1._Marker_key ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-		'where h1._Refs_key = 91485 ' + \
-		'and h1._Organism_key = %s ' % (organismKey) + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 1'
+	cmd = '''
+		select distinct h1._Marker_key 
+		from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+		where h1._Refs_key = 91485 
+		and h1._Organism_key = %s 
+		and h1._Class_key = h2._Class_key 
+		and h2._Organism_key = 1
+		'''% (organismKey)
 
 	results = db.sql(cmd, 'auto')
 	for r in results:
 		calculated.append(r['_Marker_key'])
 
-	cmd = 'select distinct h1._Marker_key ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-		'where h1._Refs_key != 91485 ' + \
-		'and h1._Organism_key = %s ' % (organismKey) + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 1'
+	cmd = '''
+		select distinct h1._Marker_key 
+		from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+		where h1._Refs_key != 91485 
+		and h1._Organism_key = %s 
+		and h1._Class_key = h2._Class_key 
+		and h2._Organism_key = 1
+		''' % (organismKey)
 
 	results = db.sql(cmd, 'auto')
 	for r in results:
     		curated.append(r['_Marker_key'])
 
-	db.sql('select distinct otherMarkerKey = h1._Marker_key, mouseMarkerKey = h2._Marker_key ' + \
-	       'into #allhomologies ' + \
-	       'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-	       'where h1._Organism_key = %s ' % (organismKey) + \
-	       'and h1._Class_key = h2._Class_key ' + \
-	       'and h2._Organism_key = 1', None)
+	db.sql('''
+		select distinct h1._Marker_key as otherMarkerKey, h2._Marker_key as mouseMarkerKey
+	        into #allhomologies 
+	        from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+	        where h1._Organism_key = %s 
+	        and h1._Class_key = h2._Class_key 
+	        and h2._Organism_key = 1
+		''' % (organismKey), None)
 
 	db.sql('create index idx_hkey on #allhomologies(otherMarkerKey)', None)
 	db.sql('create index idx_mkey on #allhomologies(mouseMarkerKey)', None)
@@ -182,39 +188,50 @@ def runQueries(organismKey):
 
 	# other entrezgene ids
 
-	results = db.sql('select h.otherMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
-		'where h.otherMarkerKey = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 55 ', 'auto')
+	results = db.sql('''
+		select h.otherMarkerKey, a.accID 
+		from #homologies h, ACC_Accession a 
+		where h.otherMarkerKey = a._Object_key 
+		and a._MGIType_key = 2 
+		and a._LogicalDB_key = 55 
+		''', 'auto')
 	for r in results:
 		otherEG[r['otherMarkerKey']] = r['accID']
 
 	# mouse entrezgene ids
 
-	results = db.sql('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
-		'where h.mouseMarkerKey = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 55 ', 'auto')
+	results = db.sql('''
+		select h.mouseMarkerKey, a.accID 
+		from #homologies h, ACC_Accession a 
+		where h.mouseMarkerKey = a._Object_key 
+		and a._MGIType_key = 2 
+		and a._LogicalDB_key = 55 
+		''', 'auto')
 	for r in results:
 		mouseEG[r['mouseMarkerKey']] = r['accID']
 
 	# mouse MGI 
 
-	results = db.sql('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
-		'where h.mouseMarkerKey = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a.prefixPart = "MGI:" ' + \
-		'and a._LogicalDB_key = 1 ' + \
-		'and a.preferred = 1 ', 'auto')
+	results = db.sql('''
+		select h.mouseMarkerKey, a.accID 
+		from #homologies h, ACC_Accession a 
+		where h.mouseMarkerKey = a._Object_key 
+		and a._MGIType_key = 2 
+		and a.prefixPart = 'MGI:' 
+		and a._LogicalDB_key = 1 
+		and a.preferred = 1 
+		''', 'auto')
 	for r in results:
 		mouseMGI[r['mouseMarkerKey']] = r['accID']
 
 	# sorted by other chromosome
 
-	results = db.sql('select h.*, c.sequenceNum ' + \
-		'from #homologies h, MRK_Chromosome c ' + \
-		'where h.otherOrganism = c._Organism_key ' + \
-		'and h.chromosome = c.chromosome ', 'auto')
+	results = db.sql('''
+		select h.*, c.sequenceNum 
+		from #homologies h, MRK_Chromosome c 
+		where h.otherOrganism = c._Organism_key 
+		and h.chromosome = c.chromosome 
+		''', 'auto')
 
 	db.sql('drop table #allhomologies', None)
 	db.sql('drop table #homologies', None)

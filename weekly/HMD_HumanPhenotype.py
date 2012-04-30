@@ -82,16 +82,20 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # Get mouse to human orthologous marker pair's symbols and keys
 #
 
-db.sql('select distinct mouseKey = h1._Marker_key, mouseSym = m1.symbol, ' + \
-		'humanKey = h2._Marker_key, humanSym = m2.symbol ' + \
-		'into #homology ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2, ' + \
-		'MRK_Marker m1, MRK_Marker m2 ' + \
-		'where h1._Organism_key = 1 ' + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 2 ' + \
-		'and h1._Marker_key = m1._Marker_key ' + \
-		'and h2._Marker_key = m2._Marker_key ', None)
+db.sql('''
+	select distinct h1._Marker_key as mouseKey, 
+			m1.symbol as mouseSym, 
+	                h2._Marker_key as humanKey, 
+			m2.symbol as humanSym 
+	into #homology 
+	from MRK_Homology_Cache h1, MRK_Homology_Cache h2, 
+	MRK_Marker m1, MRK_Marker m2 
+	where h1._Organism_key = 1 
+	and h1._Class_key = h2._Class_key 
+	and h2._Organism_key = 2 
+	and h1._Marker_key = m1._Marker_key 
+	and h2._Marker_key = m2._Marker_key 
+	''', None)
 
 db.sql('create index index_mouseKey on #homology(mouseKey)', None)
 db.sql('create index index_humanKey on #homology(humanKey)', None)
@@ -101,24 +105,28 @@ db.sql('create index index_humanSym on #homology(humanSym)', None)
 # Get the MGI IDs for the mouse markers
 #
 
-results = db.sql('select a._Object_key, a.accID ' + \
-		'from #homology h, ACC_Accession a ' + \
-		'where a._Object_key = h.mouseKey ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 1 ' + \
-		'and a.prefixPart = "MGI:" ' + \
-		'and a.preferred = 1 ', 'auto')
+results = db.sql('''
+	select a._Object_key, a.accID 
+	from #homology h, ACC_Accession a 
+	where a._Object_key = h.mouseKey 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 1 
+	and a.prefixPart = 'MGI:' 
+	and a.preferred = 1 
+	''', 'auto')
 mmgi = createDict(results, '_Object_key', 'accID')
 
 #
 # Get the EntrezGene for the human markers
 #
 
-results = db.sql('select a._Object_key, a.accID ' + \
-                'from #homology h, ACC_Accession a ' + \
-                'where a._Object_key = h.humanKey ' + \
-                'and a._MGIType_key = 2 ' + \
-                'and a._LogicalDB_key = 55', 'auto')
+results = db.sql('''
+	select a._Object_key, a.accID 
+        from #homology h, ACC_Accession a 
+        where a._Object_key = h.humanKey 
+        and a._MGIType_key = 2 
+        and a._LogicalDB_key = 55
+	''', 'auto')
 hlocus = createDict(results, '_Object_key', 'accID')
 
 #
@@ -126,15 +134,17 @@ hlocus = createDict(results, '_Object_key', 'accID')
 # only select primary ids
 #
 
-results = db.sql('select distinct h.mouseKey, a.accID ' + \
-                'from #homology h, GXD_AlleleGenotype g, VOC_AnnotHeader v, ACC_Accession a ' + \
-                'where h.mouseKey = g._Marker_key ' + \
-                'and g._Genotype_key = v._Object_key ' + \
-                'and v._AnnotType_key = 1002 ' + \
-                'and a._Object_key = v._Term_key ' + \
-                'and a._MGIType_key = 13 ' + \
-                'and a.preferred = 1 ' + \
-                'and a._LogicalDB_key = 34 ', 'auto')
+results = db.sql('''
+	select distinct h.mouseKey, a.accID 
+        from #homology h, GXD_AlleleGenotype g, VOC_AnnotHeader v, ACC_Accession a 
+        where h.mouseKey = g._Marker_key 
+        and g._Genotype_key = v._Object_key 
+        and v._AnnotType_key = 1002 
+        and a._Object_key = v._Term_key 
+        and a._MGIType_key = 13 
+        and a.preferred = 1 
+        and a._LogicalDB_key = 34 
+	''', 'auto')
 mpheno = createDict(results, 'mouseKey', 'accID')
 
 results = db.sql('select * from #homology order by humanSym', 'auto')

@@ -343,44 +343,50 @@ def process():
     #  VEGA
     #
 
-    db.sql('select m._Marker_key, m.symbol, substring(m.name,1,75) as name, ma.accID ' + \
-	    'into #markers ' + \
-	    'from MRK_Marker m, ACC_Accession ma ' + \
-	    'where m._Organism_key = 1 ' + \
-	    'and m._Marker_Type_key = 1 ' + \
-	    'and m._Marker_Status_key in (1,3) ' + \
-	    'and m.chromosome != "MT" ' + \
-	    'and m._Marker_key = ma._Object_key ' + \
-	    'and ma._MGIType_key = 2 ' + \
-	    'and ma._LogicalDB_key = 1 ' + \
-	    'and ma.prefixPart = "MGI:" ' + \
-	    'and ma.preferred = 1 ' + \
-	    'and exists (select 1 from SEQ_Marker_Cache c where m._Marker_key = c._Marker_key ' + \
-	    'and c._LogicalDB_key in (59, 60, 85))', None)
+    db.sql('''
+	select m._Marker_key, m.symbol, substring(m.name,1,75) as name, ma.accID 
+	into #markers 
+	from MRK_Marker m, ACC_Accession ma 
+	where m._Organism_key = 1 
+	and m._Marker_Type_key = 1 
+	and m._Marker_Status_key in (1,3) 
+	and m.chromosome != 'MT' 
+	and m._Marker_key = ma._Object_key 
+	and ma._MGIType_key = 2 
+	and ma._LogicalDB_key = 1 
+	and ma.prefixPart = 'MGI:' 
+	and ma.preferred = 1 
+	and exists (select 1 from SEQ_Marker_Cache c where m._Marker_key = c._Marker_key 
+	and c._LogicalDB_key in (59, 60, 85))
+	''', None)
     db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
 
     #
     # retrieve location information
     #
 
-    db.sql('select m.*, l.chromosome, l.strand, c.sequenceNum, ' + \
-	    'convert(int, l.startCoordinate) as startC, ' + \
-	    'convert(int, l.endCoordinate) as endC ' + \
-	    'into #location ' + \
-	    'from #markers m, MRK_Location_Cache l, MRK_Chromosome c ' + \
-	    'where m._Marker_key = l._Marker_key ' + \
-	    'and l.chromosome = c.chromosome ' + \
-	    'and c._Organism_key = 1', None)
+    db.sql('''
+	select m.*, l.chromosome, l.strand, c.sequenceNum, 
+	convert(int, l.startCoordinate) as startC, 
+	convert(int, l.endCoordinate) as endC 
+	into #location 
+	from #markers m, MRK_Location_Cache l, MRK_Chromosome c 
+	where m._Marker_key = l._Marker_key 
+	and l.chromosome = c.chromosome 
+	and c._Organism_key = 1
+	''', None)
     db.sql('create index location_idx1 on #location(_Marker_key)', None)
     db.sql('create index location_idx2 on #location(sequenceNum)', None)
 
     #
     # retrieve gene model information
     
-    results = db.sql('select m._Marker_key, c._LogicalDB_key, c.accID ' + \
-	    'from #markers m, SEQ_Marker_Cache c ' + \
-	    'where m._Marker_key = c._Marker_key ' + \
-	    'and c._LogicalDB_key in (59, 60, 85)', 'auto')
+    results = db.sql('''
+	select m._Marker_key, c._LogicalDB_key, c.accID 
+	from #markers m, SEQ_Marker_Cache c 
+	where m._Marker_key = c._Marker_key 
+	and c._LogicalDB_key in (59, 60, 85)
+	''', 'auto')
     for r in results:
         key = r['_Marker_key']
         value = r['accID']

@@ -152,7 +152,7 @@ db.sql('''
             m._Marker_key = o._Marker_key and 
             a1._LogicalDB_key = 1 and 
             a1._MGIType_key = 2 and 
-            a1.prefixPart = "MGI:" and 
+            a1.prefixPart = 'MGI:' and 
             a1.preferred = 1 and 
             a2._LogicalDB_key = 60 and 
             a2._MGIType_key = 2 and 
@@ -167,7 +167,7 @@ results = db.sql('''
 	select m._marker_key, s.term 
         from #markers m, MRK_MCV_Cache s 
         where m._marker_key = s._marker_key 
-        and s.qualifier = "D"
+        and s.qualifier = 'D'
 	''', 'auto')
 featureTypes = {}
 for r in results:

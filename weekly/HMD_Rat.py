@@ -141,34 +141,40 @@ def runQueries():
 
 	global curated, calculated, ratEG, mouseEG, mouseMGI
 
-	cmd = 'select distinct h1._Marker_key ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-		'where h1._Refs_key = 91485 ' + \
-		'and h1._Organism_key = 40 ' + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 1'
+	cmd = '''
+		select distinct h1._Marker_key 
+		from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+		where h1._Refs_key = 91485 
+		and h1._Organism_key = 40 
+		and h1._Class_key = h2._Class_key 
+		and h2._Organism_key = 1
+		'''
 
 	results = db.sql(cmd, 'auto')
 	for r in results:
 		calculated.append(r['_Marker_key'])
 
-	cmd = 'select distinct h1._Marker_key ' + \
-		'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-		'where h1._Refs_key != 91485 ' + \
-		'and h1._Organism_key = 40 ' + \
-		'and h1._Class_key = h2._Class_key ' + \
-		'and h2._Organism_key = 1'
+	cmd = '''
+		select distinct h1._Marker_key 
+		from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+		where h1._Refs_key != 91485 
+		and h1._Organism_key = 40 
+		and h1._Class_key = h2._Class_key 
+		and h2._Organism_key = 1
+		'''
 
 	results = db.sql(cmd, 'auto')
 	for r in results:
     		curated.append(r['_Marker_key'])
 
-	db.sql('select distinct ratMarkerKey = h1._Marker_key, mouseMarkerKey = h2._Marker_key ' + \
-	       'into #allhomologies ' + \
-	       'from MRK_Homology_Cache h1, MRK_Homology_Cache h2 ' + \
-	       'where h1._Organism_key = 40 ' + \
-	       'and h1._Class_key = h2._Class_key ' + \
-	       'and h2._Organism_key = 1', None)
+	db.sql('''
+		select distinct h1._Marker_key as ratMarkerKey, h2._Marker_key as mouseMarkerKey
+	        into #allhomologies 
+	        from MRK_Homology_Cache h1, MRK_Homology_Cache h2 
+	        where h1._Organism_key = 40 
+	        and h1._Class_key = h2._Class_key 
+	        and h2._Organism_key = 1
+		''', None)
 
 	db.sql('create index idx_hkey on #allhomologies(ratMarkerKey)', None)
 	db.sql('create index idx_mkey on #allhomologies(mouseMarkerKey)', None)
@@ -206,50 +212,63 @@ def runQueries():
 
 	# rat entrezgene ids
 
-	results = db.sql('select h.ratMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
-		'where h.ratMarkerKey = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 55 ', 'auto')
+	results = db.sql('''
+		select h.ratMarkerKey, a.accID
+		from #homologies h, ACC_Accession a 
+		where h.ratMarkerKey = a._Object_key 
+		and a._MGIType_key = 2 
+		and a._LogicalDB_key = 55 
+		''', 'auto')
 
 	for r in results:
 		ratEG[r['ratMarkerKey']] = r['accID']
 
 	# mouse entrezgene ids
 
-	results = db.sql('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
-		'where h.mouseMarkerKey = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a._LogicalDB_key = 55 ', 'auto')
+	results = db.sql('''
+		select h.mouseMarkerKey, a.accID
+		from #homologies h, ACC_Accession a 
+		where h.mouseMarkerKey = a._Object_key 
+		and a._MGIType_key = 2 
+		and a._LogicalDB_key = 55 
+		''', 'auto')
 
 	for r in results:
 		mouseEG[r['mouseMarkerKey']] = r['accID']
 
 	# mouse MGI 
 
-	results = db.sql('select h.mouseMarkerKey, a.accID from #homologies h, ACC_Accession a ' + \
-		'where h.mouseMarkerKey = a._Object_key ' + \
-		'and a._MGIType_key = 2 ' + \
-		'and a.prefixPart = "MGI:" ' + \
-		'and a._LogicalDB_key = 1 ' + \
-		'and a.preferred = 1 ', 'auto')
+	results = db.sql('''
+		select h.mouseMarkerKey, a.accID
+		from #homologies h, ACC_Accession a 
+		where h.mouseMarkerKey = a._Object_key 
+		and a._MGIType_key = 2 
+		and a.prefixPart = 'MGI:' 
+		and a._LogicalDB_key = 1 
+		and a.preferred = 1 
+		''', 'auto')
 
 	for r in results:
 		mouseMGI[r['mouseMarkerKey']] = r['accID']
 
 	# sorted by rat chromosome
 
-	results1 = db.sql('select h.*, c.sequenceNum ' + \
-		'from #homologies h, MRK_Chromosome c ' + \
-		'where h.ratOrganism = c._Organism_key ' + \
-		'and h.chromosome = c.chromosome ', 'auto')
+	results1 = db.sql('''
+		select h.*, c.sequenceNum 
+		from #homologies h, MRK_Chromosome c 
+		where h.ratOrganism = c._Organism_key 
+		and h.chromosome = c.chromosome 
+		''', 'auto')
 
 	# sorted by mouse chromosome
 
-	results2 = db.sql('select h.*, c.sequenceNum ' + \
-		'from #homologies h, MRK_Chromosome c ' + \
-		'where h.mouseOrganism = c._Organism_key ' + \
-		'and h.mouseChr = c.chromosome ' + \
-		'order by c.sequenceNum, h.mouseOffset', 'auto')
+	results2 = db.sql('''
+		select h.*, c.sequenceNum 
+		from #homologies h, MRK_Chromosome c 
+		where h.mouseOrganism = c._Organism_key 
+		and h.mouseChr = c.chromosome 
+		order by c.sequenceNum, h.mouseOffset
+		''', 'auto')
 
 	# sorted by rat symbol
 

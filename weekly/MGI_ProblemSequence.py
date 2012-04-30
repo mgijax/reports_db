@@ -66,7 +66,7 @@ db.sql('''
 	select p._Probe_key, p.name 
         into #probes 
         from PRB_Notes n, PRB_Probe p 
-        where n.note like "%staff have found evidence of artifact in the sequence of this molecular%" 
+        where n.note like '%staff have found evidence of artifact in the sequence of this molecular%'
         and n._Probe_key = p._Probe_key
 	''', None)
 db.sql('create index probes_idx1 on #probes(_Probe_key)', None)
@@ -85,7 +85,7 @@ db.sql('''
 	from #probes p, ACC_Accession pa 
 	where p._Probe_key = pa._Object_key 
 	and pa._MGIType_key = 3 
-	and pa.prefixPart = "MGI:" 
+	and pa.prefixPart = 'MGI:' 
 	and pa._LogicalDB_key = 1 
 	and not exists (select 1 from ACC_Accession a 
 	where p._Probe_key = a._Object_key  
@@ -106,10 +106,10 @@ results = db.sql('''
 	from #forncbi n, #probeseqs p, PRB_Marker m, ACC_Accession ma 
 	where n._Probe_key = p._Probe_key
 	and p._Probe_key = m._Probe_key 
-	and m.relationship = "H" 
+	and m.relationship = 'H' 
 	and m._Marker_key = ma._Object_key 
 	and ma._MGIType_key = 2 
-	and ma.prefixPart = "MGI:" 
+	and ma.prefixPart = 'MGI:' 
 	and ma._LogicalDB_key = 1 
 	and ma.preferred = 1 
 	order by p.accID

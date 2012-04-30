@@ -62,7 +62,7 @@ db.sql('''
 	and m._Marker_Status_key in (1,3) 
 	and m._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 
-	and a.prefixPart = "MGI:" 
+	and a.prefixPart = 'MGI:' 
 	and a.preferred = 1
 	''', None)
 db.sql('create index idx_marker on #markers(_Marker_key)', None)

@@ -50,33 +50,35 @@ TAB = reportlib.TAB
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-db.sql('select p._Probe_key, pname = p.name, p.primer1sequence, p.primer2sequence, p.productSize, pm._Marker_key, ' + \
-      'm.symbol, mname = m.name, m.chromosome ' + \
-      'into #primers ' + \
-      'from PRB_Probe p, PRB_Marker pm, MRK_Marker m ' + \
-      'where p._SegmentType_key = 63473 and ' + \
-      'p._Probe_key = pm._Probe_key and ' + \
-      'pm._Marker_key = m._Marker_key', None)
+db.sql('''
+	select p._Probe_key, p.name as pname, p.primer1sequence, p.primer2sequence, p.productSize, pm._Marker_key, 
+               m.symbol, m.name as mname, m.chromosome 
+        into #primers 
+        from PRB_Probe p, PRB_Marker pm, MRK_Marker m 
+        where p._SegmentType_key = 63473 
+        and p._Probe_key = pm._Probe_key 
+        and pm._Marker_key = m._Marker_key
+	''', None)
 db.sql('create index idx1 on #primers(_Probe_key)', None)
 db.sql('create index idx2 on #primers(_Marker_key)', None)
 
-cmd = 'select p.*, probeID = a1.accID, markerID = a2.accID, o.offset ' + \
-      'from #primers p, ACC_Accession a1, ACC_Accession a2, MRK_Offset o ' + \
-      'where p._Probe_key = a1._Object_key and ' + \
-	    'a1._MGIType_key = 3 and ' + \
-            'a1._LogicalDB_key = 1 and ' + \
-            'a1.prefixPart = "MGI:" and ' + \
-            'a1.preferred = 1 and ' + \
-            'p._Marker_key = a2._Object_key and ' + \
-	    'a2._MGIType_key = 2 and ' + \
-            'a2._LogicalDB_key = 1 and ' + \
-            'a2.prefixPart = "MGI:" and ' + \
-            'a2.preferred = 1 and ' + \
-            'p._Marker_key = o._Marker_key and ' + \
-            'o.source = 0 ' + \
-      'order by p.symbol'
-
-results = db.sql(cmd, 'auto')
+results = db.sql('''
+       select p.*, probeID = a1.accID, markerID = a2.accID, o.offset 
+       from #primers p, ACC_Accession a1, ACC_Accession a2, MRK_Offset o 
+       where p._Probe_key = a1._Object_key 
+	     and a1._MGIType_key = 3 
+             and a1._LogicalDB_key = 1 
+             and a1.prefixPart = 'MGI:' 
+             and a1.preferred = 1 
+             and p._Marker_key = a2._Object_key 
+	     and a2._MGIType_key = 2 
+             and a2._LogicalDB_key = 1 
+             and a2.prefixPart = 'MGI:' 
+             and a2.preferred = 1 
+             and p._Marker_key = o._Marker_key 
+             and o.source = 0 
+       order by p.symbol
+       ''', 'auto')
 
 for r in results:
     mname = r['mname']

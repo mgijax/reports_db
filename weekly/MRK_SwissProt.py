@@ -51,14 +51,14 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 # Retrieve MGI Accession number, Marker symbol, name, etc.
 
-cmd = 'select m.mgiID, m.symbol, m.status, m.name, m.chromosome, m.offset, a.accID ' + \
-      'from MRK_Mouse_View m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 13 ' + \
-      'order by m.symbol, m.mgiID'
-
-results = db.sql(cmd, 'auto')
+results = db.sql('''
+	select m.mgiID, m.symbol, m.status, m.name, m.chromosome, m.offset, a.accID 
+      	from MRK_Mouse_View m, ACC_Accession a 
+      	where m._Marker_key = a._Object_key 
+      	and a._MGIType_key = 2 
+      	and a._LogicalDB_key = 13 
+      	order by m.symbol, m.mgiID
+	''', 'auto')
 
 prevMarker = ''
 sequence = ''

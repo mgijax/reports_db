@@ -181,7 +181,7 @@ results = db.sql('''
 	and o._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
         and a._LogicalDB_key = 1 
-        and a.prefixPart = "MGI:" 
+        and a.prefixPart = 'MGI:' 
         and a.preferred = 1
 	union
 	select distinct o._Marker_key, a.accID 
@@ -190,7 +190,7 @@ results = db.sql('''
 	and o._OrthologMarker_key = a._Object_key 
         and a._MGIType_key = 2 
         and a._LogicalDB_key = 1 
-        and a.prefixPart = "MGI:" 
+        and a.prefixPart = 'MGI:' 
         and a.preferred = 1
 	''', 'auto')
 mgiID = {}

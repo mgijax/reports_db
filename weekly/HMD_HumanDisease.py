@@ -62,11 +62,13 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # select all OMIM annotations
 #
 
-db.sql('select distinct a._Object_key, a._Term_key, a.term, a.qualifier, e._Refs_key ' + 
-	'into #omim ' + \
-	'from VOC_Annot_View a, VOC_Evidence e ' + \
-	'where a._AnnotType_key = 1005 ' + \
-	'and a._Annot_key = e._Annot_key', None)
+db.sql('''
+	select distinct a._Object_key, a._Term_key, a.term, a.qualifier, e._Refs_key 
+	into #omim 
+	from VOC_Annot_View a, VOC_Evidence e 
+	where a._AnnotType_key = 1005 
+	and a._Annot_key = e._Annot_key
+	''', None)
 db.sql('create index idx1 on #omim(_Object_key)', None)
 db.sql('create index idx2 on #omim(_Term_key)', None)
 db.sql('create index idx3 on #omim(_Refs_key)', None)
@@ -74,10 +76,13 @@ db.sql('create index idx3 on #omim(_Refs_key)', None)
 #
 # resolve OMIM ids
 #
-results = db.sql('select distinct m._Term_key, a.accID from #omim m, ACC_Accession a ' + \
-	'where m._Term_key = a._Object_key ' + \
-	'and a._MGIType_key = 13 ' + \
-	'and a.preferred = 1', 'auto')
+results = db.sql('''
+	select distinct m._Term_key, a.accID 
+	from #omim m, ACC_Accession a 
+	where m._Term_key = a._Object_key 
+	and a._MGIType_key = 13 
+	and a.preferred = 1
+	''', 'auto')
 omimID = {}
 for r in results:
 	key = r['_Term_key']
@@ -87,10 +92,12 @@ for r in results:
 #
 # resolve MP ids
 #
-results = db.sql('select distinct m._Object_key, a.accID ' + \
-	'from #omim m, VOC_Annot_View a ' + \
-	'where m._Object_key = a._Object_key ' + \
-	'and a._AnnotType_key = 1002', 'auto')
+results = db.sql('''
+	select distinct m._Object_key, a.accID 
+	from #omim m, VOC_Annot_View a 
+	where m._Object_key = a._Object_key 
+	and a._AnnotType_key = 1002
+	''', 'auto')
 MPID = {}
 for r in results:
 	key = r['_Object_key']
@@ -102,10 +109,12 @@ for r in results:
 #
 # resolve MP terms
 #
-results = db.sql('select distinct m._Object_key, a.term ' + \
-	'from #omim m, VOC_Annot_View a ' + \
-	'where m._Object_key = a._Object_key ' + \
-	'and a._AnnotType_key = 1002', 'auto')
+results = db.sql('''
+	select distinct m._Object_key, a.term 
+	from #omim m, VOC_Annot_View a 
+	where m._Object_key = a._Object_key 
+	and a._AnnotType_key = 1002
+	''', 'auto')
 MPTerm = {}
 for r in results:
 	key = r['_Object_key']
@@ -117,10 +126,12 @@ for r in results:
 #
 # resolve Pubmed References for OMIM annotations
 #
-results = db.sql('select distinct m._Object_key, m._Term_key, a.accID ' + \
-	'from #omim m, ACC_Accession a ' + \
-	'where m._Refs_key = a._Object_key ' + \
-	'and a._LogicalDB_key = 29 ', 'auto')
+results = db.sql('''
+	select distinct m._Object_key, m._Term_key, a.accID 
+	from #omim m, ACC_Accession a 
+	where m._Refs_key = a._Object_key 
+	and a._LogicalDB_key = 29 
+	''', 'auto')
 	
 omimRef = {}
 for r in results:
@@ -134,16 +145,18 @@ for r in results:
 #
 # resolve allele IDs
 #
-results = db.sql('select distinct m._Object_key, a.accID ' + \
-	'from #omim m, GXD_AlleleGenotype g, ACC_Accession a, ALL_Allele l ' + \
-	'where m._Object_key = g._Genotype_key ' + \
-	'and g._Allele_key = a._Object_key ' + \
-	'and a._MGIType_key = 11 ' + \
-	'and a._LogicalDB_key = 1 ' + \
-	'and a.prefixPart = "MGI:" ' + \
-	'and a.preferred = 1 ' + \
-	'and g._Allele_key = l._Allele_key ' + \
-	'and l.isWildType = 0', 'auto')
+results = db.sql('''
+	select distinct m._Object_key, a.accID 
+	from #omim m, GXD_AlleleGenotype g, ACC_Accession a, ALL_Allele l 
+	where m._Object_key = g._Genotype_key 
+	and g._Allele_key = a._Object_key 
+	and a._MGIType_key = 11 
+	and a._LogicalDB_key = 1 
+	and a.prefixPart = 'MGI:'
+	and a.preferred = 1 
+	and g._Allele_key = l._Allele_key 
+	and l.isWildType = 0
+	''', 'auto')
 alleleID = {}
 for r in results:
 	key = r['_Object_key']
@@ -153,11 +166,13 @@ for r in results:
 #
 # resolve allele symbols
 #
-results = db.sql('select distinct m._Object_key, a.symbol ' + \
-	'from #omim m, GXD_AlleleGenotype g, ALL_Allele a ' + \
-	'where m._Object_key = g._Genotype_key ' + \
-	'and g._Allele_key = a._Allele_key ' + \
-	'and a.isWildType = 0', 'auto')
+results = db.sql('''
+	select distinct m._Object_key, a.symbol
+	from #omim m, GXD_AlleleGenotype g, ALL_Allele a 
+	where m._Object_key = g._Genotype_key 
+	and g._Allele_key = a._Allele_key 
+	and a.isWildType = 0
+	''', 'auto')
 symbol = {}
 for r in results:
 	key = r['_Object_key']
@@ -167,12 +182,14 @@ for r in results:
 #
 # resolve Marker ID for Entrez Gene ID
 #
-results = db.sql('select distinct m._Object_key, a.accID ' + \
-	'from #omim m, GXD_AlleleGenotype g, ACC_Accession a ' + \
-	'where m._Object_key = g._Genotype_key ' + \
-	'and g._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 ' + \
-	'and a._LogicalDB_key = 55', 'auto')
+results = db.sql('''
+	select distinct m._Object_key, a.accID 
+	from #omim m, GXD_AlleleGenotype g, ACC_Accession a 
+	where m._Object_key = g._Genotype_key 
+	and g._Marker_key = a._Object_key 
+	and a._MGIType_key = 2 
+	and a._LogicalDB_key = 55
+	''', 'auto')
 omimMarker = {}
 for r in results:
 	key = r['_Object_key']

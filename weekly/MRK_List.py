@@ -162,7 +162,7 @@ query1 = '''
     where m._marker_status_key in (1, 3)
     and m._marker_key = a._object_key
     and a._mgitype_key = 2
-    and a.prefixpart = "MGI:"
+    and a.prefixpart = 'MGI:'
     and a._logicaldb_key = 1
     and a.preferred = 1
     '''

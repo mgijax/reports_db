@@ -60,7 +60,7 @@ results = db.sql('''select distinct omimID = a.accID, ma.accID
         and ag._Marker_key = ma._Object_key 
         and ma._MGIType_key = 2
         and ma._LogicalDB_key = 1
-        and ma.prefixPart = "MGI:"
+        and ma.prefixPart = 'MGI:'
         and ma.preferred = 1
 	order by ma.accID
 	''', 'auto')

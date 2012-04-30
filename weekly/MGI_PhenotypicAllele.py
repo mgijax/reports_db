@@ -26,9 +26,6 @@
 #
 # History:
 #
-# lec	04/30/2012
-#	- TR11055/add Status = Autoload
-#
 # lec	08/31/2010
 #	- TR10280 fix; _AlleleType_key was put in for testing but not removed for release
 #
@@ -76,7 +73,7 @@ db.sql('''
        into #alleles 
        from ALL_Allele a, VOC_Term t1, VOC_Term t2, MRK_Marker m 
        where a._Allele_Status_key = t1._Term_key 
-       and t1.term in ('Approved', 'Autoload')
+       and t1.term in ('Approved')
        and a.isWildType = 0 
        and a._Transmission_key != 3982953 
        and a._Allele_Type_key = t2._Term_key 

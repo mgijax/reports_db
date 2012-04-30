@@ -100,13 +100,15 @@ db.sql('create index idx2 on #komp(_Marker_key)', None)
 # allele ids
 #
 
-results = db.sql('''select k._Allele_key, a.accID 
+results = db.sql('''
+      select k._Allele_key, a.accID 
       from #komp k, ACC_Accession a 
       where k._Allele_key = a._Object_key 
       and a._MGIType_key = 11 
       and a._LogicalDB_key = 1 
-      and a.prefixPart = "MGI:" 
-      and a.preferred = 1''', 'auto')
+      and a.prefixPart = 'MGI:' 
+      and a.preferred = 1
+      ''', 'auto')
 alleleID = {}
 for r in results:
     key = r['_Allele_key']
@@ -115,13 +117,15 @@ for r in results:
 
 # marker ids
 
-results = db.sql('''select distinct k._Marker_key, a.accID
+results = db.sql('''
+      select distinct k._Marker_key, a.accID
       from #komp k, ACC_Accession a 
       where k._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 1 
-      and a.prefixPart = "MGI:" 
-      and a.preferred = 1''', 'auto')
+      and a.prefixPart = 'MGI:' 
+      and a.preferred = 1
+      ''', 'auto')
 markerID = {}
 for r in results:
     key = r['_Marker_key']
@@ -132,12 +136,14 @@ for r in results:
 # mutant cell line ids
 #
 
-results = db.sql('''select distinct k._Allele_key, a.accID
+results = db.sql('''
+	select distinct k._Allele_key, a.accID
 	from #komp k, ALL_Allele_CellLine c, ACC_Accession a
         where k._Allele_key = c._Allele_key
 	and c._MutantCellLine_key = a._Object_key
         and a._MGIType_key = 28
-        and a._LogicalDB_key in (108,109)''', 'auto')
+        and a._LogicalDB_key in (108,109)
+	''', 'auto')
 mutantID = {}
 for r in results:
     key = r['_Allele_key']

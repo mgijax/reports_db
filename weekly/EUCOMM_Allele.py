@@ -102,7 +102,7 @@ results = db.sql('''select k._Allele_key, a.accID
       where k._Allele_key = a._Object_key 
       and a._MGIType_key = 11 
       and a._LogicalDB_key = 1 
-      and a.prefixPart = "MGI:" 
+      and a.prefixPart = 'MGI:' 
       and a.preferred = 1''', 'auto')
 alleleID = {}
 for r in results:
@@ -117,7 +117,7 @@ results = db.sql('''select distinct k._Marker_key, a.accID
       where k._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 1 
-      and a.prefixPart = "MGI:" 
+      and a.prefixPart = 'MGI:' 
       and a.preferred = 1''', 'auto')
 markerID = {}
 for r in results:

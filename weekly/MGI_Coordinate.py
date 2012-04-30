@@ -128,16 +128,18 @@ def getCoords(logicalDBkey, provider):
     #
 
     if logicalDBkey in [vega, ncbi, ensembl]:
-        results = db.sql('select m._Marker_key, a.accID, ' + \
-                'c.chromosome, c.strand, ' + \
-                'convert(int, c.startCoordinate) as startC, ' + \
-                'convert(int, c.endCoordinate) as endC ' + \
-                    'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
-                    'where m._Marker_key = mc._Marker_key ' + \
-                    'and mc._Sequence_key = c._Sequence_key ' + \
-                    'and mc._Sequence_key = a._Object_key ' + \
-                    'and a._MGIType_key = %d ' % (sequenceType) + \
-                    'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
+        results = db.sql('''
+		select m._Marker_key, a.accID, 
+                       c.chromosome, c.strand, 
+                       convert(int, c.startCoordinate) as startC, 
+                       convert(int, c.endCoordinate) as endC 
+                    from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a 
+                    where m._Marker_key = mc._Marker_key 
+                    and mc._Sequence_key = c._Sequence_key 
+                    and mc._Sequence_key = a._Object_key 
+                    and a._MGIType_key = %d
+                    and a._LogicalDB_key = %d 
+		 ''' % (sequenceType, logicalDBkey) , 'auto')
 
         for r in results:
             key = r['_Marker_key']
@@ -149,16 +151,18 @@ def getCoords(logicalDBkey, provider):
 
     elif logicalDBkey in [mirbase]:
 
-        results = db.sql('select m._Marker_key, a.accID, ' + \
-                'c.chromosome, c.strand, ' + \
-                'convert(int, c.startCoordinate) as startC, ' + \
-                'convert(int, c.endCoordinate) as endC ' + \
-                    'from #markers m, MRK_Location_Cache c, ACC_Accession a ' + \
-                    'where m._Marker_key = c._Marker_key ' + \
-                    'and c.provider = "%s" ' % (provider) + \
-		    'and m._Marker_key = a._Object_key ' + \
-		    'and a._MGIType_key = %d ' % (mgiMarkerType) + \
-		    'and a._LogicalDB_Key = %d ' % (logicalDBkey) , 'auto')
+        results = db.sql('''
+		select m._Marker_key, a.accID, 
+                       c.chromosome, c.strand, 
+                       convert(int, c.startCoordinate) as startC, 
+                       convert(int, c.endCoordinate) as endC 
+                    from #markers m, MRK_Location_Cache c, ACC_Accession a 
+                    where m._Marker_key = c._Marker_key 
+                    and c.provider = "%s" 
+		    and m._Marker_key = a._Object_key 
+		    and a._MGIType_key = %d
+		    and a._LogicalDB_Key = %d 
+		''' % (provider, mgiMarkerType, logicalDBkey) , 'auto')
 
         for r in results:
             key = r['_Marker_key']
@@ -169,13 +173,15 @@ def getCoords(logicalDBkey, provider):
     # contains chromosome, strand, startC, endC
 
     else:
-        results = db.sql('select m._Marker_key, ' + \
-                'c.chromosome, c.strand, ' + \
-                'convert(int, c.startCoordinate) as startC, ' + \
-                'convert(int, c.endCoordinate) as endC ' + \
-                    'from #markers m, MRK_Location_Cache c ' + \
-                    'where m._Marker_key = c._Marker_key ' + \
-                    'and c.provider = "%s" ' % (provider), 'auto')
+        results = db.sql('''
+		select m._Marker_key, 
+                       c.chromosome, c.strand, 
+                       convert(int, c.startCoordinate) as startC, 
+                       convert(int, c.endCoordinate) as endC 
+                    from #markers m, MRK_Location_Cache c 
+                    where m._Marker_key = c._Marker_key 
+                    and c.provider = "%s" 
+		''' % (provider), 'auto')
 
         for r in results:
             key = r['_Marker_key']
@@ -184,18 +190,20 @@ def getCoords(logicalDBkey, provider):
 
     # get the representative coordinates
 
-    results = db.sql('select m._Marker_key, a.accID, ' + \
-                'c.chromosome, c.strand, ' + \
-                'convert(int, c.startCoordinate) as startC, ' + \
-                'convert(int, c.endCoordinate) as endC, ' + \
-		'c.version as genomeBuild ' + \
-                    'from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a ' + \
-                    'where m._Marker_key = mc._Marker_key ' + \
-                    'and mc._Qualifier_key = 615419 ' + \
-                    'and mc._Sequence_key = c._Sequence_key ' + \
-                    'and mc._Sequence_key = a._Object_key ' + \
-                    'and a._MGIType_key = %d ' % (sequenceType) + \
-                    'and a._LogicalDB_key = %d ' % (logicalDBkey) , 'auto')
+    results = db.sql('''
+		select m._Marker_key, a.accID, 
+                       c.chromosome, c.strand, 
+                       convert(int, c.startCoordinate) as startC, 
+                       convert(int, c.endCoordinate) as endC, 
+		       c.version as genomeBuild 
+                    from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a 
+                    where m._Marker_key = mc._Marker_key 
+                    and mc._Qualifier_key = 615419 
+                    and mc._Sequence_key = c._Sequence_key 
+                    and mc._Sequence_key = a._Object_key 
+                    and a._MGIType_key = %d 
+                    and a._LogicalDB_key = %d 
+		''' % (sequenceType, logicalDBkey) , 'auto')
 
     for r in results:
         key = r['_Marker_key']
