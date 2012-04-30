@@ -1,9 +1,4 @@
-TAG: 
-DATE: 04/30/2012
-STAFF: sc
-CHANGES:
-sc - TR11057 - fix to gp2protein script
-
+TAG: reports_db-5-0-0-10
 TAG: reports_db-5-0-0-9
 TAG: reports_db-5-0-0-8
 TAG: reports_db-5-0-0-7
@@ -11,9 +6,12 @@ TAG: reports_db-5-0-0-6
 TAG: reports_db-5-0-0-5
 TAG: reports_db-5-0-0-4
 TAG: reports_db-5-0-0-3
-DATE: 04/24/2012
+DATE: 04/24/2012-04/30/2012
 STAFF: lec
 CHANGES:
+
+TR11057/fix to gp2protein script (sc)
+TR11055/MGI_PhenotypicAllele.py: add status = Autoload
 
 TR11035/Postgres Cleanup
 
