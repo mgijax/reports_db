@@ -166,8 +166,8 @@ for r in results:
 # that have a "with" value 
 # that begins "UniProtKB"
 #
-db.sql('''select a._Term_key, termID = ta.accID, qualifier = q.synonym, a._Object_key, 
-	         e._AnnotEvidence_key, uniprotIDs = e.inferredFrom, 
+db.sql('''select a._Term_key, termID as ta.accID, qualifier as q.synonym, a._Object_key, 
+	         e._AnnotEvidence_key, uniprotIDs as e.inferredFrom, 
 	         e.modification_date, e._Refs_key
 	into #gomarker1 
 	from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, 
