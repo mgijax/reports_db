@@ -60,6 +60,10 @@ PRB_CloneLibrary.py
 PRB_CloneLibrarycDNA.py
 PRB_TissueMouse.py
 
+obsolete directories:
+panelDocs
+system_docs
+
 TAG: reports_db-5-0-0-2
 DATE: 04/12/2012
 STAFF: lec
