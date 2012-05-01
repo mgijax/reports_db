@@ -22,6 +22,18 @@
 #
 # History:
 #
+# 05/01/2012	sc
+#	- TR11057
+#	- miRNA Transcript IDs were not being written to file as their ldb
+#	  was not being considered
+#	- added 'else: continue' in the block of code which assigns prefixes
+#	- added transcript ldbs to same block of code
+#	- Harold wants all Genes with rep genomic sequence to appear in this rpt
+#	  if protein, use that
+#	  else if transcript,  use that
+#	  else just print out marker mgiID
+#
+#
 # lec	03/30/2011
 #   - TR10652/change 'NCBI:' to 'RefSeq:'
 #
@@ -89,60 +101,82 @@ db.useOneConnection(1)
 # all mouse genes that are microRNA's
 #
 db.sql('''
-    select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, mc.accID as seqID, mc._LogicalDB_key
-    into #results1
+    select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
+    into #transcripts
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
     and mc._Marker_Type_key = 1
-    and mc._Qualifier_key = 615421
-    union
-    select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, mc.accID as seqID, mc._LogicalDB_key
-    from SEQ_Marker_Cache mc, MRK_Mouse_View mm, MRK_MCV_Cache mcv
+    and mc._Qualifier_key = 615420''', None)
+
+results = db.sql('''select * from #transcripts''', 'auto')
+# rep transcript by markerKey
+transcriptDict = {}
+for r in results:
+    transcriptDict [r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
+
+db.sql('create index idx1 on #transcripts(_Marker_key)', None)
+
+db.sql('''
+    select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
+    into #proteins
+    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
     and mc._Marker_Type_key = 1
-    and mc._Qualifier_key = 615420
-    and mc._Marker_key = mcv._Marker_key
-    and mcv.term = "miRNA Gene"
-    ''', None)
+    and mc._Qualifier_key = 615421''', None)
 
-db.sql('create index ix1 on #results1(_Marker_key)', None)
+results = db.sql('''select * from #proteins''', 'auto')
+
+# rep protein by markerKey (not all markers are protein coding)
+proteinDict = {}
+for r in results:
+    proteinDict[r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
+
+db.sql('create index idx1 on #proteins(_Marker_key)', None)
 
 #
-# all mouse genes not in the first group that have an Ensembl,
+# all mouse genes not in the first two group that have an Ensembl,
 # NCBI, or VEGA gene model as the representative genomic sequence
 #
 db.sql('''
     select distinct mm.mgiID
-    into #results2
+    into #noTransProt
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
     and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615419
     and mc._LogicalDB_key in (59,60,85)
-    and mm._Marker_key not in (select _Marker_key from #results1)
+    and mm._Marker_key not in (select _Marker_key from #transcripts)
+    and mm._Marker_key not in (select _Marker_key from #proteins)
     ''', None)
 
 #
 # Write a record to the report for each marker/sequence in the results set.
-#
-results = db.sql('select * from #results1', 'auto')
+# If there is a protein,  use it, if not use the transcript
+results = db.sql('select * from #transcripts', 'auto')
 for r in results:
     mgiID = "MGI:"+r['mgiID']
-    logicalDB = r['_LogicalDB_key']
-
+    markerKey = r['_Marker_key']
+    if proteinDict.has_key(markerKey):
+	l = proteinDict[markerKey]
+	seqID = l[0]
+	logicalDB = l[1]
+    else:
+	l = transcriptDict[markerKey]
+	seqID = l[0]
+        logicalDB = l[1]
     #
     # Apply the proper prefix to the seq ID based on the logical DB.
     #
     if logicalDB in [13,41]:
-        seqID = 'UniProtKB:' + r['seqID']
+        seqID = 'UniProtKB:' + seqID
     elif logicalDB in [9]:
-        seqID = 'EMBL:' + r['seqID']
+        seqID = 'EMBL:' + seqID
     elif logicalDB in [27]:
-        seqID = 'RefSeq:' + r['seqID']
-    elif logicalDB in [132]:
-        seqID = 'VEGA:' + r['seqID']
-    elif logicalDB in [134]:
-        seqID = 'ENSEMBL:' + r['seqID']
+        seqID = 'RefSeq:' + seqID
+    elif logicalDB in [131,132]:
+        seqID = 'VEGA:' + seqID
+    elif logicalDB in [133, 134]:
+        seqID = 'ENSEMBL:' + seqID
     else:
 	continue
     fp.write(mgiID + TAB + seqID + CRT)
@@ -150,7 +184,7 @@ for r in results:
 #
 #
 #
-results = db.sql('select * from #results2', 'auto')
+results = db.sql('select * from #noTransProt', 'auto')
 for r in results:
     mgiID = "MGI:"+r['mgiID']
     fp.write(mgiID + TAB + CRT)
