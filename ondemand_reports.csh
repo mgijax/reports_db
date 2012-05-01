@@ -25,4 +25,4 @@ foreach i (*.py)
     $i >>& ${LOG}
 end
 
-echo `date`: End weekly public reports | tee -a ${LOG}
+echo `date`: End on-demand public reports | tee -a ${LOG}

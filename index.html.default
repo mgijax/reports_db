@@ -135,7 +135,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>3. MGI Sequence Coordinates (in GFF3 format)(tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD><A HREF="../mgifgg/MGI_GFF3_Spec.docx">Specification file:  MGI_GFF3_Spec.docx</A></TD></TD></TR>
+        <TABLE BORDER CELLPADDING=2><TR><TD><A HREF="../mgifgg/MGI_GFF3_Spec.docx">Specification file:  MGI_GFF3_Spec.docx</A></TD></TR></TABLE>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="../mgifgg//MGI.giff2.gz">MGI.giff3.gz</A></TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
