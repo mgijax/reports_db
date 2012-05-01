@@ -170,14 +170,13 @@
         </TD></TR>
     </TABLE></TD></TR>
 
- <TR><TD><TABLE>
+    <TR><TD><TABLE>
         <TR><TD><B>7. MGI Marker associations to Gene Trap IDs (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>Mutant<BR>Cell Line IDs<BR>(space-delimited)</TD></TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_GeneTrap.rpt">MRK_GeneTrap.rpt</A></TD>
-</TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_GeneTrap.rpt">MRK_GeneTrap.rpt</A></TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
