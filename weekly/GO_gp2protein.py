@@ -22,6 +22,9 @@
 #
 # History:
 #
+# 05/01/2012	lec
+#	- make 'idx1' names unique
+#
 # 05/01/2012	sc
 #	- TR11057
 #	- miRNA Transcript IDs were not being written to file as their ldb
@@ -114,7 +117,7 @@ transcriptDict = {}
 for r in results:
     transcriptDict [r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
 
-db.sql('create index idx1 on #transcripts(_Marker_key)', None)
+db.sql('create index transcripts_idx1 on #transcripts(_Marker_key)', None)
 
 db.sql('''
     select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
@@ -131,7 +134,7 @@ proteinDict = {}
 for r in results:
     proteinDict[r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
 
-db.sql('create index idx1 on #proteins(_Marker_key)', None)
+db.sql('create index proteins_idx1 on #proteins(_Marker_key)', None)
 
 #
 # all mouse genes not in the first two group that have an Ensembl,
