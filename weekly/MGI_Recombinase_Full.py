@@ -235,7 +235,7 @@ db.sql('''
        and aa._Marker_key = m._Marker_key
        ''', None)
 
-db.sql('create index idx1 on #cre(_Allele_key)', None)
+db.sql('create index cre_idx1 on #cre(_Allele_key)', None)
 
 # anatomical systems of expressed structures
 
@@ -246,7 +246,7 @@ db.sql('''
       where c._Allele_key = cc._Allele_key
       and cc.expressed = 1
       ''', None)
-db.sql('create index idx1 on #expressed(_Allele_key)', None)
+db.sql('create index expressed_idx1 on #expressed(_Allele_key)', None)
 
 expressedTAB = {}
 expressedHTML = {}

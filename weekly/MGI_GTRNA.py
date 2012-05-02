@@ -37,6 +37,9 @@
 #
 # History:
 #
+# 05/02/2012	lec
+#	- use '5'' RACE', '3'' RACE' to handle single quotes for sybase/postgres
+#
 # 6/2/2009 sc - created
 #
 '''
@@ -73,16 +76,16 @@ collection = "dbGSS Gene Trap"
 outputDir = os.environ['REPORTOUTPUTDIR']
 # rna sequence tag methods in order to determine sequence type
 # note some seq types are incorrect in our database and in genbank
-rnaMethods = "5' RACE, 3' RACE"
+rnaMethods = "5'' RACE, 3'' RACE"
 
 # put configured methods in form usable by sql
 temp = ''
 tokens = string.split(rnaMethods, ',') 
 for i in range(len(tokens) - 1):
     # concatenate all but the last token 
-    temp = temp + '"' + string.strip(tokens[i]) + '", '
+    temp = temp + "'" + string.strip(tokens[i]) + "', "
 # add last token, sans ','
-temp = temp + '"' + string.strip(tokens[-1]) + '"'
+temp = temp + "'" + string.strip(tokens[-1]) + "'"
 rnaMethods = temp
 
 masterGffFileName = os.environ['MASTER_GFF_FILE']
@@ -155,37 +158,43 @@ print 'Loading database lookups ...'
 sys.stdout.flush()
 
 # get dbGSSGeneTrap Collection coordinates
-db.sql('SELECT mcf.strand, mcf._Object_key as _Sequence_key, ' + \
-    'chr.chromosome ' + \
-    'INTO #coords ' + \
-    'FROM MAP_Coord_Collection mcc, MAP_Coordinate mc, ' + \
-    'MAP_Coord_Feature mcf, MRK_Chromosome chr ' + \
-    'WHERE mcc.name = "%s" ' % collection + \
-    'AND mcc._Collection_key = mc._Collection_key ' + \
-    'AND mc._Map_key = mcf._Map_key ' + \
-    'AND mc._Object_key = chr._Chromosome_key', None)
+db.sql('''
+	SELECT mcf.strand, mcf._Object_key as _Sequence_key, 
+    	chr.chromosome 
+    	INTO #coords 
+    	FROM MAP_Coord_Collection mcc, MAP_Coordinate mc, 
+    	MAP_Coord_Feature mcf, MRK_Chromosome chr 
+    	WHERE mcc.name = '%s'
+    	AND mcc._Collection_key = mc._Collection_key 
+    	AND mc._Map_key = mcf._Map_key 
+    	AND mc._Object_key = chr._Chromosome_key
+	''' % (collection), None)
 
-db.sql('CREATE INDEX idx1 on #coords(_Sequence_key)', None)
+db.sql('CREATE INDEX coords_idx1 on #coords(_Sequence_key)', None)
 
 # reduce to just RNA and grab sequence tag method
-db.sql('SELECT c.*, v.term as seqTagMethod ' + \
-    'INTO #rnaCoords ' + \
-    'FROM #coords c, SEQ_GeneTrap s, VOC_Term v ' + \
-    'WHERE c._Sequence_key = s._Sequence_key ' + \
-    'AND s._TagMethod_key = v._Term_key ' + \
-    'AND v.term in (%s)' % rnaMethods, None)
-db.sql('CREATE INDEX idx1 on #rnaCoords(_Sequence_key)', None)
+db.sql('''
+	SELECT c.*, v.term as seqTagMethod 
+    	INTO #rnaCoords 
+    	FROM #coords c, SEQ_GeneTrap s, VOC_Term v 
+    	WHERE c._Sequence_key = s._Sequence_key 
+    	AND s._TagMethod_key = v._Term_key 
+    	AND v.term in (%s)
+	''' % (rnaMethods), None)
+db.sql('CREATE INDEX rnaCoords_idx1 on #rnaCoords(_Sequence_key)', None)
 
 # get seqID
-db.sql('SELECT c.*, a.accID as seqId ' + \
-    'INTO #rcSeqs ' + \
-    'FROM #rnaCoords c, ACC_Accession a ' + \
-    'WHERE c._Sequence_key = a._Object_key ' + \
-    'AND a._MGIType_key = 19 ' + \
-    'AND a._LogicalDB_key = 9 ' + \
-    'AND a.preferred = 1 ', None)
+db.sql('''
+	SELECT c.*, a.accID as seqId 
+    	INTO #rcSeqs 
+    	FROM #rnaCoords c, ACC_Accession a 
+    	WHERE c._Sequence_key = a._Object_key 
+    	AND a._MGIType_key = 19 
+    	AND a._LogicalDB_key = 9 
+    	AND a.preferred = 1 
+	''', None)
 
-db.sql('CREATE INDEX idx1 on #rcSeqs(_Sequence_key)', None)
+db.sql('CREATE INDEX rcSeqs_idx1 on #rcSeqs(_Sequence_key)', None)
 
 results = db.sql('SELECT * from #rcSeqs', 'auto')
 
@@ -204,13 +213,15 @@ for r in results:
     seqIdDictBySeqKey[seqKey] = sList
 
 # get dbGSS sequence tag IDs
-results = db.sql('SELECT c._Sequence_key, a.accId as seqTagId ' + \
-    'FROM #rcSeqs c, ACC_Accession a ' + \
-    'WHERE a._MGIType_key = 19 ' + \
-    'AND a._LogicalDB_key != 9 ' + \
-    'AND a.preferred = 1 ' + \
-    'AND a._Object_key = c._Sequence_key ' + \
-    'ORDER BY c._Sequence_key' , 'auto')
+results = db.sql('''
+	SELECT c._Sequence_key, a.accId as seqTagId 
+    	FROM #rcSeqs c, ACC_Accession a 
+    	WHERE a._MGIType_key = 19 
+    	AND a._LogicalDB_key != 9 
+    	AND a.preferred = 1 
+    	AND a._Object_key = c._Sequence_key 
+    	ORDER BY c._Sequence_key
+	''' , 'auto')
 
 # load seqTagIdsDictBySeqKey, there is 1 seqTagId per sequence
 for r in results:
@@ -219,20 +230,22 @@ for r in results:
     seqTagIdsDictBySeqKey[seqKey] = seqTagId
 
 # get MGI ID of the allele associated with the sequence
-db.sql('SELECT c._Sequence_key, sa._Allele_key, a.accID as mgiID ' + \
-    'INTO #mgiIDs ' + \
-    'FROM #rnaCoords c, SEQ_Allele_Assoc sa, ALL_Allele aa, ' + \
-    'ACC_Accession a ' + \
-    'where c._Sequence_key = sa._Sequence_key ' + \
-    'and sa._Allele_key = aa._Allele_key ' + \
-    'and aa.isMixed = 0 ' + \
-    'and sa._Allele_key = a._Object_key ' + \
-    'and a._MGIType_key = 11 ' + \
-    'and a._LogicalDB_key = 1 ' + \
-    'and a.preferred = 1 ' + \
-    'and a.prefixPart = "MGI:"', None)
+db.sql('''
+	SELECT c._Sequence_key, sa._Allele_key, a.accID as mgiID 
+    	INTO #mgiIDs 
+    	FROM #rnaCoords c, SEQ_Allele_Assoc sa, ALL_Allele aa, 
+    	ACC_Accession a 
+    	where c._Sequence_key = sa._Sequence_key 
+    	and sa._Allele_key = aa._Allele_key 
+    	and aa.isMixed = 0 
+    	and sa._Allele_key = a._Object_key 
+    	and a._MGIType_key = 11 
+    	and a._LogicalDB_key = 1 
+    	and a.preferred = 1 
+    	and a.prefixPart = 'MGI:'
+	''', None)
 
-db.sql('CREATE INDEX idx1 on #mgiIDs(_Allele_key)', None)
+db.sql('CREATE INDEX mgiIDS_idx1 on #mgiIDs(_Allele_key)', None)
 
 results = db.sql('SELECT * from #mgiIDs', 'auto')
 
@@ -244,13 +257,15 @@ for r in results:
     alleleKeyDictBySeqKey[sequenceKey] = alleleKey
 
 # get allele creator
-results = db.sql('SELECT c.*, t.term as creator ' + \
-    'FROM #mgiIDs c, ALL_Allele_CellLine aca, ALL_CellLine ac, ' + \
-    'ALL_CellLine_Derivation acd, VOC_Term t ' + \
-    'WHERE c._Allele_key = aca._Allele_key ' + \
-    'AND aca._MutantCellLine_key =  ac._CellLine_key ' + \
-    'AND ac._Derivation_key = acd._Derivation_key ' + \
-    'AND acd._Creator_key = t._Term_key ', 'auto')
+results = db.sql('''
+	SELECT c.*, t.term as creator 
+    	FROM #mgiIDs c, ALL_Allele_CellLine aca, ALL_CellLine ac, 
+    	ALL_CellLine_Derivation acd, VOC_Term t 
+    	WHERE c._Allele_key = aca._Allele_key 
+    	AND aca._MutantCellLine_key =  ac._CellLine_key 
+    	AND ac._Derivation_key = acd._Derivation_key 
+    	AND acd._Creator_key = t._Term_key 
+	''', 'auto')
 
 # load alleleIdAndCreatorDictByAlleleKey
 for r in results:
