@@ -470,6 +470,14 @@
         </TD></TR>
     </TABLE></TD></TR>
 
+    <TR><TD><TABLE>
+        <TR><TD><B>3. GO terms and GO IDs for all three ontologies (Biological Process, Cellular Component, Molecular Function) (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Ontology</TD><TD>GO ID</TD><TD>GO Term</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_terms.mgi">go_terms.mgi</A> (only those terms annotated to MGI markers are included)</TD></TR>
+    </TABLE></TD></TR>
+
 </TABLE><BR>
 
 <!-- -->
