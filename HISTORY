@@ -1,8 +1,11 @@
-TAG: reports_db-5-0-0-?
-DATE: 05/02/2012
+TAG: reports_db-5-0-0-16
+DATE: 05/03/2012
 STAFF: lec
 CHANGES:
 TR11035/postgres cleanup; bug fixes
+re-installed:
+MGI_MakerName.py
+GO_terms.py
 
 TAG: reports_db-5-0-0-15
 DATE: 05/01/2012
