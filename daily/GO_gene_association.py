@@ -38,6 +38,11 @@
 #
 # History:
 #
+# lec	05/08/2012
+#	- TR11060/add secondary file/subset/
+#	  only contains annotations where column 17 (gene product) has UniProtKB:xxxx-??
+#	  gene_association_pro.mgi
+#
 # lec	03/13/2012
 # lec	03/08/2012
 #	pubMed = {} was being called/selected twice
@@ -147,6 +152,7 @@ CRT = reportlib.CRT
 db.useOneConnection(1)
 
 fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2 = reportlib.init('gene_association_pro', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
 # Header information
@@ -304,6 +310,7 @@ isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
 isoformPattern5 = re.compile(r'PR:', re.I)
 
 isoformsProtein = {}
+isoformsProtein2 = {}
 results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
 	from #gomarker2 r, VOC_Evidence_Property p
 	where r._AnnotEvidence_key = p._AnnotEvidence_key
@@ -337,6 +344,14 @@ for r in results:
 	           isoformsProtein[key] = []
                isoformsProtein[key].append(b)
 
+	       #
+	       # TR11060
+	       # if UniProtKB and contains "-"
+	       #
+               if isoformPattern1.match(b) != None and string.find(b, '-') >= 0:
+                   if not isoformsProtein2.has_key(key):
+	               isoformsProtein2[key] = []
+                   isoformsProtein2[key].append(b)
 
 #
 # protein hash
@@ -550,6 +565,13 @@ for r in results:
 	    reportRow = reportRow + row + CRT
 
         fp.write(reportRow)
+
+	#
+	# TR11060
+	# subset of UniProtKB:xxxx-?? only
+	#
+	if isoformsProtein2.has_key(isoformKey):
+            fp2.write(reportRow)
     
 #
 # append GOA annotations, if they exist

@@ -456,7 +456,7 @@
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Database<BR>Designation</TD><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>NOT<BR>Designation</TD><TD>GO<BR>Term ID</TD><TD>MGI<BR>Reference Accession ID</TD><TD>GO<BR>Evidence Code</TD><TD>Inferred From</TD>
         <TD>Ontology<BR><FONT SIZE=-1>P=Biological Process<BR>F=Molecular Function<BR>C=Cellular Component</FONT></TD>
-        <TD>Mouse Marker Name</TD><TD>Mouse Marker Synonyms<BR>(if any)</TD><TD>Mouse Marker Type<BR><FONT SIZE=-1>gene<BR>transcript<BR>protein</FONT></TD><TD>Taxon</TD><TD>Modification Date</TD><TD>Assigned By</TD></TR></TABLE>
+        <TD>Mouse Marker Name</TD><TD>Mouse Marker Synonyms<BR>(if any)</TD><TD>Mouse Marker Type<BR><FONT SIZE=-1>gene<BR>transcript<BR>protein</FONT></TD><TD>Taxon</TD><TD>Modification Date</TD><TD>Assigned By</TD><TD>Annotation Extension</TD><TD>Gene Product</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="gene_association.mgi">gene_association.mgi</A></TD></TR>
     </TABLE></TD></TR>
