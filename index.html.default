@@ -50,7 +50,7 @@
 <!-- -->
 
 <A NAME="marker"></A><BR>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Mouse Genetic Markers</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Mouse Genetic Markers</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. List of Mouse Genetic Markers (sorted alphabetically by marker symbol, tab-delimited)</B></TD></TR>
@@ -66,7 +66,7 @@
 <!-- -->
 
 <A NAME="seq"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Sequence Data</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Sequence Data</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. MGI Sequence Coordinates (tab-delimited)</B></TD></TR>
@@ -256,7 +256,7 @@
 <!-- -->
 
 <A NAME="orthology"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Mammalian Orthology</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Mammalian Orthology</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Human and Mouse Orthology</B></TD></TR>
@@ -447,7 +447,7 @@
 <!-- -->
 
 <A NAME="go"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Gene Ontology Data</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Gene Ontology Data</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Gene Ontology (GO) Annotations of Mouse Markers (tab-delimited)
@@ -482,7 +482,7 @@
 
 <!-- -->
 <A NAME="strain"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Strains and Polymorphisms</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Strains and Polymorphisms</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Official Strain Nomenclature (tab-delimited)</B></TD></TR>
@@ -506,7 +506,7 @@
 <!-- -->
 
 <A NAME="expression"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Gene Expression</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Gene Expression</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. MGI Genetic Markers with GXD Literature Content Records (tab-delimited)</B></TD></TR>
@@ -553,7 +553,7 @@
 <!-- -->
 
 <A NAME="pheno"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Alleles and Phenotypes</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Alleles and Phenotypes</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Mammalian Phenotype Vocabulary in OBO v1.2 and tab-delimited Formats</B></TD></TR>
@@ -664,7 +664,7 @@
 <!-- -->
 
 <A NAME="cre"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Recombinase (cre) Specificity</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Recombinase (cre) Specificity</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Recombinase (cre) Specificity</B></TD></TR>
@@ -681,7 +681,7 @@
 <!-- -->
 
 <A NAME="nomen"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Nomenclature</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Nomenclature</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Nomenclature Events in the Past Week</B></TD></TR>
@@ -705,7 +705,7 @@
 <!-- -->
 
 <A NAME="refs"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>References</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>References</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. Association of MGI Markers and PubMed IDs (tab-delimited)</B></TD></TR>
@@ -730,7 +730,7 @@
 <!-- -->
 
 <A NAME="clonecoll"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TH>Clone Collections</TH></TR>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Clone Collections</B></TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>1. All Clones (tab-delimited)</B></TD></TR>
@@ -745,7 +745,7 @@
 <!-- -->
 
 <a name="dnamap"></a>
-<table bgcolor="#ffffff" border="1" cellpadding="2" width="100%"><tbody><tr><th>DNA Mapping Panels</th></tr>
+<table bgcolor="#ffffff" border="1" cellpadding="2" width="100%"><tbody><tr><td><b>DNA Mapping Panels</b></td></tr>
 
     <tr><td><table>
         <tbody><tr><td><b>1. Copeland-Jenkins - (C57BL/6J x M.spretus)F1 x C57BL/6J</b></td></tr>
