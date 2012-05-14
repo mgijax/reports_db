@@ -17,8 +17,8 @@
 #	8:  Genome Coordinate Start
 #	9:  Genome Coordinate End
 #	10: Strand
-#	11: GenBank ID (required)
-#	12: RefSeq transcript ID (required)
+#	11: GenBank ID
+#	12: RefSeq transcript ID 
 #	13: VEGA transcript ID
 #	14: Ensembl transcript ID
 #	15: UniProt ID
@@ -92,25 +92,25 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 #
 # header
 #
-fp.write('#1:MGI Marker Accession ID\t')
-fp.write('2:Marker Symbol\t')
-fp.write('3:Status\t')
-fp.write('4:Marker Type\t')
-fp.write('5:Marker Name\t')
-fp.write('6:cM position\t')
-fp.write('7:Chromosome\t')
-fp.write('8:Genome Coordinate Start\t')
-fp.write('9:Genome Coordinate End\t')
-fp.write('10:Strand\t')
-fp.write('11:GenBank ID (required)\t')
-fp.write('12:RefSeq transcript ID (required)\t')
-fp.write('13:VEGA transcript ID\t')
-fp.write('14:Ensembl transcript ID\t')
-fp.write('15:UniProt ID\t')
-fp.write('16:TrEMBL ID\t')
-fp.write('17:VEGA protein ID\t')
-fp.write('18:Ensembl protein ID\t')
-fp.write('19:RefSeq protein ID\n')
+fp.write('1. MGI Marker Accession ID\t')
+fp.write('2. Marker Symbol\t')
+fp.write('3. Status\t')
+fp.write('4. Marker Type\t')
+fp.write('5. Marker Name\t')
+fp.write('6. cM position\t')
+fp.write('7. Chromosome\t')
+fp.write('8. Genome Coordinate Start\t')
+fp.write('9. Genome Coordinate End\t')
+fp.write('10. Strand\t')
+fp.write('11. GenBank ID\t')
+fp.write('12. RefSeq transcript ID\t')
+fp.write('13. VEGA transcript ID\t')
+fp.write('14. Ensembl transcript ID\t')
+fp.write('15. UniProt ID\t')
+fp.write('16. TrEMBL ID\t')
+fp.write('17. VEGA protein ID\t')
+fp.write('18. Ensembl protein ID\t')
+fp.write('19. RefSeq protein ID\n')
 
 # deleted sequences
 
@@ -127,6 +127,12 @@ db.sql('create index deletedIDS_idx1 on #deletedIDs(accID)', None)
 db.sql('create index deletedIDS_idx2 on #deletedIDs(_LogicalDB_key)', None)
 
 # all official/interim mouse markers that have at least one Sequence ID
+#
+#	9	GenBank
+#	27	RefSeq transcript (not "xp_" or "np_")
+#	131	VEGA transcript
+#	133	Ensembl transcript
+#
 
 db.sql('''
 	select m._Marker_key, m.symbol, m.name, m.chromosome, 
