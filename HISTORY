@@ -1,3 +1,4 @@
+TAG: reports_db-5-0-0-19
 TAG: reports_db-5-0-0-18
 DATE: 05/17/2012
 DATE: 05/09/2012
@@ -6,8 +7,7 @@ CHANGES:
 1) index.html.default: left-justify section names
 2) TR11035/postgres cleanup
 weekly/MRK_Sequence.py
-3) TR11072/GO_gene_association.py
-4) turning off front-end translater:
+3) turning off front-end translater:
 	added db.setAutoTranslate(False)
 
 TAG: reports_db-5-0-0-17
