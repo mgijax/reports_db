@@ -46,6 +46,7 @@ try:
         import pg_db
         db = pg_db
         db.setTrace()
+	db.setAutoTranslate(False)
         db.setAutoTranslateBE()
     else:
         import db

@@ -74,6 +74,7 @@ try:
         import pg_db
         db = pg_db
         db.setTrace()
+	db.setAutoTranslate(False)
         db.setAutoTranslateBE()
     else:
         import db
@@ -92,25 +93,25 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 #
 # header
 #
-fp.write('1. MGI Marker Accession ID\t')
-fp.write('2. Marker Symbol\t')
-fp.write('3. Status\t')
-fp.write('4. Marker Type\t')
-fp.write('5. Marker Name\t')
-fp.write('6. cM position\t')
-fp.write('7. Chromosome\t')
-fp.write('8. Genome Coordinate Start\t')
-fp.write('9. Genome Coordinate End\t')
-fp.write('10. Strand\t')
-fp.write('11. GenBank ID\t')
-fp.write('12. RefSeq transcript ID\t')
-fp.write('13. VEGA transcript ID\t')
-fp.write('14. Ensembl transcript ID\t')
-fp.write('15. UniProt ID\t')
-fp.write('16. TrEMBL ID\t')
-fp.write('17. VEGA protein ID\t')
-fp.write('18. Ensembl protein ID\t')
-fp.write('19. RefSeq protein ID\n')
+fp.write('MGI Marker Accession ID\t')
+fp.write('Marker Symbol\t')
+fp.write('Status\t')
+fp.write('Marker Type\t')
+fp.write('Marker Name\t')
+fp.write('cM position\t')
+fp.write('Chromosome\t')
+fp.write('Genome Coordinate Start\t')
+fp.write('Genome Coordinate End\t')
+fp.write('Strand\t')
+fp.write('GenBank ID\t')
+fp.write('RefSeq transcript ID\t')
+fp.write('VEGA transcript ID\t')
+fp.write('Ensembl transcript ID\t')
+fp.write('UniProt ID\t')
+fp.write('TrEMBL ID\t')
+fp.write('VEGA protein ID\t')
+fp.write('Ensembl protein ID\t')
+fp.write('RefSeq protein ID\n')
 
 # deleted sequences
 
