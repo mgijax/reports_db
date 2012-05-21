@@ -200,7 +200,7 @@ def main():
 
     # get basic info from Cre cache table and accession table
     cmd = '''
-	select a._Allele_key, a.symbol, a.name, mname=mm.name, a.alleleType,
+	select a._Allele_key, a.symbol, a.name, mm.name as mname, a.alleleType,
 	       a.driverNote, a.structure, a.system, aa.accID
 	from ALL_Cre_Cache a, ACC_Accession aa, 
 	     ALL_Allele alle LEFT OUTER JOIN MRK_Marker mm on (alle._Marker_key = mm._Marker_key)
