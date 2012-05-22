@@ -76,3 +76,6 @@ setenv PERLLIB			/usr/local/lib
 # master file of all gene trap best single hits on the current genome version
 setenv MASTER_GFF_FILE ${DATADOWNLOADS}/ftp.ncbi.nih.gov/gtblatpipeline/output/best_blat_hits_single_Gbrowse.master.gff
 
+# Iphone archive
+setenv IPHONEARCHIVE		${FTPREPORTDIR}/archive/iphone
+

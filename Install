@@ -37,6 +37,10 @@ if ( ! -d ${INPARANOIDDIR} ) then
     mkdir -p ${INPARANOIDDIR}
 endif
 
+if ( ! -d ${IPHONEARCHIVE} ) then
+    mkdir -p ${IPHONEARCHIVE}
+endif
+
 # provide a link to the Mammalian Phenotype vocabulary
 cd ${REPORTOUTPUTDIR}
 foreach f (${MPFILES})

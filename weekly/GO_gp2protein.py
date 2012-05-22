@@ -14,13 +14,14 @@
 #
 #	A tab-delimited file in this format:
 #	field 1: MGI Marker ID
-#       field 2: SwissProt or TrEMBL sequences ('UniPrpt:' + seqID)
-#                RefSeq sequence ('RefSeq:' + seqID)
-#                GenBank sequence ('EMBL:' + seqID)
+#       field 2: protein or transcript or neither (blank)
 #
 # Used by:
 #
 # History:
+#
+# 05/22/2012	lec
+#	- TR11034/UniProt trumps protein; add uniprotkbDict
 #
 # 05/01/2012	lec
 #	- make 'idx1' names unique
@@ -35,7 +36,6 @@
 #	  if protein, use that
 #	  else if transcript,  use that
 #	  else just print out marker mgiID
-#
 #
 # lec	03/30/2011
 #   - TR10652/change 'NCBI:' to 'RefSeq:'
@@ -101,45 +101,67 @@ fp = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REPO
 db.useOneConnection(1)
 
 #
-# all mouse genes with representative protein sequence ids
-# all mouse genes that are microRNA's
+# representative transcripts by marker
 #
 db.sql('''
-    select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
+    select distinct mc._Marker_key, mc._Marker_Type_key, 
+	   mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
     into #transcripts
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
     and mc._Marker_Type_key = 1
-    and mc._Qualifier_key = 615420''', None)
+    and mc._Qualifier_key = 615420
+    ''', None)
+db.sql('create index transcripts_idx1 on #transcripts(_Marker_key)', None)
 
 results = db.sql('''select * from #transcripts''', 'auto')
-# rep transcript by markerKey
 transcriptDict = {}
 for r in results:
     transcriptDict [r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
 
-db.sql('create index transcripts_idx1 on #transcripts(_Marker_key)', None)
-
+#
+# representative proteins by marker
+#
 db.sql('''
-    select distinct mc._Marker_key, mc._Marker_Type_key, mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
+    select distinct mc._Marker_key, mc._Marker_Type_key, 
+	   mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
     into #proteins
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
     and mc._Marker_Type_key = 1
-    and mc._Qualifier_key = 615421''', None)
+    and mc._Qualifier_key = 615421
+    ''', None)
+db.sql('create index proteins_idx1 on #proteins(_Marker_key)', None)
 
 results = db.sql('''select * from #proteins''', 'auto')
-
-# rep protein by markerKey (not all markers are protein coding)
 proteinDict = {}
 for r in results:
     proteinDict[r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
 
-db.sql('create index proteins_idx1 on #proteins(_Marker_key)', None)
+#
+# uniprotKB by marker (ldb = 13 SwissProt only)
+#
+db.sql('''
+    select distinct mc._Marker_key, mc._Marker_Type_key, 
+	   mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
+    into #uniprotkb
+    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
+    where mc._Marker_key = mm._Marker_key
+    and mc._Marker_Type_key = 1
+    and mc._LogicalDB_key in (13)
+    ''', None)
+db.sql('create index uniprotkb_idx1 on #proteins(_Marker_key)', None)
+
+results = db.sql('''select * from #uniprotkb''', 'auto')
+uniprotkbDict = {}
+for r in results:
+    uniprotkbDict[r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
 
 #
-# all mouse genes not in the first two group that have an Ensembl,
-# NCBI, or VEGA gene model as the representative genomic sequence
+# all mouse genes not in transcriptDict or proteinDict that have an 
+# Ensembl, NCBI, or VEGA gene model as the representative genomic sequence
+#
+# that is, the marker has neither transcript nor protein
 #
 db.sql('''
     select distinct mm.mgiID
@@ -155,12 +177,26 @@ db.sql('''
 
 #
 # Write a record to the report for each marker/sequence in the results set.
-# If there is a protein,  use it, if not use the transcript
+#
+# if uniprotKB exists, use it
+# else if protein exists, use it
+# else use transcript
+#
+# if the sequence accession id for the given marker is not of interest, then skip
+# of interest list:  13,41,9,27,131,132,133,134
+#
+
 results = db.sql('select * from #transcripts', 'auto')
 for r in results:
-    mgiID = "MGI:"+r['mgiID']
+
+    mgiID = "MGI:" + r['mgiID']
     markerKey = r['_Marker_key']
-    if proteinDict.has_key(markerKey):
+
+    if uniprotkbDict.has_key(markerKey):
+	l = uniprotkbDict[markerKey]
+	seqID = l[0]
+	logicalDB = l[1]
+    elif proteinDict.has_key(markerKey):
 	l = proteinDict[markerKey]
 	seqID = l[0]
 	logicalDB = l[1]
@@ -168,9 +204,11 @@ for r in results:
 	l = transcriptDict[markerKey]
 	seqID = l[0]
         logicalDB = l[1]
+
     #
     # Apply the proper prefix to the seq ID based on the logical DB.
     #
+
     if logicalDB in [13,41]:
         seqID = 'UniProtKB:' + seqID
     elif logicalDB in [9]:
@@ -183,14 +221,15 @@ for r in results:
         seqID = 'ENSEMBL:' + seqID
     else:
 	continue
+
     fp.write(mgiID + TAB + seqID + CRT)
 
 #
-#
+# markers that have neither transcrip nor protein
 #
 results = db.sql('select * from #noTransProt', 'auto')
 for r in results:
-    mgiID = "MGI:"+r['mgiID']
+    mgiID = "MGI:" + r['mgiID']
     fp.write(mgiID + TAB + CRT)
 
 reportlib.finish_nonps(fp)
