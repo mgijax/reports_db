@@ -14,29 +14,37 @@
 #
 # Output format:
 #
-#	1: MGI Marker ID
-#	2: Symbol
-#	3: Name
-#	4: Start Coordinate
-#	5: End Coordinate
-#	6: Strand
-#	7: # of References
-#	8: MGI Ref ID (MGI:xxx|MGI:xxx|...)
-#	9: # of Alleles
+#	1:  MGI Marker ID
+#	2:  Symbol
+#	3:  Name
+#	4:  Start Coordinate
+#	5:  End Coordinate
+#	6:  Strand
+#
+#	7:  # of References
+#	8:  MGI Ref ID (MGI:xxx|MGI:xxx|...)
+#
+#	9:  # of Alleles
 #	10: MGI Allele ID (MGI:xxx|MGI:xxx|...)
+#
 #	11: # of GO annotations (C group)
-#	12: GO ID (C group): (GO:xxxx|GO:xxxx|...)
+#	12: GO ID (C group): (GO:xxxx|term||GO:xxxx|term||...)
+#
 #	13: # of GO annotations (F group)
-#	14: GO ID (F group): (GO:xxxx|GO:xxxx|...)
+#	14: GO ID (F group): (GO:xxxx|term||GO:xxxx|term||...)
+#
 #	15: # of GO annotations (P group)
-#	16: GO ID (P group): (GO:xxxx|GO:xxxx|...)
+#	16: GO ID (P group): (GO:xxxx|term||GO:xxxx|term||...)
+#
 #	17: # of MP annotations
-#	18: MP ID: (MP:xxxx|MP:xxxx|...)
-#	19: # of OMIM annotations (via orthology)
-#	20: OMIM ID: (xxxx|xxxx|...)
+#	18: MP ID: (MP:xxxx|term||MP:xxxx|term||...)
+#
+#	19: # of OMIM annotations (via human disease via mouse ortholog)
+#	20: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
+#
 #	21: # of Nomenclature Events (via marker history)
-#	22: Nomenclature sequence number:event:  
-#			1||assigned|2||rename|3||split|4||deletion
+#	22: Nomenclature sequence number and event:  
+#			1|assigned||2|rename||3|split||4|deletion
 # History:
 #
 # lec	05/17/2012
@@ -167,7 +175,7 @@ for r in results:
 # GO annotations
 #
 results = db.sql('''
-        select distinct m._marker_key, a.accid, d.dag
+        select distinct m._marker_key, a.accid, t.term, d.dag
         from #markers m, VOC_Annot aa, ACC_Accession a, VOC_Term t, DAG_Node_View d
         where m._marker_key = aa._object_key
 	and aa._annottype_key = 1000
@@ -183,7 +191,7 @@ goFannots = {}
 goPannots = {}
 for r in results:
     key = r['_marker_key']
-    value = r['accid']
+    value = r
 
     if r['dag'] == 'Cellular Component':
 	goannots = goCannots
@@ -200,35 +208,46 @@ for r in results:
 # Phenotype Annotations
 #
 results = db.sql('''
-        select distinct m._marker_key, a.accid
-        from #markers m, VOC_Annot aa, ACC_Accession a
+        select distinct m._marker_key, a.accid, t.term
+        from #markers m, VOC_Annot aa, ACC_Accession a, VOC_Term t
         where m._marker_key = aa._object_key
 	and aa._annottype_key = 1002
 	and aa._term_key = a._object_key
 	and a._mgitype_key = 13
 	and a.preferred = 1
+	and aa._Term_key = t._Term_key
         ''', 'auto')
 phenoannots = {}
 for r in results:
     key = r['_marker_key']
-    value = r['accid']
+    value = r
 
     if not phenoannots.has_key(key):
 	phenoannots[key] = []
     phenoannots[key].append(value)
 
 #
-# OMIM ortholog (human)
+# OMIM human disease
 #
 results = db.sql('''
-        select distinct m._marker_key, a.termid
-        from #markers m, MRK_OMIM_Cache a
-        where m._marker_key = a._marker_key
+	select distinct m._marker_key, a.accid, t.term
+	from #markers m, MRK_Homology_Cache h1, MRK_Homology_Cache h2, 
+	     VOC_Annot aa, ACC_Accession a, VOC_Term t
+	where m._marker_key = h1._marker_key
+	and h1._Organism_key = 1 
+	and h1._Class_key = h2._Class_key 
+	and h2._Organism_key = 2
+	and h2._Marker_key = aa._object_key
+	and aa._annottype_key = 1006
+	and aa._term_key = a._object_key
+	and a._mgitype_key = 13
+	and a.preferred = 1
+	and aa._Term_key = t._Term_key
         ''', 'auto')
 omimannots = {}
 for r in results:
     key = r['_marker_key']
-    value = r['termid']
+    value = r
 
     if not omimannots.has_key(key):
 	omimannots[key] = []
@@ -238,7 +257,7 @@ for r in results:
 # Nomenclature History
 #
 results = db.sql('''
-        select distinct m._marker_key, h.sequenceNum, e.event
+        select distinct m._marker_key, h.sequencenum, e.event
         from #markers m, MRK_History h, MRK_Event e
         where m._marker_key = h._marker_key
 	and h._marker_event_key = e._marker_event_key
@@ -303,7 +322,9 @@ for r in results:
 
     if goCannots.has_key(key):
 	fp.write(str(len(goCannots[key])) + TAB)
-	fp.write(string.join(goCannots[key], '|') + TAB)
+	for n in goCannots[key]:
+	    fp.write(str(n['accid']) + '|' + n['term'] + '||')
+	fp.write(TAB)
     else:
         fp.write('0' + TAB + TAB)
 
@@ -312,7 +333,9 @@ for r in results:
 
     if goFannots.has_key(key):
 	fp.write(str(len(goFannots[key])) + TAB)
-	fp.write(string.join(goFannots[key], '|') + TAB)
+	for n in goFannots[key]:
+	    fp.write(str(n['accid']) + '|' + n['term'] + '||')
+	fp.write(TAB)
     else:
         fp.write('0' + TAB + TAB)
 
@@ -321,7 +344,9 @@ for r in results:
 
     if goPannots.has_key(key):
 	fp.write(str(len(goPannots[key])) + TAB)
-	fp.write(string.join(goPannots[key], '|') + TAB)
+	for n in goPannots[key]:
+	    fp.write(str(n['accid']) + '|' + n['term'] + '||')
+	fp.write(TAB)
     else:
         fp.write('0' + TAB + TAB)
 
@@ -330,7 +355,9 @@ for r in results:
 
     if phenoannots.has_key(key):
 	fp.write(str(len(phenoannots[key])) + TAB)
-	fp.write(string.join(phenoannots[key], '|') + TAB)
+	for n in phenoannots[key]:
+	    fp.write(str(n['accid']) + '|' + n['term'] + '||')
+	fp.write(TAB)
     else:
         fp.write('0' + TAB + TAB)
 
@@ -339,7 +366,9 @@ for r in results:
 
     if omimannots.has_key(key):
 	fp.write(str(len(omimannots[key])) + TAB)
-	fp.write(string.join(omimannots[key], '|') + TAB)
+	for n in omimannots[key]:
+	    fp.write(str(n['accid']) + '|' + n['term'] + '||')
+	fp.write(TAB)
     else:
         fp.write('0' + TAB + TAB)
 
@@ -348,7 +377,7 @@ for r in results:
 
     if nomen.has_key(key):
 	for n in nomen[key]:
-	    fp.write(str(n['sequenceNum']) + '||' + n['event'] + '|')
+	    fp.write(str(n['sequencenum']) + '|' + n['event'] + '||')
         fp.write(CRT)
     else:
         fp.write('0' + TAB + CRT)
