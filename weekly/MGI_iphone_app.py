@@ -39,11 +39,14 @@
 #	17: # of MP annotations
 #	18: MP ID: (MP:xxxx|term||MP:xxxx|term||...)
 #
-#	19: # of OMIM annotations (via human disease via mouse ortholog)
+#	19: # of OMIM annotations (via genotype annotations)
 #	20: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
 #
-#	21: # of Nomenclature Events (via marker history)
-#	22: Nomenclature sequence number and event:  
+#	21: # of OMIM annotations (via human disease via mouse ortholog)
+#	22: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
+#
+#	23: # of Nomenclature Events (via marker history)
+#	24: Nomenclature sequence number and event:  
 #			1|assigned||2|rename||3|split||4|deletion
 # History:
 #
@@ -91,8 +94,7 @@ if os.path.isfile('%s/%s' % (reportDir, currentReport)):
         os.remove('%s/%s' % (reportDir, currentReport))
 
 # move existing reports to the archive
-if os.path.isfile('%s/%s.rpt' % (reportDir, reportWithDate)):
-	os.system('mv -f %s/%s.rpt %s' % (reportDir, reportWithDate, archiveDir))
+os.system('mv -f %s/%s*.rpt %s' % (reportDir, reportName, archiveDir))
 
 fp = reportlib.init(reportWithDate, outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
@@ -227,6 +229,29 @@ for r in results:
     phenoannots[key].append(value)
 
 #
+# OMIM genotype annotations
+#
+results = db.sql('''
+	select distinct m._marker_key, a.accid, t.term
+	from #markers m, GXD_AlleleGenotype g, VOC_Annot aa, ACC_Accession a, VOC_Term t
+	where m._marker_key = g._marker_key
+	and g._genotype_key = aa._object_key
+	and aa._annottype_key = 1005
+	and aa._term_key = a._object_key
+	and a._mgitype_key = 13
+	and a.preferred = 1
+	and aa._Term_key = t._Term_key
+        ''', 'auto')
+omimgenotype = {}
+for r in results:
+    key = r['_marker_key']
+    value = r
+
+    if not omimgenotype.has_key(key):
+	omimgenotype[key] = []
+    omimgenotype[key].append(value)
+
+#
 # OMIM human disease
 #
 results = db.sql('''
@@ -244,14 +269,14 @@ results = db.sql('''
 	and a.preferred = 1
 	and aa._Term_key = t._Term_key
         ''', 'auto')
-omimannots = {}
+omimhuman = {}
 for r in results:
     key = r['_marker_key']
     value = r
 
-    if not omimannots.has_key(key):
-	omimannots[key] = []
-    omimannots[key].append(value)
+    if not omimhuman.has_key(key):
+	omimhuman[key] = []
+    omimhuman[key].append(value)
 
 #
 # Nomenclature History
@@ -361,19 +386,30 @@ for r in results:
     else:
         fp.write('0' + TAB + TAB)
 
-#	19: # of OMIM annotations (via orthology)
+#	19: # of OMIM annotations (via genotype)
 #	20: OMIM ID: (xxxx|xxxx|...)
 
-    if omimannots.has_key(key):
-	fp.write(str(len(omimannots[key])) + TAB)
-	for n in omimannots[key]:
+    if omimgenotype.has_key(key):
+	fp.write(str(len(omimgenotype[key])) + TAB)
+	for n in omimgenotype[key]:
 	    fp.write(str(n['accid']) + '|' + n['term'] + '||')
 	fp.write(TAB)
     else:
         fp.write('0' + TAB + TAB)
 
-#	21: # of Nomenclature Events (via marker history)
-#	22: Nomenclature sequence number:event:  
+#	21: # of OMIM annotations (via human disease)
+#	22: OMIM ID: (xxxx|xxxx|...)
+
+    if omimhuman.has_key(key):
+	fp.write(str(len(omimhuman[key])) + TAB)
+	for n in omimhuman[key]:
+	    fp.write(str(n['accid']) + '|' + n['term'] + '||')
+	fp.write(TAB)
+    else:
+        fp.write('0' + TAB + TAB)
+
+#	23: # of Nomenclature Events (via marker history)
+#	24: Nomenclature sequence number:event:  
 
     if nomen.has_key(key):
 	for n in nomen[key]:
