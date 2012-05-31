@@ -14,6 +14,9 @@
 #
 # Output format:
 #
+#	Markers of type 'gene' (_marker_type_key = 1)
+#	Markers of status official or interum (_marker_status_key in (1,3)
+#
 #	1:  MGI Marker ID
 #	2:  Symbol
 #	3:  Name
@@ -108,6 +111,7 @@ db.sql('''
 	into #markers
 	from MRK_Marker m, ACC_Accession a
 	where m._organism_key = 1
+	and m._marker_type_key = 1
 	and m._marker_status_key in (1,3)
 	and m._marker_key = a._object_key
 	and a._mgitype_key = 2
@@ -229,7 +233,7 @@ for r in results:
     phenoannots[key].append(value)
 
 #
-# OMIM genotype annotations
+# OMIM by genotype annotations (_annottype_key = 1005)
 #
 results = db.sql('''
 	select distinct m._marker_key, a.accid, t.term
@@ -252,7 +256,7 @@ for r in results:
     omimgenotype[key].append(value)
 
 #
-# OMIM human disease
+# OMIM human disease (_annottype_key = 1006)
 #
 results = db.sql('''
 	select distinct m._marker_key, a.accid, t.term

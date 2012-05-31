@@ -89,7 +89,6 @@ ENDTD = '</font></td>'
 BREAK = '<br>'
 BLANKFIELD = '%s&nbsp;%s' % (BEGTD, ENDTD)
 
-ALLELE_ANCHOR = '<A HREF="%ssearches/accession_report.cgi?id=%s" target="_blank">'
 CRE_ANCHOR = '<A HREF="%srecombinase/specificity?id=%s&systemKey=%s">'
 CLOSE_ANCHOR = '</A>'
 
@@ -149,7 +148,7 @@ def writeHTML(r):
  
     s = '<tr>' + \
         BEGTD + driverNote + ENDTD + \
-        BEGTD + ALLELE_ANCHOR % (WI_URL, r['accID']) + symbol + CLOSE_ANCHOR + ENDTD + \
+	BEGTD + reportlib.create_accession_anchor(r['accID']) + symbol + CLOSE_ANCHOR + ENDTD + \
         BEGTDWRAP + name + ENDTD
 
     if expressedHTML.has_key(key):
@@ -260,7 +259,6 @@ for r in results:
         expressedTAB[key] = []
     expressedTAB[key].append(value)
 
-    #value = CRE_ANCHOR % (WI_URL, key, r['_System_key']) + r['system'] + CLOSE_ANCHOR
     value = CRE_ANCHOR % (WI_URL, r['accID'], r['_System_key']) + r['system'] + CLOSE_ANCHOR
     if not expressedHTML.has_key(key):
         expressedHTML[key] = []
