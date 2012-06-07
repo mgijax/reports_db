@@ -1010,7 +1010,7 @@ def iphone_omim():
 # main
 #
 
-#iphone_genes()
-#iphone_mp()
+iphone_genes()
+iphone_mp()
 iphone_omim()
 
