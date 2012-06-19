@@ -1,3 +1,24 @@
+TAG: reports_db-5-0-0-23
+DATE: 06/19/2012
+STAFF: lec
+CHANGES:
+used by GBrowse:
+SEQ_RepTransGenomic.rpt
+MGI_ComprehensiveMarkerSequence.rpt
+MRK_Sequence.rpt
+MGI_PhenotypicAllele.rpt
+MGI_Coordinate.rpt
+MRK_ENSEMBL.rpt
+MRK_VEGA.rpt
+MRK_GeneTrap.rpt
+MGI_GTGUP.rpt
+MGI_GTDNA.gff
+MGI_GTRNA.gff
+MGI_QTL.gff
+MGI_STS.gff
+MGI_SNP.gff
+build_37_chromosomes.gff
+
 TAG: reports_db-5-0-0-22
 TAG: reports_db-5-0-0-21
 DATE: 06/07/2012
