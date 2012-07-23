@@ -1,3 +1,9 @@
+TAG: reports_db-5-0-0-24
+DATE: 07/23/2012
+STAFF: lec
+CHANGES:
+public_rpt_release.csh: remove iphone*[0-9]*
+
 TAG: reports_db-5-0-0-23
 DATE: 06/19/2012
 STAFF: lec

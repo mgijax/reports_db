@@ -7,19 +7,19 @@
 # Report:
 #       Produce a tab-delimited report with the following output fields:
 #
-#       MGD ID
-#       Gene Symbol
-#       Gene Name
-#       Chromosome
-#       cM Position
-#       VEGA Gene ID
-#	VEGA Transcript IDs - space delimited
-#	VEGA Protein IDs - space delimited
-#	Feature Type(s)
-#	Coordinate Start
-#	Coordinate End
-#	Stand
-#	BioType(s)
+#       1  MGD ID
+#       2  Gene Symbol
+#       3  Gene Name
+#       4  Chromosome
+#       5  cM Position
+#       6  VEGA Gene ID
+#	7  VEGA Transcript IDs - space delimited
+#	8  VEGA Protein IDs - space delimited
+#	9  Feature Type(s)
+#	10 Coordinate Start
+#	11 Coordinate End
+#	12 Stand
+#	13 BioType(s)
 #
 # Usage:
 #       MRK_VEGA.py
