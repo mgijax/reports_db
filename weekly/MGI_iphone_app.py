@@ -24,45 +24,44 @@
 #	3:  Symbol
 #	4:  Name
 #	5:  URL prefix (by marker id)
-#	6:  Start Coordinate
-#	7:  End Coordinate
-#	8:  Strand
+#	6.  Genetic position (ex. 'ChrX 36.02 cM')
+#	7.  Genomic position (ex. 'ChrX:67639052-67642592 (+)')
 #
-#	9:  # of References
-#	10: MGI Ref ID (MGI:xxx|J:xxx||MGI:xxx|J:xxx||...)
-#	11: URL prefix (by reference (J:))
+#	8:  # of References
+#	9: MGI Ref ID (MGI:xxx|J:xxx||MGI:xxx|J:xxx||...)
+#	10: URL prefix (by reference (J:))
 #
-#	12:  # of Alleles
-#	13: MGI Allele ID (MGI:xxx|MGI:xxx|...)
-#	14: URL prefix (by allele id)
+#	11:  # of Alleles
+#	12: MGI Allele ID (MGI:xxx|MGI:xxx|...)
+#	13: URL prefix (by allele id)
 #
-#	15: # of GO annotations (C group)
-#	16: GO ID (C group): (GO:xxxx|term||GO:xxxx|term||...)
-#	17: URL prefix (by GO id)
+#	14: # of GO annotations (C group)
+#	15: GO ID (C group): (GO:xxxx|term||GO:xxxx|term||...)
+#	16: URL prefix (by GO id)
 #
-#	18: # of GO annotations (F group)
-#	19: GO ID (F group): (GO:xxxx|term||GO:xxxx|term||...)
-#	20: URL prefix (by GO id)
+#	17: # of GO annotations (F group)
+#	18: GO ID (F group): (GO:xxxx|term||GO:xxxx|term||...)
+#	19: URL prefix (by GO id)
 #
-#	21: # of GO annotations (P group)
-#	22: GO ID (P group): (GO:xxxx|term||GO:xxxx|term||...)
-#	23: URL prefix (by GO id)
+#	20: # of GO annotations (P group)
+#	21: GO ID (P group): (GO:xxxx|term||GO:xxxx|term||...)
+#	22: URL prefix (by GO id)
 #
-#	24: # of MP annotations
-#	25: MP ID: (MP:xxxx|term||MP:xxxx|term||...)
-#	26: URL prefix (by MP id)
+#	23: # of MP annotations
+#	24: MP ID: (MP:xxxx|term||MP:xxxx|term||...)
+#	25: URL prefix (by MP id)
 #
-#	27: # of OMIM annotations (via genotype annotations)
-#	28: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
-#	29: URL prefix (by OMIM id)
+#	26: # of OMIM annotations (via genotype annotations)
+#	27: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
+#	28: URL prefix (by OMIM id)
 #
-#	30: # of OMIM annotations (via human disease via mouse ortholog)
-#	31: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
-#	32: URL prefix (by OMIM id)
+#	29: # of OMIM annotations (via human disease via mouse ortholog)
+#	30: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
+#	31: URL prefix (by OMIM id)
 #
-#	33: # of Nomenclature Events (via marker history)
-#	34: Nomenclature sequence number and event:  
-#	35: URL prefix (by marker)
+#	32: # of Nomenclature Events (via marker history)
+#	33: Nomenclature sequence number and event:  
+#	34: URL prefix (by marker)
 #			1|assigned||2|rename||3|split||4|deletion
 # iphone-mp
 #
@@ -211,11 +210,13 @@ def iphone_genes():
     #	and m._marker_type_key = 1
     #
     db.sql('''
-	    select m._marker_key, m.symbol, m.name, a.accid
+	    select m._marker_key, m.symbol, m.name, m.chromosome, o.offset, a.accid
 	    into #markers
-	    from MRK_Marker m, ACC_Accession a
+	    from MRK_Marker m, ACC_Accession a, MRK_Offset o
 	    where m._organism_key = 1
 	    and m._marker_status_key in (1,3)
+	    and m._marker_key = o._marker_key
+	    and o.source = 0
 	    and m._marker_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 1
@@ -423,16 +424,19 @@ def iphone_genes():
         fp.write(r['name'] + TAB)
         fp.write(print_url_prefix(reportlib.create_accession_anchor(r['accid'], 'marker')) + TAB)
     
-    #	Start Coordinate
-    #	End Coordinate
-    #	Strand
+    #	Genetic position (ex. 'ChrX 36.02 cM')
+
+	fp.write('Chr' + r['chromosome'] + ' ' + str(r['offset']) + ' cM' + TAB)
+
+    #	Genomic position (ex. 'ChrX:67639052-67642592 (+)')
     
         if coords.has_key(key):
-            fp.write(mgi_utils.prvalue(coords[key][0]['startc']) + TAB)
-            fp.write(mgi_utils.prvalue(coords[key][0]['endc']) + TAB)
-            fp.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
+	    fp.write('Chr' + r['chromosome'] + ':')
+            fp.write(mgi_utils.prvalue(coords[key][0]['startc']) + '-')
+            fp.write(mgi_utils.prvalue(coords[key][0]['endc']) + ' (')
+            fp.write(mgi_utils.prvalue(coords[key][0]['strand']) + ')' + TAB)
         else:
-            fp.write(TAB + TAB + TAB)
+            fp.write(TAB)
     
     #	# of References
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
