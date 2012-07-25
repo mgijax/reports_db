@@ -242,6 +242,50 @@ for r in results:
     provider = r['provider']
     markerRepSeqDictByAlleleKey[alleleKey] = [chr, start, end, strand, mgiID, symbol, repSeqID, provider]
 
+# look up coordinates of markers with directly attached coordinates --
+# These may override ones from representative sequences or may be for markers
+# which have no representative sequences.
+
+results = db.sql ('''select a._Allele_key, mlc.chromosome,
+		convert(int, mlc.startCoordinate) as startCoordinate,
+		convert(int, mlc.endCoordinate) as endCoordinate,
+		mlc.strand, mlc.provider, v.mgiID, v.symbol
+	from #alleleMarkers a,
+		MRK_Location_Cache mlc,
+		MRK_Mouse_View v
+	where a._Marker_key = mlc._Marker_key
+		and a._Marker_key = v._Marker_key''', 'auto')
+
+repSeqID = ''	# no representative genomic sequence is involved with these
+
+for r in results:
+    alleleKey = r['_Allele_key']
+    chrom = r['chromosome']
+    start = r['startCoordinate']
+    end = r['endCoordinate']
+    strand = r['strand']
+    mgiID = r['mgiID']
+    symbol = r['symbol']
+    provider = r['provider']
+
+    # if we already have a coordinate for this allele, then it was from a
+    # representative genomic sequence for the marker
+
+    if markerRepSeqDictByAlleleKey.has_key(alleleKey):
+	    # if there's no difference in the coordinate assignment, then we
+	    # can move on to the next allele
+
+	    prev = markerRepSeqDictByAlleleKey[alleleKey]
+	    if (chrom == prev[0]) and (start == prev[1]) and \
+		(end == prev[2]) and (strand == prev[3]):
+			continue
+
+    # otherwise, we need to either remember the new coordinate or use it to
+    # override the old coordinate from a representative genomic sequence
+
+    markerRepSeqDictByAlleleKey[alleleKey] = [chrom, start, end, strand,
+	mgiID, symbol, repSeqID, provider]
+
 # Lookup of allele rep sequence attributes
 db.sql('''select distinct saa._Sequence_key, saa._Allele_key,
             a.accid as allRepSeqId
