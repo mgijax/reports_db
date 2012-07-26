@@ -79,3 +79,5 @@ setenv MASTER_GFF_FILE ${DATADOWNLOADS}/ftp.ncbi.nih.gov/gtblatpipeline/output/b
 # Iphone archive
 setenv IPHONEARCHIVE		${FTPREPORTDIR}/archive/iphone
 
+# number of subprocesses to use in report generation (where applicable)
+setenv SUBPROCESSES	5
