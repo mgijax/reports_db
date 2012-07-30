@@ -623,7 +623,6 @@
         <TD>Marker Chromosome</TD>
         <TD>Marker Start Coordinate</TD>
         <TD>Marker End Coordinate</TD>
-        <TD>Strand</TD>
         <TD>Genome Build</TD>
         <TD>High-level Mammalian Phenotype ID (comma-delimited)</TD></TABLE>
         </TD></TR>
