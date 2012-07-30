@@ -73,14 +73,30 @@
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD>
         <TD>Marker Type</TD>
+        <TD>Feature Type</TD>
         <TD>Marker Symbol</TD>
         <TD>Marker Name</TD>
-        <TD>Representative Genome ID</TD>
-        <TD>Representative Genome Chromosome</TD>
-        <TD>Representative Genome Start</TD>
-        <TD>Representative Genome End</TD>
-        <TD>Representative Genome Strand</TD>
-        <TD>Representative Genome Build</TD>
+        <TD>Chromosome</TD>
+        <TD>Start Coordinate</TD>
+        <TD>End Coordinate</TD>
+        <TD>Strand</TD>
+        <TD>Genome Build</TD>
+        <TD>Provider Collection</TD>
+        <TD>Provider Display</TD>
+	    </TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_MRK_coord.rpt">MGI_MRK_Coord.rpt</A> (Build 37)</TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>2. MGI Gene Model Coordinates (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD>
+        <TD>Marker Type</TD>
+        <TD>Marker Symbol</TD>
+        <TD>Marker Name</TD>
+        <TD>Genome Build</TD>
         <TD>Entrez Gene ID</TD>
         <TD>NCBI Gene Chromosome</TD>
         <TD>NCBI Gene Start</TD>
@@ -96,27 +112,14 @@
         <TD>VEGA Gene Start</TD>
         <TD>VEGA Gene End</TD>
         <TD>VEGA Gene Strand</TD>
-        <TD>UniSTS Gene Chromosome</TD>
-        <TD>UniSTS Gene Start</TD>
-        <TD>UniSTS Gene End</TD>
-        <TD>MGI QTL Gene Chromosome</TD>
-        <TD>MGI QTL Gene Start</TD>
-        <TD>MGI QTL Gene End</TD>
-        <TD>miRBase Gene ID</TD>
-        <TD>miRBase Gene Chromosome</TD>
-        <TD>miRBase Gene Start</TD>
-        <TD>miRBase Gene End</TD>
-        <TD>miRBase Gene Strand</TD>
-        <TD>Roopenian Gene Start</TD>
-        <TD>Roopenian Gene End</TD>
         </TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Coordinate.rpt">MGI_Coordinate.rpt</A> (Build 37)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Gene_Model_Coord.rpt">MGI_Gene_Model_Coord.rpt</A> (Build 37)</TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>2. MGI Sequence Coordinates (in GFF format)(tab-delimited)</B></TD></TR>
+        <TR><TD><B>3. MGI Sequence Coordinates (in GFF format)(tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Chromosome</TD>
         <TD>Source of Feature</TD>
@@ -133,7 +136,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>3. MGI Sequence Coordinates (in GFF3 format)(tab-delimited)</B></TD></TR>
+        <TR><TD><B>4. MGI Sequence Coordinates (in GFF3 format)(tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD><A HREF="../mgigff/MGI_GFF_Spec.docx">Specification file:  MGI_GFF_Spec.docx</A></TD></TR></TABLE>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="../mgigff/MGI.gff3.gz">MGI.gff3.gz</A></TD></TR>
@@ -141,7 +144,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>4. MGI Marker associations to Sequence (GenBank, RefSeq,VEGA, Ensembl) information (tab-delimited)</B></TD></TR>
+        <TR><TD><B>5. MGI Marker associations to Sequence (GenBank, RefSeq,VEGA, Ensembl) information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR>
 	<TD>MGI Marker Accession ID</TD>
@@ -171,7 +174,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>5. MGI Marker associations to SWISS-PROT and TrEMBL protein IDs (tab-delimited)</B></TD></TR>
+        <TR><TD><B>6. MGI Marker associations to SWISS-PROT and TrEMBL protein IDs (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>SWISS-PROT/TrEMBL Protein<BR>Accession IDs<BR>(space-delimited)</TD></TR></TABLE>
@@ -181,7 +184,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>6. MGI Marker associations to SWISS-PROT protein IDs (tab-delimited)</B></TD></TR>
+        <TR><TD><B>7. MGI Marker associations to SWISS-PROT protein IDs (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>SWISS-PROT Protein<BR>Accession IDs<BR>(space-delimited)</TD></TR></TABLE>
@@ -191,7 +194,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>7. MGI Marker associations to Gene Trap IDs (tab-delimited)</B></TD></TR>
+        <TR><TD><B>8. MGI Marker associations to Gene Trap IDs (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>Mutant<BR>Cell Line IDs<BR>(space-delimited)</TD></TR></TABLE>
@@ -200,7 +203,7 @@
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE><B>8. MGI Marker associations to Entrez Gene (tab-delimited)</B></TD></TR>
+    <TR><TD><TABLE><B>9. MGI Marker associations to Entrez Gene (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>Type<BR><FONT SIZE=-1>Gene<BR>DNA Segment<BR>Other Genome Feature<BR>Complex/Cluster/Region<BR>microRNA</FONT></TD>
@@ -211,7 +214,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>9. MGI Marker associations to VEGA sequence information (tab-delimited)</B></TD></TR>
+        <TR><TD><B>10. MGI Marker associations to VEGA sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>VEGA Accession ID</TD><TD>VEGA Transcript ID<BR>(space-delimited, if any)</TD><TD>VEGA Protein ID<BR>(space-delimited, if any)</TD><TD>Feature Types (|-delimited)</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Strand</TD><TD>BioTypes<BR>(|-delimited)</TD></TR></TABLE>
@@ -221,7 +224,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>10. MGI Marker associations to Ensembl sequence information (tab-delimited)</B></TD></TR>
+        <TR><TD><B>11. MGI Marker associations to Ensembl sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>Ensembl Accession ID</TD><TD>Ensembl Transcript ID<BR>(space-delimited, if any)</TD><TD>Ensembl Protein ID<BR>(space-delimited, if any)</TD><TD>Feature Types (|-delimited)</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Strand</TD><TD>BioTypes<BR>(|-delimited)</TD></TR></TABLE>
@@ -231,7 +234,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>11. MGI Marker associations to VEGA, Ensembl or NCBI gene models where a gene vs. pseudogene discrepancy exists(tab-delimited)</B></TD></TR>
+        <TR><TD><B>12. MGI Marker associations to VEGA, Ensembl or NCBI gene models where a gene vs. pseudogene discrepancy exists(tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Marker Symbol</TD><TD>Provider Source</TD><TD>Gene ID</TD><TD>Biotype</TD><TD>MGI Representative Gene Model</TD></TABLE>
         </TD></TR>
@@ -239,7 +242,7 @@
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE><B>12. Primer Sequences</B></TD></TR>
+    <TR><TD><TABLE><B>13. Primer Sequences</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>Primer Marker Name</TD><TD>MGI Marker Accession ID</TD><TD>MGI Primer Pair ID</TD><TD>Primer 1 Sequence</TD><TD>Primer 2 Sequence</TD><TD>Amplimer Size</TD><TD>Chromosome</TD><TD>Map Position</TD></TR></TABLE>
         </TD></TR>
@@ -248,7 +251,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>13. InterPro Domains (tab-delimited)</B></TD></TR>
+        <TR><TD><B>14. InterPro Domains (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>InterPro ID</TD><TD>Domain Marker Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TR></TABLE>
         </TD></TR>
@@ -256,7 +259,7 @@
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE><B>14. MGI-DoTS and MGI-DFCI mouse gene index Associations (tab-delimited)</B></TD></TR>
+    <TR><TD><TABLE><B>15. MGI-DoTS and MGI-DFCI mouse gene index Associations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>DT/TC ID</TD><TD>GenBank Sequence IDs (comma-delimited)</TD></TABLE>
         </TD></TR>
