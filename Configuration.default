@@ -47,6 +47,9 @@ setenv MAFILES			"adult_mouse_anatomy.obo"
 # InParanoid directory
 setenv INPARANOIDDIR		${REPORTDIR}/inparanoid
 
+# CvDC directory
+setenv CVDCDIR			${REPORTDIR}/output/cvdc
+
 # InParanoid files
 setenv REFSEQFASTAGZ		/data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa.gz
 setenv REFSEQFASTA		/data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa
