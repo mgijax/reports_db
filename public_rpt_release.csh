@@ -123,7 +123,7 @@ foreach i (Mus-musculus* aaseq*)
     cp $i ${FTPCUSTOM}/inparanoid
 end
 
-echo `date`: Copy CvDC files to ${FTPREPORTDIR}{LOG}
+echo `date`: Copy CvDC files to ${FTPREPORTDIR}/cvdc | tee -a ${LOG}
 rm -f ${FTPREPORTDIR}/cvdc/*html
 cd ${CVDCDIR}
 foreach i (*)
