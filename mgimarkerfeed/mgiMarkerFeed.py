@@ -994,6 +994,7 @@ def alleles():
 	    and n._MGIType_key = 11 
 	    and n._Note_key = nc._Note_key 
 	    and n._NoteType_key = nt._NoteType_key
+	    and nt.private = 0
 	    ''', 'auto')
 
     notes = {}
