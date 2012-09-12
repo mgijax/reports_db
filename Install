@@ -17,8 +17,8 @@ cp index.html ${FTPREPORTDIR}
 # directories
 #
 
-if ( ! -d ${REPORTDIR} ) then
-    mkdir -p ${REPORTDIR}
+if ( ! -d ${PUBREPORTDIR} ) then
+    mkdir -p ${PUBREPORTDIR}
 endif
 
 if ( ! -d ${REPORTOUTPUTDIR} ) then
