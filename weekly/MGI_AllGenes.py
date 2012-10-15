@@ -367,13 +367,13 @@ def process():
     #
 
     db.sql('''
-	select m.*, l.chromosome, l.strand, c.sequenceNum, 
+	select m.*, l.genomicChromosome as chromosome, l.strand, c.sequenceNum, 
 	convert(int, l.startCoordinate) as startC, 
 	convert(int, l.endCoordinate) as endC 
 	into #location 
 	from #markers m, MRK_Location_Cache l, MRK_Chromosome c 
 	where m._Marker_key = l._Marker_key 
-	and l.chromosome = c.chromosome 
+	and l.genomicChromosome = c.chromosome 
 	and c._Organism_key = 1
 	''', None)
     db.sql('create index location_idx1 on #location(_Marker_key)', None)
