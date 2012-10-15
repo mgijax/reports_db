@@ -92,7 +92,11 @@ for r in results:
 # mapped features that have marker associations
 # exclude DNA Segments and QTLs
 
-results = db.sql('''select c.chromosome, c.strand, m.symbol, m._Marker_key,
+# Since all these markers will have coordinates (because startCoordinate is
+# not null), we can use the 'genomicChromosome' field, rather than the usual
+# genetic 'chromosome' field.
+
+results = db.sql('''select c.genomicChromosome as chromosome, c.strand, m.symbol, m._Marker_key,
 	mt.name as markerType, a.accID, 
         convert(int, c.startCoordinate) as startC, 
         convert(int, c.endCoordinate) as endC 
@@ -109,7 +113,7 @@ results = db.sql('''select c.chromosome, c.strand, m.symbol, m._Marker_key,
 	and a._LogicalDB_key = 1 
 	and a.prefixPart = "MGI:" 
 	and a.preferred = 1 
-	and m.chromosome = cc.chromosome 
+	and c.genomicChromosome = cc.chromosome 
 	and m._Organism_key = cc._Organism_key 
 	order by cc.sequenceNum, c.startCoordinate, c.endCoordinate
 	''', 'auto')
