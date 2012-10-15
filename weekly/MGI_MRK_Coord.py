@@ -141,6 +141,7 @@ def getCoordinates():
 		mm.symbol,
 		mm.name,
 		mlc.chromosome,
+		mlc.genomicChromosome,
 		convert(int, mlc.startCoordinate) as startCoordinate,
 		convert(int, mlc.endCoordinate) as endCoordinate,
 		mlc.strand,
@@ -218,7 +219,14 @@ for r in coords:
     fp.write(featureType + TAB)
     fp.write(r['symbol'] + TAB)
     fp.write(r['name'] + TAB)
-    fp.write(r['chromosome'] + TAB)
+
+    # prefer to display genomic chromosome (associated with coordinates) 
+    # rather than genetic chromosome (associated with cM / cytoband)
+    if r['genomicChromosome']:
+	fp.write(r['genomicChromosome'] + TAB)
+    else:
+	fp.write(r['chromosome'] + TAB)
+
     fp.write(str(r['startCoordinate']) + TAB)
     fp.write(str(r['endCoordinate']) + TAB)
     fp.write(mgi_utils.prvalue(r['strand']) + TAB)
