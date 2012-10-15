@@ -153,7 +153,7 @@ for r in results:
 	
 # Retrieve marker coordinates
 
-results = db.sql ('''select _Marker_key, chromosome,
+results = db.sql ('''select _Marker_key, chromosome, genomicChromosome,
 		convert(int, startCoordinate) as startCoordinate,
 		convert(int, endCoordinate) as endCoordinate,
 		strand, version
@@ -214,7 +214,12 @@ for r in results:
 	if coords.has_key(r['_Marker_key']):
 		coord = coords[r['_Marker_key']]
 
-		chrom = coord['chromosome']
+		# prefer a genomic chromosome, but fall back on a genetic one
+		# if the marker has no coordinates
+		chrom = coord['genomicChromosome']
+		if not chrom:
+			chrom = coord['chromosome']
+
 		start = coord['startCoordinate']
 		end = coord['endCoordinate']
 		strand = coord['strand']
