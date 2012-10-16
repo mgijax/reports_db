@@ -246,7 +246,7 @@ for r in results:
 # These may override ones from representative sequences or may be for markers
 # which have no representative sequences.
 
-results = db.sql ('''select a._Allele_key, mlc.chromosome,
+results = db.sql ('''select a._Allele_key, mlc.genomicChromosome as chromosome,
 		convert(int, mlc.startCoordinate) as startCoordinate,
 		convert(int, mlc.endCoordinate) as endCoordinate,
 		mlc.strand, mlc.provider, v.mgiID, v.symbol
@@ -254,6 +254,7 @@ results = db.sql ('''select a._Allele_key, mlc.chromosome,
 		MRK_Location_Cache mlc,
 		MRK_Mouse_View v
 	where a._Marker_key = mlc._Marker_key
+		and mlc.genomicChromosome is not null
 		and a._Marker_key = v._Marker_key''', 'auto')
 
 repSeqID = ''	# no representative genomic sequence is involved with these
