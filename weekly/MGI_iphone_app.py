@@ -232,7 +232,8 @@ def iphone_genes():
         select m._marker_key,
                c.strand, 
                convert(int, c.startcoordinate) as startc,
-               convert(int, c.endcoordinate) as endc
+               convert(int, c.endcoordinate) as endc,
+	       c.genomicChromosome
         from #markers m, MRK_Location_Cache c
         where m._marker_key = c._marker_key
             ''', 'auto')
@@ -431,7 +432,7 @@ def iphone_genes():
     #	Genomic position (ex. 'ChrX:67639052-67642592 (+)')
     
         if coords.has_key(key):
-	    fp.write('Chr' + r['chromosome'] + ':')
+	    fp.write('Chr' + coords[key][0]['genomicChromosome'] + ':')
             fp.write(mgi_utils.prvalue(coords[key][0]['startc']) + '-')
             fp.write(mgi_utils.prvalue(coords[key][0]['endc']) + ' (')
             fp.write(mgi_utils.prvalue(coords[key][0]['strand']) + ')' + TAB)
