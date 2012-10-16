@@ -78,7 +78,7 @@
         <TD>Provider Display</TD>
 	    </TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_MRK_coord.rpt">MGI_MRK_Coord.rpt</A> (Build 37)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_MRK_coord.rpt">MGI_MRK_Coord.rpt</A> (GRCm38)</TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
@@ -114,7 +114,7 @@
         <TD>VEGA Gene Strand</TD>
         </TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Gene_Model_Coord.rpt">MGI_Gene_Model_Coord.rpt</A> (Build 37)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Gene_Model_Coord.rpt">MGI_Gene_Model_Coord.rpt</A> (GRCm38)</TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
@@ -131,7 +131,7 @@
         <TD>Empty Column</TD>
 	<TD>ID=MGI ID;Name=marker symbol;Note=marker feature</TD></TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GTGUP.gff">MGI_GTGUP.gff</A> (Build 37)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GTGUP.gff">MGI_GTGUP.gff</A> (GRCm38)</TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
