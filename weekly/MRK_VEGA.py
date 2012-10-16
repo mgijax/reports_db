@@ -141,13 +141,17 @@ db.sql('''
 	     m.symbol, 
 	     m.name, 
 	     m.chromosome, 
+	     mlc.genomicChromosome,
 	     o.offset, 
-	     a2.accID as vegaID
+	     a2.accID as vegaID,
+	     mlc.genomicChromosome as sortChromosome
       into #markers
-      from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Offset o 
+      from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Offset o,
+      	    MRK_Location_Cache mlc
       where a1._Object_key = a2._Object_key 
             and a1._Object_key = m._Marker_key 
             and m._Marker_key = o._Marker_key 
+            and m._Marker_key = mlc._Marker_key 
             and a1._LogicalDB_key = 1 
             and a1._MGIType_key = 2 
             and a1.prefixPart = 'MGI:' 
@@ -156,6 +160,8 @@ db.sql('''
             and a2._MGIType_key = 2 
             and o.source = 0 
       ''', None)
+db.sql('''update #markers set sortChromosome = genomicChromosome
+	where genomicChromosome is not null''', None)
 db.sql('create index marker_idx1 on #markers(_Marker_key)', None)
 
 #
@@ -214,7 +220,7 @@ for r in results:
 #
 # final select
 #
-results = db.sql('select * from #markers order by chromosome, symbol', 'auto')
+results = db.sql('select * from #markers order by sortChromosome, symbol', 'auto')
 
 for r in results:
 
@@ -227,11 +233,16 @@ for r in results:
     # column 5: chromosome
     # column 6: genomic id
 
+    if r['genomicChromosome']:
+	    chromosome = r['genomicChromosome']
+    else:
+	    chromosome = r['chromosome']
+
     fp.write(r['mgiID'] + TAB + 
 	     r['symbol'] + TAB + 
 	     r['name'] + TAB +
 	     str(r['offset']) + TAB +
-             r['chromosome'] + TAB + 
+             chromosome + TAB + 
              genomicID + TAB)
 
     # column 7
