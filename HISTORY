@@ -1,3 +1,11 @@
+TAG: reports_db-5-0-0-29
+DATE: 11/01/2012
+STAFF: lec
+CHANGES:
+1) TR11164/MGI_PhenoGenoMP.py
+while working on this TR, spotted a potential issue with this
+report and fixed it
+
 TAG: reports_db-5-0-0-28
 DATE: 08/27/2012
 STAFF: lec

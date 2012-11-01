@@ -207,8 +207,11 @@ for r in results:
         fp.write(string.join(mpAlleles[genotype], '|') + TAB)
         fp.write(mpStrain[genotype] + TAB)
         fp.write(mpID[term] + TAB)
+
         if mpRef.has_key(refKey):
 	    fp.write(string.join(mpRef[refKey], ','))
+        else:
+	    fp.write(TAB)
 
 	if mpMarker.has_key(genotype):
 	    fp.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
