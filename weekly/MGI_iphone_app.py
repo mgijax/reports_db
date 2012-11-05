@@ -432,7 +432,11 @@ def iphone_genes():
     #	Genomic position (ex. 'ChrX:67639052-67642592 (+)')
     
         if coords.has_key(key):
-	    fp.write('Chr' + coords[key][0]['genomicChromosome'] + ':')
+	    chromosome = coords[key][0]['genomicChromosome']
+	    if not chromosome:
+		# if no genomic chromosome, fall back on the genetic one
+		chromosome = r['chromosome']
+	    fp.write('Chr' + chromosome + ':')
             fp.write(mgi_utils.prvalue(coords[key][0]['startc']) + '-')
             fp.write(mgi_utils.prvalue(coords[key][0]['endc']) + ' (')
             fp.write(mgi_utils.prvalue(coords[key][0]['strand']) + ')' + TAB)

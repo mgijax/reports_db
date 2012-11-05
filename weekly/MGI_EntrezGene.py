@@ -224,10 +224,13 @@ for r in results:
 	# column 6: chromosome
 	# column 7: marker type
 
+	chromosome = None
+
 	if coords.has_key(r['_Marker_key']):
 		# genomic chromosome, if marker has coordinates
 		chromosome = coords[r['_Marker_key']][0]['genomicChromosome']
-	else:
+
+	if not chromosome:
 		# genetic chromosome, if marker has no coordinates
 		chromosome = r['chromosome']
 
