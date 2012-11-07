@@ -61,6 +61,27 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List2.rpt">MRK_List2.rpt</A> (excluding withdrawn marker symbols)</TD></TR>
     </TABLE></TD></TR>
 
+    <TR><TD><TABLE>
+        <TR><TD><B>2. MGI Marker Coordinates (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD>
+        <TD>Marker Type</TD>
+        <TD>Feature Type</TD>
+        <TD>Marker Symbol</TD>
+        <TD>Marker Name</TD>
+        <TD>Chromosome</TD>
+        <TD>Start Coordinate</TD>
+        <TD>End Coordinate</TD>
+        <TD>Strand</TD>
+        <TD>Genome Build</TD>
+        <TD>Provider</TD>
+        <TD>Provider Display</TD>
+	    </TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_MRK_Coord.rpt">MGI_MRK_Coord.rpt</A> (GRCm38)</TD></TR>
+        </TD></TR>
+    </TABLE></TD></TR>
+
 </TABLE><BR>
 
 <!-- -->
@@ -69,18 +90,13 @@
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Sequence Data</B></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>1. MGI Sequence Coordinates (tab-delimited)</B></TD></TR>
+        <TR><TD><B>1. MGI Gene Model Coordinates (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD>
         <TD>Marker Type</TD>
         <TD>Marker Symbol</TD>
         <TD>Marker Name</TD>
-        <TD>Representative Genome ID</TD>
-        <TD>Representative Genome Chromosome</TD>
-        <TD>Representative Genome Start</TD>
-        <TD>Representative Genome End</TD>
-        <TD>Representative Genome Strand</TD>
-        <TD>Representative Genome Build</TD>
+        <TD>Genome Build</TD>
         <TD>Entrez Gene ID</TD>
         <TD>NCBI Gene Chromosome</TD>
         <TD>NCBI Gene Start</TD>
@@ -96,22 +112,9 @@
         <TD>VEGA Gene Start</TD>
         <TD>VEGA Gene End</TD>
         <TD>VEGA Gene Strand</TD>
-        <TD>UniSTS Gene Chromosome</TD>
-        <TD>UniSTS Gene Start</TD>
-        <TD>UniSTS Gene End</TD>
-        <TD>MGI QTL Gene Chromosome</TD>
-        <TD>MGI QTL Gene Start</TD>
-        <TD>MGI QTL Gene End</TD>
-        <TD>miRBase Gene ID</TD>
-        <TD>miRBase Gene Chromosome</TD>
-        <TD>miRBase Gene Start</TD>
-        <TD>miRBase Gene End</TD>
-        <TD>miRBase Gene Strand</TD>
-        <TD>Roopenian Gene Start</TD>
-        <TD>Roopenian Gene End</TD>
         </TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Coordinate.rpt">MGI_Coordinate.rpt</A> (Build 37)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Gene_Model_Coord.rpt">MGI_Gene_Model_Coord.rpt</A> (GRCm38)</TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
@@ -128,7 +131,7 @@
         <TD>Empty Column</TD>
 	<TD>ID=MGI ID;Name=marker symbol;Note=marker feature</TD></TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GTGUP.gff">MGI_GTGUP.gff</A> (Build 37)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GTGUP.gff">MGI_GTGUP.gff</A> (GRCm38)</TD></TR>
         </TD></TR>
     </TABLE></TD></TR>
 
@@ -607,9 +610,21 @@
     <TR><TD><TABLE>
         <TR><TD><B>4. List of All Mouse QTL Alleles (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Allele Accession ID</TD><TD>Allele Symbol</TD><TD>Allele Name</TD><TD>Allele Type</TD>
-        <TD>PubMed ID for original reference</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker RefSeq ID</TD>
-        <TD>Marker Ensembl ID</TD><TD>High-level Mammalian Phenotype ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR>
+        <TD>MGI Allele Accession ID</TD>
+        <TD>Allele Symbol</TD>
+        <TD>Allele Name</TD>
+        <TD>Allele Type</TD>
+        <TD>PubMed ID for original reference</TD>
+        <TD>MGI Marker Accession ID</TD>
+        <TD>Marker Symbol</TD>
+        <TD>Marker RefSeq ID</TD>
+        <TD>Marker Ensembl ID</TD>
+        <TD>Marker Chromosome</TD>
+        <TD>Marker Start Coordinate</TD>
+        <TD>Marker End Coordinate</TD>
+        <TD>Genome Build</TD>
+        <TD>High-level Mammalian Phenotype ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_QTLAllele.rpt">MGI_QTLAllele.rpt</A></TD></TR>
     </TABLE></TD></TR>

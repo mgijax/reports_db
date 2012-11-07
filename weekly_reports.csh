@@ -21,22 +21,24 @@ echo `date`: Start weekly public reports | tee -a ${LOG}
 #
 # Generate weekly reports
 #
-cd ${PUBWEEKLY}
-foreach i (*.py)
-    echo `date`: $i | tee -a ${LOG}
-    $i >>& ${LOG}
-end
+./run_in_parallel.py -p ${SUBPROCESSES} weekly/*py inparanoid/inparanoid.csh ncbilinkout/ncbilinkout.csh >>& ${LOG}
+
+#cd ${PUBWEEKLY}
+#foreach i (*.py)
+#    echo `date`: $i | tee -a ${LOG}
+#    $i >>& ${LOG}
+#end
 
 #
 # Generate inparanoid files.
 #
-echo `date`: inparanoid.csh | tee -a ${LOG}
-${PUBRPTS}/inparanoid/inparanoid.csh >>& ${LOG}
+#echo `date`: inparanoid.csh | tee -a ${LOG}
+#${PUBRPTS}/inparanoid/inparanoid.csh >>& ${LOG}
 
 #
 # Generate NCBI LinkOut files.
 #
-echo `date`: ncbilinkout.csh | tee -a ${LOG}
-${PUBRPTS}/ncbilinkout/ncbilinkout.csh >>& ${LOG}
+#echo `date`: ncbilinkout.csh | tee -a ${LOG}
+#${PUBRPTS}/ncbilinkout/ncbilinkout.csh >>& ${LOG}
 
 echo `date`: End weekly public reports | tee -a ${LOG}

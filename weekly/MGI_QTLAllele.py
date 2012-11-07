@@ -18,6 +18,10 @@
 #		Gene Symbol
 #		RefSeq ID of Gene
 #		Ensembl ID
+#		Marker Chromosome
+#		Marker Start Coordinate
+#		Marker End Coordinate
+#		Genome Build
 #		MP IDs of MP annotations
 #
 # History:
@@ -147,6 +151,20 @@ ensemblIDs = {}
 for r in results:
 	ensemblIDs[r['_Marker_key']] = r['accID']
 	
+# Retrieve marker coordinates
+
+results = db.sql ('''select _Marker_key, chromosome, genomicChromosome,
+		convert(int, startCoordinate) as startCoordinate,
+		convert(int, endCoordinate) as endCoordinate,
+		strand, version
+	from MRK_Location_Cache
+	where _Organism_key = 1
+		and startCoordinate is not null''', 'auto')
+
+coords = {}
+for r in results:
+	coords[r['_Marker_key']] = r
+
 # Retrieve MP IDs for MP annotations
 
 results = db.sql('''
@@ -192,6 +210,30 @@ for r in results:
 	if ensemblIDs.has_key(r['_Marker_key']):
 		fp.write(ensemblIDs[r['_Marker_key']])
 	fp.write(reportlib.TAB)
+
+	if coords.has_key(r['_Marker_key']):
+		coord = coords[r['_Marker_key']]
+
+		# prefer a genomic chromosome, but fall back on a genetic one
+		# if the marker has no coordinates
+		chrom = coord['genomicChromosome']
+		if not chrom:
+			chrom = coord['chromosome']
+
+		start = coord['startCoordinate']
+		end = coord['endCoordinate']
+		strand = coord['strand']
+		build = coord['version']	# not displayed for now
+
+		for field in (chrom, start, end, build):
+			if field == None:
+				fp.write ('null' + reportlib.TAB)
+			else:
+				fp.write (str(field) + reportlib.TAB) 
+	else:
+		for i in range(0,4):
+			fp.write ('null' + reportlib.TAB)
+
 
 	if mpIDs.has_key(r['_Allele_key']):
 		fp.write(string.join(mpIDs[r['_Allele_key']], ','))

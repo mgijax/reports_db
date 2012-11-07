@@ -74,6 +74,7 @@ fp2.write(TAB.join(headers) + CRT)
 db.sql('''
     select m.*, 
     upper(substring(s.status, 1, 1)) as markerstatus,
+    mlc.genomicChromosome,
     t.name as markertype,
         case
         when o.offset >= 0 then str(o.offset,10,2)
@@ -81,9 +82,11 @@ db.sql('''
         when o.offset = -1.0 then "  syntenic"
         end as cmposition
     into #markers
-    from MRK_Marker m, MRK_Status s, MRK_Types t, MRK_Offset o
+    from MRK_Marker m, MRK_Status s, MRK_Types t, MRK_Offset o,
+    	MRK_Location_Cache mlc
     where m._organism_key = 1
     and m._marker_key = o._marker_key
+    and m._marker_key = mlc._marker_key
     and o.source = 0
     and m._marker_type_key = t._marker_type_key
     and m._marker_status_key = s._marker_status_key
@@ -154,6 +157,7 @@ query1 = '''
     select a.accid, 
 	   m._marker_key, 
 	   m.chromosome, 
+	   m.genomicChromosome,
 	   m.cmposition, 
 	   m.symbol, 
 	   m.markerstatus, 
@@ -172,6 +176,7 @@ query2 = '''
     select 'NULL', 
            m._marker_key, 
            m.chromosome, 
+	   m.genomicChromosome,
            m.cmposition, 
            m.symbol, 
            m.markerstatus, 
@@ -190,7 +195,12 @@ for r in results:
     key = r['_marker_key']
 
     fp1.write(mgi_utils.prvalue(r['accid']) + TAB)
-    fp1.write(r['chromosome'] + TAB)
+
+    if r['genomicChromosome']:
+    	fp1.write(r['genomicChromosome'] + TAB)
+    else:
+    	fp1.write(r['chromosome'] + TAB)
+
     fp1.write(r['cmposition'] + TAB)
 
     if coords.has_key(key):
@@ -222,7 +232,12 @@ for r in results:
     key = r['_marker_key']
 
     fp2.write(mgi_utils.prvalue(r['accid']) + TAB)
-    fp2.write(r['chromosome'] + TAB)
+
+    if r['genomicChromosome']:
+    	fp2.write(r['genomicChromosome'] + TAB)
+    else:
+    	fp2.write(r['chromosome'] + TAB)
+
     fp2.write(r['cmposition'] + TAB)
 
     if coords.has_key(key):

@@ -137,12 +137,15 @@ db.sql('create index deletedIDS_idx2 on #deletedIDs(_LogicalDB_key)', None)
 
 db.sql('''
 	select m._Marker_key, m.symbol, m.name, m.chromosome, 
+	mlc.genomicChromosome,
 	o.offset, upper(substring(s.status, 1, 1)) as markerStatus, t.name as markerType
 	into #markers 
-	from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t 
+	from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t,
+		MRK_Location_Cache mlc
 	where m._Organism_key = 1 
 	and m._Marker_Status_key in (1,3) 
 	and m._Marker_key = o._Marker_key 
+	and m._Marker_key = mlc._Marker_key 
 	and o.source = 0 
 	and m._Marker_Status_key = s._Marker_Status_key 
 	and m._Marker_Type_key = t._Marker_Type_key 
@@ -374,13 +377,18 @@ for r in results:
 #	6:  cM position
 #	7:  Chromosome
 
+	if r['genomicChromosome']:
+		chromosome = r['genomicChromosome']
+	else:
+		chromosome = r['chromosome']
+
 	fp.write(mgiID[key] + TAB + \
 	       	 r['symbol'] + TAB + \
 	       	 r['markerStatus'] + TAB + \
 	         r['markerType'] + TAB + \
 	         r['name'] + TAB + \
 	         offset + TAB + \
-	         r['chromosome'] + TAB)
+	         chromosome + TAB)
 
 	# genome coordinates: column 8-9-10
         if coords.has_key(key):

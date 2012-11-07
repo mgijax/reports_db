@@ -197,7 +197,8 @@ results = db.sql('''
     select m._marker_key,
            c.strand, 
 	   convert(int, c.startCoordinate) as startC,
-	   convert(int, c.endCoordinate) as endC
+	   convert(int, c.endCoordinate) as endC,
+	   c.genomicChromosome
     from #markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
 	''', 'auto')
@@ -223,12 +224,22 @@ for r in results:
 	# column 6: chromosome
 	# column 7: marker type
 
+	chromosome = None
+
+	if coords.has_key(r['_Marker_key']):
+		# genomic chromosome, if marker has coordinates
+		chromosome = coords[r['_Marker_key']][0]['genomicChromosome']
+
+	if not chromosome:
+		# genetic chromosome, if marker has no coordinates
+		chromosome = r['chromosome']
+
 	fp.write(mgiID[r['_Current_key']] + TAB + \
 	 	r['symbol'] + TAB + \
 		r['markerStatus'] + TAB + \
 	 	r['name'] + TAB + \
 	 	r['offset'] + TAB + \
-	 	r['chromosome'] + TAB + \
+	 	chromosome + TAB + \
 		r['markerType'] + TAB)
 
 	if r['isPrimary']:
@@ -254,7 +265,7 @@ for r in results:
 		fp.write(TAB)
 
 		# column 12-13-14
-                if coords.has_key(key):
+                if coords.has_key(r['_Marker_key']):
                     fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['startC']) + TAB)
                     fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['endC']) + TAB)
                     fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['strand']) + TAB)
