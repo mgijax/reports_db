@@ -1,3 +1,9 @@
+TAG: reports_db-5-1-1-2
+DATE: 11/12/2012
+STAFF: jsb
+CHANGES:
+1) updated MGI_MRK_Coord.py to support null strands when looking up providers
+
 TAG: reports_db-5-1-1-1
 DATE: 11/07/2012
 STAFF: dbm
