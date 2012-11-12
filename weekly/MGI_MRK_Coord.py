@@ -102,7 +102,7 @@ def getProviderCache():
 		and smc._Sequence_key = scc._Sequence_key
 		and mlc.startCoordinate = scc.startCoordinate
 		and mlc.endCoordinate = scc.endCoordinate
-		and mlc.strand = scc.strand
+--		and mlc.strand = scc.strand
 		and mlc.provider = mcc.abbreviation
 		and scc._Map_key = mc._Map_key
 		and mc._Collection_key = mcc._Collection_key''', 'auto')
@@ -122,7 +122,7 @@ def getProviderCache():
 	where mlc._Organism_key = 1
 		and mlc.startCoordinate = mcf.startCoordinate
 		and mlc.endCoordinate = mcf.endCoordinate
-		and mlc.strand = mcf.strand
+--		and mlc.strand = mcf.strand
 		and mlc._Marker_key = mcf._Object_key
 		and mcf._MGIType_key = 2
 		and mlc.provider = mcc.abbreviation
