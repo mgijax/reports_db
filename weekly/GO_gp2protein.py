@@ -20,6 +20,9 @@
 #
 # History:
 #
+# 12/14/2012	lec
+#	- TR11242/inclulde _Marker_Status_key in (1,3) only
+#
 # 05/22/2012	lec
 #	- TR11034/UniProt trumps protein; add uniprotkbDict
 #
@@ -109,6 +112,7 @@ db.sql('''
     into #transcripts
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
+    and mm._Marker_Status_key in (1,3)
     and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615420
     ''', None)
@@ -128,6 +132,7 @@ db.sql('''
     into #proteins
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
+    and mm._Marker_Status_key in (1,3)
     and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615421
     ''', None)
@@ -147,6 +152,7 @@ db.sql('''
     into #uniprotkb
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
+    and mm._Marker_Status_key in (1,3)
     and mc._Marker_Type_key = 1
     and mc._LogicalDB_key in (13)
     ''', None)
@@ -168,6 +174,7 @@ db.sql('''
     into #noTransProt
     from SEQ_Marker_Cache mc, MRK_Mouse_View mm
     where mc._Marker_key = mm._Marker_key
+    and mm._Marker_Status_key in (1,3)
     and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615419
     and mc._LogicalDB_key in (59,60,85)
