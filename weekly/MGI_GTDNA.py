@@ -67,10 +67,11 @@ TAB = reportlib.TAB
 #
 collection = "dbGSS Gene Trap"
 outputDir = os.environ['REPORTOUTPUTDIR']
-# rna sequence tag methods in order to determine sequence type
-# this script used NOT IN this list
+
+# We use RNA sequence tag methods to determine sequence type
+# this script uses NOT IN this list
 # note some seq types are incorrect in our database and in genbank
-rnaMethods = '5'' RACE, 3'' RACE'
+rnaMethods = "5' RACE, 3' RACE"
 
 # put configured methods in form usable by sql
 temp = ''
