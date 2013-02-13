@@ -20,6 +20,9 @@
 #
 # History:
 #
+# 02/13/2013	lec
+#	- TR11272/split protein coding genes into protein coding/rna/neither reports
+#
 # 12/14/2012	lec
 #	- TR11242/inclulde _Marker_Status_key in (1,3) only
 #
@@ -75,7 +78,6 @@
 '''
  
 import sys
-import string
 import os
 import reportlib
 
@@ -99,7 +101,9 @@ except:
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-fp = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp1 = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2 = reportlib.init('gp2rna', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp3 = reportlib.init('gp_unlocalized', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 db.useOneConnection(1)
 
@@ -198,15 +202,18 @@ for r in results:
 
     mgiID = "MGI:" + r['mgiID']
     markerKey = r['_Marker_key']
+    isfp1 = 0
 
     if uniprotkbDict.has_key(markerKey):
 	l = uniprotkbDict[markerKey]
 	seqID = l[0]
 	logicalDB = l[1]
+	isfp1 = 1
     elif proteinDict.has_key(markerKey):
 	l = proteinDict[markerKey]
 	seqID = l[0]
 	logicalDB = l[1]
+	isfp1 = 1
     else:
 	l = transcriptDict[markerKey]
 	seqID = l[0]
@@ -229,16 +236,22 @@ for r in results:
     else:
 	continue
 
-    fp.write(mgiID + TAB + seqID + CRT)
+    if isfp1:
+        fp1.write(mgiID + TAB + seqID + CRT)
+    else:
+        fp2.write(mgiID + TAB + seqID + CRT)
 
 #
-# markers that have neither transcrip nor protein
+# markers that have neither transcript nor protein
 #
 results = db.sql('select * from #noTransProt', 'auto')
 for r in results:
     mgiID = "MGI:" + r['mgiID']
-    fp.write(mgiID + TAB + CRT)
+    fp3.write(mgiID + TAB + CRT)
 
-reportlib.finish_nonps(fp)
+reportlib.finish_nonps(fp1)
+reportlib.finish_nonps(fp2)
+reportlib.finish_nonps(fp3)
+
 db.useOneConnection(1)
 
