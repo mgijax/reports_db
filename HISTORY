@@ -1,3 +1,10 @@
+TAG: reports_db-5-1-2-1
+DATE: 02/14/2013
+STAFF: lec
+CHANGES:
+1) TR11112/GO_gene_association.py
+2) TR11272/GO_gp2protein.py
+
 TAG: reports_db-5-1-1-4
 DATE: 01/15/2013
 STAFF: sc
