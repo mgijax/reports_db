@@ -157,7 +157,7 @@ go_urlprefix = 'http://www.informatics.jax.org/searches/GO.cgi?id='
 mp_urlprefix = 'http://www.informatics.jax.org/searches/Phat.cgi?id='
 geno_urlprefix = 'http://www.informatics.jax.org/javawi2/servlet/WIFetch?page=mpAnnotSummary&id='
 omim_urlprefix = 'http://www.omim.org/entry/'
-omimdisease_urlprefix = 'http://www.informatics.jax.org/javawi2/servlet/WIFetch?page=humanDisease&id='
+omimdisease_urlprefix = 'http://www.informatics.jax.org/disease/'
 
 #
 # report directory, archive, etc.
