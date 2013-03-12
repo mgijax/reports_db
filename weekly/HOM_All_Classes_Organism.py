@@ -120,8 +120,8 @@ def writeRecord (r):
 def writeHomologyClass (homology):
 
     #
-    # Process the results in the homology class dictionary based on the
-    # defined organism sort order.
+    # Process the results in the homology class dictionary in the defined
+    # organism sort order.
     #
     for organismKey in organismOrder:
 
@@ -229,7 +229,6 @@ db.sql('''
               a2._MGIType_key = 2 and
               a2._LogicalDB_key = 55
         ''', None)
-#              c.clusterID in ("4265","1609") and
 
 db.sql('create index idx1 on #temp1 (_Marker_key)', None)
 
