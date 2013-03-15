@@ -193,7 +193,7 @@ for r in results:
 #
 fp.write('HomoloGene ID' + TAB)
 fp.write('Common Organism Name' + TAB)
-fp.write('NCBI Taxonomy ID' + TAB)
+fp.write('NCBI Taxon ID' + TAB)
 fp.write('Symbol' + TAB)
 fp.write('EntrezGene ID' + TAB)
 fp.write('Mouse MGI ID' + TAB)
