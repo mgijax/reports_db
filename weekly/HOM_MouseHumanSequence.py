@@ -340,15 +340,6 @@ results = db.sql('''
              MRK_Location_Cache lc
         where t._Marker_key = lc._Marker_key and
               lc._Organism_key in (1,2)
-        union
-        select t._Marker_key,
-               m.chromosome,
-               m.cytogeneticOffset,
-               NULL, NULL, NULL, NULL, NULL
-        from #temp1 t,
-             MRK_Marker m
-        where t._Marker_key = m._Marker_key and
-              m._Organism_key not in (1,2)
         ''','auto')
 
 for r in results:
