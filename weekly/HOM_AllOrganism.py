@@ -207,7 +207,7 @@ fp.write('Synonyms' + CRT)
 
 
 #
-# Get HomoloGene ID, organism name, marker symbol, marker name. and
+# Get HomoloGene ID, organism name, taxon ID, marker symbol/name. and
 # EntrezGene ID that will be needed for each row of the report. These are
 # saved in a temp table because the marker key for each row will be used
 # to query for the remaining info.
