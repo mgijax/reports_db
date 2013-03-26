@@ -359,6 +359,7 @@ def process():
 	and ma.preferred = 1 
 	and exists (select 1 from SEQ_Marker_Cache c where m._Marker_key = c._Marker_key 
 	and c._LogicalDB_key in (59, 60, 85))
+	and m.symbol = 'agap1'
 	''', None)
     db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
 

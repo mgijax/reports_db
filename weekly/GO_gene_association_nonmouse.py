@@ -38,6 +38,9 @@
 #
 # History:
 #
+# 03/26/2013
+#	- TR11330 (scrum-dog TR11248)/added "gaf" header
+#
 # 12/28/2011	lec
 #	- changed non-ansi-standard query to left outer join
 #
@@ -153,6 +156,7 @@ def writeRecord(i, r, e):
 
 db.useOneConnection(1)
 fp = reportlib.init('gene_association', fileExt = '.mgi_nonmouse', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp.write('!gaf-version: 1.0' + CRT)
 
 #
 # retrieve all dag abbrevations for each term
