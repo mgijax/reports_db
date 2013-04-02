@@ -1,3 +1,10 @@
+TAG: reports_db-5-1-2-4
+DATE: 04/02/2013
+STAFF: lec
+CHANGES:
+1) TR11343 (scrum-dog TR11248)
+mgimarkerfeed/mgiMarkerFeed.py:genotype_mpt.bcp
+
 TAG: reports_db-5-1-2-3
 DATE: 03/26/2013
 STAFF: lec

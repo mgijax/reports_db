@@ -65,6 +65,9 @@
 #
 # History:
 #
+# lec	04/02/2013
+#	- TR11343/genotype_mpt : update marker/omim cache query
+#
 # lec	12/28/2011
 #	- changed non-ansi-standard query to left outer join
 #
@@ -1275,49 +1278,41 @@ def genotypes():
     #
     # genotype_mpt.bcp
     #
-
+    # select all genotypes
     #
-    # cache genotype/omimcategory3 values
+    # for those that contain marker/omim annotations (mrk_omim_cache)
+    # include the omimCatergory3 ('None' if no omim annotation exists)
     #
-
-    omimCat = {}
-
-    results = db.sql('''
-	select _Genotype_key, min(omimCategory3) as category
-	from MRK_OMIM_Cache where omimCategory3 != -1 
-	group by _Genotype_key
-	''', 'auto')
-
-    for r in results:
-	key = r['_Genotype_key']
-	value = r['category']
-	omimCat[key] = value
 
     fp = open(OUTPUTDIR + 'genotype_mpt.bcp', 'w')
 
     results = db.sql('''
-	select g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, qualifier = q.term, 
+	select distinct g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, 
+	qualifier = q.term, c.omimCategory3,
         convert(char(20), a.creation_date, 100) as cdate, 
         convert(char(20), a.modification_date, 100) as mdate 
-	from #genotypes g, VOC_Annot a, VOC_Term q 
+	from #genotypes g, VOC_Annot a, VOC_Term q, MRK_OMIM_Cache c
 	where g._Genotype_key = a._Object_key 
 	and a._AnnotType_key in (1002, 1005) 
 	and a._Qualifier_key = q._Term_key
+	and g._Genotype_key *= c._Genotype_key
+	and a._Term_key *= c._Term_key
+	order by g._Genotype_key
 	''', 'auto')
 
     for r in results:
 
-	if omimCat.has_key(r['_Genotype_key']):
-	    ovalue = omimCat[r['_Genotype_key']]
-        else:
-	    ovalue = -1
+	if r['omimCategory3'] == None:
+	    category = '-1'
+	else:
+	    category = r['omimCategory3']
 
 	fp.write(`r['_Annot_key']` + TAB + \
 		 `r['_AnnotType_key']` + TAB + \
 	         `r['_Term_key']` + TAB + \
 	         `r['_Genotype_key']` + TAB + \
 		string.strip(mgi_utils.prvalue(r['qualifier'])) + TAB + \
-		`ovalue` + TAB + \
+		str(category) + TAB + \
 		str(r['cdate']) + TAB + \
 		str(r['mdate']) + CRT)
 
