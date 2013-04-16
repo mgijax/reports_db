@@ -148,6 +148,22 @@ db.sql('''
 	and not exists (select 1 from #refs rr where r._Refs_key = rr._Refs_key)
 	''', None)
 
+
+#
+# GO annotations
+#
+db.sql('''
+        insert into #refs
+	select distinct ve._Refs_key, a.accID
+	from ACC_Accession a, VOC_Evidence ve, VOC_Annot va
+	where a._LogicalDB_key = 65
+        and a._MGIType_key = 1
+        and a._Object_key = ve._Refs_key
+	and ve._Annot_key = va._Annot_key
+	and va._AnnotType_key = 1000
+        and not exists (select 1 from #refs rr where ve._Refs_key = rr._Refs_key)
+        ''', None)
+
 results = db.sql('select * from #refs', 'auto')
 for r in results:
     fp.write(r['accID'] + CRT)

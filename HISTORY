@@ -1,3 +1,8 @@
+TAG: reports_db-5-1-3-1
+DATE: 04/16/2013
+STAFF: sc
+CHANGES: N2MO merge tr6519  changes to trunk
+
 TAG: reports_db-5-1-2-4
 DATE: 04/02/2013
 STAFF: lec
@@ -11,6 +16,13 @@ STAFF: lec
 CHANGES:
 1) TR11330 (scrum-dog TR11248)
 weekly/GO_gene_association_nonmouse.py
+
+TAG: reports_db-tr6519-1
+DATE: 04/04/2013
+STAFF: sc
+CHANGES: N2MO/TR6519
+1) Jon's changes
+2) MGI_ElsevierDOI.py - added GO annotation refs
 
 TAG: reports_db-tr6519-BP
 DATE: 02/25/2013
