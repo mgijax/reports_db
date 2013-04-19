@@ -121,6 +121,9 @@
 #
 # History:
 #
+# sc	04/18/2013 
+#	- N2MO; update to use new MRK_Cluster* tables
+#
 # lec	05/17/2012
 #	- TR11046; new
 #
