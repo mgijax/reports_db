@@ -68,8 +68,9 @@ def createDict(results, keyField, valueField):
                 key = r[keyField]
                 value = r[valueField]
                 if not d.has_key(key):
-                        d[key] = ' '
-                d[key] = string.join([d[key],value,])
+                    d[key] = ' '
+		if d[key].find(value) == -1:
+		    d[key] = string.join([d[key],value,])
         return d
 
 
@@ -83,19 +84,40 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # Get mouse to human orthologous marker pair's symbols and keys
 #
 
+db.sql('''select c.clusterID, cm.*
+    into #mouse
+    from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
+    where c._ClusterType_key = 9272150
+    and c._ClusterSource_key = 9272151
+    and c._Cluster_key = cm._Cluster_key
+    and cm._Marker_key = m._Marker_key
+    and m._Organism_key = 1''', None)
+
+db.sql('create index idx1 on #mouse(_Cluster_key)', None)
+
+db.sql('''select cm.*
+    into #human
+    from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
+    where c._ClusterType_key = 9272150
+    and c._ClusterSource_key = 9272151
+    and c._Cluster_key = cm._Cluster_key
+    and cm._Marker_key = m._Marker_key
+    and m._Organism_key = 2''', None)
+
+db.sql('create index idx1 on #human(_Cluster_key)', None)
+
 db.sql('''
-	select distinct h1._Marker_key as mouseKey, 
+	select distinct hm._Marker_key as mouseKey, 
 			m1.symbol as mouseSym, 
-	                h2._Marker_key as humanKey, 
+			hm.clusterID,
+	                hh._Marker_key as humanKey, 
 			m2.symbol as humanSym 
 	into #homology 
-	from MRK_Homology_Cache h1, MRK_Homology_Cache h2, 
+	from #mouse hm, #human hh, 
 	MRK_Marker m1, MRK_Marker m2 
-	where h1._Organism_key = 1 
-	and h1._Class_key = h2._Class_key 
-	and h2._Organism_key = 2 
-	and h1._Marker_key = m1._Marker_key 
-	and h2._Marker_key = m2._Marker_key 
+	where hm._Cluster_key = hh._Cluster_key
+	and hm._Marker_key = m1._Marker_key 
+	and hh._Marker_key = m2._Marker_key 
 	''', None)
 
 db.sql('create index index_mouseKey on #homology(mouseKey)', None)
@@ -148,7 +170,7 @@ results = db.sql('''
 	''', 'auto')
 mpheno = createDict(results, 'mouseKey', 'accID')
 
-results = db.sql('select * from #homology order by humanSym', 'auto')
+results = db.sql('select * from #homology order by humanSym, mouseSym', 'auto')
 
 for r in results:
     fp.write(r['humanSym'] + TAB)
@@ -157,7 +179,7 @@ for r in results:
         fp.write(hlocus[r['humanKey']] + TAB)
     else:
         fp.write(TAB)
-
+    fp.write(r['clusterID'] + TAB)
     fp.write(r['mouseSym'] + TAB)
 
     if mmgi.has_key(r['mouseKey']):
