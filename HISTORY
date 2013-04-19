@@ -1,3 +1,11 @@
+TAG: reports_db-5-1-3-2
+DATE: 04/18/2013
+STAFF: sc
+CHANGES: N2MO 
+1) US142 - weekly/MGI_iphone_app.py, update to use MRK_Cluster*
+2) US148 - weekly_reports.csh - US not finished (diff script not ready), 
+    commented out code.
+
 TAG: reports_db-5-1-3-1
 DATE: 04/16/2013
 STAFF: sc

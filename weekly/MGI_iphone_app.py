@@ -363,21 +363,39 @@ def iphone_genes():
     #
     # OMIM human disease (_annottype_key = 1006)
     #
-    results = db.sql('''
-	    select distinct m._marker_key, a.accid, t.term
-	    from #markers m, MRK_Homology_Cache h1, MRK_Homology_Cache h2, 
-	         VOC_Annot aa, ACC_Accession a, VOC_Term t
-	    where m._marker_key = h1._marker_key
-	    and h1._Organism_key = 1 
-	    and h1._Class_key = h2._Class_key 
-	    and h2._Organism_key = 2
-	    and h2._Marker_key = aa._object_key
-	    and aa._annottype_key = 1006
-	    and aa._term_key = a._object_key
-	    and a._mgitype_key = 13
-	    and a.preferred = 1
-	    and aa._Term_key = t._Term_key
-            ''', 'auto')
+    db.sql('''select c.clusterID, cm.*, m._Organism_key
+        into #mouse
+        from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
+        where c._ClusterType_key = 9272150
+        and c._ClusterSource_key = 9272151
+        and c._Cluster_key = cm._Cluster_key
+        and cm._Marker_key = m._Marker_key
+        and m._Organism_key = 1''', None)
+
+    db.sql('create index idx1 on #mouse(clusterID)', None)
+
+    db.sql('''select c.clusterID, cm.*, m._Organism_key
+        into #human
+        from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
+        where c._ClusterType_key = 9272150
+        and c._ClusterSource_key = 9272151
+        and c._Cluster_key = cm._Cluster_key
+        and cm._Marker_key = m._Marker_key
+        and m._Organism_key = 2''', None)
+
+    db.sql('create index idx1 on #human(clusterID)', None)
+
+    results = db.sql('''select distinct m._marker_key, a.accid, t.term
+            from #markers m, #mouse hm, #human hh,
+	    VOC_Annot aa, ACC_Accession a, VOC_Term t
+            where m._marker_key = hm._marker_key
+            and hm.clusterID = hh.clusterID
+            and hh._Marker_key = aa._object_key
+            and aa._annottype_key = 1006
+            and aa._term_key = a._object_key
+            and a._mgitype_key = 13
+            and a.preferred = 1
+            and aa._Term_key = t._Term_key''', 'auto')
     omimhuman = {}
     for r in results:
         key = r['_marker_key']
@@ -412,7 +430,6 @@ def iphone_genes():
     for r in results:
     
         key = r['_marker_key']
-    
     #	MGI Marker ID
     #	Marker key
     #	Symbol
