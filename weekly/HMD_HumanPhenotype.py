@@ -24,6 +24,10 @@
 #
 # History:
 #
+# sc	04/19/2013
+#	- N2MO; update to use MRK_Cluster* tables and deal w/
+#	  N-M human/mouse homologies; added homologeneID to report
+#
 # lec	04/23/2008
 #	- TR 8963; only select primary MP Header Ids
 #
