@@ -163,6 +163,7 @@ organismResults = db.sql('''select o._Organism_key, o.commonName, a.accID
 	from MGI_Organism o
 	left outer join ACC_Accession a on (
 		o._Organism_key = a._Object_key
+		and a.preferred = 1
 		and a._MGIType_key = 20
 		and a._LogicalDB_key = 32)''', 'auto')
 
@@ -177,6 +178,7 @@ termResults = db.sql('''select t._Term_key, t.term, a.accID
 	where t._Vocab_key = 44
 		and t._Term_key = a._Object_key
 		and a._MGIType_key = 13
+		and a.preferred = 1
 		and a._LogicalDB_key = 15''', 'auto')
 
 diseaseTerms = buildCache(termResults, '_Term_key', 'term')
