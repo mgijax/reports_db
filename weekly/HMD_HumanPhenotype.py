@@ -167,6 +167,7 @@ results = db.sql('''
         where h.mouseKey = g._Marker_key 
         and g._Genotype_key = v._Object_key 
         and v._AnnotType_key = 1002 
+	and v.isNormal = 0
         and a._Object_key = v._Term_key 
         and a._MGIType_key = 13 
         and a.preferred = 1 
