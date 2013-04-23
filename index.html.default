@@ -557,7 +557,7 @@ D></TABLE>
     <TR><TD><TABLE>
         <TR><TD><B>12. Associations of Mouse Genes with OMIM Diseases</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>OMIM ID</TD><TD>OMIM Term</TD><TD>HomoloGene ID</TD><TD>Common Organism Name</TD><TD>NCBI Taxon ID</TD><TD>Gene Symbol</TD><TD>Entrez Gene ID</TD><TD>Mouse MGI ID</TD></TR></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>OMIM Disease ID</TD><TD>OMIM Disease Name</TD><TD>HomoloGene ID</TD><TD>Common Organism Name</TD><TD>NCBI Taxon ID</TD><TD>Symbol</TD><TD>EntrezGene ID</TD><TD>Mouse MGI ID</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_OMIM.rpt">MGI_OMIM.rpt</A></TD></TR>
     </TABLE></TD></TR>
