@@ -1,9 +1,12 @@
-TAG: reports_db-???
-DATE: 04/18/2013
-STAFF: sc
+TAG: reports_db-5-1-3-3
+DATE: 04/23/2013
+STAFF: sc, jsb
 CHANGES: N2MO
 1) HMD_HumanPhenotype.py - updated to use MRK_Cluster* tables and deal w/N-M
 2) index.html - added new column to HMD_HumanPhenotype.rpt
+3) index.html - redefined MGI_OMIM report
+4) MGI_OMIM.py - new addition (full rewrite of MGI_PhenoOMIM.py)
+5) MGI_PhenoOMIM.py - removed; replaced by #4 above
 
 TAG: reports_db-5-1-3-2
 DATE: 04/18/2013
