@@ -352,12 +352,19 @@ for r in results:
     if genomicChr != None:
 
         #
+        # The strand can be null, so build that piece separately.
+        #
+        if r['strand'] != None:
+            strand = '(' + r['strand'] + ')'
+        else:
+            strand = ''
+
+        #
         # Add the genomic coordinate string to the lookup for the marker.
         #
         genCoord[r['_Marker_key']] = 'Chr' + genomicChr + ':' + \
                                      r['startCoordinate'].strip() + '-' + \
-                                     r['endCoordinate'].strip() + '(' + \
-                                     r['strand'] + ')'
+                                     r['endCoordinate'].strip() + strand
 
     #
     # Use the genetic chromosome with one of the offsets (if available) to
