@@ -14,7 +14,8 @@ endif
 source ${MGICONFIG}/master.config.csh
 
 # set this variable to either 'sybase' or 'postgres'
-setenv DB_TYPE			sybase
+#setenv DB_TYPE			sybase
+setenv DB_TYPE			postgres
 
 setenv IMSR_DBNAME		imsr
 

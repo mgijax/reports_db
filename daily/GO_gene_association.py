@@ -41,6 +41,9 @@
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
 #	MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
 #
+# lec	05/28/2013
+#	- TR11060/add all UniProtKB: and PR:
+#
 # lec	01/15/2013
 #	- TR11112/use GOANNOTRELATIONSHIP to generate column 16
 #
@@ -165,7 +168,7 @@ pubMed = {}
 
 # see doIsoform()
 isoformsProtein = {}
-isoformsProtein2 = {}
+forPROC = {}
 
 # see doProtein()
 proteins = {}
@@ -477,7 +480,7 @@ def doCol16():
 #
 def doIsoform():
     global isoformsProtein
-    global isoformsProtein2
+    global forPROC
 
     #
     # isoformsProtein hash
@@ -494,7 +497,7 @@ def doIsoform():
     isoformPattern5 = re.compile(r'PR:', re.I)
 
     isoformsProtein = {}
-    isoformsProtein2 = {}
+    forPROC = {}
     results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
 	from #gomarker2 r, VOC_Evidence_Property p
 	where r._AnnotEvidence_key = p._AnnotEvidence_key
@@ -530,12 +533,14 @@ def doIsoform():
 
 	           #
 	           # TR11060
-	           # if UniProtKB and contains "-"
+	           # if UniProtKB:xxxx (any UniProtKB)
+		   # if PR:xxxx
 	           #
-                   if isoformPattern1.match(b) != None and string.find(b, '-') >= 0:
-                       if not isoformsProtein2.has_key(key):
-	                   isoformsProtein2[key] = []
-                       isoformsProtein2[key].append(b)
+		   if string.find(b, 'UniProtKB:') >= 0 or \
+		      string.find(b, 'PR:') >= 0:
+                       if not forPROC.has_key(key):
+	                   forPROC[key] = []
+                       forPROC[key].append(b)
 #
 # end doIsoform()
 #
@@ -759,7 +764,7 @@ def doFinish():
 	    # TR11060
 	    # subset of UniProtKB:xxxx-?? only
 	    #
-	    if isoformsProtein2.has_key(objectKey):
+	    if forPROC.has_key(objectKey):
                 fp2.write(reportRow)
  
 #
