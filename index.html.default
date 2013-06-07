@@ -158,8 +158,7 @@
 	<TD>Genome Coordinate End</TD>
 	<TD>Strand</TD>
         <TD>GenBank Accession IDs <BR>(pipe-delimited)</TD>
-	<TD>Unigene ID <BR>(if any)</TD>
-	<TD>RefSeq ID <BR>(if any)</TD>
+	<TD>RefSeq Transcript ID <BR>(if any)</TD>
 	<TD>VEGA Transcript ID <BR>(if any)</TD>
 	<TD>Ensembl Transcript ID <BR>(if any)</TD>
 	<TD>UniProt ID <BR>(if any)</TD>
@@ -167,6 +166,7 @@
 	<TD>VEGA protein ID <BR>(if any)</TD>
 	<TD>Ensembl protein ID <BR>(if any)</TD>
 	<TD>RefSeq protein ID <BR>(if any)</TD>
+        <TD>Unigene ID <BR>(if any)</TD>
 	</TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_Sequence.rpt">MRK_Sequence.rpt</A></TD></TR>

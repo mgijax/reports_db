@@ -26,10 +26,15 @@
 #	17: VEGA protein ID
 #	18: Ensembl protein ID
 #	19: RefSeq protein ID
+#	20: UniGene ID
 #
 # Notes:
 #
 # History:
+#
+# sc	06/07/2013
+#	-TR11402 - add UniGene ID column (was removed in tag 5-0-0-18 
+#		in May of 2012, but don't know why
 #
 # lec	05/14/2012
 #	- TR11035/postgres cleanup/merge
@@ -111,7 +116,8 @@ fp.write('UniProt ID\t')
 fp.write('TrEMBL ID\t')
 fp.write('VEGA protein ID\t')
 fp.write('Ensembl protein ID\t')
-fp.write('RefSeq protein ID\n')
+fp.write('RefSeq protein ID\t')
+fp.write('UniGene ID\n')
 
 # deleted sequences
 
@@ -207,8 +213,25 @@ for r in results:
     if not gbID.has_key(key):
 	gbID[key] = []
     gbID[key].append(value)
+# UniGene ids
 
-# RefSeq transgene ids
+results = db.sql('''
+      select distinct m._Marker_key, a.accID
+      from #markers m, ACC_Accession a
+      where m._Marker_key = a._Object_key
+      and a._MGIType_key = 2
+      and a._LogicalDB_key = 23
+      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a. _LogicalDB_key = d._LogicalDB_key)
+      ''', 'auto')
+ugID = {}
+for r in results:
+    key = r['_Marker_key']
+    value = r['accID']
+    if not ugID.has_key(key):
+        ugID[key] = []
+    ugID[key].append(value)
+
+# RefSeq transcript ids
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
       from #markers m, ACC_Accession a 
@@ -441,6 +464,11 @@ for r in results:
 #	19: RefSeq protein ID
 	if rsprot.has_key(key):
 		fp.write(string.join(rsprot[key], '|'))
+#	20: UniGene ID
+        if ugID.has_key(key):
+                fp.write(string.join(ugID[key], '|'))
+        fp.write(reportlib.TAB)
+
 	fp.write(CRT)
 
 reportlib.finish_nonps(fp)
