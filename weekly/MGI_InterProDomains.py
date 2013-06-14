@@ -12,6 +12,9 @@
 #
 # History:
 #
+# lec	06/14/2013
+#	- interpro domain may contain > 1 marker
+#
 # lec	04/30/2012	
 #	- TR11035/merge with MRK_InterPro.py
 #
@@ -67,7 +70,7 @@ for r in results:
     value = r
     if not markers.has_key(key):
         markers[key] = []
-    markers[key] = r
+    markers[key].append(r)
 
 #
 # interpro domain
@@ -86,13 +89,15 @@ for r in results:
 
 	key = r['_Term_key']
 
-	fp.write(r['accID'] + TAB)
-	fp.write(r['term'] + TAB)
-	
 	if markers.has_key(key):
-	    fp.write(markers[key]['accID'] + TAB)
-	    fp.write(markers[key]['symbol'] + CRT)
+            for k in markers[key]:
+	        fp.write(r['accID'] + TAB)
+	        fp.write(r['term'] + TAB)
+	        fp.write(k['accID'] + TAB)
+	        fp.write(k['symbol'] + CRT)
 	else:
+	    fp.write(r['accID'] + TAB)
+	    fp.write(r['term'] + TAB)
 	    fp.write(TAB + CRT)
 
 reportlib.finish_nonps(fp)
