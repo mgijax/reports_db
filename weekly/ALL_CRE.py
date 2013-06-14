@@ -201,11 +201,15 @@ def main():
     # get basic info from Cre cache table and accession table
     cmd = '''
 	select a._Allele_key, a.symbol, a.name, mm.name as mname, a.alleleType,
-	       a.driverNote, a.structure, a.system, a.accID
-	from ALL_Cre_Cache a,
+	       a.driverNote, a.structure, a.system, aa.accID
+	from ALL_Cre_Cache a, ACC_Accession aa, 
 	     ALL_Allele alle LEFT OUTER JOIN MRK_Marker mm on (alle._Marker_key = mm._Marker_key)
-	where a._Allele_key = alle._Allele_key
-	'''
+	where a._Allele_key = aa._Object_key
+	and aa._MGIType_key = %d
+	and aa._LogicalDB_key = %d
+	and aa.preferred = 1
+	and a._Allele_key = alle._Allele_key
+	''' % (ALLELE_MGI_TYPE_KEY, MGI_LDB_KEY)
     db.sql( cmd, parseAllele )
 
     # set 'inducible' field by querying for inducible-type notes
