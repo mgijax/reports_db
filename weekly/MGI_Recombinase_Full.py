@@ -223,15 +223,10 @@ printHeaderTAB()
 
 db.sql('''
        select distinct c._Allele_key, c.symbol, c.name, c.driverNote, 
-		a.accID, rtrim(m.name) as markerName
+		c.accID, rtrim(m.name) as markerName
        into #cre
-       from ALL_Cre_Cache c, ACC_Accession a, ALL_Allele aa, MRK_Marker m
-       where c._Allele_key = a._Object_key
-       and a._MGIType_key = 11
-       and a._LogicalDB_key = 1 
-       and a.prefixPart = 'MGI:' 
-       and a.preferred = 1
-       and c._Allele_key = aa._Allele_key
+       from ALL_Cre_Cache c, ALL_Allele aa, MRK_Marker m
+       where c._Allele_key = aa._Allele_key
        and aa._Marker_key = m._Marker_key
        ''', None)
 
