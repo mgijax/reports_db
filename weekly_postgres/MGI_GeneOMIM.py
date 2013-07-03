@@ -22,19 +22,11 @@
 import sys 
 import os
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -51,7 +43,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # Genotype/Markers that have OMIM annotations
 #
 
-results = db.sql('''select distinct omimID = a.accID, ma.accID
+results = db.sql('''select distinct a.accID omimID, ma.accID
         from GXD_AlleleGenotype ag, VOC_Annot va, ACC_Accession a, ACC_Accession ma
         where ag._Genotype_key = va._Object_key
         and va._AnnotType_key = 1005

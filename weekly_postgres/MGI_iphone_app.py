@@ -134,18 +134,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -223,7 +216,7 @@ def iphone_genes():
 	    and m._marker_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'mgi:'
+	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
 	    ''', None)
     db.sql('create index marker_idx on #markers(_marker_key)', None)
@@ -234,8 +227,8 @@ def iphone_genes():
     results = db.sql('''    
         select m._marker_key,
                c.strand, 
-               convert(int, c.startcoordinate) as startc,
-               convert(int, c.endcoordinate) as endc,
+               cast(c.startcoordinate as int) as startc,
+               cast(c.endcoordinate as int) as endc,
 	       c.genomicChromosome
         from #markers m, MRK_Location_Cache c
         where m._marker_key = c._marker_key
@@ -274,7 +267,7 @@ def iphone_genes():
 	    and aa._allele_key = a._object_key
 	    and a._mgitype_key = 11
 	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'mgi:'
+	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
             ''', 'auto')
     alleles = {}
@@ -375,7 +368,7 @@ def iphone_genes():
         and cm._Marker_key = m._Marker_key
         and m._Organism_key = 1''', None)
 
-    db.sql('create index idx1 on #mouse(clusterID)', None)
+    db.sql('create index mouse_idx on #mouse(clusterID)', None)
 
     db.sql('''select c.clusterID, cm.*, m._Organism_key
         into #human
@@ -386,7 +379,7 @@ def iphone_genes():
         and cm._Marker_key = m._Marker_key
         and m._Organism_key = 2''', None)
 
-    db.sql('create index idx1 on #human(clusterID)', None)
+    db.sql('create index human_idx on #human(clusterID)', None)
 
     results = db.sql('''select distinct m._marker_key, a.accid, t.term
             from #markers m, #mouse hm, #human hh,
@@ -656,7 +649,7 @@ def iphone_mp():
 	    and aa._object_key = a._object_key
 	    and a._mgitype_key = 12
 	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'mgi:'
+	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
             ''', 'auto')
     genoannots = {}
@@ -680,7 +673,7 @@ def iphone_mp():
 	    and g._marker_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'mgi:'
+	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
             ''', 'auto')
     markerannots = {}
@@ -704,7 +697,7 @@ def iphone_mp():
 	    and g._allele_key = a._object_key
 	    and a._mgitype_key = 11
 	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'mgi:'
+	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
             ''', 'auto')
     alleleannots = {}
@@ -839,7 +832,7 @@ def iphone_omim():
 	    and aa._object_key = a._object_key
 	    and a._mgitype_key = 12
 	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'mgi:'
+	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
             ''', 'auto')
     genoannots1 = {}
@@ -863,7 +856,7 @@ def iphone_omim():
 	    and g._marker_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'mgi:'
+	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
             ''', 'auto')
     markerannots1 = {}
@@ -887,7 +880,7 @@ def iphone_omim():
 	    and g._allele_key = a._object_key
 	    and a._mgitype_key = 11
 	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'mgi:'
+	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
             ''', 'auto')
     alleleannots1 = {}

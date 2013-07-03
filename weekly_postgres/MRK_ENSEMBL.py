@@ -51,19 +51,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -146,8 +138,7 @@ db.sql('''
 	     m.chromosome, 
 	     o.offset, 
 	     a2.accID as ensembl,
-	     mlc.genomicChromosome,
-	     mlc.genomicChromosome as sortChromosome
+	     mlc.genomicChromosome
       into #markers
       from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Offset o,
       	    MRK_Location_Cache mlc
@@ -163,8 +154,6 @@ db.sql('''
 	    m._Marker_key = mlc._Marker_key and
             o.source = 0 
 	''', None)
-db.sql('''update #markers set sortChromosome = genomicChromosome
-	where genomicChromosome is not null''', 'None')
 db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
 
 #
@@ -220,7 +209,7 @@ for r in results:
 		bioTypes[key] = []
 	bioTypes[key].append(value)
 
-results = db.sql('select * from #markers order by sortChromosome, symbol', 'auto')
+results = db.sql('select * from #markers order by genomicChromosome, symbol', 'auto')
 
 for r in results:
 

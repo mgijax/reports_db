@@ -30,18 +30,11 @@ import sys
 import os
 import string
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -224,7 +217,7 @@ fp.write('SWISS_PROT IDs' + CRT)
 # to query for the remaining info.
 #
 db.sql('''
-        select convert(int,a1.accID) as homologeneID,
+        select cast(a1.accID as int) as homologeneID,
                o._Organism_key,
                o.commonName,
                a2.accID as taxonID,
@@ -270,7 +263,7 @@ results = db.sql('''
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
               a._LogicalDB_key = 1 and
-              a.prefixPart = "MGI:" and
+              a.prefixPart = 'MGI:' and
               a.private = 0 and
               a.preferred = 1
         ''','auto')
@@ -290,7 +283,7 @@ results = db.sql('''
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
               a._LogicalDB_key = 64 and
-              a.prefixPart = "HGNC:" and
+              a.prefixPart = 'HGNC:' and
               a.private = 0 and
               a.preferred = 1
         ''','auto')
@@ -331,10 +324,10 @@ results = db.sql('''
         select t._Marker_key,
                lc.chromosome,
                lc.cytogeneticOffset,
-               str(lc.offset,10,2) as offset,
+               substr(cast(lc.offset as varchar),10,2) as offset,
                lc.genomicChromosome,
-               str(lc.startCoordinate,10,0) as startCoordinate,
-               str(lc.endCoordinate,10,0) as endCoordinate,
+               substr(cast(lc.startCoordinate as varchar),10,0) as startCoordinate,
+               substr(cast(lc.endCoordinate as varchar),10,0) as endCoordinate,
                lc.strand
         from #temp1 t,
              MRK_Location_Cache lc
@@ -416,7 +409,7 @@ results = db.sql('''
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
               a._LogicalDB_key = 27 and
-              a.prefixPart in ("NM_","XM_")
+              a.prefixPart in ('NM_','XM_')
         ''','auto')
 
 idList = ''
@@ -447,7 +440,7 @@ results = db.sql('''
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
               a._LogicalDB_key = 27 and
-              a.prefixPart in ("NP_","XP_")
+              a.prefixPart in ('NP_','XP_')
         ''','auto')
 
 idList = ''

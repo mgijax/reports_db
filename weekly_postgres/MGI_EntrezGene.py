@@ -39,19 +39,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -148,7 +140,7 @@ results = db.sql('''
 	and m._Marker_key = s._Object_key 
 	and s._MGIType_key = 2 
 	and s._SynonymType_key = st._SynonymType_key 
-	and st.synonymType = "exact"
+	and st.synonymType = 'exact'
 	''', 'auto')
 synonym = {}
 for r in results:
@@ -180,7 +172,7 @@ results = db.sql('''
 	from #markers m, MRK_MCV_Cache s 
 	where m.isPrimary = 1 
 	and m._Marker_key = s._Marker_key 
-	and s.qualifier = "D"
+	and s.qualifier = 'D'
 	''', 'auto')
 featureTypes = {}
 for r in results:

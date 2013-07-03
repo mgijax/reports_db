@@ -71,19 +71,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 #
 # constants
@@ -279,7 +271,7 @@ results = db.sql('''select c.chromosome,
             f.strand, f._Object_key as _Sequence_key
             from MAP_Coord_Collection mcc, MAP_Coordinate mc,
             MRK_Chromosome c, MAP_Coord_Feature f
-            where mcc.name = "%s"
+            where mcc.name = '%s'
             and mcc._Collection_key = mc._Collection_key
             and mc._Object_key = c._Chromosome_key
             and mc._Map_key = f._Map_key''' % COLLECTION, 'auto')

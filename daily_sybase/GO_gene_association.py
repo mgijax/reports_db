@@ -138,18 +138,7 @@ import string
 import re
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
+import db
 
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'

@@ -35,19 +35,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -111,7 +103,7 @@ results = db.sql('''select c.genomicChromosome as chromosome, c.strand, m.symbol
 	and c._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 
 	and a._LogicalDB_key = 1 
-	and a.prefixPart = "MGI:" 
+	and a.prefixPart = 'MGI:' 
 	and a.preferred = 1 
 	and c.genomicChromosome = cc.chromosome 
 	and m._Organism_key = cc._Organism_key 

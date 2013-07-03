@@ -41,19 +41,11 @@ import sys
 import os
 import string
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 #
 # Main
@@ -70,7 +62,7 @@ fp.write('#For details of nomenclature rules, see http://www.informatics.jax.org
 # exclude QTLs
 
 db.sql('''
-       select a._Allele_key, a._Marker_key, a.symbol, a.name, alleleType = t2.term, marker = m.symbol, a._Allele_Type_key 
+       select a._Allele_key, a._Marker_key, a.symbol, a.name, t2.term as alleleType, m.symbol as marker, a._Allele_Type_key 
        into #alleles 
        from ALL_Allele a, VOC_Term t1, VOC_Term t2, MRK_Marker m 
        where a._Allele_Status_key = t1._Term_key 

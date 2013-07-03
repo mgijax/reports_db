@@ -46,19 +46,11 @@ import sys
 import os
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -148,14 +140,14 @@ fp.write('20. VEGA gene strand' + CRT)
 
 # all active markers
 
-db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, markerType = t.name 
+db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, t.name as markerType
         into #markers 
         from MRK_Marker m, MRK_Types t, ACC_Accession a 
         where m._Organism_key = 1 
         and m._Marker_Status_key in (1,3) 
         and m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
-        and a.prefixPart = "MGI:" 
+        and a.prefixPart = 'MGI:' 
         and a._LogicalDB_key = 1 
         and a.preferred = 1 
         and m._Marker_Type_key = t._Marker_Type_key

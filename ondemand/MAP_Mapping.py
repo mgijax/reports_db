@@ -35,6 +35,10 @@ import string
 import mgi_utils
 import reportlib
 import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT

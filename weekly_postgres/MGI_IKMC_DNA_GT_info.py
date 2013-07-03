@@ -68,19 +68,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 #
 # constants
@@ -97,10 +89,10 @@ COLLECTION = 'dbGSS Gene Trap'
 # and other dna methods may be discovered
 # note: we do not use sequence type because some are incorrect in 
 # our database and in genbank
-RNA_METHODS = '''"5'' RACE", "3'' RACE"'''
+#RNA_METHODS = "5' RACE, 3' RACE"
 
 # The set of IKMC creators
-IKMC_CREATORS = "'CMHD', 'ESDB', 'EUCOMM', 'TIGM'"
+#IKMC_CREATORS = "'CMHD', 'ESDB', 'EUCOMM', 'TIGM'"
 
 #
 # Lookups
@@ -156,8 +148,8 @@ db.sql('''select a._Allele_key, a._Marker_key, a.isMixed, ac._CellLine_key,
 	    and aca._MutantCellLine_key =  ac._CellLine_key 
 	    and ac._Derivation_key = acd._Derivation_key
 	    and acd._Creator_key = t1._Term_key 
-	    and t1.term in (%s)
-	    and acd._Vector_key = t2._Term_key''' % IKMC_CREATORS, None)
+	    and t1.term in ('CMHD', 'ESDB', 'EUCOMM', 'TIGM')
+	    and acd._Vector_key = t2._Term_key''' , None)
 db.sql('''create index celllines_idx1 on #cellines(_Allele_key)''', None)
 
 db.sql('''select distinct c._Allele_key, c._Marker_key
@@ -174,8 +166,8 @@ db.sql('''create index markerRepSeq_idx1 on #markerRepSeq(_Sequence_key)''', Non
 db.sql('''create index markerRepSeq_idx2 on #markerRepSeq(_Marker_key)''', None)
 
 db.sql('''select m.*, scc.chromosome, 
-	    convert(int, scc.startCoordinate) as startCoordinate,
-	    convert(int, scc.endCoordinate) as endCoordinate,
+	    cast(scc.startCoordinate as int) as startCoordinate,
+	    cast(scc.endCoordinate as int) as endCoordinate,
 	    scc.strand, v.mgiID, v.symbol, 
 	    a.accid as repSeqID, ldb.name as provider
 	    into #markerRepCoord
@@ -217,14 +209,14 @@ db.sql('''select s.*, a.accid as mclID
 db.sql('''create index mclIDs_idx1 on #mclIDs(_Sequence_key)''', None)
 
 results = db.sql('''select m.*, sgt.goodHitCount, 
-	    convert(int, sgt.pointCoordinate) as pointCoordinate, 
+	    cast(sgt.pointCoordinate as int) as pointCoordinate, 
 	    t1.term as seqTagMethod
 	    into #seqTagsAll
 	    from #mclIDs m, SEQ_GeneTrap sgt, VOC_Term t1
 	    where m._Sequence_key = sgt._Sequence_key
 	    and sgt._TagMethod_key = t1._Term_key
-	    and t1.term not in (%s)''' % RNA_METHODS, None)
-
+	    and t1._Term_key not in (3983000, 3983001)''', None) # 5' RACE
+								 # 3' RACE
 print 'Loading lookups ...'
 sys.stdout.flush()
 
@@ -247,8 +239,8 @@ for r in results:
 # which have no representative sequences.
 
 results = db.sql ('''select a._Allele_key, mlc.genomicChromosome as chromosome,
-		convert(int, mlc.startCoordinate) as startCoordinate,
-		convert(int, mlc.endCoordinate) as endCoordinate,
+		cast(mlc.startCoordinate as int) as startCoordinate,
+		cast(mlc.endCoordinate as int) as endCoordinate,
 		mlc.strand, mlc.provider, v.mgiID, v.symbol
 	from #alleleMarkers a,
 		MRK_Location_Cache mlc,
@@ -311,12 +303,12 @@ for r in results:
 
 # Lookup of gene trap sequence tag alignments
 results = db.sql('''select c.chromosome, 
-	    convert(int, f.startCoordinate) as startCoordinate,
-            convert(int, f.endCoordinate) as endCoordinate,
+	    cast(f.startCoordinate as int) as startCoordinate,
+            cast(f.endCoordinate as int) as endCoordinate,
             f.strand, f._Object_key as _Sequence_key
             from MAP_Coord_Collection mcc, MAP_Coordinate mc,
             MRK_Chromosome c, MAP_Coord_Feature f
-            where mcc.name = "%s"
+            where mcc.name = '%s'
             and mcc._Collection_key = mc._Collection_key
             and mc._Object_key = c._Chromosome_key
             and mc._Map_key = f._Map_key''' % COLLECTION, 'auto')

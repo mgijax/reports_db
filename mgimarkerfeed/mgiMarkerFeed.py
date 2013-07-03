@@ -157,22 +157,10 @@ import sys
 import os
 import string
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslateBE()
-    else:
-        import db
-	db.set_sqlLogFunction(db.sqlLogAll)
-except:
-    import db
-    db.set_sqlLogFunction(db.sqlLogAll)
-
+import db
 import mgi_utils
 
+db.set_sqlLogFunction(db.sqlLogAll)
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 

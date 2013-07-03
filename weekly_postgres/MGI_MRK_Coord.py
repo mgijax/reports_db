@@ -31,19 +31,11 @@ import sys
 import os
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -142,8 +134,8 @@ def getCoordinates():
 		mm.name,
 		mlc.chromosome,
 		mlc.genomicChromosome,
-		convert(int, mlc.startCoordinate) as startCoordinate,
-		convert(int, mlc.endCoordinate) as endCoordinate,
+		cast(mlc.startCoordinate as int) as startCoordinate,
+		cast(mlc.endCoordinate as int) as endCoordinate,
 		mlc.strand,
 		mlc.provider as displayName,
 		aa.accID

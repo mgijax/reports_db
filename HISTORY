@@ -1,3 +1,31 @@
+TAG: reports-tr11353-1
+DATE: 07/3/2013
+STAFF: sc
+CHANGES: 
+1) added weekly_postgres, weekly_sybase, daily_sybase dirs and corresponding wrappers
+2) removed daily and weekly dirs, reorganized into 1)
+3) removed old daily and weekly wrappers
+5) Install - updated for new directories in 1)
+6) report scripts:
+a) removed DB_TYPE from all report scripts; but not from Configuration as some
+    library seems to be dependent on it
+b) testing revealed 7 reports were including private data. Needed to remove private
+   data from my sybase db to fully test.
+	** EUCOMM_Allele.rpt
+	** KOMP_Allele.rpt
+	** MGI_ElsevierDOI.rp
+	** MGI_GTRNA.gff
+	** MGI_GTdbGSS_info.rpt
+	** MGI_IKMC_DNA_GT_info.rpt 
+	** MGI_IKMC_DNA_GT.gff
+c) some reports needed case changes to run correctly in postgres e.g.
+	** 'mgi:' --> 'MGI:'
+	** 'Image' --> 'IMAGE'
+d) MGI_IKMC_DNA_GT_info.rpt / MGI_IKMC_DNA_GT.rpt report not excluding RNA sequence
+   tags properly - updated to use term keys instead of terms
+e) MGI_CloneSet.py - ldb.name in never worked, missing quotes around ldbs:
+   ('Image', 'NIA 15K,NIA 7.4K,NIA', 'RIKEN (FANTOM),RIKEN', 'RPCI-23', 'RPCI-24')
+
 TAG: reports-tr11353-BP
 DATE: 06/19/2013
 STAFF: sc

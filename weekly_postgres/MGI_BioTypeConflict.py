@@ -56,19 +56,11 @@ import sys
 import os
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -99,8 +91,8 @@ fp.write('#\n\n')
 
 results = db.sql('''
 		 select s._Marker_key, s._Qualifier_key, s.accID, s.rawbiotype, 
-			m.symbol, mgiID = a.accID, featureType = mcv.term,
-			provider = v.term
+			m.symbol, a.accID as mgiID, mcv.term as featureType,
+			v.term as provider
 		 from SEQ_Marker_Cache s, MRK_Marker m, ACC_Accession a, 
 			MRK_MCV_Cache mcv, VOC_Term v
 		 where s._BiotypeConflict_key = 5420767

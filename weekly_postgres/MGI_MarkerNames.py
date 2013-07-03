@@ -44,19 +44,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 #
 # Main
@@ -66,7 +58,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 # all official/interim mouse markers
 
-db.sql('''select m._Marker_key, m.symbol, m.name, a.accID, a.numericPart, markerType = t.name
+db.sql('''select m._Marker_key, m.symbol, m.name, a.accID, a.numericPart, t.name as markerType
         into #markers 
         from MRK_Marker m, ACC_Accession a, MRK_Types t
         where m._Organism_key = 1
@@ -74,7 +66,7 @@ db.sql('''select m._Marker_key, m.symbol, m.name, a.accID, a.numericPart, marker
         and m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
         and a._LogicalDB_key = 1 
-        and a.prefixPart = "MGI:" 
+        and a.prefixPart = 'MGI:' 
 	and a.preferred = 1
 	and m._Marker_Type_key = t._Marker_Type_key
 	''', None)

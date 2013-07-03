@@ -35,18 +35,11 @@ import string
 import mgi_html
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 #
 # Main
@@ -69,28 +62,14 @@ os.system('mv %s/Nomenclature-*.rpt %s/archive/nomen' % (reportDir, reportDir))
 
 db.useOneConnection(1)
 
-#
-# purposely did not add this to lib_py_postgres/pg_db.py/translate_be() (for now)
-#
+results = db.sql('select to_char(now() - interval \'7 days\', \'YYYY-MM-DD\')', 'auto')
+bdate = results[0]['to_char']
 
-if os.environ['DB_TYPE'] == 'postgres':
-	results = db.sql('select to_char(now() - interval \'7 days\', \'YYYY-MM-DD\')', 'auto')
-	bdate = results[0]['to_char']
+results = db.sql('select to_char(now(), \'YYYY-MM-DD\')', 'auto')
+edate = results[0]['to_char']
 
-	results = db.sql('select to_char(now(), \'YYYY-MM-DD\')', 'auto')
-	edate = results[0]['to_char']
-
-	datequery = '\'%s\' and \'%s\'' \
+datequery = '\'%s\' and \'%s\'' \
 		% (bdate, edate)
-else:
-	results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
-	bdate = results[0]['']
-
-	results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
-	edate = results[0]['']
-
-	datequery = 'dateadd(day,-7,"%s") and dateadd(day,1,"%s")' \
-		% (currentDate, currentDate)
 
 title = 'Updates to Mouse Nomenclature from %s to %s' % (bdate, edate)
 fpHTML = reportlib.init(reportName, title, os.environ['FTPREPORTDIR'], isHTML = 1, printHeading = "MGI")
@@ -167,7 +146,7 @@ for r in results:
 
 # get human ortholog (5)
 results = db.sql('''
-	select distinct m._Marker_key, humanSymbol = h.symbol 
+	select distinct m._Marker_key, h.symbol as humanSymbol
 	from #markers m, MRK_Marker h, MRK_Homology_Cache hm1, MRK_Homology_Cache hm2 
 	where m._Marker_key = hm1._Marker_key 
 	and hm1._Homology_key = hm2._Homology_key 

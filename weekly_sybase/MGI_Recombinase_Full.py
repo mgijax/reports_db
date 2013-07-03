@@ -44,7 +44,7 @@ import sys
 import os
 import string
 import reportlib
-import pg_db
+import db
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE

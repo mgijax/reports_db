@@ -45,19 +45,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -70,7 +62,16 @@ collection = 'dbGSS Gene Trap'
 # and other dna methods may be discovered
 # note: we do not use sequence type because some are incorrect in 
 # our database and in genbank
-rnaMethods = '''"5'' RACE", "3'' RACE"'''
+#rnaMethods = "5'' RACE, 3'' RACE"
+
+#temp = ''
+#tokens = string.split(rnaMethods, ',')
+#for i in range(len(tokens) - 1):
+#    # concatenate all but the last token
+#    temp = temp + "'" + string.strip(tokens[i]) + "', "
+## add last token, sans ','
+#temp = temp + "'" + string.strip(tokens[-1]) + "'"
+#rnaMethods = temp
 
 #
 # data structures
@@ -98,7 +99,7 @@ alleleKeyDictBySeqKey = {}
 alleleIdAndCreatorDictByAlleleKey = {}
 
 # The set of IKMC creators
-IKMC_CREATORS = "'CMHD', 'ESDB', 'EUCOMM', 'TIGM'"
+IKMC_CREATORS = 'CMHD', 'ESDB', 'EUCOMM', 'TIGM'
 
 #
 #  Query and build structures
@@ -117,7 +118,7 @@ db.sql('''
     	INTO #coords 
     	FROM MAP_Coord_Collection mcc, MAP_Coordinate mc, 
     	     MAP_Coord_Feature mcf, MRK_Chromosome chr 
-    	WHERE mcc.name = "%s" 
+    	WHERE mcc.name = '%s' 
     	AND mcc._Collection_key = mc._Collection_key 
     	AND mc._Map_key = mcf._Map_key 
     	AND mc._Object_key = chr._Chromosome_key
@@ -132,8 +133,10 @@ db.sql('''
     	FROM #coords c, SEQ_GeneTrap s, VOC_Term v 
     	WHERE c._Sequence_key = s._Sequence_key 
     	AND s._TagMethod_key = v._Term_key 
-    	AND v.term not in (%s)
-	''' % rnaMethods, None)
+	and v._Term_key not in (3983000, 3983001)''', None) # 5' RACE
+                                                            # 3' RACE
+    	#AND v.term not in (%s)
+	#''' % rnaMethods, None)
 db.sql('CREATE INDEX dnaCoords_idx1 on #dnaCoords(_Sequence_key)', None)
 
 # get seqID
@@ -212,8 +215,8 @@ results = db.sql('''
     	AND aca._MutantCellLine_key =  ac._CellLine_key 
     	AND ac._Derivation_key = acd._Derivation_key 
     	AND acd._Creator_key = t._Term_key 
-    	AND t.term in (%s)
-	''' % IKMC_CREATORS, 'auto')
+    	AND t.term in ('CMHD', 'ESDB', 'EUCOMM', 'TIGM')
+	''',  'auto')
 
 # load alleleIdAndCreatorDictByAlleleKey
 for r in results:

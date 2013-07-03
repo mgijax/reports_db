@@ -70,7 +70,7 @@ import os
 import types
 import urllib
 import reportlib
-import pg_db
+import db
 
 
 eUtilUrl = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'

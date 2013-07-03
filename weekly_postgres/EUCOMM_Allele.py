@@ -40,19 +40,11 @@ import sys
 import os
 import string
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -82,7 +74,7 @@ fp.write('#\n\n')
 #
 
 db.sql('''select a._Allele_key, a._Marker_key, a.symbol, a.name,
-	projectID = aa.accID, ldb = ldb.name, markerSymbol = m.symbol 
+	aa.accID as projectID, ldb.name as ldb, m.symbol as markerSymbol
 	into #eucomm
 	from ALL_Allele a, ACC_Accession aa, ACC_LogicalDB ldb, MRK_Marker m 
         where a._Allele_key = aa._Object_key 

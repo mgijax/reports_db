@@ -30,18 +30,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -78,8 +71,8 @@ db.sql('''
     t.name as markertype,
         case
         when o.offset >= 0 then str(o.offset,10,2)
-        when o.offset = -999.0 then "       N/A"
-        when o.offset = -1.0 then "  syntenic"
+        when o.offset = -999.0 then '       N/A'
+        when o.offset = -1.0 then '  syntenic'
         end as cmposition
     into #markers
     from MRK_Marker m, MRK_Status s, MRK_Types t, MRK_Offset o,
@@ -120,7 +113,7 @@ results = db.sql('''
 	select m._marker_key, s.term 
         from #markers m, MRK_MCV_Cache s 
         where m._marker_key = s._marker_key 
-        and s.qualifier = "D"
+        and s.qualifier = 'D'
 	''', 'auto')
 featureTypes = {}
 for r in results:
@@ -139,7 +132,7 @@ results = db.sql('''
     where m._marker_key = s._object_key
     and s._mgitype_key = 2
     and s._synonymtype_key = st._synonymtype_key
-    and st.synonymtype = "exact"
+    and st.synonymtype = 'exact'
 	''', 'auto')
 synonyms = {}
 for r in results:

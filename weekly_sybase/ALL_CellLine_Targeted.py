@@ -48,7 +48,7 @@
 import sys
 import os
 import reportlib
-import pg_db
+import db
 
 
 CRT = reportlib.CRT

@@ -11,14 +11,14 @@
 #	Takes the FASTA files REFSEQFASTA and UNIPROTFASTA and generates
 #	a new FASTA file that contains:
 #
-#		1. protein ids that are designated as
-#	           "representative polypeptide" for a given Marker
-#		   in MGI.
-#	
-#		2. a new FASTA header:
+#	1. protein ids that are designated as
+#           "representative polypeptide" for a given Marker
+#	   in MGI.
 #
-#		   MGI:#### source=MGI; version=MM/DD/YYYY; symbol=####; uniprot=####
-#		   MGI:#### source=MGI; version=MM/DD/YYYY; symbol=####; refseq=####
+#	2. a new FASTA header:
+#
+#	   MGI:#### source=MGI; version=MM/DD/YYYY; symbol=####; uniprot=####
+#	   MGI:#### source=MGI; version=MM/DD/YYYY; symbol=####; refseq=####
 #
 # Usage:
 #       MGI_InParanoid_FASTA.py
@@ -45,18 +45,10 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslateBE()
 
 uniprotHeader = '>%s source=MGI; version=%s; symbol=%s, uniprot=%s\n'
 refseqHeader = '>%s source=MGI; version=%s; symbol=%s, refseq=%s\n'
@@ -89,31 +81,32 @@ def initialize():
     fpC = reportlib.init(reportNameC, outputdir = os.environ['INPARANOIDDIR'], printHeading = None, fileExt = '.10090.fasta')
 
     # deleted sequences
-    db.sql('select s._Sequence_key into #deletedsequences ' + \
-	    'from SEQ_Sequence s ' + \
-	    'where s._SequenceStatus_key = 316343', None)
+    db.sql('''select s._Sequence_key into #deletedsequences 
+	    from SEQ_Sequence s 
+	    where s._SequenceStatus_key = 316343''', None)
     db.sql('create index deletedsequences_idx1 on #deletedsequences(_Sequence_key)', None)
 
     # markers with deleted sequences
-    db.sql('select distinct m._Marker_key into #excludemarkers ' + \
-	    'from #deletedsequences d, SEQ_Marker_Cache m ' + \
-	    'where d._Sequence_key = m._Sequence_key ' + \
-	    'and m._Organism_key = 1 ', None)
+    db.sql('''select distinct m._Marker_key 
+	    into #excludemarkers 
+	    from #deletedsequences d, SEQ_Marker_Cache m 
+	    where d._Sequence_key = m._Sequence_key
+	    and m._Organism_key = 1''', None)
     db.sql('create index excludedmarkers_idx1 on #excludemarkers(_Marker_key)', None)
 
     #
     # marker/polypeptide sequences that are not excluded
     # markers of type gene only
     #
-    db.sql('select s.accID, s._Marker_key, s._Qualifier_key into #sequences ' + \
-	    'from SEQ_Marker_Cache s, MRK_Marker m ' + \
-            'where s._SequenceType_key = 316348 ' + \
-	    'and s._Organism_key = 1 ' + \
-	    'and s._Marker_key = m._Marker_key ' + \
-	    'and m._Marker_Type_key = 1 '+ \
-	    'and m._Marker_Status_key in (1,3) '+ \
-	    'and not exists (select 1 from #excludemarkers x where ' + \
-		's._Marker_key = x._Marker_key)', None)
+    db.sql('''select s.accID, s._Marker_key, s._Qualifier_key into #sequences 
+	    from SEQ_Marker_Cache s, MRK_Marker m 
+            where s._SequenceType_key = 316348 
+	    and s._Organism_key = 1 
+	    and s._Marker_key = m._Marker_key
+	    and m._Marker_Type_key = 1
+	    and m._Marker_Status_key in (1,3) 
+	    and not exists (select 1 from #excludemarkers x where 
+		s._Marker_key = x._Marker_key)''', None)
     db.sql('create index sequences_idx1 on #sequences(accID)', None)
     db.sql('create index sequences_idx2 on #sequences(_Marker_key)', None)
 
@@ -121,7 +114,9 @@ def initialize():
     # cache the representative polypeptide
     #
 
-    results = db.sql('select accID, _Marker_key from #sequences where _Qualifier_key = 615421', 'auto')
+    results = db.sql('''select accID, _Marker_key 
+	from #sequences 
+	where _Qualifier_key = 615421''', 'auto')
     for r in results:
         key = r['accID']
         value = r['_Marker_key']
@@ -143,9 +138,9 @@ def initialize():
     # cache the marker key:symbol
     #
 
-    results = db.sql('select s._Marker_key, m.symbol ' + \
-	    'from #sequences s, MRK_Marker m ' + \
-	    'where s._Marker_key = m._Marker_key', 'auto')
+    results = db.sql('''select s._Marker_key, m.symbol 
+	    from #sequences s, MRK_Marker m 
+	    where s._Marker_key = m._Marker_key''', 'auto')
     for r in results:
         key = r['_Marker_key']
         value = r['symbol']
@@ -155,13 +150,13 @@ def initialize():
     # cache the marker key:mgi id
     #
 
-    results = db.sql('select s._Marker_key, a.accID ' + \
-	    'from #sequences s, ACC_Accession a ' + \
-	    'where s._Marker_key = a._Object_key ' + \
-	    'and a._MGIType_key = 2 ' + \
-	    'and a._LogicalDB_key = 1 ' + \
-	    'and a.prefixPart = "MGI:" ' + \
-	    'and a.preferred = 1', 'auto')
+    results = db.sql('''select s._Marker_key, a.accID 
+	    from #sequences s, ACC_Accession a 
+	    where s._Marker_key = a._Object_key
+	    and a._MGIType_key = 2 
+	    and a._LogicalDB_key = 1 
+	    and a.prefixPart = 'MGI:' 
+	    and a.preferred = 1''', 'auto')
     for r in results:
         key = r['_Marker_key']
         value = r['accID']

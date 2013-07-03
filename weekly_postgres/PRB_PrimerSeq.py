@@ -28,19 +28,11 @@ import os
 import string
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -64,7 +56,7 @@ db.sql('create index idx1 on #primers(_Probe_key)', None)
 db.sql('create index idx2 on #primers(_Marker_key)', None)
 
 results = db.sql('''
-       select p.*, probeID = a1.accID, markerID = a2.accID, o.offset 
+       select p.*, a1.accID as probeID, a2.accID as markerID, o.offset 
        from #primers p, ACC_Accession a1, ACC_Accession a2, MRK_Offset o 
        where p._Probe_key = a1._Object_key 
 	     and a1._MGIType_key = 3 

@@ -35,6 +35,10 @@ import string
 import mgi_utils
 import reportlib
 import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -51,7 +55,7 @@ db.sql('''
 	from ACC_Accession pa, ACC_LogicalDB ldb
 	where pa._MGIType_key = 3 
 	and pa._LogicalDB_key = ldb._LogicalDB_key
-	and ldb.name in ('Image', 'NIA 15K,NIA 7.4K,NIA', 'RIKEN (FANTOM),RIKEN', 'RPCI-23', 'RPCI-24')
+	and ldb.name in ('IMAGE', 'NIA 15K', 'NIA 7.4K','NIA', 'RIKEN (FANTOM)', 'RIKEN', 'RPCI-23', 'RPCI-24')
 	''', None)
 db.sql('create index clone1_idx1 on #clone1(_Object_key)', None)
 db.sql('create index clone1_idx2 on #clone1(_LogicalDB_key)', None)
@@ -75,7 +79,7 @@ results = db.sql('''
 	and n._Marker_key = ma._Object_key 
 	and ma._MGIType_key = 2 
 	and ma._LogicalDB_key = 1 
-	and ma.prefixPart = "MGI:" 
+	and ma.prefixPart = 'MGI:' 
 	and ma.preferred = 1
 	''', 'auto')
 markers = {}
@@ -95,7 +99,7 @@ results = db.sql('''
 	and n._Object_key = pa._Object_key  
 	and pa._MGIType_key = 3 
 	and pa._LogicalDB_key = 1 
-	and pa.prefixPart = "MGI:" 
+	and pa.prefixPart = 'MGI:' 
 	and pa.preferred = 1 
 	order by n.db, name
 	''', 'auto')

@@ -1,11 +1,11 @@
 #!/bin/csh -f
 
 #
-# nightly_reports.csh
+# run_daily_sybase.csh
 #
-# Script to generate nightly public reports.
+# Script to generate daily public sybase reports.
 #
-# Usage: nightly_reports.csh
+# Usage: run_daily_sybase.csh
 #
 
 cd `dirname $0` && source ./Configuration
@@ -16,7 +16,7 @@ setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
-echo `date`: Start nightly public reports | tee -a ${LOG}
+echo `date`: Start daily public sybase reports | tee -a ${LOG}
 
 cd ${PUBDAILY}
 
@@ -33,4 +33,4 @@ foreach i (gene_association.mgi)
     cp $i ${FTPREPORTDIR}
 end
 
-echo `date`: End nightly public reports | tee -a ${LOG}
+echo `date`: End nightly public sybase reports | tee -a ${LOG}

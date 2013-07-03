@@ -31,19 +31,11 @@ import sys
 import os
 import mgi_utils
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -52,7 +44,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 db.sql('''
 	select a.accID, a._Object_key 
-	into #refs 
+	into temporary table rfs 
 	from ACC_Accession a 
 	where a._MGIType_key = 1 
 	and a._LogicalDB_key = 1 
@@ -61,11 +53,11 @@ db.sql('''
 	and a.preferred = 1
 	''', None)
 
-db.sql('create unique index index_object_key on #refs(_Object_key)', None)
+db.sql('create unique index index_object_key on rfs(_Object_key)', None)
 
 results = db.sql('''
 	select distinct r.accID, b.accID as pubmedid, a.accID as jnum
-	from #refs r, ACC_Accession b, ACC_Accession a 
+	from rfs r, ACC_Accession b, ACC_Accession a 
 	where r._Object_key = b._Object_key 
 	and b._MGIType_key = 1 
 	and b._LogicalDB_key = 29 

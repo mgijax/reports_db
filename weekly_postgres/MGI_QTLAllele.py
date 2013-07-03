@@ -35,19 +35,11 @@ import sys
 import os
 import string
 import reportlib
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-	db.setAutoTranslate(False)
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 #
 # Main
@@ -154,8 +146,8 @@ for r in results:
 # Retrieve marker coordinates
 
 results = db.sql ('''select _Marker_key, chromosome, genomicChromosome,
-		convert(int, startCoordinate) as startCoordinate,
-		convert(int, endCoordinate) as endCoordinate,
+		cast(startCoordinate as int) as startCoordinate,
+		cast(endCoordinate as int) as endCoordinate,
 		strand, version
 	from MRK_Location_Cache
 	where _Organism_key = 1
