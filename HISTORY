@@ -1,3 +1,4 @@
+TAG: reports-tr11353-2
 TAG: reports-tr11353-1
 DATE: 07/3/2013
 STAFF: sc
@@ -25,6 +26,7 @@ d) MGI_IKMC_DNA_GT_info.rpt / MGI_IKMC_DNA_GT.rpt report not excluding RNA seque
    tags properly - updated to use term keys instead of terms
 e) MGI_CloneSet.py - ldb.name in never worked, missing quotes around ldbs:
    ('Image', 'NIA 15K,NIA 7.4K,NIA', 'RIKEN (FANTOM),RIKEN', 'RPCI-23', 'RPCI-24')
+f) Configuration.defaults - added PUBDAILY, PUBWEEKLY_POSTGRES, PUBWEEKLY_SYBASE
 
 TAG: reports-tr11353-BP
 DATE: 06/19/2013
