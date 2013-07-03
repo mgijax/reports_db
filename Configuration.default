@@ -26,10 +26,13 @@ setenv REPORTOUTPUTDIR		${PUBREPORTDIR}/output
 setenv REPORTLOGSDIR		${PUBREPORTDIR}/logs
 
 # daily reports directory
-setenv PUBDAILY			${PUBRPTS}/daily
+setenv PUBDAILY                 ${PUBRPTS}/daily_sybase
 
 # weekly reports directory
-setenv PUBWEEKLY		${PUBRPTS}/weekly
+setenv PUBWEEKLY_POSTGRES       ${PUBRPTS}/weekly_postgres
+
+# weekly reports directory
+setenv PUBWEEKLY_SYBASE       ${PUBRPTS}/weekly_sybase
 
 # on-demand reports directory
 setenv ONDEMAND			${PUBRPTS}/ondemand
