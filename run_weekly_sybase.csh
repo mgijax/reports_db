@@ -21,12 +21,12 @@ echo `date`: Start weekly public sybase reports | tee -a ${LOG}
 #
 # Generate weekly reports
 #
-#./run_in_parallel.py -p ${SUBPROCESSES} weekly/*py inparanoid/inparanoid.csh ncbilinkout/ncbilinkout.csh >>& ${LOG}
+./run_in_parallel.py -p ${SUBPROCESSES} weekly_sybase/*py >>& ${LOG}
 
-cd ${PUBWEEKLY_SYBASE}
-foreach i (*.py)
-    echo `date`: $i | tee -a ${LOG}
-    $i >>& ${LOG}
-end
+#cd ${PUBWEEKLY_SYBASE}
+#foreach i (*.py)
+#    echo `date`: $i | tee -a ${LOG}
+#    $i >>& ${LOG}
+#end
 
 echo `date`: End weekly public sybase reports | tee -a ${LOG}
