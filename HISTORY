@@ -1,3 +1,18 @@
+TAG: reports-tr11353-4
+DATE: 08/07/2013
+STAFF: sc
+CHANGES: US 124 - update public reports to use new PG_PUB_* settings
+1) Added:
+    setenv PG_DBSERVER      ${PG_PUB_DBSERVER}
+    setenv PG_DBNAME        ${PG_PUB_DBNAME}
+    setenv PG_DBUSER        ${PG_PUB_DBUSER}
+   To:
+    * ondemand_reports.csh
+    * run_weekly_postgres.csh
+    * runone_report.csh
+    * inparanoid/inparanoid.csh
+2) bug in MGI_CvDC.py - converted to postgres
+
 TAG: reports-tr11353-3
 DATE: 07/12/2013
 STAFF: sc

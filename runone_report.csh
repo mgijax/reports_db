@@ -14,6 +14,17 @@ set USAGE = "$0 <directory>/<report script name>"
 
 cd `dirname $0` && source ./Configuration
 
+#
+# set postgres configuration to use the public instance
+#
+setenv PG_DBSERVER      ${PG_PUB_DBSERVER}
+setenv PG_DBNAME        ${PG_PUB_DBNAME}
+setenv PG_DBUSER        ${PG_PUB_DBUSER}
+
+echo "PG_DBSERVER: ${PG_DBSERVER}"
+echo "PG_DBNAME: ${PG_DBNAME}"
+echo "PG_DBUSER: ${PG_DBUSER}"
+
 # check that we received an acceptable argument
 
 if ($#argv != 1) then
