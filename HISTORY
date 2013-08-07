@@ -1,3 +1,10 @@
+TAG: reports-tr11353-5
+DATE: 08/07/2013
+STAFF: sc
+CHANGES: US 133 - update to use new fewi allele detail URL 
+1) ALL_OMIM.py
+2) MGI_iphone_app.py
+
 TAG: reports-tr11353-4
 DATE: 08/07/2013
 STAFF: sc

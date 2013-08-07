@@ -148,7 +148,7 @@ CRT = reportlib.CRT
 #
 # markers & references:  use reportlib.create_accession_anchor()
 #
-allele_urlprefix = 'http://www.informatics.jax.org/javawi2/servlet/WIFetch?page=alleleDetail&id='
+allele_urlprefix = 'http://www.informatics.jax.org/allele/'
 go_urlprefix = 'http://www.informatics.jax.org/searches/GO.cgi?id='
 mp_urlprefix = 'http://www.informatics.jax.org/searches/Phat.cgi?id='
 geno_urlprefix = 'http://www.informatics.jax.org/javawi2/servlet/WIFetch?page=mpAnnotSummary&id='

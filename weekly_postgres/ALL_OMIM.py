@@ -81,8 +81,7 @@ allele_re3 = re.compile(r'<([^>]*)>')
 #
 # This is a replacement pattern for creating an HTML link from matches against allele_re1
 # 
-link_repl   = r'<a href="http://www.informatics.jax.org/javawi2/servlet/WIFetch?page=alleleDetail&id=\1">\2</a>' 
-
+link_repl   = r'<a href="http://www.informatics.jax.org/allele/\1">\2</a>'
 #--------------------------------------------------------------------------------------------
 fp = None
 nrecs = 0
