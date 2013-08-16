@@ -33,19 +33,13 @@ echo "PG_DBUSER: ${PG_DBUSER}"
 #
 # Generate weekly reports
 #
-./run_in_parallel.py -p ${SUBPROCESSES} weekly_postgres/*py inparanoid/inparanoid.csh ncbilinkout/ncbilinkout.csh >>& ${LOG}
+./run_in_parallel.py -p ${SUBPROCESSES} weekly_postgres/*py ncbilinkout/ncbilinkout.csh >>& ${LOG}
 
 #cd ${PUBWEEKLY_POSTGRES}
 #foreach i (*.py)
 #    echo `date`: $i | tee -a ${LOG}
 #    $i >>& ${LOG}
 #end
-
-#
-# Generate inparanoid files.
-#
-#echo `date`: inparanoid.csh | tee -a ${LOG}
-#${PUBRPTS}/inparanoid/inparanoid.csh >>& ${LOG}
 
 #
 # Generate NCBI LinkOut files.
