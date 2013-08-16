@@ -21,7 +21,7 @@ echo `date`: Start weekly public sybase reports | tee -a ${LOG}
 #
 # Generate weekly reports
 #
-./run_in_parallel.py -p ${SUBPROCESSES} weekly_sybase/*py >>& ${LOG}
+./run_in_parallel.py -p ${SUBPROCESSES} weekly_sybase/*py inparanoid/inparanoid.csh >>& ${LOG}
 
 #cd ${PUBWEEKLY_SYBASE}
 #foreach i (*.py)
