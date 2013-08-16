@@ -45,19 +45,21 @@ if ( ! -d ${CVDCDIR} ) then
     mkdir -p ${CVDCDIR}
 endif
 
-# provide a link to the Mammalian Phenotype vocabulary
-cd ${REPORTOUTPUTDIR}
-foreach f (${MPFILES})
-    rm -rf $f
-    ln -s ${MPVOCSOURCE}/$f .
-end
+if ( ${SERVER_NAME} == "lindon" ) then
+    # provide a link to the Mammalian Phenotype vocabulary
+    cd ${REPORTOUTPUTDIR}
+    foreach f (${MPFILES})
+        rm -rf $f
+        ln -s ${MPVOCSOURCE}/$f .
+    end
 
-# provide a link to the Adult Mouse Anatomy vocabulary
-cd ${REPORTOUTPUTDIR}
-foreach f (${MAFILES})
-    rm -rf $f
-    ln -s ${MAVOCSOURCE}/$f .
-end
+    # provide a link to the Adult Mouse Anatomy vocabulary
+    cd ${REPORTOUTPUTDIR}
+    foreach f (${MAFILES})
+        rm -rf $f
+        ln -s ${MAVOCSOURCE}/$f .
+    end
+endif
 
 #
 # permissions
