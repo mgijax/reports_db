@@ -32,9 +32,10 @@ import string
 import reportlib
 import db
 
-
 CRT = reportlib.CRT
 TAB = reportlib.TAB
+
+db.useOneConnection(1)
 
 introBLOG = '''
 <p>
@@ -415,4 +416,4 @@ def process():
 
 init()
 process()
-
+db.useOneConnection(0)

@@ -29,4 +29,10 @@ echo `date`: Start weekly public sybase reports | tee -a ${LOG}
 #    $i >>& ${LOG}
 #end
 
+#
+# Generate inparanoid files.
+#
+#echo `date`: inparanoid.csh | tee -a ${LOG}
+#${PUBRPTS}/inparanoid/inparanoid.csh >>& ${LOG}
+
 echo `date`: End weekly public sybase reports | tee -a ${LOG}

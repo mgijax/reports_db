@@ -56,6 +56,8 @@ TAB = reportlib.TAB
 PAGE = reportlib.PAGE
 IMSR = os.environ['IMSR_DBNAME']
 
+db.useOneConnection(1)
+
 allBLOG = '''
 This report provides a list of all genes which have one or more 
 published knockout or conditional knockout alleles. Each gene symbol is 
@@ -422,3 +424,4 @@ reportlib.finish_nonps(fp4)	# non-postscript file
 reportlib.finish_nonps(fp5)	# non-postscript file
 reportlib.finish_nonps(fp6)	# non-postscript file
 
+db.useOneConnection(0)

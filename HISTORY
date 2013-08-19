@@ -1,3 +1,28 @@
+TAG: reports-tr11353-6	
+DATE: 08/19/2013
+STAFF: dbm,sc
+CHANGES: Issues running reports on prodapp1
+1) inparanoid.csh - moved back to weekly_sybase as it uses wu-blast tools which
+   are not available on linux
+2) MGI_AllGenes.py  - moved back to weekly_sybase as it needs access to 
+       lindon:${DATALOADSOUTPUT}/komp/kompreports/output/geneList.txt and 
+       lindon:${DATALOADSOUTPUT}/komp/kompreports/output/geneListNoKo.txt
+   added db.useOneConnection calls
+3) MRK_NomenUpdates.py -  moved back to weekly_sybase as needs access to
+   /usr/local/mgi/live/dbutils/mgidbutilities/text/jax_header which won't be
+   installed on prodapp1
+4) Install - modified to only make sym links to these directories when it is 
+       being run on lindon since that's the only place where the files will 
+       exist.
+    ${DATALOADSOUTPUT}/mgi/vocload/runTimeMP
+    ${DATALOADSOUTPUT}/mgi/vocload/runTimeMA
+5) weekly_sybase/MGI_Knockout.py, MGI_Recombinase_Full.py, MRK_NomenUpdates.py -       added db.useOneConnection calls
+6) weekly_postgres/MGI_CvDC.py - 'mgi:' -> 'MGI:'
+7) inparanoid/MGI_InParanoid_FASTA.py - added db.useOneConnection calls
+8) runone_report.csh - updated so it works for sybase as well as postgres
+9) run_weekly_sybase.csh - added commented out inparanoid back into serially run
+      section
+
 TAG: reports-tr11353-5
 DATE: 08/07/2013
 STAFF: sc

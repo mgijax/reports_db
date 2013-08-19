@@ -92,7 +92,7 @@ db.sql('''
 	and a._Allele_key = aa._Object_key
 	and aa._MGIType_key = 11
 	and aa._LogicalDB_key = 1
-	and aa.prefixPart = 'mgi:'
+	and aa.prefixPart = 'MGI:'
 	and aa.preferred = 1
 	and a._Allele_key = r._Object_key
 	and r._MGIType_key = 11

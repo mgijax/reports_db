@@ -58,28 +58,14 @@ os.system('mv %s/Nomenclature-*.rpt %s/archive/nomen' % (reportDir, reportDir))
 
 db.useOneConnection(1)
 
-#
-# purposely did not add this to lib_py_postgres/pg_db.py/translate_be() (for now)
-#
+results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
+bdate = results[0]['']
 
-if os.environ['DB_TYPE'] == 'postgres':
-	results = db.sql('select to_char(now() - interval \'7 days\', \'YYYY-MM-DD\')', 'auto')
-	bdate = results[0]['to_char']
+results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
+edate = results[0]['']
 
-	results = db.sql('select to_char(now(), \'YYYY-MM-DD\')', 'auto')
-	edate = results[0]['to_char']
-
-	datequery = '\'%s\' and \'%s\'' \
-		% (bdate, edate)
-else:
-	results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
-	bdate = results[0]['']
-
-	results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
-	edate = results[0]['']
-
-	datequery = 'dateadd(day,-7,"%s") and dateadd(day,1,"%s")' \
-		% (currentDate, currentDate)
+datequery = 'dateadd(day,-7,"%s") and dateadd(day,1,"%s")' \
+	% (currentDate, currentDate)
 
 title = 'Updates to Mouse Nomenclature from %s to %s' % (bdate, edate)
 fpHTML = reportlib.init(reportName, title, os.environ['FTPREPORTDIR'], isHTML = 1, printHeading = "MGI")
@@ -174,7 +160,7 @@ for r in results:
 
 	key = r['_Marker_key']
 	symbol = mgi_html.escape(r['symbol'])
-
+        print 'key: %s symbol: %s' % (key, symbol)
 	fpHTML.write('%-2s ' % (r['chromosome']))
 
 	fpHTML.write('%s%-30s%s ' \
@@ -219,6 +205,7 @@ for r in results:
 
 	rows = rows + 1
 
+print 'closing reports'
 fpHTML.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
 reportlib.finish_nonps(fpHTML, isHTML = 1)	# non-postscript file
 reportlib.finish_nonps(fpRpt)			# non-postscript file
