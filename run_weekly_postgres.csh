@@ -17,7 +17,6 @@ rm -rf ${LOG}
 touch ${LOG}
 
 echo `date`: Start weekly public postgres reports | tee -a ${LOG}
-echo `pwd`: Current directory | tee -a ${LOG}
 
 #
 # set postgres configuration to use the public instance
@@ -25,10 +24,6 @@ echo `pwd`: Current directory | tee -a ${LOG}
 setenv PG_DBSERVER      ${PG_PUB_DBSERVER}
 setenv PG_DBNAME        ${PG_PUB_DBNAME}
 setenv PG_DBUSER        ${PG_PUB_DBUSER}
-
-echo "PG_DBSERVER: ${PG_DBSERVER}"
-echo "PG_DBNAME: ${PG_DBNAME}"
-echo "PG_DBUSER: ${PG_DBUSER}"
 
 #
 # Generate weekly reports
