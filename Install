@@ -45,19 +45,21 @@ if ( ! -d ${CVDCDIR} ) then
     mkdir -p ${CVDCDIR}
 endif
 
-# provide a link to the Mammalian Phenotype vocabulary
-cd ${REPORTOUTPUTDIR}
-foreach f (${MPFILES})
-    rm -rf $f
-    ln -s ${MPVOCSOURCE}/$f .
-end
+if ( ${SERVER_NAME} == "lindon" ) then
+    # provide a link to the Mammalian Phenotype vocabulary
+    cd ${REPORTOUTPUTDIR}
+    foreach f (${MPFILES})
+        rm -rf $f
+        ln -s ${MPVOCSOURCE}/$f .
+    end
 
-# provide a link to the Adult Mouse Anatomy vocabulary
-cd ${REPORTOUTPUTDIR}
-foreach f (${MAFILES})
-    rm -rf $f
-    ln -s ${MAVOCSOURCE}/$f .
-end
+    # provide a link to the Adult Mouse Anatomy vocabulary
+    cd ${REPORTOUTPUTDIR}
+    foreach f (${MAFILES})
+        rm -rf $f
+        ln -s ${MAVOCSOURCE}/$f .
+    end
+endif
 
 #
 # permissions
@@ -66,4 +68,4 @@ end
 cd ${PUBRPTS}
 chmod 664 Configuration* HISTORY *.html
 chmod 775 *.sh */*.py */*.sql Install
-chmod 775 daily weekly
+chmod 775 daily_sybase weekly_sybase weekly_postgres

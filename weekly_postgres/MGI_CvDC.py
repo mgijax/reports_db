@@ -45,9 +45,13 @@
 import sys 
 import os
 import re
-import db
 import mgi_utils
 import reportlib
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE

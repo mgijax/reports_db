@@ -13,11 +13,11 @@ endif
 
 source ${MGICONFIG}/master.config.csh
 
-# set this variable to either 'sybase' or 'postgres'
-setenv DB_TYPE			sybase
-#setenv DB_TYPE			postgres
-
 setenv IMSR_DBNAME		imsr
+
+# even though this product no longer directly uses this variable
+# it must remain set because dependent products expect it to be set
+setenv DB_TYPE			postgres
 
 # report output directory
 setenv REPORTOUTPUTDIR		${PUBREPORTDIR}/output
@@ -26,10 +26,13 @@ setenv REPORTOUTPUTDIR		${PUBREPORTDIR}/output
 setenv REPORTLOGSDIR		${PUBREPORTDIR}/logs
 
 # daily reports directory
-setenv PUBDAILY			${PUBRPTS}/daily
+setenv PUBDAILY                 ${PUBRPTS}/daily_sybase
 
 # weekly reports directory
-setenv PUBWEEKLY		${PUBRPTS}/weekly
+setenv PUBWEEKLY_POSTGRES       ${PUBRPTS}/weekly_postgres
+
+# weekly reports directory
+setenv PUBWEEKLY_SYBASE       ${PUBRPTS}/weekly_sybase
 
 # on-demand reports directory
 setenv ONDEMAND			${PUBRPTS}/ondemand

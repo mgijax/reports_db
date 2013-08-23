@@ -45,18 +45,9 @@ import os
 import string
 import mgi_utils
 import reportlib
+import db
 
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+db.useOneConnection(1)
 
 uniprotHeader = '>%s source=MGI; version=%s; symbol=%s, uniprot=%s\n'
 refseqHeader = '>%s source=MGI; version=%s; symbol=%s, refseq=%s\n'
@@ -221,3 +212,5 @@ process(refseqFileName, 3, refseqHeader, refseqLabel)
 reportlib.finish_nonps(fpA)
 reportlib.finish_nonps(fpB)
 reportlib.finish_nonps(fpC)
+
+db.useOneConnection(0)
