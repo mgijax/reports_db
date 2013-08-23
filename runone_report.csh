@@ -26,7 +26,6 @@ endif
 if $?PG_PUB_DBUSER then
     setenv PG_DBUSER        ${PG_PUB_DBUSER}
 endif
-echo $MGD_DBSERVER $MGD_DBNAME
 
 # check that we received an acceptable argument
 
