@@ -16,21 +16,21 @@ setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
-echo `date`: Start daily public sybase reports | tee -a ${LOG}
+echo `date`: Start daily public sybase reports >>& ${LOG}
 
 cd ${PUBDAILY}
 
 foreach i (*.py)
-    echo `date`: $i | tee -a ${LOG}
+    echo `date`: $i >>& ${LOG}
     $i >>& ${LOG}
 end
 
 cd ${REPORTOUTPUTDIR}
 
-echo `date`: Copy reports | tee -a ${LOG}
+echo `date`: Copy reports >>& ${LOG}
 foreach i (gene_association.mgi)
-    echo `date`: $i | tee -a ${LOG}
+    echo `date`: $i >>& ${LOG}
     cp $i ${FTPREPORTDIR}
 end
 
-echo `date`: End nightly public sybase reports | tee -a ${LOG}
+echo `date`: End nightly public sybase reports >>& ${LOG}

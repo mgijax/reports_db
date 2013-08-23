@@ -16,7 +16,7 @@ setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
-echo `date`: Start weekly public sybase reports | tee -a ${LOG}
+echo `date`: Start weekly public sybase reports >>& ${LOG}
 
 #
 # Generate weekly reports
@@ -35,4 +35,4 @@ echo `date`: Start weekly public sybase reports | tee -a ${LOG}
 #echo `date`: inparanoid.csh | tee -a ${LOG}
 #${PUBRPTS}/inparanoid/inparanoid.csh >>& ${LOG}
 
-echo `date`: End weekly public sybase reports | tee -a ${LOG}
+echo `date`: End weekly public sybase reports >>& ${LOG}
