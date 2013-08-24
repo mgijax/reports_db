@@ -1,3 +1,10 @@
+TAG: reports-5-1-5-2
+DATE: 08/24/2013
+STAFF: dbm
+CHANGES: 
+1) run_daily_sybase.csh, run_weekly_sybase.csh, run_weekly_postgres.csh -
+   logging fixes
+
 TAG: reports-5-1-5-1
 DATE: 08/23/2013
 STAFF: sc	
