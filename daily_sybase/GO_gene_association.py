@@ -41,6 +41,9 @@
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
 #	MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
 #
+# lec	08/27/2013
+#	- TR11459/GOANNOT_RELATIONSHIP/fix
+#
 # lec	05/28/2013
 #	- TR11060/add all UniProtKB: and PR:
 #
@@ -306,7 +309,7 @@ def doCol16():
     annotRelationshipLookup = {}
     annotRelationshipFile = open(annotRelationshipFileName, 'r')
     for line in annotRelationshipFile.readlines():
-        tokens = line[:-1].split(TAB)
+        tokens = line.split(TAB)
         key = str(tokens[0]) + ':' + tokens[2]
         value = tokens[3].strip()
         if not annotRelationshipLookup.has_key(key):
