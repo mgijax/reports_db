@@ -23,6 +23,8 @@
 #
 # History:
 #
+# 10/09/2013 - lec - TR11502/add _Organims_key to version query
+#
 # 07/26/2012 - jsb - initial addition
 #
 '''
@@ -184,7 +186,7 @@ featureTypes = getFeatureTypeCache()
 
 results = db.sql ('''select distinct version
 	from MRK_Location_Cache
-	where version is not null''', 'auto')
+	where _Organism_key = 1 and version is not null''', 'auto')
 
 if results:
 	genomeBuild = results[0]['version']
