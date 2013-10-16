@@ -194,7 +194,7 @@ db.sql('create index gomarker1_idx2 on #gomarker1(_Refs_key)', None)
 # resolve pub med id
 #
 db.sql('''select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uniprotIDs,
-	         convert(varchar(10), g.modification_date, 112) as mDate,
+	         to_char(g.modification_date, 'YYYYMMDD') as mDate,
 	         b.accID as refID
 	into #gomarker2
 	from #gomarker1 g LEFT OUTER JOIN ACC_Accession b on
