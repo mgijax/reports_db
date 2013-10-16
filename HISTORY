@@ -1,3 +1,10 @@
+TAG: reports_db-5-1-5-5
+DATE: 10/16/2013
+STAFF: dbm
+CHANGES: 
+1) TR11516/weekly_postgres/GO_gene_association_nonmouse.py: convert
+   modification_date to YYYYMMDD format
+
 TAG: reports_db-5-1-5-4
 DATE: 10/09/2013
 STAFF: lec
