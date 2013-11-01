@@ -1,3 +1,17 @@
+TAG: reports_db-5-1-5-6
+DATE: 11/1/2013
+STAFF: sc	
+CHANGES: MGI_PhenoGenoMP.rpt - Extra tab reported via user support
+
+old:
+fp.write(string.join(mpRef[refKey], ','))
+new:
+fp.write(string.join(mpRef[refKey], ',') + TAB)
+old:
+fp.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
+new:
+fp.write(string.join(mpMarker[genotype], ',') + CRT)
+
 TAG: reports_db-5-1-5-5
 DATE: 10/16/2013
 STAFF: dbm

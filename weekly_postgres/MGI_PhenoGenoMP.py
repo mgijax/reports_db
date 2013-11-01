@@ -201,12 +201,12 @@ for r in results:
         fp.write(mpID[term] + TAB)
 
         if mpRef.has_key(refKey):
-	    fp.write(string.join(mpRef[refKey], ','))
+	    fp.write(string.join(mpRef[refKey], ',') + TAB)
         else:
 	    fp.write(TAB)
 
 	if mpMarker.has_key(genotype):
-	    fp.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
+	    fp.write(string.join(mpMarker[genotype], ',') + CRT)
         else:
 	    fp.write(TAB + CRT)
 
