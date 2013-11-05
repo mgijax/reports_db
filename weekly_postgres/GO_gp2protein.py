@@ -16,9 +16,16 @@
 #	field 1: MGI Marker ID
 #       field 2: protein or transcript or neither (blank)
 #
+#	gp2protein.mgi : genes witih protein sequences (fp1)
+#	gp2rna.mgi : any genes with/without a transcript (fp2)
+#	gp_unlocalized.mgi : all genes not in gp2protein or gp2rna (fp3)
+#
 # Used by:
 #
 # History:
+#
+# 10/31/2013	lec
+#	- TR11510/re-organize reports to include 'feature type' rules
 #
 # 02/13/2013	lec
 #	- TR11272/split protein coding genes into protein coding/rna/neither reports
@@ -41,7 +48,7 @@
 #	- Harold wants all Genes with rep genomic sequence to appear in this rpt
 #	  if protein, use that
 #	  else if transcript,  use that
-#	  else just print out marker mgiID
+#	  else just print out marker accID
 #
 # lec	03/30/2011
 #   - TR10652/change 'NCBI:' to 'RefSeq:'
@@ -100,16 +107,36 @@ fp3 = reportlib.init('gp_unlocalized', fileExt = '.mgi', outputdir = os.environ[
 db.useOneConnection(1)
 
 #
-# representative transcripts by marker
+# all markers of type 'gene'
+# with feature type (see below)
 #
 db.sql('''
-    select distinct mc._Marker_key, mc._Marker_Type_key, 
-	   mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
+    select distinct mm._Marker_key, a.accID, tdc.term
+    into #allgenes
+    from MRK_Marker mm, ACC_Accession a, VOC_Annot_View tdc
+    where mm._Marker_Status_key in (1,3)
+    and mm._Marker_Type_key = 1
+    and mm._Organism_key = 1
+    and mm._Marker_key = a._Object_key
+    and a._MGIType_key = 2
+    and a._LogicalDB_key = 1
+    and a.preferred = 1
+    and mm._Marker_key = tdc._Object_key
+    and tdc._AnnotType_key = 1011    
+    and tdc._LogicalDB_key = 146    
+    and (tdc.term in ('protein coding gene') or tdc.term like '%RNA gene')
+    ''', None)
+db.sql('create index allgenes_idx1 on #allgenes(_Marker_key)', None)
+
+#
+# representative transcripts by marker
+# _Qualifier_key = 615420 = 'transcript'
+#
+db.sql('''
+    select distinct mm._Marker_key, mm.accID, mc.accID as seqID, mc._LogicalDB_key
     into #transcripts
-    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
+    from SEQ_Marker_Cache mc, #allgenes mm
     where mc._Marker_key = mm._Marker_key
-    and mm._Marker_Status_key in (1,3)
-    and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615420
     ''', None)
 db.sql('create index transcripts_idx1 on #transcripts(_Marker_key)', None)
@@ -121,15 +148,13 @@ for r in results:
 
 #
 # representative proteins by marker
+# _Qualifier_key = 615421 = 'polypeptide'
 #
 db.sql('''
-    select distinct mc._Marker_key, mc._Marker_Type_key, 
-	   mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
+    select distinct mm._Marker_key, mm.accID, mc.accID as seqID, mc._LogicalDB_key
     into #proteins
-    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
+    from SEQ_Marker_Cache mc, #allgenes mm
     where mc._Marker_key = mm._Marker_key
-    and mm._Marker_Status_key in (1,3)
-    and mc._Marker_Type_key = 1
     and mc._Qualifier_key = 615421
     ''', None)
 db.sql('create index proteins_idx1 on #proteins(_Marker_key)', None)
@@ -143,13 +168,10 @@ for r in results:
 # uniprotKB by marker (ldb = 13 SwissProt only)
 #
 db.sql('''
-    select distinct mc._Marker_key, mc._Marker_Type_key, 
-	   mm.mgiID, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
+    select distinct mm._Marker_key, mm.accID, mc.accID as seqID, mc._LogicalDB_key
     into #uniprotkb
-    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
+    from SEQ_Marker_Cache mc, #allgenes mm
     where mc._Marker_key = mm._Marker_key
-    and mm._Marker_Status_key in (1,3)
-    and mc._Marker_Type_key = 1
     and mc._LogicalDB_key in (13)
     ''', None)
 db.sql('create index uniprotkb_idx1 on #proteins(_Marker_key)', None)
@@ -160,22 +182,36 @@ for r in results:
     uniprotkbDict[r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
 
 #
-# all mouse genes not in transcriptDict or proteinDict that have an 
-# Ensembl, NCBI, or VEGA gene model as the representative genomic sequence
+# all mouse genes
+# include: markers of type 'gene'
+# include: marker with 'genomic' representative sequence from Ensembl, NCBI, or VEGA gene model
+# excludd: feature type in 'protein coding gene'
+# excludd: feature type in '%RNA gene'
+# exclude: markers in transcriptDict or proteinDict list
 #
-# that is, the marker has neither transcript nor protein
+# _Qualifier_key = 615419 = 'genomic'
 #
 db.sql('''
-    select distinct mm.mgiID
+    select distinct a.accID
     into #noTransProt
-    from SEQ_Marker_Cache mc, MRK_Mouse_View mm
-    where mc._Marker_key = mm._Marker_key
-    and mm._Marker_Status_key in (1,3)
-    and mc._Marker_Type_key = 1
+    from SEQ_Marker_Cache mc, MRK_Marker mm, ACC_Accession a, VOC_Annot_View tdc
+    where mm._Marker_Status_key in (1,3)
+    and mm._Marker_Type_key = 1
+    and mm._Organism_key = 1
+    and mm._Marker_key = a._Object_key
+    and a._MGIType_key = 2
+    and a._LogicalDB_key = 1
+    and a.preferred = 1
+    and mm._Marker_key = mc._Marker_key
     and mc._Qualifier_key = 615419
     and mc._LogicalDB_key in (59,60,85)
     and mm._Marker_key not in (select _Marker_key from #transcripts)
     and mm._Marker_key not in (select _Marker_key from #proteins)
+    and mm._Marker_key = tdc._Object_key
+    and tdc._AnnotType_key = 1011    
+    and tdc._LogicalDB_key = 146    
+    and tdc.term not in ('protein coding gene') 
+    and tdc.term not like '%RNA gene'
     ''', None)
 
 #
@@ -189,27 +225,43 @@ db.sql('''
 # of interest list:  13,41,9,27,131,132,133,134
 #
 
-results = db.sql('select * from #transcripts', 'auto')
+results = db.sql('select * from #allgenes', 'auto')
 for r in results:
 
-    mgiID = "MGI:" + r['mgiID']
+    accID = "MGI:" + r['accID']
     markerKey = r['_Marker_key']
+    featureType = r['term']
     isfp1 = 0
 
+    # fp1 (protein)
     if uniprotkbDict.has_key(markerKey):
 	l = uniprotkbDict[markerKey]
 	seqID = l[0]
 	logicalDB = l[1]
 	isfp1 = 1
+
     elif proteinDict.has_key(markerKey):
 	l = proteinDict[markerKey]
 	seqID = l[0]
 	logicalDB = l[1]
 	isfp1 = 1
-    else:
+
+    # fp2 (rna)
+    elif transcriptDict.has_key(markerKey):
 	l = transcriptDict[markerKey]
 	seqID = l[0]
         logicalDB = l[1]
+
+    # if there is no protein or transcript 
+    # 	AND the gene is *not* featureType = RNA
+    # then skip it
+    elif featureType == 'protein coding gene':
+	continue
+
+    # else...there is no protein or transcript AND the gene *is* featureType = RNA
+    # so we keep it
+    else:
+        logicalDB = ''
 
     #
     # Apply the proper prefix to the seq ID based on the logical DB.
@@ -226,20 +278,20 @@ for r in results:
     elif logicalDB in [133, 134]:
         seqID = 'ENSEMBL:' + seqID
     else:
-	continue
+	seqID = ''
 
     if isfp1:
-        fp1.write(mgiID + TAB + seqID + CRT)
+        fp1.write(accID + TAB + seqID + CRT)
     else:
-        fp2.write(mgiID + TAB + seqID + CRT)
+        fp2.write(accID + TAB + seqID + CRT)
 
 #
 # markers that have neither transcript nor protein
 #
 results = db.sql('select * from #noTransProt', 'auto')
 for r in results:
-    mgiID = "MGI:" + r['mgiID']
-    fp3.write(mgiID + TAB + CRT)
+    accID = "MGI:" + r['accID']
+    fp3.write(accID + TAB + CRT)
 
 reportlib.finish_nonps(fp1)
 reportlib.finish_nonps(fp2)

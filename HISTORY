@@ -1,3 +1,10 @@
+TAG: reports_db-5-1-5-7
+DATE: 11/05/2013
+STAFF: lec
+CHANGES: 
+1) TR11510/weekly_postgres/GO_gp2protein.py
+add feature type rules
+
 TAG: reports_db-5-1-5-6
 DATE: 11/1/2013
 STAFF: sc	
