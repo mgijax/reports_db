@@ -43,6 +43,9 @@
 #   15. id.version
 #   16. tag = Tag Method
 #
+# 11/18/2013	lec
+#	- TR11530/bug : column 10 is printing allele-status not allele-type.
+#
 # 04/26/2012	lec
 #	- TR11035/re-organized this report to begin from the perspective of the Gene Trap Alleles
 #	- the previous version took 25-30 minutes to run 8 minutes
@@ -103,7 +106,7 @@ db.sql('''
 	into #genetrap
 	from ALL_Allele a, VOC_Term t1, ACC_Accession ac
 	where a._Allele_Status_key in (847114, 3983021)
-	and a._Allele_Status_key = t1._Term_key
+	and a._Allele_Type_key = t1._Term_key
 	and a._Allele_Type_key = 847121
         and a._Allele_key = ac._Object_key
         and ac._LogicalDB_key = 1 
