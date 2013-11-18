@@ -1,3 +1,10 @@
+TAG: reports_db-5-1-5-8
+DATE: 11/18/2013
+STAFF: lec
+CHANGES: 
+1) TR11530/weekly_sybase/ALL_CellLine_GeneTrap.py
+fix column 10/allele-type
+
 TAG: reports_db-5-1-5-7
 DATE: 11/05/2013
 STAFF: lec
