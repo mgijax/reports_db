@@ -1,3 +1,9 @@
+TAG: reports_db-5-1-6-1
+DATE: 12/05/2013
+STAFF: lec
+CHANGES: 
+1) wrong version of daily_sybase/GO_gene_association.py
+
 TAG: reports_db-5-1-5-8
 DATE: 11/18/2013
 STAFF: lec

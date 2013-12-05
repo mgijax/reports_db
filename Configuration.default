@@ -60,13 +60,6 @@ setenv UNIPROTFASTA		${INPARANOIDDIR}/uniprot.fasta
 # GOA file
 setenv GOAMGI			${DATALOADSOUTPUT}/goa/goaload/output/goa.mgi
 
-# ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
-#       MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
-# GO ANNOTATION RELATIONSHIP-FILE
-setenv GOANNOT_RELATIONSHIP	/mgi/all/wts_projects/11100/11112/annotation_relationships.txt
-# GO ANNOTATION ERROR FILE
-setenv GOANNOT_ERROR		/mgi/all/wts_projects/11100/11112/annotation_relationships.error
-
 # KOMP files
 setenv KOMP_GENELIST		${DATALOADSOUTPUT}/komp/kompreports/output/geneList.txt
 setenv KOMP_TARGETLIST		${DATALOADSOUTPUT}/komp/kompreports/output/geneListNoKo.txt
