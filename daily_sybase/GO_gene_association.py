@@ -38,8 +38,8 @@
 #
 # History:
 #
-# lec	11/12/2013
-#	- TR11518/add "new" doCol16(); TR11459/removed
+# ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
+#	MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
 #
 # lec	08/27/2013
 #	- TR11459/GOANNOT_RELATIONSHIP/fix
@@ -147,6 +147,8 @@ DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 UNIPROTKB = 'uniprotload'
 assignedByList = ['RGD', 'GOC', 'RefGenome']
+annotRelationshipFileName = os.environ['GOANNOT_RELATIONSHIP']
+annotRelationshipFileError = os.environ['GOANNOT_ERROR']
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -167,6 +169,7 @@ proteinsGene = {}
 # see doCol16
 # list of column 16 object/evidence/printable format
 col16PrintLookup = {}
+col16Error = ''
 
 #
 # begin doSetup()
@@ -191,10 +194,8 @@ def doSetup():
     #   and m.symbol = 'Slc14a2'
     #	and ta.accID in ('GO:0015204','GO:0002687','GO:0008594')
     #   and m.symbol = 'Mbd2'
-    #   and m.symbol = 'Adipoq'
-    #   and m.symbol = 'Birc3'
     #
-    db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.synonym as qualifier, a._Object_key, 
+    db.sql('''select a._Term_key, t.term, ta.accID as termID, q.synonym as qualifier, a._Object_key, 
     	    e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
     	    e._Refs_key, e._ModifiedBy_key, 
     	    m.symbol, m.name, lower(mt.name) as markerType
@@ -244,7 +245,7 @@ def doSetup():
     #
     # resolve foreign keys and store in "results" table
     #
-    db.sql('''select distinct g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
+    db.sql('''select g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
     	    g._Object_key, g._AnnotEvidence_key, g._EvidenceTerm_key, g.symbol, g.name, g.markerType, 
     	    convert(varchar(10), g.modification_date, 112) as mDate, 
     	    ma.accID as markerID, 
@@ -287,54 +288,184 @@ def doSetup():
 #
 
 #
-# begin doCol16new()
+# begin doCol16()
 #
 def doCol16():
 
     global col16PrintLookup
+    global col16Error
 
     #
-    # list of object/evidence/stanza that are GO-properrties
+    # create error file
     #
-    # objectKey = marker key:annotation/evidence key (must match objectKey in doFinish())
-    #
-    # including properties that use go-sanctioned-property list
-    # and we also include mgi-property ('cell type', 'anatomy', 'target')
-    #
-    # include: _Vocab_key = 82
-    # include: go-sanctioned-properties (use _Term_key > 6481780 or sequenceNum > 9)
-    # include: mgi-properties
-    # exclude: annotations where evidence = ISO (3251466)
-    #
+    try:
+	col16Error = open(annotRelationshipFileError, 'w')
+    except:
+	print 'cannot open error file %s : no errors can be reported\n' % (annotRelationshipFileError)
 
-    results = db.sql('''select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
+    #
+    # TR11112/use hand-coded annotation relationship file to determine column 16
+    #
+    annotRelationshipLookup = {}
+    annotRelationshipFile = open(annotRelationshipFileName, 'r')
+    for line in annotRelationshipFile.readlines():
+        tokens = line.split(TAB)
+        key = str(tokens[0]) + ':' + tokens[2]
+        value = tokens[3].strip()
+        if not annotRelationshipLookup.has_key(key):
+	    annotRelationshipLookup[key] = []
+        annotRelationshipLookup[key].append(value)
+    annotRelationshipFile.close()
+    #print annotRelationshipLookup
+
+    cellLineSelect = re.compile(r'(CL:[0-9]+)', re.I)
+    targetSelect = re.compile(r'(MGI:[0-9]+|UniProtKB:+[0-9])', re.I)
+    anatomySelect = re.compile(r'(MA:[0-9]+|EMAP:[0-9]+)', re.I)
+
+    # list of object/evidence/stanza rows
+    col16EvidenceLookup = {}
+    # list of property/value for one object/evidence row
+    col16PropertyLookup = {}
+
+    #
+    # list of object/evidence/stanza with 'anatomy', 'cell type', 'target' properties
+    # key = marker key:annotation/evidence key
+    # values = all results (includes  property, value)
+    #
+    # exclude annotations where evidence = ISO (3251466)
+    #
+    results = db.sql('''select r.symbol, r._Object_key, r._AnnotEvidence_key, r._Term_key, r.termID, t.term as property, p.value, p.stanza
 	    from #gomarker2 r, VOC_Evidence_Property p, VOC_Term t
 	    where r._EvidenceTerm_key not in (3251466)
             and r._AnnotEvidence_key = p._AnnotEvidence_key
+	    and p._PropertyTerm_key in (6481774, 6481773, 6481777)
 	    and p._PropertyTerm_key = t._Term_key
-	    and t._Term_key > 6481780
 	    order by r.symbol, r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum, property''', 'auto')
-
     for r in results:
-	objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
+        key = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key']) + ':' + str(r['stanza'])
+        value = r
+        if not col16EvidenceLookup.has_key(key):
+	    col16EvidenceLookup[key] = []
+        col16EvidenceLookup[key].append(value)
+    #print col16EvidenceLookup
 
-	if not col16PrintLookup.has_key(objectKey):
-		col16PrintLookup[objectKey] = []
-    		stanza = 0
+    #
+    # iterate thru list of each object/evidence
+    #
+    for r in col16EvidenceLookup:
+        col16PropertyLookup.clear()
 
-	if stanza == 0:
-		sep = ''
-	elif r['stanza'] != stanza:
-		sep = '|'
-	else:
-		sep = ','
+        #
+        # iterate thru list of property/value for a specific object/evidence/stanza
+        # create the "property relationship(value)" text
+        # for example:
+        #   go id: GO:0000122
+        #	property = target
+        #   value = Ihh ; MGI:96533
+        # text = "has_regulation_target(MGI:MGI:96533)"
+        #
+        for v in col16EvidenceLookup[r]:
+       
+	   isError = 0
 
-	col16PrintLookup[objectKey].append(sep + r['property'] + '(' + r['value'] + ')')
-	stanza = r['stanza']
+           # determine property relationship
+           aKey = v['termID'] + ':' + v['property']
+           if annotRelationshipLookup.has_key(aKey):
+               startPart = annotRelationshipLookup[aKey][0]
 
+	   # cellular component default
+	   elif dag[v['_Term_key']] == 'C':
+               startPart = 'part_of'
+
+	   # molecular function and property in ('cell type', 'anatomy')
+	   elif dag[v['_Term_key']] == 'F' and v['property'] in ['cell type', 'anatomy']:
+               startPart = 'occurs_in'
+
+	   # molecular function and property not in ('cell type', 'anatomy')
+	   # biological process
+           else:
+	       isError = 1
+	       try:
+		   col16Error.write(v['termID'] + '\t' + v['symbol'] + '\t' + v['property'] + '\t' + v['value'] + '\n')
+               except:
+		   pass
+
+	   # if errors were found...skip this property/value
+	   if isError == 1:
+	       continue
+
+           p = v['property']
+
+           if not col16PropertyLookup.has_key(p):
+	       col16PropertyLookup[p] = []
+
+           # extract anatomy information
+           if p == 'anatomy':
+               for pv in anatomySelect.findall(v['value']):
+	          col16PropertyLookup[p].append(startPart + '(' + pv + ')')
+
+           # extract cell line information
+           if p == 'cell type':
+               for pv in cellLineSelect.findall(v['value']):
+	           if pv not in ('CL:0000001', 'CL:0000002'):
+	               col16PropertyLookup[p].append(startPart + '(' + pv + ')')
+
+           # extract target information
+           if p == 'target':
+               for pv in targetSelect.findall(v['value']):
+	          pv = pv.replace('MGI', 'MGI:MGI')
+	          col16PropertyLookup[p].append(startPart + '(' + pv + ')')
+
+        #
+        # all properties collected for given object/evidence
+        # construct column 16 print value
+        #
+
+        # make sure there is at least one value per property
+        if not col16PropertyLookup.has_key('anatomy'):
+	    col16PropertyLookup['anatomy'] = []
+	    col16PropertyLookup['anatomy'].append('')
+        if not col16PropertyLookup.has_key('cell type'):
+	    col16PropertyLookup['cell type'] = []
+	    col16PropertyLookup['cell type'].append('')
+        if not col16PropertyLookup.has_key('target'):
+	    col16PropertyLookup['target'] = []
+	    col16PropertyLookup['target'].append('')
+
+        # prepare col16PrintLookup
+	# remove 'stanza' and put all stanza's 
+	# for given object/evidence into one print statement
+	# this assumes that stanza's will not exceed '9'
+	ckey = r[:-2]
+        if not col16PrintLookup.has_key(ckey):
+            col16PrintLookup[ckey] = []
+
+        #
+        # iterate thru each property
+        # concatenate one value per property with "," separator
+	#
+        # for example:
+        #  anatomy 1,cell type 1,target 1
+        #  anatomy 1,cell type 2,target 2
+        #  anatomy 1,cell type 2,target 1
+        #  anatomy 1,cell type 2,target 2
+        #
+        for ap in col16PropertyLookup['anatomy']:
+            for cp in col16PropertyLookup['cell type']:
+                for tp in col16PropertyLookup['target']:
+		    temp = []
+		    if len(ap) > 0:
+		        temp.append(ap)
+		    if len(cp) > 0:
+		        temp.append(cp)
+		    if len(tp) > 0:
+		        temp.append(tp)
+		    col16PrintLookup[ckey].append(string.join(temp, ','))
     #print col16PrintLookup
 
-## end doCol16new()
+    col16Error.close()
+
+## end doCol16()
 
 #
 # begin doIsoform()
@@ -580,13 +711,10 @@ def doFinish():
 	    # contains property/value information
 	    #
 
-	    properties = ''
             if col16PrintLookup.has_key(objectKey):
-		if len(properties) == 0:
-			properties = string.join(col16PrintLookup[objectKey], '')
-		else:
-			properties = properties + '|' + string.join(col16PrintLookup[objectKey], '')
-            reportRow = reportRow + properties + TAB
+                reportRow = reportRow + string.join(col16PrintLookup[objectKey], '|') + TAB
+            else:                    
+                reportRow = reportRow + TAB
 
             # column 17
 	    #
