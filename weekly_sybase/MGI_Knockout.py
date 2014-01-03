@@ -36,6 +36,9 @@
 #
 # History:
 #
+# lec	12/31/2013
+#	- TR11515/changes to _Allele_Type_key
+#
 # lec   03/28/2012
 #       - TR 11027; create_accession_anchor() for MGI 5.0 
 #
@@ -221,7 +224,7 @@ db.sql('''
 	into #knockouts 
 	from ALL_Allele a, ACC_Accession aa, VOC_Term t 
 	where a._Allele_Status_key = 847114 
-	and a._Allele_Type_key in (847116, 847119, 847120) 
+	and a._Allele_Type_key = 847116
 	and a._Allele_key = aa._Object_key 
 	and aa._MGIType_key = 11 
 	and aa._LogicalDB_key = 1 
