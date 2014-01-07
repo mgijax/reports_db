@@ -70,7 +70,7 @@
 # History:
 #
 # lec	01/05/2014
-#	- TR11515/allele.bcp/added allele_collection.bcp, 
+#	- TR11515/allele.bcp/allele_type.bcp/allele_collection.bcp, 
 #		allele_subtype.bcp, allele_subtype_assoc.bcp
 #
 # lec	04/02/2013
