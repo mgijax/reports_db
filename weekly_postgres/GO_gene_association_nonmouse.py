@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	01/13/2014
+#	- TR11570/fix GO qualifier; use VOC_Term
+#
 # 03/26/2013
 #	- TR11330 (scrum-dog TR11248)/added "gaf" header
 #
@@ -105,7 +108,11 @@ def writeRecord(i, r, e):
 	fp.write(TAB)
 
 	# field 4
-	fp.write(string.strip(r['qualifier']) + TAB)
+	if r['qualifier'] != None:
+	    qualifier = string.strip(r['qualifier'])
+	else:
+	    qualifier = ''
+	fp.write(qualifier + TAB)
 
 	# field 5
 	fp.write(r['termID'] + TAB)
@@ -164,12 +171,12 @@ for r in results:
 # that begins "UniProtKB"
 #
 db.sql('''
-	select a._Term_key, ta.accID as termID, q.synonym as qualifier, a._Object_key, 
+	select a._Term_key, ta.accID as termID, q.term as qualifier, a._Object_key, 
 	         e._AnnotEvidence_key, e.inferredFrom as uniprotIDs, 
 	         e.modification_date, e._Refs_key
 	into #gomarker1 
 	from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, 
-	     VOC_Term et, MGI_Synonym q, MGI_User u 
+	     VOC_Term et, VOC_Term q, MGI_User u 
 	where a._AnnotType_key = 1000 
 	and a._Annot_key = e._Annot_key 
 	and a._Term_key = t._Term_key 
@@ -179,8 +186,7 @@ db.sql('''
 	and e._EvidenceTerm_key = et._Term_key 
 	and et.abbreviation in ('ISS','ISO','ISM','ISA') 
 	and e.inferredFrom like 'UniProtKB:%' 
-        and a._Qualifier_key = q._Object_key 
-	and q._SynonymType_key = 1023 
+        and a._Qualifier_key = q._Term_key 
 	and e._ModifiedBy_key = u._User_key
 	and e._Refs_key not in (89196,105787) 
 	and u.login not in ('GOC', 'RGD', 'UniProtKB')
