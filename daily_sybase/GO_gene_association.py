@@ -41,6 +41,9 @@
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
 #	MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
 #
+# lec	01/13/2014
+#	- TR11570/fix GO qualifier; use VOC_Term
+#
 # lec	01/02/2014
 #	- TR11518/add "new" doCol16()
 #	- all mgi-properties shoudl now be coverted to go-properties
@@ -195,7 +198,7 @@ def doSetup():
     #   and m.symbol = 'Birc3'
     #	and m.symbol = 'Hk1'
     #
-    db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.synonym as qualifier, a._Object_key, 
+    db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
     	    e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
     	    e._Refs_key, e._ModifiedBy_key, 
     	    m.symbol, m.name, lower(mt.name) as markerType
@@ -206,7 +209,7 @@ def doSetup():
 	     VOC_Evidence e, 
 	     MRK_Marker m, 
 	     MRK_Types mt, 
-	     MGI_Synonym q 
+	     VOC_Term q
         where a._AnnotType_key = 1000 
         and a._Annot_key = e._Annot_key 
         and a._Object_key = m._Marker_key 
@@ -216,8 +219,7 @@ def doSetup():
         and ta._MGIType_key = 13 
         and ta.preferred = 1 
         and m._Marker_Type_key = mt._Marker_Type_key 
-        and a._Qualifier_key = q._Object_key 
-        and q._SynonymType_key = 1023
+        and a._Qualifier_key = q._Term_key 
         ''', None)
     db.sql('create index gomarker1_idx1 on #gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on #gomarker1(_EvidenceTerm_key)', None)
@@ -528,7 +530,13 @@ def doFinish():
             reportRow = DBABBREV + TAB
             reportRow = reportRow + str(r['markerID']) + TAB
             reportRow = reportRow + r['symbol'] + TAB
-            reportRow = reportRow + string.strip(r['qualifier']) + TAB
+
+	    if r['qualifier'] != None:
+		qualifier = string.strip(r['qualifier'])
+	    else:
+		qualifier = ''
+
+            reportRow = reportRow + qualifier + TAB
             reportRow = reportRow + r['termID'] + TAB
 
             # column 6; reference

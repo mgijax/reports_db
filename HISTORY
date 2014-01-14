@@ -1,3 +1,9 @@
+TAG: reports_db-5-1-6-4
+DATE: 01/14/2014
+STAFF: lec
+CHANGES:
+1) TR11570/fix GO qualifier/use VOC_Term
+
 TAG: reports_db-5-1-6-3
 DATE: 01/02/2014
 STAFF: lec
