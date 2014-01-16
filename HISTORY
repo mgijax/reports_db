@@ -6,7 +6,7 @@ CHANGES:
 weekly_postgres/MGI_Mutations.py
 weekly_postgres/MGI_OMIM.py
 weekly_sybase/ALL_CellLine_Targeted.py 
-weekly_sybase/MGI_Knockout.py
+weekly_sybase/MGI_Knockout.py : obsolete/removed
 mgimarkerfeed/mgiMarkerFeed.py
 
 TAG: reports_db-tr11515-BP
