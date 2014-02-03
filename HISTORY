@@ -5,6 +5,7 @@ CHANGES:
 1) changes to _Allele_Type_key
 weekly_postgres/MGI_Mutations.py
 weekly_postgres/MGI_OMIM.py
+weekly_postgres/MGI_PhenotypicAllele.py
 weekly_sybase/ALL_CellLine_Targeted.py 
 weekly_sybase/MGI_Knockout.py : obsolete/removed
 mgimarkerfeed/mgiMarkerFeed.py

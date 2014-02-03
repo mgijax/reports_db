@@ -13,6 +13,7 @@
 #		Allele Symbol
 #		Allele Name
 #		Allele Type
+#		Allele Attribute/Subtype
 #		PubMed ID of Original Reference
 #		MGI ID of Gene
 #		Gene Symbol
@@ -25,6 +26,9 @@
 #       MGI_PhenotypicAllele.py
 #
 # History:
+#
+# lec	02/03/2014
+#	- TR11515/allele type change/add allele-attribute
 #
 # lec	08/31/2010
 #	- TR10280 fix; _AlleleType_key was put in for testing but not removed for release
@@ -183,6 +187,22 @@ for r in results:
                 synonym[key] = []
         synonym[key].append(value)
 
+# Retrieve Allele Attribute/Subtype
+results = db.sql('''
+	select s._Allele_key, t.term
+        from #alleles s, VOC_Annot a, VOC_Term t
+        where s._Allele_key = a._Object_key 
+        and a._AnnotType_key = 1014
+	and a._Term_key = t._Term_key
+	''', 'auto')
+subtype = {}
+for r in results:
+        key = r['_Allele_key']
+        value = r['term']
+        if not subtype.has_key(key):
+                subtype[key] = []
+        subtype[key].append(value)
+
 #
 # Main
 #
@@ -195,6 +215,11 @@ for r in results:
 		 r['symbol'] + reportlib.TAB + \
 		 r['name'] + reportlib.TAB + \
 		 r['alleleType'] + reportlib.TAB)
+
+	# allele attribute/sub-type/pipedelimited
+	if subtype.has_key(r['_Allele_key']):
+		fp.write(string.join(subtype[r['_Allele_key']], '|'))
+	fp.write(reportlib.TAB)
 
 	if pubIDs.has_key(r['_Allele_key']):
 		fp.write(pubIDs[r['_Allele_key']])
