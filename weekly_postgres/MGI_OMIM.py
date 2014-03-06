@@ -281,7 +281,7 @@ heterozygoteQuery = '''select _Genotype_key
 transgeneQuery = '''select distinct g._Genotype_key
 	from gxd_allelegenotype g, all_allele a
 	where g._Allele_key = a._Allele_key
-		and a._Allele_Type_key in (847127, 847128, 847129, 2327160)'''
+		and a._Allele_Type_key = 847126'''
 
 complexQuery = '''select _Genotype_key, count(1)
 	from gxd_allelepair

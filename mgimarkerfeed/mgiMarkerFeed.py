@@ -9,6 +9,7 @@
 #	TR 3345 - add Strain info; incorporate marker offset into marker.bcp
 #	TR 5565 - JaxStrain additions
 #	TR 10460 - add mutant cell line accession ids
+#	TR 11515 - added Allele/Collection
 #	MPR
 #
 # bcp files
@@ -18,52 +19,59 @@
 #	4.  allele_inheritance_mode.bcp
 #	5.  allele_pairstate.bcp
 #       6.  allele_transmission.bcp
-#	7.  allele_creator.bcp
-#	8.  allele_celllinetype.bcp
-#	9.  allele_vector.bcp
-#	10. allele_vectortype.bcp
-#	11. allele_markerstatus.bcp
-#	12. allele_markerqualifier.bcp
-#       13. genotype_existsas.bcp
-#	14. strain_type.bcp
-#	15. mp_term.bcp
-#	16. mp_synonym.bcp
-#	17. mp_closure.bcp
-#	18. marker.bcp
-#	19. marker_label.bcp
-#	20. accession_marker.bcp
-#	21. allele_cellline.bcp
-#	22. accession_allele_cellline.bcp
-#	23. allele_derivation.bcp
-#	24. allele.bcp
-#	25. allele_allele_cellline.bcp
-#	26. allele_marker.bcp
-#	27. allele_label.bcp
-#	28. allele_note.bcp
-#	29. accession_allele.bcp
-#	30. strain.bcp
-#	31. strain_marker.bcp
-#	32. strain_synonym.bcp
-#	33. strain_strain_type.bcp
-#	34. accession_strain.bcp
-#	35. strain_species.bcp
-#       36. genotype.bcp
-#       37. genotype_mpt.bcp
-#       38. genotype_header.bcp
-#       39. strain_genotype.bcp
-#       40. allele_pair.bcp
-#	41. reference.bcp
-#	42. accession_reference.bcp
-#	43. genotype_mpt_reference.bcp
-#	44. allele_reference.bcp
-#	45. strain_reference.bcp
-#	46. marker_reference.bcp
-#	47. marker_omim.bcp
+#       7.  allele_collection.bcp
+#       8.  allele_subtype.bcp
+#	9.  allele_creator.bcp
+#	10. allele_celllinetype.bcp
+#	11. allele_vector.bcp
+#	12. allele_vectortype.bcp
+#	13. allele_markerstatus.bcp
+#	14. allele_markerqualifier.bcp
+#       15. genotype_existsas.bcp
+#	16. strain_type.bcp
+#	17. mp_term.bcp
+#	18. mp_synonym.bcp
+#	19. mp_closure.bcp
+#	20. marker.bcp
+#	21. marker_label.bcp
+#	22. accession_marker.bcp
+#	23. allele_cellline.bcp
+#	24. accession_allele_cellline.bcp
+#	25. allele_derivation.bcp
+#	26. allele.bcp
+#	27. allele_allele_cellline.bcp
+#	28. allele_marker.bcp
+#	29. allele_label.bcp
+#	30. allele_note.bcp
+#	31. accession_allele.bcp
+#	32. allele_subtype_assoc.bcp
+#	33. strain.bcp
+#	34. strain_marker.bcp
+#	35. strain_synonym.bcp
+#	36. strain_strain_type.bcp
+#	37. accession_strain.bcp
+#	38. strain_species.bcp
+#       39. genotype.bcp
+#       40. genotype_mpt.bcp
+#       41. genotype_header.bcp
+#       42. strain_genotype.bcp
+#       43. allele_pair.bcp
+#	44. reference.bcp
+#	45. accession_reference.bcp
+#	46. genotype_mpt_reference.bcp
+#	47. allele_reference.bcp
+#	48. strain_reference.bcp
+#	49. marker_reference.bcp
+#	50. marker_omim.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
 #
 # History:
+#
+# lec	01/05/2014
+#	- TR11515/allele.bcp/allele_type.bcp/allele_collection.bcp, 
+#		allele_subtype.bcp, allele_subtype_assoc.bcp
 #
 # lec	04/02/2013
 #	- TR11343/genotype_mpt : update marker/omim cache query
@@ -310,6 +318,44 @@ def vocabs():
 	    	convert(char(20), creation_date, 100) as cdate, 
 	    	convert(char(20), modification_date, 100) as mdate 
 	    from VOC_Term where _Vocab_key = 61
+	    ''', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     str(r['cdate']) + TAB + \
+		     str(r['mdate']) + CRT)
+    fp.close()
+
+    #
+    # allele_collection.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_collection.bcp', 'w')
+
+    results = db.sql('''
+	    select _Term_key, term, 
+	    	convert(char(20), creation_date, 100) as cdate, 
+	    	convert(char(20), modification_date, 100) as mdate 
+	    from VOC_Term where _Vocab_key = 92
+	    ''', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Term_key']` + TAB + \
+		     r['term'] + TAB + \
+		     str(r['cdate']) + TAB + \
+		     str(r['mdate']) + CRT)
+    fp.close()
+
+    #
+    # allele_subtype.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_subtype.bcp', 'w')
+
+    results = db.sql('''
+	    select _Term_key, term, 
+	    	convert(char(20), creation_date, 100) as cdate, 
+	    	convert(char(20), modification_date, 100) as mdate 
+	    from VOC_Term where _Vocab_key = 93
 	    ''', 'auto', execute = 1)
     for r in results:
 	    fp.write(`r['_Term_key']` + TAB + \
@@ -756,6 +802,7 @@ def alleles():
     # allele_pair
     # allele_note
     # accession_allele
+    # allele_subtype_assoc
     #
 
     #
@@ -857,7 +904,8 @@ def alleles():
 
     results = db.sql('''
 	select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._Transmission_key, 
-	m._Strain_key, m.isWildType, m.isExtinct, m.isMixed, m.symbol, m.name, t.term as status, 
+	m._Strain_key, m._Collection_key, m.isWildType, m.isExtinct, m.isMixed, 
+	m.symbol, m.name, t.term as status, 
 	convert(char(20), m.creation_date, 100) as cdate, 
 	convert(char(20), m.modification_date, 100) as mdate 
 	from #alleles a, ALL_Allele m, VOC_Term t 
@@ -873,6 +921,7 @@ def alleles():
 	             `r['_Transmission_key']` + TAB + \
 		     mgi_status(r['status']) + TAB + \
 		     `r['_Strain_key']` + TAB + \
+	             `r['_Collection_key']` + TAB + \
 		     `r['isWildType']` + TAB + \
 		     `r['isExtinct']` + TAB + \
 		     `r['isMixed']` + TAB + \
@@ -1021,6 +1070,28 @@ def alleles():
 		     r['LogicalDB'] + TAB + \
 		     `r['_Object_key']` + TAB + \
 		     `r['preferred']` + TAB + \
+		     str(r['cdate']) + TAB + \
+		     str(r['mdate']) + CRT)
+    fp.close()
+
+    #
+    # select data fields for allele_subtype_assoc.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'allele_subtype_assoc.bcp', 'w')
+
+    results = db.sql('''
+	    select a._Allele_key, va._Term_key, 
+	    	convert(char(20), va.creation_date, 100) as cdate, 
+	    	convert(char(20), va.modification_date, 100) as mdate 
+	    from #alleles a, VOC_Annot va
+	    where a._Allele_key = va._Object_key
+	    and va._AnnotType_key = 1014
+	    ''', 'auto')
+
+    for r in results:
+	    fp.write(`r['_Allele_key']` + TAB + \
+		     `r['_Term_key']` + TAB + \
 		     str(r['cdate']) + TAB + \
 		     str(r['mdate']) + CRT)
     fp.close()

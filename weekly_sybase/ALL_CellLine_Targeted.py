@@ -31,6 +31,9 @@
 #   14. strainIMSR - list of IMSR providers holding strain stock
 #       associated to the Gene/Allele
 #
+# 12/31/2013	lec
+#	- TR11515/changes to _Allele_Type_key
+#
 # 04/09/2012    lec
 #       - convert to using one db.sql() per sql command in preparation for postgres
 #
@@ -74,6 +77,10 @@ fp.write('markerSymbol' + TAB)
 fp.write('esIMSR' + TAB)
 fp.write('strainIMSR' + CRT)
 		
+#
+# _Allele_Type_key = 847116 => 'Targeted'
+#
+
 db.sql('''
 	select distinct c.cellLine as mclID, c.parentCellLine, 
 	    c.vector, c.creator as mclCreator, c.derivationName as library,  
@@ -81,26 +88,25 @@ db.sql('''
 	    avv._Marker_key, ma.accID as markerID 
 	into #gt_seqs 
 	from ALL_CellLine_View c, ALL_Allele_CellLine ac, 
-	ACC_Accession cc, ACC_Accession aa, 
-	ALL_Allele_View avv 
-		LEFT OUTER JOIN ACC_Accession ma on (
-	    		avv._Marker_key = ma._Object_key
-	    		and ma._LogicalDB_key = 1 
-	    		and ma._MGIType_key = 2 
-	    		and ma.private = 0  
-	    		and ma.preferred = 1)
+		ACC_Accession cc, ACC_Accession aa, ACC_Accession ma,
+		ALL_Allele avv
 	where c.cellLine = cc.accID 
 	    and cc._MGIType_key = 28 
 	    and cc._LogicalDB_key in (108, 109, 137) 
 	    and c._CellLine_key = ac._MutantCellLine_key 
+	    and ac._Allele_key = avv._Allele_key 
+	    and avv._Allele_Status_key in (847114, 3983021) 
+	    and avv._Allele_Type_key = 847116
 	    and ac._Allele_key = aa._Object_key
 	    and aa._LogicalDB_key = 1 
 	    and aa._MGIType_key = 11 
 	    and aa.private = 0  
 	    and aa.preferred = 1  
-	    and ac._Allele_key = avv._Allele_key 
-	    and avv._Allele_Status_key in (847114, 3983021) 
-	    and avv._Allele_Type_key in (847116,847117,847118,847119,847120)
+	    and avv._Marker_key = ma._Object_key
+	    and ma._LogicalDB_key = 1 
+	    and ma._MGIType_key = 2 
+	    and ma.private = 0  
+	    and ma.preferred = 1
 	    ''', None)
 	
 db.sql('create index idx_mrk on #gt_seqs (markerID)', None)
@@ -122,7 +128,8 @@ db.sql('''
 	''', None)
 
 db.sql('''
-	insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1 
+	insert into #imsrCounts 
+	select distinct ac.accID, f.abbrevName, 1 
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
 	    imsr..Accession ac, imsr..Facility f 
 	where ac.accID = g.markerID 
@@ -134,7 +141,8 @@ db.sql('''
 	''', None)
 
 db.sql('''
-	insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
+	insert into #imsrCounts 
+	select distinct ac.accID, f.abbrevName, 2
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,  
 	    imsr..Accession ac, imsr..Facility f 
 	where ac.accID = g.alleleID 
@@ -146,7 +154,8 @@ db.sql('''
 	''', None)
 
 db.sql('''
-	insert into #imsrCounts select distinct ac.accID, f.abbrevName, 2
+	insert into #imsrCounts 
+	select distinct ac.accID, f.abbrevName, 2
 	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,
 	    imsr..Accession ac, imsr..Facility f 
 	where ac.accID = g.markerID 

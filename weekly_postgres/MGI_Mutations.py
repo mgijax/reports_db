@@ -19,6 +19,9 @@
 #
 # History:
 #
+# lec	12/31/2013
+#	- TR11515/allele type changes
+#
 # lec	12/13/2006
 #	- created, TR 8028
 #
@@ -69,9 +72,6 @@ fpTAB = None
 
 # key = marker key, value = dictionary of allele categories & counts
 markers = {}	
-
-# key = allele type key, value = dictionary of categoryKey that contains 'term' and 'count'
-alleleCategories = {}
 
 def init():
     #
@@ -163,22 +163,7 @@ def process():
     # process data
     #
 
-    global markers, alleleCategories
-
-    #
-    # lookup of Marker Detail Allele Categories-to-Allele Type key mappings
-    #
-
-    results = db.sql('''
-	select vt1._Term_key as categoryKey, vt1.term, vt2._Term_key as alleleTypeKey
-        from MGI_VocAssociationType mvat, MGI_VocAssociation mva, VOC_Term vt1, VOC_Term vt2 
-        where mvat._AssociationType_key = 1001 
-	and mvat._AssociationType_key = mva._AssociationType_key 
-	and mva._Term_key_1 = vt1._Term_key
-        and mva._Term_key_2 = vt2._Term_key
-	''', 'auto')
-    for r in results:
-	alleleCategories[r['alleleTypeKey']] = r
+    global markers
 
     #
     # same query as MGI_KOMP_AllGenes
@@ -216,13 +201,14 @@ def process():
     #
 
     db.sql('''
-	select m.*, a._Allele_Type_key 
+	select m.*, a._Allele_Type_key, t.term
 	into #markers2 
-	from #markers1 m, ALL_Allele a 
+	from #markers1 m, ALL_Allele a, VOC_Term t
 	where m._Marker_key = a._Marker_key 
 	and a.isWildType = 0 
 	and a._Allele_Type_key != 847130 
 	and a._Allele_Status_key = 847114 
+	and a._Allele_Type_key = t._Term_key
 	order by m.symbol
 	''', None)
     db.sql('create index markers2_idx1 on #markers2(_Marker_key)', None)
@@ -232,8 +218,8 @@ def process():
     for r in results:
 
 	key = r['_Marker_key']
-        ctermkey = alleleCategories[r['_Allele_Type_key']]['categoryKey']
-	cterm = alleleCategories[r['_Allele_Type_key']]['term']
+        ctermkey = r['_Allele_Type_key']
+	cterm = r['term']
 
 	#
 	# marker "value" = dictionary where key = term key 

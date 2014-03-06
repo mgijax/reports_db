@@ -1,3 +1,9 @@
+TAG: reports_db-5-1-8-?
+DATE: 03/06/2014
+STAFF: lec
+CHANGES:
+1) merge to trunk : branch point for TR11515/allele stuff
+
 TAG: reports_db-5-1-6-4
 DATE: 01/14/2014
 STAFF: lec
@@ -9,6 +15,18 @@ DATE: 01/02/2014
 STAFF: lec
 CHANGES:
 1) TR11518/daily_sybase/GO_gene_association.py/new doCol16()
+
+TAG: reports_db-tr11515-1
+DATE: 12/31/2013, 03/06/2014
+STAFF: lec
+CHANGES:
+1) changes to _Allele_Type_key
+weekly_postgres/MGI_Mutations.py
+weekly_postgres/MGI_OMIM.py
+weekly_postgres/MGI_PhenotypicAllele.py
+weekly_sybase/ALL_CellLine_Targeted.py 
+weekly_sybase/MGI_Knockout.py : obsolete/removed
+mgimarkerfeed/mgiMarkerFeed.py
 
 TAG: reports_db-tr11515-BP
 DATE: 12/31/2013
