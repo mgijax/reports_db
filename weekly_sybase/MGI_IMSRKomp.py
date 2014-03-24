@@ -33,6 +33,8 @@ db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 inFile = open('/data/downloads/emnet.informatics.jax.org:48080/imsrwi/imsrwi/report/kompCounts.txt', 'rU')
 
+fp.write('Marker Symbol\tMGI Marker Accession ID\tTotal number of IMSR Strains\tTotal number of Alleles\n')
+
 #
 # field 1 : MGI id (allele or marker)
 # field 2 : type
