@@ -572,6 +572,14 @@ D></TABLE>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_OMIM.rpt">MGI_OMIM.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
+    <TR><TD><TABLE>
+        <TR><TD><B>13. IMSR/KOMP Counts</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>Total number of IMSR Strains</TD><TD>Total number of Alleles</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_IMSRKomp.rpt">MGI_IMSRKomp.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
 </TABLE><BR>
 
 <!-- -->
