@@ -47,10 +47,13 @@
  
 import sys 
 import os
-import re
-import db
 import mgi_utils
 import reportlib
+import pg_db
+db = pg_db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -84,7 +87,7 @@ fp.write('# 11. JAX Strain Registry ID' + 2*CRT)
 
 db.sql('''
 	select distinct a._Allele_key, a.symbol, a.name, aa.accID, t.term as alleletype
-	into #allele
+	into temporary table allele
 	from ALL_Allele a, ACC_Accession aa, VOC_Term t, MGI_Reference_Assoc r
 	where a._Allele_Status_key in (847114)
 	and a._Allele_Type_key = t._Term_key
@@ -97,7 +100,7 @@ db.sql('''
 	and r._MGIType_key = 11
 	and r._Refs_key in (176309, 186964)
 	''', None)
-db.sql('create index idx_allele on #allele(_Allele_key)', None)
+db.sql('create index idx_allele on allele(_Allele_key)', None)
 
 #
 # genes
@@ -106,7 +109,7 @@ db.sql('create index idx_allele on #allele(_Allele_key)', None)
 
 results = db.sql('''
 	select a._Allele_key, m.symbol, m.name, m.chromosome, aa.accID
-	from #allele a, ALL_Marker_Assoc ama, MRK_Marker m, ACC_Accession aa
+	from allele a, ALL_Marker_Assoc ama, MRK_Marker m, ACC_Accession aa
 	where a._Allele_key = ama._Allele_key
 	and ama._Marker_key = m._Marker_key
 	and m._Marker_key = aa._Object_key
@@ -129,7 +132,7 @@ for r in results:
 #
 results = db.sql('''
 	select a._Allele_key, s.synonym 
-    	from #allele a, MGI_Synonym s
+    	from allele a, MGI_Synonym s
     	where a._Allele_key = s._Object_key 
     	and s._MGIType_key = 11
 	''', 'auto')
@@ -147,7 +150,7 @@ for r in results:
 
 results = db.sql('''
         select distinct a._Allele_key, t.term, aa.accID 
-        from #allele a, GXD_AlleleGenotype ga, VOC_Annot na, VOC_Term t, ACC_Accession aa 
+        from allele a, GXD_AlleleGenotype ga, VOC_Annot na, VOC_Term t, ACC_Accession aa 
         where a._Allele_key = ga._Allele_key 
         and ga._Genotype_key = na._Object_key 
         and na._AnnotType_key = 1002 
@@ -172,7 +175,7 @@ for r in results:
 #
 results = db.sql('''
         select a._Allele_key, nc.note 
-        from #allele a, MGI_Note n, MGI_NoteChunk nc 
+        from allele a, MGI_Note n, MGI_NoteChunk nc 
         where a._Allele_key = n._Object_key 
         and n._MGIType_key = 11 
 	and n._NoteType_key = 1020
@@ -193,7 +196,7 @@ for r in results:
 #
 results = db.sql('''
 	select a._Allele_key, aa.accID
-    	from #allele a, PRB_Strain_Marker p, ACC_Accession aa
+    	from allele a, PRB_Strain_Marker p, ACC_Accession aa
     	where a._Allele_key = p._Allele_key
 	and p._Strain_key = aa._Object_key
 	and aa._MGIType_key = 10
@@ -210,7 +213,7 @@ for r in results:
 #
 # main select
 #
-results = db.sql('select * from #allele', 'auto')
+results = db.sql('select * from allele', 'auto')
 
 for r in results:
     key = r['_Allele_key']

@@ -1,9 +1,9 @@
-TAG: reports_db-5-1-8-?
-DATE: 04/31/2014
+TAG: reports_db-5-1-8-3
+DATE: 05/01/2014
 STAFF: lec
 CHANGES:
 1) TR11660/MGI_GenePheno.py/add genotype ID
-2) TR11669/weekly/MGI_CvDC.py
+2) TR11669/weekly/MGI_CvDC.py moved to weekly_postgres
 
 TAG: reports_db-5-1-8-2
 DATE: 03/27/2014
