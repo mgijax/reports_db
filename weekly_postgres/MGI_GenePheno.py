@@ -23,6 +23,7 @@
 #	field 5: Mammalian Phenotype ID
 #	field 6: PubMed ID
 #	field 7: MGI Marker Accession ID (comma-delimited)
+#	field 8: MGI Genotype Accession ID (comma-delimited)
 #
 #	MGI_Gene_Disease
 #	field 8: OMIM ID(s) (comma-delimited)
@@ -36,6 +37,9 @@
 #       MGI_GenePheno.py
 #
 # History:
+#
+# lec	04/30/2014
+#	- TR11660/add genotype ID
 #
 # lec	04/25/2012
 #	- TR11035/removed and then put back in
@@ -218,6 +222,26 @@ for r in results:
     mpMarker[key].append(value)
 
 #
+# resolve Genotype ID
+#
+results = db.sql('''select distinct m._Object_key, a.accID
+	from #mp m, GXD_AlleleGenotype g, ACC_Accession a
+	where m._Object_key = g._Genotype_key
+	and g._Genotype_key = a._Object_key
+	and a._MGIType_key = 12
+	and a._LogicalDB_key = 1
+	and a.prefixPart = 'MGI:'
+	and a.preferred = 1
+	''', 'auto')
+mpGenotype= {}
+for r in results:
+    key = r['_Object_key']
+    value = r['accID']
+    if not mpGenotype.has_key(key):
+	mpGenotype[key] = []
+    mpGenotype[key].append(value)
+
+#
 # OMIM annotations that do not have "NOT" qualifier
 #
 results = db.sql('''select distinct m._Object_key, a.accID
@@ -290,7 +314,8 @@ for r in results:
     fp1.write(mpID[term] + TAB)
     if mpRef.has_key(refKey):
         fp1.write(string.join(mpRef[refKey], ','))
-    fp1.write(TAB + string.join(mpMarker[genotype], ',') + CRT)
+    fp1.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
+    fp1.write(TAB + string.join(mpGenotype[genotype], ',') + CRT)
 
     #
     # OMIM report 1

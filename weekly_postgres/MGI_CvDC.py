@@ -37,6 +37,9 @@
 #	please list the JAX Registry number for Public strains 
 #	(i.e. "Private?" ="No") that are associated with the allele in column 1. 
 #
+# lec	05/01/2014
+#	- TR11669/missing gene info
+#
 # lec	08/02/2012
 #	- TR11134
 #
@@ -45,13 +48,9 @@
 import sys 
 import os
 import re
+import db
 import mgi_utils
 import reportlib
-import pg_db
-db = pg_db
-db.setTrace()
-db.setAutoTranslate(False)
-db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -113,7 +112,7 @@ results = db.sql('''
 	and m._Marker_key = aa._Object_key
 	and aa._MGIType_key = 2
 	and aa._LogicalDB_key = 1
-	and aa.prefixPart = 'mgi:'
+	and aa.prefixPart = 'MGI:'
 	and aa.preferred = 1
 	''', 'auto')
 
