@@ -20,11 +20,6 @@
 #
 # History:
 #
-#
-# sc    06/27/2014
-#       - TR11560 Feature Relationships project
-#       - exclude feature type 'mutation defined region'
-#
 # lec   04/23/2012
 #       - TR11035/postgres cleanup; added feature type, coordinates & biotype
 #
@@ -173,29 +168,19 @@ for r in results:
 
 # Get Feature Type for Primary Marker
 results = db.sql('''
-	select m._Marker_key, s.term, s._MCVTerm_key
+	select m._Marker_key, s.term
 	from #markers m, MRK_MCV_Cache s 
 	where m.isPrimary = 1 
 	and m._Marker_key = s._Marker_key 
 	and s.qualifier = 'D'
 	''', 'auto')
-
-# {markerKey:[list of feature types]
 featureTypes = {}
-# {markerKey:[list of feature type keys]
-featureTypeByKey = {}
-
 for r in results:
-	markerKey = r['_Marker_key']
+	key = r['_Marker_key']
 	value = r['term']
-	termKey = r['_MCVTerm_key']
-	if not featureTypes.has_key(markerKey):
-		featureTypes[markerKey] = []
-	featureTypes[markerKey].append(value)
-	if not featureTypeByKey.has_key(markerKey):
-                featureTypeByKey[markerKey] = []
-        featureTypeByKey[markerKey].append(termKey)
-
+	if not featureTypes.has_key(key):
+		featureTypes[key] = []
+	featureTypes[key].append(value)
 
 #
 # coordinates
@@ -230,21 +215,6 @@ for r in results:
 	# column 5: offset
 	# column 6: chromosome
 	# column 7: marker type
-	key = r['_Marker_key']
-	# if the marker's feature type is not
-	# 'mutation defined region', key=11928467 write out to the report
-
-	# default feature type
-	fTypes = ''
-	if featureTypes.has_key(key):
-	    mcvKeyList = featureTypeByKey[key]
-	    if 11928467 in mcvKeyList:
-		print 'skipping %s ft %s' % (r['symbol'], mcvKeyList)
-		continue
-	    else:
-		print 'found ftype for symbol %s ft %s' % (r['symbol'], string.join(featureTypes[key],'|'))
-		fTypes = (string.join(featureTypes[key],'|'))
-
 
 	chromosome = None
 
@@ -282,7 +252,9 @@ for r in results:
 		fp.write(TAB)
 
 		# column 11: feature types
-		fp.write(fTypes + TAB)
+		if featureTypes.has_key(r['_Marker_key']):	
+			fp.write(string.join(featureTypes[r['_Marker_key']], '|'))
+		fp.write(TAB)
 
 		# column 12-13-14
                 if coords.has_key(r['_Marker_key']):
