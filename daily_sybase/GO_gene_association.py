@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	07/01/2014
+#	- TR11710/doCol16
+#
 # lec	01/13/2014
 #	- TR11570/fix GO qualifier; use VOC_Term
 #
@@ -328,8 +331,11 @@ def doCol16():
 	# always grab the second value for the GAF
 	#
 	if value.find(';') > 0:
-		values = value.split('; ')
-		value = values[1]
+		try:
+			values = value.split('; ')
+			value = values[1]
+		except:
+			pass
 
 	if not col16PrintLookup.has_key(objectKey):
 		col16PrintLookup[objectKey] = []
