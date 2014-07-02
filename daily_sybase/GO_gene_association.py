@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	07/02/2014
+#	- TR11693/only include official/interum markers
+#
 # lec	07/01/2014
 #	- TR11710/doCol16
 #
@@ -214,6 +217,7 @@ def doSetup():
         and a._Annot_key = e._Annot_key 
         and a._Object_key = m._Marker_key 
         and m._Marker_Type_key = 1 
+	and m._Marker_Status_key in (1,3)
         and a._Term_key = t._Term_key 
         and a._Term_key = ta._Object_key 
         and ta._MGIType_key = 13 
