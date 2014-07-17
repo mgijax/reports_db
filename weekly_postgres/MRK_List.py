@@ -15,6 +15,11 @@
 #
 # History:
 #
+#
+# sc    06/27/2014
+#       - TR11560 Feature Relationships project
+#       - exclude feature type 'mutation defined region'
+#
 # lec	04/23/2012
 #	- TR11035/Postgres cleanup; merge 
 #		MRK_List1, MRK_List2, MRK_List3, MRK_List4,
@@ -110,19 +115,25 @@ for r in results:
 # feature types
 #
 results = db.sql('''
-	select m._marker_key, s.term 
+	select m._marker_key, s.term, s._MCVTerm_key
         from #markers m, MRK_MCV_Cache s 
         where m._marker_key = s._marker_key 
         and s.qualifier = 'D'
 	''', 'auto')
+# {markerKey:[list of feature types]
 featureTypes = {}
+# {markerKey:[list of feature type keys]
+featureTypeByKey = {}
 for r in results:
-        key = r['_marker_key']
+        markerKey = r['_marker_key']
         value = r['term']
-        if not featureTypes.has_key(key):
-                featureTypes[key] = []
-        featureTypes[key].append(value)
-
+	termKey = r['_MCVTerm_key']
+        if not featureTypes.has_key(markerKey):
+                featureTypes[markerKey] = []
+        featureTypes[markerKey].append(value)
+	if not featureTypeByKey.has_key(markerKey):
+                featureTypeByKey[markerKey] = []
+        featureTypeByKey[markerKey].append(termKey)
 #
 # synonyms
 #
@@ -186,6 +197,17 @@ results = db.sql('(%s union %s) order by symbol' % (query1, query2), 'auto')
 for r in results:
 
     key = r['_marker_key']
+    # if the marker's feature type is not 
+    # 'mutation defined region', key=11928467 write out to the report
+
+    # default feature type
+    fTypes = ''
+    if featureTypes.has_key(key):
+	mcvKeyList = featureTypeByKey[key]
+	if 11928467 in mcvKeyList:
+	    continue
+	else:
+	    fTypes = (string.join(featureTypes[key],'|'))
 
     fp1.write(mgi_utils.prvalue(r['accid']) + TAB)
 
@@ -208,9 +230,7 @@ for r in results:
     fp1.write(r['name'] + TAB)
     fp1.write(r['markertype'] + TAB)
 
-    if featureTypes.has_key(key):
-	fp1.write(string.join(featureTypes[key],'|'))
-    fp1.write(TAB)
+    fp1.write(fTypes + TAB)
 
     if synonyms.has_key(key):
 	fp1.write(string.join(synonyms[key],'|'))
@@ -223,6 +243,18 @@ results = db.sql('%s order by symbol' % (query1), 'auto')
 for r in results:
 
     key = r['_marker_key']
+
+    # if the marker's feature type is not
+    # 'mutation defined region', key=11928467 write out to the report
+
+    # default ft for withdrawn markers
+    fTypes = ''
+    if featureTypes.has_key(key):
+        mcvKeyList = featureTypeByKey[key]
+        if 11928467 in mcvKeyList:
+            continue
+        else:
+            fTypes = (string.join(featureTypes[key],'|'))
 
     fp2.write(mgi_utils.prvalue(r['accid']) + TAB)
 
@@ -246,7 +278,7 @@ for r in results:
     fp2.write(r['markertype'] + TAB)
 
     if featureTypes.has_key(key):
-	fp2.write(string.join(featureTypes[key],'|'))
+	fp2.write(fTypes)
     fp2.write(TAB)
 
     if synonyms.has_key(key):

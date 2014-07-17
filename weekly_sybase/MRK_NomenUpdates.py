@@ -9,6 +9,10 @@
 #
 # History:
 #
+# sc    06/27/2014
+#       - TR11560 Feature Relationships project
+#       - exclude feature type 'mutation defined region'
+#
 # lec	03/28/2012
 #	- TR 11027; create_accession_anchor() for MGI 5.0
 #
@@ -140,6 +144,22 @@ for r in results:
 		seqIDs[r['_Marker_key']] = []
 	seqIDs[r['_Marker_key']].append(r['accID'])
 
+#
+# excluded markers
+# feature type='mutation defined region', key=11928467
+#
+results = db.sql('''
+        select m._marker_key
+        from #markers m, MRK_MCV_Cache s
+        where m._marker_key = s._marker_key
+        and s.qualifier = 'D'
+	and s._MCVTerm_key = _k
+        ''', 'auto')
+excludedMarkerList = []
+for r in results:
+        markerKey = r['_marker_key']
+        excludedMarkerList.append(markerKey)
+
 # get human ortholog (5)
 results = db.sql('''
 	select distinct m._Marker_key, humanSymbol = h.symbol 
@@ -159,8 +179,10 @@ rows = 0
 for r in results:
 
 	key = r['_Marker_key']
+	if if key in excludedMarkerList:
+	    continue
+
 	symbol = mgi_html.escape(r['symbol'])
-        print 'key: %s symbol: %s' % (key, symbol)
 	fpHTML.write('%-2s ' % (r['chromosome']))
 
 	fpHTML.write('%s%-30s%s ' \
@@ -205,7 +227,6 @@ for r in results:
 
 	rows = rows + 1
 
-print 'closing reports'
 fpHTML.write(reportlib.CRT + '(%d rows affected)' % (rows) + reportlib.CRT)
 reportlib.finish_nonps(fpHTML, isHTML = 1)	# non-postscript file
 reportlib.finish_nonps(fpRpt)			# non-postscript file

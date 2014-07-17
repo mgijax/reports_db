@@ -24,6 +24,10 @@
 #
 # History:
 #
+# sc    06/27/2014
+#       - TR11560 Feature Relationships project
+#       - exclude feature type 'mutation defined region'
+#
 # 04/17/2013 - jsb - rewrote for n-to-m homologies
 #
 # 07/05/2011	lec
@@ -136,6 +140,21 @@ def maskNulls (s):
 ###--- Main Program ---###
 
 db.useOneConnection(1)
+
+#
+# excluded markers
+# feature type='mutation defined region', key=11928467
+#
+results = db.sql('''
+        select _marker_key
+        from MRK_MCV_Cache
+        where qualifier = 'D'
+        and _MCVTerm_key = 11928467
+        ''', 'auto')
+excludedMarkerList = []
+for r in results:
+        markerKey = r['_marker_key']
+        excludedMarkerList.append(markerKey)
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
@@ -380,7 +399,8 @@ for (disease, hgID, taxonID, termKey, markerKey, organismKey) in results:
 	symbol = lookup(symbols, markerKey)
 	egID = lookup(entrezGeneIDs, markerKey)
 	mgiID = lookup(mgiIDs, markerKey)
-
+        if markerKey in excludedMarkerList:
+	    continue
 	for item in [ diseaseID, disease, hgID, organism, taxonID, symbol,
 		egID, mgiID ]:
 			fp.write (maskNulls(item) + TAB)

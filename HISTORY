@@ -1,3 +1,14 @@
+TAG: reports_db-5-1-9-1
+DATE: 07/17/2014
+STAFF: sc
+CHANGES: TR11560
+1) updated the following to exclude feature type 'mutation defined region
+weekly_postgres/MGI_EntrezGene.py
+weekly_postgres/MGI_GeneOMIM.py
+weekly_postgres/MGI_OMIM.py
+weekly_postgres/MRK_List.py
+weekly_sybase/MRK_NomenUpdates.py
+
 TAG: reports_db-5-1-8-5
 DATE: 07/02/2014
 STAFF: lec

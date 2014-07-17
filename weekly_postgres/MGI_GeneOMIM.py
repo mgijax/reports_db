@@ -14,6 +14,10 @@
 #
 # History:
 #
+# sc    06/27/2014
+#       - TR11560 Feature Relationships project
+#       - exclude feature type 'mutation defined region'
+#
 # lec	03/01/2011
 #	- TR10616/for Donna Maglott/NCBI
 #
@@ -40,10 +44,25 @@ PAGE = reportlib.PAGE
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
+# excluded markers
+# feature type='mutation defined region', key=11928467
+#
+results = db.sql('''
+        select _marker_key
+        from MRK_MCV_Cache
+        where qualifier = 'D'
+        and _MCVTerm_key = 11928467
+        ''', 'auto')
+excludedMarkerList = []
+for r in results:
+        markerKey = r['_marker_key']
+        excludedMarkerList.append(markerKey)
+
+#
 # Genotype/Markers that have OMIM annotations
 #
 
-results = db.sql('''select distinct a.accID omimID, ma.accID
+results = db.sql('''select distinct a.accID omimID, ma.accID, ag._Marker_key
         from GXD_AlleleGenotype ag, VOC_Annot va, ACC_Accession a, ACC_Accession ma
         where ag._Genotype_key = va._Object_key
         and va._AnnotType_key = 1005
@@ -59,7 +78,8 @@ results = db.sql('''select distinct a.accID omimID, ma.accID
 	''', 'auto')
 
 for r in results:
-
+    if r['_Marker_key'] in excludedMarkerList:
+	continue
     fp.write(r['accID'] + TAB)
     fp.write(r['omimID'] + CRT)
 
