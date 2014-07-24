@@ -121,6 +121,9 @@
 #
 # History:
 #
+# lnh  07/23/2014
+#      - TR11725 : store previous week's iPhone app reports
+#
 # sc	04/18/2013 
 #	- N2MO; update to use new MRK_Cluster* tables
 #
@@ -131,6 +134,7 @@
 
 import sys
 import os
+import subprocess
 import string
 import mgi_utils
 import reportlib
@@ -180,13 +184,47 @@ def init_report(reportName):
 
     reportWithDate = '%s-%s' % (reportName, currentDate)
     currentReport = '%s-current.rpt' % (reportName)
-
-    # remove current report link if it exists
+    #
+    # addons to support TR 11725 start here
+    #
+    oldReportLink='%s-old.rpt' % (reportName)
+    tempDir='%s/iphone-temp' % (reportDir)
+    currentReportFile='%s/%s-current_file' % (tempDir,reportName)
+    currentReportName=""
+    currentDir=os.getcwd()
+    if os.path.isdir('%s' % (tempDir) ):
+       os.system('rm -rf %s' % (tempDir))
     if os.path.isfile('%s/%s' % (reportDir, currentReport)):
-            os.remove('%s/%s' % (reportDir, currentReport))
-
+       #create a temp directory to temporary store current report info 
+       os.system('mkdir %s' % (tempDir))
+       os.system('readlink %s/%s > %s'% (reportDir,currentReport,currentReportFile))
+       if os.path.isfile('%s' % (currentReportFile)):
+          f = open(currentReportFile)
+          lines = f.readlines()     
+          f.close()
+          for report_name in lines:
+              report_name= report_name.strip()
+              if report_name:
+                 os.system('cp -p %s/%s %s/' % (reportDir,report_name,tempDir))
+                 currentReportName='%s' % (report_name)
+       #Remove old report symbolic link if exists
+       if os.path.isfile('%s/%s' % (reportDir,oldReportLink)):
+          os.remove('%s/%s' % (reportDir, oldReportLink))
+       # remove current report link if it exists
+       if os.path.isfile('%s/%s' % (reportDir, currentReport)):
+          os.remove('%s/%s' % (reportDir, currentReport))
     # move existing reports to the archive
     os.system('mv -f %s/%s*.rpt %s' % (reportDir, reportName, archiveDir))
+    
+    #restore old report - and create the "old" symbolic link to point to previous week report 
+    if os.path.isfile('%s/%s' % (tempDir,currentReportName)):
+       os.system('mv %s/%s %s'%(tempDir,currentReportName,reportDir))     
+       os.chdir(reportDir)
+       os.symlink(currentReportName, oldReportLink)
+       os.chdir(currentDir)
+
+    if os.path.isdir('%s' % (tempDir) ):
+       os.system('rm -rf %s' % (tempDir)) 
 
     fp = reportlib.init(reportWithDate, outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
