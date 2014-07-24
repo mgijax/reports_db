@@ -1,3 +1,12 @@
+TAG: reports_db-5-1-9-2
+DATE: 07/24/2014
+STAFF: lnh
+CHANGES: TR11725
+1)weekly_postgres/MGI_iphone_app.py
+Modified the init_report function to do the following to each report:
+a.) Keep previous week report if exists
+b.) create symbolic link labeled "old" to the previous week report
+
 TAG: reports_db-5-1-9-1
 DATE: 07/17/2014
 STAFF: sc
