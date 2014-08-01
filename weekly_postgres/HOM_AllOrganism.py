@@ -55,7 +55,7 @@ synonym = {}
 # Define the sort order of the organisms within a homology class
 # based on organism key.
 #
-organismOrder = [ 1, 2, 10, 94, 13, 11, 40, 63, 84 ]
+organismOrder = [ 1, 2, 10, 94, 13, 11, 40, 63, 95, 84 ]
 
 
 #
