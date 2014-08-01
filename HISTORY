@@ -1,3 +1,10 @@
+TAG: reports_db-5-1-9-3
+DATE: 08/01/2014
+STAFF: dbm
+CHANGES: TR11662
+1) index.html.default: added western clawed frog to HOM_AllOrganism.rpt
+2) HOM_AllOrganism.py: added organism key 95
+
 TAG: reports_db-5-1-9-2
 DATE: 07/24/2014
 STAFF: lnh
