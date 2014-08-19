@@ -1,3 +1,10 @@
+TAG: reports_db-5-1-9-4
+DATE: 08/19/2014
+STAFF: dbm
+CHANGES: TR11679
+1) index.html.default: added mp.owl to A&P section
+2) Configuration.default: added mp.owl to MPFILES setting
+
 TAG: reports_db-5-1-9-3
 DATE: 08/01/2014
 STAFF: dbm
