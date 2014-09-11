@@ -23,46 +23,57 @@
 #	2:  Marker key
 #	3:  Symbol
 #	4:  Name
-#	5:  URL prefix (by marker id)
-#	6.  Genetic position (ex. 'ChrX 36.02 cM')
-#	7.  Genomic position (ex. 'ChrX:67639052-67642592 (+)')
 #
-#	8:  # of References
-#	9: MGI Ref ID (MGI:xxx|J:xxx||MGI:xxx|J:xxx||...)
-#	10: URL prefix (by reference (J:))
+#	5: MGI Ref ID (MGI:xxx||MGI:xxx...)
 #
-#	11:  # of Alleles
-#	12: MGI Allele ID (MGI:xxx|MGI:xxx|...)
-#	13: URL prefix (by allele id)
+#	6: MGI Allele ID (MGI:xxx|MGI:xxx|...)
+#	7: GO ID (C group): (GO:xxxx||GO:xxxx||...)
 #
-#	14: # of GO annotations (C group)
-#	15: GO ID (C group): (GO:xxxx|term||GO:xxxx|term||...)
-#	16: URL prefix (by GO id)
+#	8: GO ID (F group): (GO:xxxx||GO:xxxx||...)
 #
-#	17: # of GO annotations (F group)
-#	18: GO ID (F group): (GO:xxxx|term||GO:xxxx|term||...)
-#	19: URL prefix (by GO id)
+#	9: GO ID (P group): (GO:xxxx||GO:xxxx||...)
 #
-#	20: # of GO annotations (P group)
-#	21: GO ID (P group): (GO:xxxx|term||GO:xxxx|term||...)
-#	22: URL prefix (by GO id)
+#	10: MP ID: (MP:xxxx||MP:xxxx||...)
 #
-#	23: # of MP annotations
-#	24: MP ID: (MP:xxxx|term||MP:xxxx|term||...)
-#	25: URL prefix (by MP id)
+#	11: OMIM ID: (xxxx||xxxx||...)
 #
-#	26: # of OMIM annotations (via genotype annotations)
-#	27: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
-#	28: URL prefix (by OMIM id)
+#	12: OMIM ID: (xxxx||xxxx||...)
 #
-#	29: # of OMIM annotations (via human disease via mouse ortholog)
-#	30: OMIM ID: (xxxx|disease term||xxxx|disease term||...)
-#	31: URL prefix (by OMIM id)
+#####
+#TR11732 Changes
+#Remove the following 23 columns:
+#       5:  URL prefix (by marker id)
+#       6.  Genetic position (ex. 'ChrX 36.02 cM')
+#       7.  Genomic position (ex. 'ChrX:67639052-67642592 (+)')
+#       8:  # of References
+#       10: URL prefix (by reference (J:))
+#       11:  # of Alleles
+#       13: URL prefix (by allele id)
+#       14: # of GO annotations (C group)
+#       15: GO ID (C group): (GO:xxxx|term||GO:xxxx|term||...)
+#       16: URL prefix (by GO id)
+#       17: # of GO annotations (F group)
+#       19: URL prefix (by GO id)
+#       20: # of GO annotations (P group)
+#       22: URL prefix (by GO id)
+#       23: # of MP annotations
+#       25: URL prefix (by MP id)
+#       26: # of OMIM annotations (via genotype annotations)
+#       28: URL prefix (by OMIM id)
+#       29: # of OMIM annotations (via human disease via mouse ortholog)
+#       31: URL prefix (by OMIM id)
+#       32: # of Nomenclature Events (via marker history)
+#       33: Nomenclature sequence number and event:  
+#       34: URL prefix (by marker)
 #
-#	32: # of Nomenclature Events (via marker history)
-#	33: Nomenclature sequence number and event:  
-#	34: URL prefix (by marker)
-#			1|assigned||2|rename||3|split||4|deletion
+#Remove the terms from the following columns (leave only IDs):
+#       15 - GO IDs (cellular component group)
+#       18 - GO IDs (molecular function group)
+#       21 - GO IDs (biological process group)
+#       24 - MP IDs
+#       27 - OMIM IDs
+#       30 - OMIM IDs
+##################################
 # iphone-mp
 #
 #	MP annotations
@@ -71,22 +82,29 @@
 #	2: MP Term
 #	3: MP Definition
 #
-#	4: # of References
-#	5: MGI Ref ID (MGI:xxx|J:xxx||MGI:xxx|J:xxx||...)
-#	6: URL prefix (by reference (J:))
+#	4: MGI Ref ID (MGI:xxx||MGI:xxx||...)
 #
-#	7: # of Genotypes
-#	8: MGI Genotype ID (MGI:xxx|MGI:xxx|...)
-#	9: URL prefix (by genotype)
+#	5: MGI Genotype ID (MGI:xxx|MGI:xxx|...)
 #
-#	10: # of Markers
-#	11: MGI Marker ID (MGI:xxx|MGI:xxx|...)
-#	12: URL prefix (by marker)
+#       6: MGI Marker ID (MGI:xxx|MGI:xxx|...)
 #
-#	13: # of Alleles
-#	14: MGI Allele ID (MGI:xxx|MGI:xxx|...)
-#	15: URL prefix (by allele)
+#	7: MGI Allele ID (MGI:xxx|MGI:xxx|...)
+######
+#TR11732 Changes
+#Remove the following 8 columns:
+#       4 - # of references
+#       6 - url prefix
+#       7 - # of genotypes
+#       9 - url prefix
+#       10 - # of markers
+#       12 - url prefix
+#       13 - # of alleles
+#       15 - url prefix
 #
+#Remove the J#s from the following columns (leave only IDs):
+#       5 - MGI IDs of annotated references
+#
+###################################
 # iphone-omim
 #
 #	1: OMIM ID
@@ -119,7 +137,37 @@
 #	20: Human EntrezGene ID (xxx|xxx|...)
 #	21: URL prefix (by omim id: human disease page)
 #
+######
+#TR11732 Changes
+#Remove the following 13 columns:
+#       3 - url prefix
+#       4 - # of references
+#       6 - url prefix
+#       7 - # of genotypes
+#       9 - url prefix
+#       10 - # of markers
+#       12 - url prefix
+#       13 - # of alleles
+#       15 - url prefix
+#       16 - # of references
+#       18 - url prefix
+#       19 - # of human gene annotations
+#       21 - url prefix
+#
+#Remove the J#s from the following columns (leave only IDs):
+#       5 - MGI IDs of annotated references
+#       17 - MGI IDs of annotated references
+#
+####
+##TR11732 Changes
+# replaced the double pipes separator, in each report, with single pipe  
+# and got rid of the trailing double pipes 
+#####################################
+#
 # History:
+#
+# lnh  08/07/2014
+#      - TR11732 : trim down iphone app reports
 #
 # lnh  07/23/2014
 #      - TR11725 : store previous week's iPhone app reports
@@ -258,33 +306,12 @@ def iphone_genes():
 	    and a.preferred = 1
 	    ''', None)
     db.sql('create index marker_idx on #markers(_marker_key)', None)
-
-    #
-    # coordinates
-    #
-    results = db.sql('''    
-        select m._marker_key,
-               c.strand, 
-               cast(c.startcoordinate as int) as startc,
-               cast(c.endcoordinate as int) as endc,
-	       c.genomicChromosome
-        from #markers m, MRK_Location_Cache c
-        where m._marker_key = c._marker_key
-            ''', 'auto')
-    coords = {}
-    for r in results:
-        key = r['_marker_key']
-        value = r
-        if not coords.has_key(key):
-            coords[key] = []
-        coords[key].append(value)
-
     #
     # refs
     #
     results = db.sql('''
-            select distinct m._marker_key, r.mgiid, r.jnumid
-            from #markers m, MRK_Reference r 
+            select distinct m._marker_key, r.mgiid
+            from #markers m, MRK_Reference r
             where m._marker_key = r._marker_key
             ''', 'auto')
     refs = {}
@@ -292,7 +319,7 @@ def iphone_genes():
         key = r['_marker_key']
         value = r
         if not refs.has_key(key):
-	    refs[key] = []
+            refs[key] = []
         refs[key].append(value)
 
     #
@@ -320,8 +347,8 @@ def iphone_genes():
     # GO annotations
     #
     results = db.sql('''
-            select distinct m._marker_key, a.accid, t.term, d.dag
-            from #markers m, VOC_Annot aa, ACC_Accession a, VOC_Term t, DAG_Node_View d
+            select distinct m._marker_key, a.accid,d.dag
+            from #markers m, VOC_Annot aa, ACC_Accession a,VOC_term t, DAG_Node_View d
             where m._marker_key = aa._object_key
 	    and aa._annottype_key = 1000
 	    and aa._term_key = a._object_key
@@ -353,14 +380,13 @@ def iphone_genes():
     # Phenotype Annotations
     #
     results = db.sql('''
-            select distinct m._marker_key, a.accid, t.term
-            from #markers m, VOC_Annot aa, ACC_Accession a, VOC_Term t
+            select distinct m._marker_key, a.accid
+            from #markers m, VOC_Annot aa, ACC_Accession a
             where m._marker_key = aa._object_key
 	    and aa._annottype_key = 1002
 	    and aa._term_key = a._object_key
 	    and a._mgitype_key = 13
 	    and a.preferred = 1
-	    and aa._Term_key = t._Term_key
             ''', 'auto')
     phenoannots = {}
     for r in results:
@@ -375,15 +401,14 @@ def iphone_genes():
     # OMIM by genotype annotations (_annottype_key = 1005)
     #
     results = db.sql('''
-	    select distinct m._marker_key, a.accid, t.term
-	    from #markers m, GXD_AlleleGenotype g, VOC_Annot aa, ACC_Accession a, VOC_Term t
+	    select distinct m._marker_key, a.accid
+	    from #markers m, GXD_AlleleGenotype g, VOC_Annot aa, ACC_Accession a
 	    where m._marker_key = g._marker_key
 	    and g._genotype_key = aa._object_key
 	    and aa._annottype_key = 1005
 	    and aa._term_key = a._object_key
 	    and a._mgitype_key = 13
 	    and a.preferred = 1
-	    and aa._Term_key = t._Term_key
             ''', 'auto')
     omimgenotype = {}
     for r in results:
@@ -419,17 +444,16 @@ def iphone_genes():
 
     db.sql('create index human_idx on #human(clusterID)', None)
 
-    results = db.sql('''select distinct m._marker_key, a.accid, t.term
+    results = db.sql('''select distinct m._marker_key, a.accid
             from #markers m, #mouse hm, #human hh,
-	    VOC_Annot aa, ACC_Accession a, VOC_Term t
+	    VOC_Annot aa, ACC_Accession a
             where m._marker_key = hm._marker_key
             and hm.clusterID = hh.clusterID
             and hh._Marker_key = aa._object_key
             and aa._annottype_key = 1006
             and aa._term_key = a._object_key
             and a._mgitype_key = 13
-            and a.preferred = 1
-            and aa._Term_key = t._Term_key''', 'auto')
+            and a.preferred = 1''', 'auto')
     omimhuman = {}
     for r in results:
         key = r['_marker_key']
@@ -438,23 +462,6 @@ def iphone_genes():
         if not omimhuman.has_key(key):
 	    omimhuman[key] = []
         omimhuman[key].append(value)
-
-    #
-    # Nomenclature History
-    #
-    results = db.sql('''
-            select distinct m._marker_key, h.sequencenum, e.event
-            from #markers m, MRK_History h, MRK_Event e
-            where m._marker_key = h._marker_key
-	    and h._marker_event_key = e._marker_event_key
-            ''', 'auto')
-    nomen = {}
-    for r in results:
-        key = r['_marker_key']
-        value = r
-        if not nomen.has_key(key):
-	    nomen[key] = []
-        nomen[key].append(value)
 
     #
     # report
@@ -468,147 +475,106 @@ def iphone_genes():
     #	Marker key
     #	Symbol
     #	Name
-    #	URL prefix (by marker)
-    
         fp.write(r['accid'] + TAB)
         fp.write(str(r['_marker_key']) + TAB)
         fp.write(r['symbol'] + TAB)
         fp.write(r['name'] + TAB)
-        fp.write(print_url_prefix(reportlib.create_accession_anchor(r['accid'], 'marker')) + TAB)
     
-    #	Genetic position (ex. 'ChrX 36.02 cM')
-
-	fp.write('Chr' + r['chromosome'] + ' ' + str(r['offset']) + ' cM' + TAB)
-
-    #	Genomic position (ex. 'ChrX:67639052-67642592 (+)')
-    
-        if coords.has_key(key):
-	    chromosome = coords[key][0]['genomicChromosome']
-	    if not chromosome:
-		# if no genomic chromosome, fall back on the genetic one
-		chromosome = r['chromosome']
-	    fp.write('Chr' + chromosome + ':')
-            fp.write(mgi_utils.prvalue(coords[key][0]['startc']) + '-')
-            fp.write(mgi_utils.prvalue(coords[key][0]['endc']) + ' (')
-            fp.write(mgi_utils.prvalue(coords[key][0]['strand']) + ')' + TAB)
-        else:
-            fp.write(TAB)
-    
-    #	# of References
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by reference)
-    	
         if refs.has_key(key):
-	    fp.write(str(len(refs[key])) + TAB)
+            i=0
 	    for n in refs[key]:
-	        fp.write(str(n['mgiid']) + '|' + n['jnumid'] + '||')
+                if i>0:
+	           fp.write('|'+str(n['mgiid']))
+                else:
+                   fp.write(str(n['mgiid']))
+                   i=1;
             fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(print_url_prefix(reportlib.create_accession_anchor('', 'reference')) + TAB)
     
-    #	# of Alleles
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by allele)
-    
         if alleles.has_key(key):
-	    fp.write(str(len(alleles[key])) + TAB)
 	    fp.write(string.join(alleles[key], '|') + TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(allele_urlprefix + TAB)
-
-    #	# of GO annotations (C group)
     #	GO ID (C group): (GO:xxxx|GO:xxxx|...)
-    #	URL prefix (by marker)
-    
         if goCannots.has_key(key):
-	    fp.write(str(len(goCannots[key])) + TAB)
+            i=0
 	    for n in goCannots[key]:
-	        fp.write(str(n['accid']) + '|' + n['term'] + '||')
+                if i>0:
+	           fp.write('|'+str(n['accid']))
+                else:
+	           fp.write(str(n['accid']))
+                   i=1
 	    fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(go_urlprefix + TAB)
-    
-    #	# of GO annotations (F group)
     #	GO ID (F group): (GO:xxxx|GO:xxxx|...)
-    #	URL prefix (by marker)
-    
         if goFannots.has_key(key):
-	    fp.write(str(len(goFannots[key])) + TAB)
+            i=0
 	    for n in goFannots[key]:
-	        fp.write(str(n['accid']) + '|' + n['term'] + '||')
+                if i>0:
+                   fp.write('|'+str(n['accid']))
+                else:
+                   fp.write(str(n['accid']))
+                   i=1
 	    fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(go_urlprefix + TAB)
     
-    #	# of GO annotations (P group)
     #	GO ID (P group): (GO:xxxx|GO:xxxx|...)
-    #	URL prefix (by marker)
-    
         if goPannots.has_key(key):
-	    fp.write(str(len(goPannots[key])) + TAB)
+            i=0
 	    for n in goPannots[key]:
-	        fp.write(str(n['accid']) + '|' + n['term'] + '||')
+                if i>0:
+                   fp.write('|'+str(n['accid']))
+                else:
+                   fp.write(str(n['accid']))
+                   i=1
 	    fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(go_urlprefix + TAB)
     
-    #	# of MP annotations
     #	MP ID: (MP:xxxx|MP:xxxx|...)
-    #	URL prefix (by marker)
-    
         if phenoannots.has_key(key):
-	    fp.write(str(len(phenoannots[key])) + TAB)
+            i=0
 	    for n in phenoannots[key]:
-	        fp.write(str(n['accid']) + '|' + n['term'] + '||')
+                if i>0:
+                   fp.write('|'+str(n['accid']))
+                else:
+                   fp.write(str(n['accid']))
+                   i=1
 	    fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(mp_urlprefix + TAB)
 
-    #	# of OMIM annotations (via genotype)
     #	OMIM ID: (xxxx|xxxx|...)
-    #	URL prefix (by marker)
-    
         if omimgenotype.has_key(key):
-	    fp.write(str(len(omimgenotype[key])) + TAB)
+            i=0
 	    for n in omimgenotype[key]:
-	        fp.write(str(n['accid']) + '|' + n['term'] + '||')
+                if i>0:
+                   fp.write('|'+str(n['accid']))
+                else:
+                   fp.write(str(n['accid']))
+                   i=1
 	    fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(omim_urlprefix + TAB)
     
-    #	# of OMIM annotations (via human disease)
     #	OMIM ID: (xxxx|xxxx|...)
-    #	URL prefix (by marker)
-    
         if omimhuman.has_key(key):
-	    fp.write(str(len(omimhuman[key])) + TAB)
+            i=0
 	    for n in omimhuman[key]:
-	        fp.write(str(n['accid']) + '|' + n['term'] + '||')
+                if i>0:
+                   fp.write('|'+str(n['accid']))
+                else:
+                   fp.write(str(n['accid']))
+                   i=1
 	    fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(omimdisease_urlprefix + TAB)
-
-    #	# of Nomenclature Events (via marker history)
-    #	Nomenclature sequence number:event:  
-    #	URL prefix (by marker)
-    
-        if nomen.has_key(key):
-	    fp.write(str(len(nomen[key])) + TAB)
-	    for n in nomen[key]:
-	        fp.write(str(n['sequencenum']) + '|' + n['event'] + '||')
-            fp.write(TAB)
-        else:
-            fp.write('0' + TAB + TAB)
-        fp.write(print_url_prefix(reportlib.create_accession_anchor(r['accid'], 'marker')) + CRT)
-    
+        fp.write(CRT)
     reportlib.finish_nonps(fp)
     
     # re-create a symbolic link between the new file and the current file
@@ -762,52 +728,34 @@ def iphone_mp():
 	if notes.has_key(key):
 	    fp.write(notes[key])
 	fp.write(TAB)
-
-    #	# of References
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by reference)
-    	
         if refs.has_key(key):
-	    fp.write(str(len(refs[key])) + TAB)
+            i=0
 	    for n in refs[key]:
-	        fp.write(str(n['mgiid']) + '|' + n['jnumid'] + '||')
+                if i>0:
+                   fp.write('|'+str(n['mgiid']))
+                else:
+                   fp.write(str(n['mgiid']))
+                   i=1
             fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(print_url_prefix(reportlib.create_accession_anchor('', 'reference')) + TAB)
-
-    #	# of Genotypes
     #	MGI Genotype ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by genotypes)
-    
         if genoannots.has_key(key):
-	    fp.write(str(len(genoannots[key])) + TAB)
 	    fp.write(string.join(genoannots[key], '|') + TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(geno_urlprefix + TAB)
-
-    #	# of Markers
     #	MGI Marker ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by marker)
-    
         if markerannots.has_key(key):
-	    fp.write(str(len(markerannots[key])) + TAB)
 	    fp.write(string.join(markerannots[key], '|') + TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(print_url_prefix(reportlib.create_accession_anchor('', 'marker')) + TAB)
-
-    #	# of Alleles
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by allele)
-    
         if alleleannots.has_key(key):
-	    fp.write(str(len(alleleannots[key])) + TAB)
 	    fp.write(string.join(alleleannots[key], '|') + TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(allele_urlprefix + CRT)
+        fp.write(CRT)
 
     reportlib.finish_nonps(fp)
     
@@ -844,7 +792,7 @@ def iphone_omim():
     # OMIM/Genotype/References
     #
     results = db.sql('''
-            select distinct m._term_key, r.mgiid, r.jnumid
+            select distinct m._term_key, r.mgiid
             from #omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1005
@@ -934,7 +882,7 @@ def iphone_omim():
     # OMIM/Human Marker/References
     #
     results = db.sql('''
-            select distinct m._term_key, r.mgiid, r.jnumid
+            select distinct m._term_key, r.mgiid
             from #omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1006
@@ -982,84 +930,63 @@ def iphone_omim():
 
 	fp.write(r['accid'] + TAB)
 	fp.write(r['term'] + TAB)
-	fp.write(omim_urlprefix + TAB)
 
     #   OMIM (_annottype_key = 1006)
-    #	# of References
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by reference)
-    	
         if refs1.has_key(key):
-	    fp.write(str(len(refs1[key])) + TAB)
+            i=0
 	    for n in refs1[key]:
-	        fp.write(str(n['mgiid']) + '|' + n['jnumid'] + '||')
+                if i>0:
+                   fp.write('|'+str(n['mgiid']))
+                else:
+                   fp.write(str(n['mgiid']))
+                   i=1
             fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(print_url_prefix(reportlib.create_accession_anchor('', 'reference')) + TAB)
 
     #   OMIM (_annottype_key = 1006)
-    #	# of Genotypes
     #	MGI Genotype ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by genotypes)
-    
         if genoannots1.has_key(key):
-	    fp.write(str(len(genoannots1[key])) + TAB)
 	    fp.write(string.join(genoannots1[key], '|') + TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(geno_urlprefix + TAB)
 
     #   OMIM (_annottype_key = 1006)
-    #	# of Markers
     #	MGI Marker ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by marker)
-    
         if markerannots1.has_key(key):
-	    fp.write(str(len(markerannots1[key])) + TAB)
 	    fp.write(string.join(markerannots1[key], '|') + TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(print_url_prefix(reportlib.create_accession_anchor('', 'marker')) + TAB)
 
     #   OMIM (_annottype_key = 1006)
-    #	# of Alleles
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by allele)
-    
         if alleleannots1.has_key(key):
-	    fp.write(str(len(alleleannots1[key])) + TAB)
 	    fp.write(string.join(alleleannots1[key], '|') + TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(allele_urlprefix + TAB)
 
     #   OMIM (_annottype_key = 1006)
-    #	# of References
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
-    #	URL prefix (by reference)
-    	
         if refs2.has_key(key):
-	    fp.write(str(len(refs2[key])) + TAB)
+            i=0
 	    for n in refs2[key]:
-	        fp.write(str(n['mgiid']) + '|' + n['jnumid'] + '||')
+                if i>0:
+                   fp.write('|'+str(n['mgiid']))
+                else:
+                   fp.write(str(n['mgiid']))
+                   i=1
             fp.write(TAB)
         else:
             fp.write('0' + TAB + TAB)
-        fp.write(print_url_prefix(reportlib.create_accession_anchor('', 'reference')) + TAB)
 
     #   OMIM (_annottype_key = 1006)
-    #	# of Human Markers
     #	EntrezGene ID (xxx|xxx|...)
-    #	URL prefix (by human/marker)
-    
         if markerannots2.has_key(key):
-	    fp.write(str(len(markerannots2[key])) + TAB)
 	    fp.write(string.join(markerannots2[key], '|') + TAB)
         else:
             fp.write('0' + TAB + TAB)
-	fp.write(omimdisease_urlprefix + CRT)
-
+        fp.write(CRT)
     reportlib.finish_nonps(fp)
     
     # re-create a symbolic link between the new file and the current file
