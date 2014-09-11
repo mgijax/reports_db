@@ -1,3 +1,13 @@
+TAG: reports_db-5-1-9-5
+DATE: 09/11/2014
+STAFF: lnh
+CHANGES: TR11732
+1)weekly_postgres/MGI_iphone_app.py
+Trim down iphone app reports - 
+a.) iphone_app_snapshot_genes.rpt
+b.) iphone_app_snapshot_mp.rpt
+c.) iphone_app_snapshot_omim.rpt
+
 TAG: reports_db-5-1-9-4
 DATE: 08/19/2014
 STAFF: dbm
