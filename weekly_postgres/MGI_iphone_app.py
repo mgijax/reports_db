@@ -491,13 +491,13 @@ def iphone_genes():
                    i=1;
             fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' + TAB)
     
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
         if alleles.has_key(key):
 	    fp.write(string.join(alleles[key], '|') + TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' + TAB)
     #	GO ID (C group): (GO:xxxx|GO:xxxx|...)
         if goCannots.has_key(key):
             i=0
@@ -509,7 +509,7 @@ def iphone_genes():
                    i=1
 	    fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' + TAB)
     #	GO ID (F group): (GO:xxxx|GO:xxxx|...)
         if goFannots.has_key(key):
             i=0
@@ -521,7 +521,7 @@ def iphone_genes():
                    i=1
 	    fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' +TAB)
     
     #	GO ID (P group): (GO:xxxx|GO:xxxx|...)
         if goPannots.has_key(key):
@@ -534,7 +534,7 @@ def iphone_genes():
                    i=1
 	    fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' +TAB)
     
     #	MP ID: (MP:xxxx|MP:xxxx|...)
         if phenoannots.has_key(key):
@@ -547,7 +547,7 @@ def iphone_genes():
                    i=1
 	    fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' +TAB)
 
     #	OMIM ID: (xxxx|xxxx|...)
         if omimgenotype.has_key(key):
@@ -560,7 +560,7 @@ def iphone_genes():
                    i=1
 	    fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' + TAB)
     
     #	OMIM ID: (xxxx|xxxx|...)
         if omimhuman.has_key(key):
@@ -571,9 +571,9 @@ def iphone_genes():
                 else:
                    fp.write(str(n['accid']))
                    i=1
-	    fp.write(TAB)
+	    #fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0')
         fp.write(CRT)
     reportlib.finish_nonps(fp)
     
@@ -627,7 +627,7 @@ def iphone_mp():
     # Mammalian Phenotype/References
     #
     results = db.sql('''
-            select distinct m._term_key, r.mgiid, r.jnumid
+            select distinct m._term_key, r.mgiid
             from #mp m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1002
@@ -708,7 +708,6 @@ def iphone_mp():
     for r in results:
         key = r['_term_key']
         value = r['accid']
-    
         if not alleleannots.has_key(key):
 	    alleleannots[key] = []
         alleleannots[key].append(value)
@@ -727,6 +726,8 @@ def iphone_mp():
 
 	if notes.has_key(key):
 	    fp.write(notes[key])
+        else:
+            fp.write('0')
 	fp.write(TAB)
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
         if refs.has_key(key):
@@ -739,22 +740,22 @@ def iphone_mp():
                    i=1
             fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' +TAB)
     #	MGI Genotype ID (MGI:xxx|MGI:xxx|...)
         if genoannots.has_key(key):
 	    fp.write(string.join(genoannots[key], '|') + TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' +TAB)
     #	MGI Marker ID (MGI:xxx|MGI:xxx|...)
         if markerannots.has_key(key):
 	    fp.write(string.join(markerannots[key], '|') + TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' +TAB)
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
         if alleleannots.has_key(key):
-	    fp.write(string.join(alleleannots[key], '|') + TAB)
+	    fp.write(string.join(alleleannots[key], '|'))
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0')
         fp.write(CRT)
 
     reportlib.finish_nonps(fp)
@@ -943,28 +944,28 @@ def iphone_omim():
                    i=1
             fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' + TAB)
 
     #   OMIM (_annottype_key = 1006)
     #	MGI Genotype ID (MGI:xxx|MGI:xxx|...)
         if genoannots1.has_key(key):
 	    fp.write(string.join(genoannots1[key], '|') + TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' + TAB)
 
     #   OMIM (_annottype_key = 1006)
     #	MGI Marker ID (MGI:xxx|MGI:xxx|...)
         if markerannots1.has_key(key):
 	    fp.write(string.join(markerannots1[key], '|') + TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' +TAB)
 
     #   OMIM (_annottype_key = 1006)
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
         if alleleannots1.has_key(key):
 	    fp.write(string.join(alleleannots1[key], '|') + TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' + TAB)
 
     #   OMIM (_annottype_key = 1006)
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
@@ -978,14 +979,14 @@ def iphone_omim():
                    i=1
             fp.write(TAB)
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0' + TAB)
 
     #   OMIM (_annottype_key = 1006)
     #	EntrezGene ID (xxx|xxx|...)
         if markerannots2.has_key(key):
-	    fp.write(string.join(markerannots2[key], '|') + TAB)
+	    fp.write(string.join(markerannots2[key], '|'))
         else:
-            fp.write('0' + TAB + TAB)
+            fp.write('0')
         fp.write(CRT)
     reportlib.finish_nonps(fp)
     
