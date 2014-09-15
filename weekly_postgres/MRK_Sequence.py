@@ -457,11 +457,10 @@ for r in results:
 #	19: RefSeq protein ID
 	if rsprot.has_key(key):
 		fp.write(string.join(rsprot[key], '|'))
+        fp.write(TAB)
 #	20: UniGene ID
         if ugID.has_key(key):
                 fp.write(string.join(ugID[key], '|'))
-        fp.write(reportlib.TAB)
-
 	fp.write(CRT)
 
 reportlib.finish_nonps(fp)
