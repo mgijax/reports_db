@@ -1,3 +1,12 @@
+TAG: reports_db-5-1-9-6
+DATE: 09/11/2014
+STAFF: lnh
+CHANGES: TR11732
+1)TR11732- weekly_postgres/MGI_iphone_app.py: 
+  Got rid of extra the tab associated with each default field 
+2)TR11774- weekly_postgres/MRK_Sequence.py: 
+  Fixed Missing tab between RefSeqID and UniGeneID fields   
+
 TAG: reports_db-5-1-9-5
 DATE: 09/11/2014
 STAFF: lnh
