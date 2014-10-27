@@ -43,6 +43,9 @@
 #   15. id.version
 #   16. tag = Tag Method
 #
+# lec   10/27/2014
+#       - TR11750/postres complient
+#
 # 11/18/2013	lec
 #	- TR11530/bug : column 10 is printing allele-status not allele-type.
 #
@@ -67,7 +70,17 @@
 import sys
 import os
 import reportlib
-import db
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB

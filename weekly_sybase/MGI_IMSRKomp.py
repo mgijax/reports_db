@@ -14,12 +14,25 @@
 #	3: imsr strains = field 3 from the kompCounts.txt
 #	4: other mutants = total number of alleles for the gene
 #
+# lec   10/24/2014
+#       - TR11750/postres complient
+#
 '''
  
 import sys 
 import os
 import reportlib
-import db
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE

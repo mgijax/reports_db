@@ -17,6 +17,9 @@
 #
 # History:
 #
+# lec   10/24/2014
+#       - TR11750/postres complient
+#
 # lec	12/08/2006
 #	- created, TR 8028
 #
@@ -30,7 +33,17 @@ import sys
 import os
 import string
 import reportlib
-import db
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB

@@ -31,6 +31,9 @@
 #   14. strainIMSR - list of IMSR providers holding strain stock
 #       associated to the Gene/Allele
 #
+# lec   10/27/2014
+#       - TR11750/postres complient
+#
 # 12/31/2013	lec
 #	- TR11515/changes to _Allele_Type_key
 #
@@ -51,8 +54,17 @@
 import sys
 import os
 import reportlib
-import db
 
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB

@@ -29,6 +29,9 @@
 #
 # History:
 #
+# lec   10/24/2014
+#       - TR11750/postres complient
+#
 # lec   03/28/2012
 #       - TR 11027; WI_URL changes for MGI 5.0
 #
@@ -44,7 +47,17 @@ import sys
 import os
 import string
 import reportlib
-import db
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
 
 db.useOneConnection(1)
 
