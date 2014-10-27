@@ -10,6 +10,9 @@
 
 cd `dirname $0` && source ./Configuration
 
+# set this variable to either 'sybase' or 'postgres'
+setenv DB_TYPE                  sybase
+
 umask 002
 
 setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
