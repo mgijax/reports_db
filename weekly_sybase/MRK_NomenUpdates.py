@@ -9,6 +9,10 @@
 #
 # History:
 #
+# lec   10/27/2014
+#       - TR11750/postres complient
+#	- fixed bug from TR11560
+#
 # sc    06/27/2014
 #       - TR11560 Feature Relationships project
 #       - exclude feature type 'mutation defined region'
@@ -39,7 +43,17 @@ import string
 import mgi_html
 import mgi_utils
 import reportlib
-import db
+
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
 
 #
 # Main
@@ -62,14 +76,18 @@ os.system('mv %s/Nomenclature-*.rpt %s/archive/nomen' % (reportDir, reportDir))
 
 db.useOneConnection(1)
 
-results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
-bdate = results[0]['']
+if os.environ['DB_TYPE'] == 'postgres':
+	bdate = "current_date - interval '7 days'"
+	edate = "current_date - interval '0 days'"
+	datequery = bdate + " and " + edate
+else:
+	results = db.sql('select convert(varchar(25), dateadd(day, -7, "%s"))' % (currentDate), 'auto')
+	bdate = results[0]['']
 
-results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
-edate = results[0]['']
+	results = db.sql('select convert(varchar(25), dateadd(day, 0, "%s"))' % (currentDate), 'auto')
+	edate = results[0]['']
 
-datequery = 'dateadd(day,-7,"%s") and dateadd(day,1,"%s")' \
-	% (currentDate, currentDate)
+	datequery = 'dateadd(day,-7,"%s") and dateadd(day,1,"%s")' % (currentDate, currentDate)
 
 title = 'Updates to Mouse Nomenclature from %s to %s' % (bdate, edate)
 fpHTML = reportlib.init(reportName, title, os.environ['FTPREPORTDIR'], isHTML = 1, printHeading = "MGI")
@@ -153,7 +171,7 @@ results = db.sql('''
         from #markers m, MRK_MCV_Cache s
         where m._marker_key = s._marker_key
         and s.qualifier = 'D'
-	and s._MCVTerm_key = _k
+	and s._MCVTerm_key = 11928467
         ''', 'auto')
 excludedMarkerList = []
 for r in results:
@@ -179,7 +197,7 @@ rows = 0
 for r in results:
 
 	key = r['_Marker_key']
-	if if key in excludedMarkerList:
+	if key in excludedMarkerList:
 	    continue
 
 	symbol = mgi_html.escape(r['symbol'])
