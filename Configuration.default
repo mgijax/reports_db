@@ -17,7 +17,9 @@ setenv IMSR_DBNAME		imsr
 
 # even though this product no longer directly uses this variable
 # it must remain set because dependent products expect it to be set
-setenv DB_TYPE			postgres
+# DB_TYPE is being set in the individual run scripts so that we can
+# run these as either postgres or sybase
+#setenv DB_TYPE			postgres
 
 # report output directory
 setenv REPORTOUTPUTDIR		${PUBREPORTDIR}/output
