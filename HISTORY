@@ -1,3 +1,10 @@
+TAG: reports_db-5-2-0-?
+DATE: 11/17/2014
+STAFF: lec, kstone
+CHANGES:
+1) TR11750/postgres 
+ALL_CRE : EBI is no longer using this report
+
 TAG: reports_db-5-1-9-9
 TAG: reports_db-5-1-9-8
 TAG: reports_db-5-1-9-7
