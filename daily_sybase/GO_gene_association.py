@@ -38,6 +38,9 @@
 #
 # History:
 #
+# sc	11/06/2014
+#	- TR11772/Modification of GAF file references
+#
 # lec   10/24/2014
 #       - TR11750/postres complient
 #
@@ -191,6 +194,25 @@ proteinsGene = {}
 # list of column 16 object/evidence/printable format
 col16PrintLookup = {}
 
+# mapping of load reference keys to GO_REF IDs/per TR11772
+# JNUM            _Refs_key      Desired addition
+# J:155856	156949         Rat2mouseISO     GO_REF:0000096 ???
+# J:161428	162524         GO_REF:0000033
+# J:164563	165659         human2mouseISO	 GO_REF:0000096 ???
+# J:60000	        61933          GO_REF:0000004
+# J:72245	        73197          GO_REF:0000003
+# J:72247	        73199          GO_REF:0000002
+# J:73065	        74017          GO_REF:0000008
+# J:73796	        74750          GO_REF:0000015
+goRefDict = {}
+goRefDict[156949] = 'GO_REF:0000096'
+goRefDict[162524] = 'GO_REF:0000033'
+goRefDict[165659] = 'GO_REF:0000096'
+goRefDict[61933] = 'GO_REF:0000004'
+goRefDict[73197] = 'GO_REF:0000003'
+goRefDict[73199] = 'GO_REF:0000002'
+goRefDict[74017] = 'GO_REF:0000008'
+goRefDict[74750] = 'GO_REF:0000015'
 #
 # begin doSetup()
 #
@@ -564,6 +586,9 @@ def doFinish():
 
             if pubMed.has_key(r['_Refs_key']):
                 referenceID = referenceID + '|PMID:' + pubMed[r['_Refs_key']]
+	    else:
+		if r['_Refs_key'] in goRefDict.keys():
+		    referenceID = referenceID + '|' +  goRefDict[r['_Refs_key']]
 
             reportRow = reportRow + referenceID + TAB
 
