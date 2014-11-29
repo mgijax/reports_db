@@ -1,3 +1,9 @@
+TAG: reports_db-5-2-0-2
+DATE: 11/27/2014
+STAFF: sc
+CHANGES TR11818 - chromosome positions missing from HOM_MouseHumanSequence.rpt
+
+HOM_MouseHumanSequence.py
 TAG: reports_db-5-2-0-1
 DATE: 11/24/2014
 STAFF: sc

@@ -24,6 +24,13 @@ HOM_MouseHumanSequence.py
 # Usage:
 #       HOM_MouseHumanSequence.py
 #
+#
+# History:
+#
+#  sc  11/27/2014
+#       - removed substring and cast on offset and coordinates - causing query
+#	  to return blank
+#
 """
 
 import sys
@@ -324,10 +331,10 @@ results = db.sql('''
         select t._Marker_key,
                lc.chromosome,
                lc.cytogeneticOffset,
-               substr(cast(lc.offset as varchar),10,2) as offset,
+               cast(lc.offset as varchar) as offset,
                lc.genomicChromosome,
-               substr(cast(lc.startCoordinate as varchar),10,0) as startCoordinate,
-               substr(cast(lc.endCoordinate as varchar),10,0) as endCoordinate,
+               cast(lc.startCoordinate as varchar) as startCoordinate,
+               cast(lc.endCoordinate as varchar) as endCoordinate,
                lc.strand
         from #temp1 t,
              MRK_Location_Cache lc
@@ -372,9 +379,9 @@ for r in results:
     #
     if offset != None:
         offset = offset.strip()
-        if offset == '-999.00':
+        if offset == '-999':
             location = 'Chr' + geneticChr
-        elif offset == '-1.00':
+        elif offset == '-1':
             location = 'Chr' + geneticChr + ' syntenic'
         else:
             location = 'Chr' + geneticChr + ' ' + offset + ' cM'
