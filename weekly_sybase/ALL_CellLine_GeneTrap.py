@@ -223,7 +223,7 @@ db.sql('''
 	and ac._IMSRType_key = 3 
 	and ac._Object_key = sga._Allele_key 
 	and sga._Strain_key = sfa._Strain_key
-	and sfa._StrainState_key <> 2 
+	and sfa._StrainState_key != 2 
 	and sfa._Facility_key = f._Facility_key''', None)
 
 # counts by marker type 2 (strain)
@@ -235,9 +235,15 @@ db.sql('''
 	and ac._IMSRType_key = 2 
 	and ac._Object_key = sga._Gene_key 
 	and sga._Strain_key = sfa._Strain_key 
-	and sfa._StrainState_key <> 2 
+	and sfa._StrainState_key != 2 
 	and sfa._Facility_key = f._Facility_key''', None)
 	
+
+#
+# TODO (kstone): recreate the following two dicts (es, strain) from imsr solr
+# es dict contains alleleIDs + markerIDs => facility abbrevNames for es cells
+# strain dict contains alleleIDs + markerIDs => facility abbrevNames for anything but es cells
+#
 # es cell line counts
 results = db.sql('select distinct accID, abbrevName from #imsrCounts where cType = 1', 'auto')
 es = {}
