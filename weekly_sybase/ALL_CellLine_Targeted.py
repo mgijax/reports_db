@@ -51,6 +51,7 @@
 #
 '''
 
+import csv
 import sys
 import os
 import reportlib
@@ -68,6 +69,74 @@ except:
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
+
+IMSR_CSV = os.environ['IMSR_STRAINS_CSV']
+
+# functions
+
+def createImsrEsDict():
+	"""
+	Reads in the IMSR allStrains.csv file and generates
+	a map of allele/marker ID to facility abbreviations
+	for es cells only
+	"""
+	facilityMap = {}
+	csvfile = open(IMSR_CSV, 'r')
+        reader = csv.reader(csvfile)
+        for row in reader:
+                allele_ids = row[0]
+                marker_ids = row[1]
+                provider = row[3]
+		strain_states = row[4]
+		if strain_states:
+			for strain_state in strain_states.split(','):
+				if strain_state.lower() != 'es cell':
+					continue
+				if allele_ids:
+					for id in allele_ids.split(','):
+						facilityMap.setdefault(id, []).append(provider)
+				if marker_ids:
+					for id in marker_ids.split(','):
+						facilityMap.setdefault(id, []).append(provider)
+
+	# unique and sort the provider list
+	for id, facilities in facilityMap.items():
+		facilityMap[id] = list(set(facilities))
+		facilityMap[id].sort()
+
+	return facilityMap
+
+def createImsrStrainDict():
+	"""
+	Reads in the IMSR allStrains.csv file and generates
+	a map of allele/marker ID to facility abbreviations
+	for any type except es cells
+	"""
+	facilityMap = {}
+	csvfile = open(IMSR_CSV, 'r')
+        reader = csv.reader(csvfile)
+        for row in reader:
+                allele_ids = row[0]
+                marker_ids = row[1]
+                provider = row[3]
+		strain_states = row[4]
+		if strain_states:
+			for strain_state in strain_states.split(','):
+				if strain_state.lower() == 'es cell':
+					continue
+				if allele_ids:
+					for id in allele_ids.split(','):
+						facilityMap.setdefault(id, []).append(provider)
+				if marker_ids:
+					for id in marker_ids.split(','):
+						facilityMap.setdefault(id, []).append(provider)
+
+	# unique and sort the provider list
+	for id, facilities in facilityMap.items():
+		facilityMap[id] = list(set(facilities))
+		facilityMap[id].sort()
+
+	return facilityMap
 
 db.useOneConnection(1)
 
@@ -125,81 +194,10 @@ db.sql('create index idx_mrk on #gt_seqs (markerID)', None)
 db.sql('create index idx_allp on #gt_seqs (alleleID)', None)
 db.sql('create index idx_gtallid on #gt_seqs (_Allele_key)', None)
 db.sql('create index idx_gtmrkid on #gt_seqs (_Marker_key)', None)
-db.sql('create table #imsrCounts(accID varchar(30), abbrevName varchar(30), cType int)', None)
 
-db.sql('''
-	insert into #imsrCounts select distinct ac.accID, f.abbrevName, 1
-	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
-	    imsr..Accession ac, imsr..Facility f 
-	where ac.accID = g.alleleID 
-	and ac._IMSRType_key = 3 
-	and ac._Object_key = sga._Allele_key 
-	and sga._Strain_key = sfa._Strain_key
-	and sfa._StrainState_key = 2 
-	and sfa._Facility_key = f._Facility_key
-	''', None)
-
-db.sql('''
-	insert into #imsrCounts 
-	select distinct ac.accID, f.abbrevName, 1 
-	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, 
-	    imsr..Accession ac, imsr..Facility f 
-	where ac.accID = g.markerID 
-	and ac._IMSRType_key = 2 
-	and ac._Object_key = sga._Gene_key 
-	and sga._Strain_key = sfa._Strain_key
-	and sfa._StrainState_key = 2
-	and sfa._Facility_key = f._Facility_key
-	''', None)
-
-db.sql('''
-	insert into #imsrCounts 
-	select distinct ac.accID, f.abbrevName, 2
-	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,  
-	    imsr..Accession ac, imsr..Facility f 
-	where ac.accID = g.alleleID 
-	and ac._IMSRType_key = 3 
-	and ac._Object_key = sga._Allele_key 
-	and sga._Strain_key = sfa._Strain_key
-	and sfa._StrainState_key != 2 
-	and sfa._Facility_key = f._Facility_key
-	''', None)
-
-db.sql('''
-	insert into #imsrCounts 
-	select distinct ac.accID, f.abbrevName, 2
-	from #gt_seqs g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,
-	    imsr..Accession ac, imsr..Facility f 
-	where ac.accID = g.markerID 
-	    and ac._IMSRType_key = 2 
-	    and ac._Object_key = sga._Gene_key 
-	    and sga._Strain_key = sfa._Strain_key 
-	    and sfa._StrainState_key != 2 
-	    and sfa._Facility_key = f._Facility_key
-	    ''', None)
-
-#
-# TODO (kstone): recreate the following two dicts (es, strain) from imsr solr
-# es dict contains alleleIDs + markerIDs => facility abbrevNames for es cells
-# strain dict contains alleleIDs + markerIDs => facility abbrevNames for anything but es cells
-#
-results = db.sql('select distinct accID, abbrevName from #imsrCounts where cType = 1', 'auto')
-es = {}
-for c in results:
-	accID = c['accID']
-	if accID not in es:
-		es[accID] = [c['abbrevName']]
-	else:
-		es[accID].append(c['abbrevName'])
-	
-results = db.sql('select distinct accID, abbrevName from #imsrCounts where cType = 2', 'auto')
-strain = {}
-for c in results:
-	accID = c['accID']
-	if accID not in strain:
-		strain[accID] = [c['abbrevName']]
-	else:
-		strain[accID].append(c['abbrevName'])
+# get imsr allele & marker ID => providers for ES Cells, and for Mice
+es = createImsrEsDict()
+strain = createImsrStrainDict()
 
 results = db.sql('''
 	select g.mclID, g.vector, g.mclCreator, g.library, 
