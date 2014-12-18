@@ -1,3 +1,8 @@
+TAG: reports_db-5-2-1-1
+DATE: 12/18/2014
+STAFF: kstone
+CHANGES - removed IMSR database access by weekly_sybase reports, using Solr csv file instead
+
 TAG: reports_db-5-2-0-3
 DATE: 12/2/2014
 STAFF: lnh 
