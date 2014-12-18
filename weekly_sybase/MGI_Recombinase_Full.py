@@ -29,6 +29,9 @@
 #
 # History:
 #
+# kstone 12/18/2014
+# 	- removed IMSR db query, replaced with Solr csv file
+#
 # lec   10/24/2014
 #       - TR11750/postres complient
 #
@@ -43,6 +46,7 @@
 #
 '''
  
+import csv
 import sys 
 import os
 import string
@@ -67,7 +71,26 @@ TAB = reportlib.TAB
 PAGE = reportlib.PAGE
 
 WI_URL = os.environ['WI_URL']
-IMSR = os.environ['IMSR_DBNAME']
+
+IMSR_CSV = os.environ['IMSR_STRAINS_CSV']
+
+# functions
+def createImsrAlleleToStrainDict():
+        """
+        Reads in the IMSR allStrains.csv file and generates
+        a map of allele ID to strain name
+        """
+        strainNameMap = {}
+        csvfile = open(IMSR_CSV, 'r')
+        reader = csv.reader(csvfile)
+        for row in reader:
+                allele_ids = row[0]
+                strain_name = row[2]
+		if allele_ids and strain_name:
+			for id in allele_ids.split(','):
+				strainNameMap.setdefault(id, []).append(strain_name)
+
+        return strainNameMap
 
 introBLOG = '''
 <p>
@@ -129,12 +152,13 @@ def printHeaderTAB():
     fpTAB.write('# field 7: Allele ID\n')
     fpTAB.write(CRT*2)
 
-def writeHTML(r):
+def writeHTML(r, imsrHTML):
     #
     # write record to HTML file
     #
 
     key = r['_Allele_key']
+    accID = r['accID']
     driverNote = string.replace(r['driverNote'], '\n', '')
 
     # superscript the symbol
@@ -164,8 +188,8 @@ def writeHTML(r):
     else:
         s = s + BLANKFIELD
       
-    if imsrHTML.has_key(key):
-	s = s + BEGTD + '%s' % (string.join(imsrHTML[key], BREAK)) + ENDTD
+    if imsrHTML.has_key(accID):
+	s = s + BEGTD + '%s' % (string.join(imsrHTML[accID], BREAK)) + ENDTD
     else:
         s = s + BLANKFIELD
       
@@ -173,12 +197,13 @@ def writeHTML(r):
 
     fpHTML.write(s)
 
-def writeTAB(r):
+def writeTAB(r, imsrTAB):
     #
     # write record to tab-delimited file
     #
 
     key = r['_Allele_key']
+    accID = r['accID']
     driverNote = string.replace(r['driverNote'], '\n', '')
 
     if r['name'] == r['markerName']:
@@ -198,8 +223,8 @@ def writeTAB(r):
       fpTAB.write(string.join(notexpressedTAB[key], '|'))
     fpTAB.write(TAB)
 
-    if imsrTAB.has_key(key):
-        fpTAB.write(string.join(imsrTAB[key], '|'))
+    if imsrTAB.has_key(accID):
+        fpTAB.write(string.join(imsrTAB[accID], '|'))
     fpTAB.write(TAB)
 
     fpTAB.write(r['accID'] + CRT)
@@ -294,36 +319,31 @@ for r in results:
 #
 
 results = db.sql('''
-        select distinct c._Allele_key, c.accID, ls.label 
-        from #cre c, %s..Accession ac, %s..Label ls, %s..SGAAssoc sga 
-        where c.accID = ac.accID 
-        and ac._Object_key = sga._Allele_key
-        and ac._IMSRType_key = 3 
-        and sga._Strain_key = ls._Object_key 
-        and ls._IMSRType_key = 1 
-        and ls.labelType = "N" 
-        ''' % (IMSR, IMSR, IMSR), 'auto')
+        select distinct c.accID
+        from #cre c
+        ''', 'auto')
+
+# map of imsr allele ID to strain names
+imsrStrainMap = createImsrAlleleToStrainDict()
+
 imsrTAB = {}
 imsrHTML = {}
 for r in results:
-    key = r['_Allele_key']
-    value = r['label']
+    accID = r['accID']
+    if accID not in imsrStrainMap:
+        continue
 
-    if not imsrTAB.has_key(key):
-        imsrTAB[key] = []
-    if value not in imsrTAB[key]:
-        imsrTAB[key].append(value)
+    for strain in imsrStrainMap[accID]:
 
-    value = string.replace(r['label'], '<', 'beginss')
-    value = string.replace(value, '>', 'endss')
-    value = string.replace(value, 'beginss', '<sup>')
-    value = string.replace(value, 'endss', '</sup>')
-    value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(r['label']), value, reportlib.close_accession_anchor())
+        imsrTAB.setdefault(accID, []).append(strain)
 
-    if not imsrHTML.has_key(key):
-        imsrHTML[key] = []
-    if value not in imsrHTML[key]:
-        imsrHTML[key].append(value)
+	value = string.replace(strain, '<', 'beginss')
+	value = string.replace(value, '>', 'endss')
+	value = string.replace(value, 'beginss', '<sup>')
+	value = string.replace(value, 'endss', '</sup>')
+	value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(strain), value, reportlib.close_accession_anchor())
+
+	imsrHTML.setdefault(accID, []).append(value)
 
 #
 # process results
@@ -331,8 +351,8 @@ for r in results:
 results = db.sql('select * from #cre order by driverNote', 'auto')
 
 for r in results:
-    writeHTML(r)
-    writeTAB(r)
+    writeHTML(r, imsrHTML)
+    writeTAB(r, imsrTAB)
 
 #
 # clean up
