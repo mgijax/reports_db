@@ -43,6 +43,9 @@
 #   15. id.version
 #   16. tag = Tag Method
 #
+# kstone 12/18/2014
+#	- Removed IMSR db query, replaced with Sorl csv file
+#
 # lec   10/27/2014
 #       - TR11750/postres complient
 #
@@ -67,6 +70,7 @@
 #
 '''
 
+import csv
 import sys
 import os
 import reportlib
@@ -84,6 +88,75 @@ except:
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
+
+IMSR_CSV = os.environ['IMSR_STRAINS_CSV']
+
+# functions 
+
+def createImsrEsDict():
+        """
+        Reads in the IMSR allStrains.csv file and generates
+        a map of allele/marker ID to facility abbreviations
+        for es cells only
+        """
+        facilityMap = {}
+        csvfile = open(IMSR_CSV, 'r')
+        reader = csv.reader(csvfile)
+        for row in reader:
+                allele_ids = row[0]
+                marker_ids = row[1]
+                provider = row[3]
+                strain_states = row[4]
+                if strain_states:
+                        for strain_state in strain_states.split(','):
+                                if strain_state.lower() != 'es cell':
+                                        continue
+                                if allele_ids:
+                                        for id in allele_ids.split(','):
+                                                facilityMap.setdefault(id, []).append(provider)
+                                if marker_ids:
+                                        for id in marker_ids.split(','):
+                                                facilityMap.setdefault(id, []).append(provider)
+        
+        # unique and sort the provider list
+        for id, facilities in facilityMap.items():
+                facilityMap[id] = list(set(facilities))
+                facilityMap[id].sort()
+
+        return facilityMap
+
+def createImsrStrainDict():
+        """
+        Reads in the IMSR allStrains.csv file and generates
+        a map of allele/marker ID to facility abbreviations
+        for any type except es cells
+        """
+        facilityMap = {}
+        csvfile = open(IMSR_CSV, 'r')
+        reader = csv.reader(csvfile)
+        for row in reader: 
+                allele_ids = row[0]
+                marker_ids = row[1]
+                provider = row[3]
+                strain_states = row[4]
+                if strain_states:
+                        for strain_state in strain_states.split(','):
+                                if strain_state.lower() == 'es cell':
+                                        continue
+                                if allele_ids: 
+                                        for id in allele_ids.split(','):
+                                                facilityMap.setdefault(id, []).append(provider)
+                                if marker_ids: 
+                                        for id in marker_ids.split(','):
+                                                facilityMap.setdefault(id, []).append(provider)
+        
+        # unique and sort the provider list
+        for id, facilities in facilityMap.items():
+                facilityMap[id] = list(set(facilities))
+                facilityMap[id].sort()
+        
+        return facilityMap
+
 
 db.useOneConnection(1)
 
@@ -185,85 +258,10 @@ db.sql('''
 	''', None)
 db.sql('create index celllines_idx1 on #celllines (_Allele_key)', None)
 
-#
-# imsr counts
-#
-db.sql('create table #imsrCounts(accID varchar(30), abbrevName varchar(30), cType int)', None)
+# get imsr allele & marker ID => providers for ES Cells, and for Mice
+es = createImsrEsDict()
+strain = createImsrStrainDict()
 
-# counts by allele type 1 (es cell line)
-db.sql('''
-	insert into #imsrCounts 
-	select distinct ac.accID, f.abbrevName, 1
-	from #genetrap g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, imsr..Accession ac, imsr..Facility f 
-	where g.alleleID = ac.accID
-	and ac._IMSRType_key = 3 
-	and ac._Object_key = sga._Allele_key 
-	and sga._Strain_key = sfa._Strain_key
-	and sfa._StrainState_key = 2 
-	and sfa._Facility_key = f._Facility_key''', None)
-
-# counts by marker type 1 (es cell line)
-db.sql('''
-	insert into #imsrCounts 
-	select distinct ac.accID, f.abbrevName, 1 
-	from #markers m, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, imsr..Accession ac, imsr..Facility f 
-	where m.markerID = ac.accID
-	and ac._IMSRType_key = 2 
-	and ac._Object_key = sga._Gene_key 
-	and sga._Strain_key = sfa._Strain_key
-	and sfa._StrainState_key = 2
-	and sfa._Facility_key = f._Facility_key''', None)
-
-# counts by allele type 2 (strain)
-db.sql('''
-	insert into #imsrCounts 
-	select distinct ac.accID, f.abbrevName, 2
-	from #genetrap g, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga,  imsr..Accession ac, imsr..Facility f 
-	where g.alleleID = ac.accID
-	and ac._IMSRType_key = 3 
-	and ac._Object_key = sga._Allele_key 
-	and sga._Strain_key = sfa._Strain_key
-	and sfa._StrainState_key != 2 
-	and sfa._Facility_key = f._Facility_key''', None)
-
-# counts by marker type 2 (strain)
-db.sql('''
-	insert into #imsrCounts 
-	select distinct ac.accID, f.abbrevName, 2
-	from #markers m, imsr..StrainFacilityAssoc sfa, imsr..SGAAssoc sga, imsr..Accession ac, imsr..Facility f 
-	where m.markerID = ac.accID
-	and ac._IMSRType_key = 2 
-	and ac._Object_key = sga._Gene_key 
-	and sga._Strain_key = sfa._Strain_key 
-	and sfa._StrainState_key != 2 
-	and sfa._Facility_key = f._Facility_key''', None)
-	
-
-#
-# TODO (kstone): recreate the following two dicts (es, strain) from imsr solr
-# es dict contains alleleIDs + markerIDs => facility abbrevNames for es cells
-# strain dict contains alleleIDs + markerIDs => facility abbrevNames for anything but es cells
-#
-# es cell line counts
-results = db.sql('select distinct accID, abbrevName from #imsrCounts where cType = 1', 'auto')
-es = {}
-for c in results:
-	accID = c['accID']
-	if accID not in es:
-		es[accID] = [c['abbrevName']]
-	else:
-		es[accID].append(c['abbrevName'])
-	
-# strain counts
-results = db.sql('select distinct accID, abbrevName from #imsrCounts where cType = 2', 'auto')
-strain = {}
-for c in results:
-	accID = c['accID']
-	if accID not in strain:
-		strain[accID] = [c['abbrevName']]
-	else:
-		strain[accID].append(c['abbrevName'])
-	
 #
 # ready to print
 #

@@ -31,6 +31,9 @@
 #   14. strainIMSR - list of IMSR providers holding strain stock
 #       associated to the Gene/Allele
 #
+# kstone 12/18/2014
+#	- Removed IMSR query, replaced with Solr csv file
+#
 # lec   10/27/2014
 #       - TR11750/postres complient
 #
