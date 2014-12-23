@@ -13,8 +13,6 @@ endif
 
 source ${MGICONFIG}/master.config.csh
 
-setenv IMSR_DBNAME		imsr
-
 # even though this product no longer directly uses this variable
 # it must remain set because dependent products expect it to be set
 # DB_TYPE is being set in the individual run scripts so that we can
@@ -75,7 +73,7 @@ setenv KOMP_TARGETLIST		${DATALOADSOUTPUT}/komp/kompreports/output/geneListNoKo.
 
 # NCBI LinkOut stuff
 setenv NCBILINKOUT_ICON		"http://www.informatics.jax.org/mgihome/other/favicon.ico"
-setenv NCBILINKOUT_BASE		"http://www.informatics.jax.org/searches/accession_report.cgi?"
+setenv NCBILINKOUT_BASE		"http://www.informatics.jax.org/marker/"
 setenv NCBILINKOUT_HOST		ftp-private.ncbi.nlm.nih.gov
 setenv NCBILINKOUT_USER		mgd
 setenv NCBILINKOUT_PASSWORD	keUPdTuD
@@ -88,6 +86,9 @@ setenv PERLLIB			/usr/local/lib
 # Setting for Gene trap scripts
 # master file of all gene trap best single hits on the current genome version
 setenv MASTER_GFF_FILE ${DATADOWNLOADS}/ftp.ncbi.nih.gov/gtblatpipeline/output/best_blat_hits_single_Gbrowse.master.gff
+
+# set IMSR csv file
+setenv IMSR_STRAINS_CSV         ${DATADOWNLOADS}/emnet.informatics.jax.org/allStrains.csv
 
 # Iphone archive
 setenv IPHONEARCHIVE		${FTPREPORTDIR}/archive/iphone
