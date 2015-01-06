@@ -120,7 +120,7 @@
 #	8: MGI Genotype ID (MGI:xxx|MGI:xxx|...)
 #	9: URL prefix (by genotype)
 #
-#	10: # of Markers
+#	10: # of Markers (_AnnotType_key = 1016)
 #	11: MGI Marker ID (MGI:xxx|MGI:xxx|...)
 #	12: URL prefix (by marker)
 #
@@ -194,6 +194,11 @@ db.setAutoTranslateBE()
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
+
+# constants
+
+MP_MARKER_ANNOT_TYPE = 1015
+OMIM_MARKER_ANNOT_TYPE = 1016
 
 #
 # URL prefxies
@@ -377,17 +382,18 @@ def iphone_genes():
         goannots[key].append(value)
 
     #
-    # Phenotype Annotations
+    # Phenotype Annotations (now using MP/Marker annotations derived by the
+    # rollupload product)
     #
     results = db.sql('''
             select distinct m._marker_key, a.accid
             from #markers m, VOC_Annot aa, ACC_Accession a
             where m._marker_key = aa._object_key
-	    and aa._annottype_key = 1002
+	    and aa._annottype_key = %d
 	    and aa._term_key = a._object_key
 	    and a._mgitype_key = 13
 	    and a.preferred = 1
-            ''', 'auto')
+            ''' % MP_MARKER_ANNOT_TYPE, 'auto')
     phenoannots = {}
     for r in results:
         key = r['_marker_key']
@@ -398,18 +404,18 @@ def iphone_genes():
         phenoannots[key].append(value)
 
     #
-    # OMIM by genotype annotations (_annottype_key = 1005)
+    # OMIM annotations rolled up to markers (now using OMIM/Marker annotations
+    # derived by the rollupload)
     #
     results = db.sql('''
 	    select distinct m._marker_key, a.accid
-	    from #markers m, GXD_AlleleGenotype g, VOC_Annot aa, ACC_Accession a
-	    where m._marker_key = g._marker_key
-	    and g._genotype_key = aa._object_key
-	    and aa._annottype_key = 1005
+	    from #markers m, VOC_Annot aa, ACC_Accession a
+	    where m._marker_key = aa._object_key
+	    and aa._annottype_key = %d
 	    and aa._term_key = a._object_key
 	    and a._mgitype_key = 13
 	    and a.preferred = 1
-            ''', 'auto')
+            ''' % OMIM_MARKER_ANNOT_TYPE, 'auto')
     omimgenotype = {}
     for r in results:
         key = r['_marker_key']
@@ -666,20 +672,20 @@ def iphone_mp():
         genoannots[key].append(value)
 
     #
-    # Mammalian Phenotype/Genotype by Marker
+    # Mammalian Phenotype/Genotype by Marker (updated to use the pre-computed
+    # MP/Marker annotations, computed by rollupload)
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #mp m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
+            from #mp m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1002
-	    and aa._object_key = g._genotype_key
-	    and g._marker_key = a._object_key
+	    and aa._annottype_key = %d
+	    and aa._object_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 1
 	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
-            ''', 'auto')
+            ''' % MP_MARKER_ANNOT_TYPE, 'auto')
     markerannots = {}
     for r in results:
         key = r['_term_key']
@@ -832,20 +838,19 @@ def iphone_omim():
         genoannots1[key].append(value)
 
     #
-    # OMIM/Genotype by Marker
+    # OMIM/Marker pairs (now updated to use ones pre-computed by rollupload)
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #omim m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
+            from #omim m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1005
-	    and aa._object_key = g._genotype_key
-	    and g._marker_key = a._object_key
+	    and aa._annottype_key = %d
+	    and aa._object_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 1
 	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
-            ''', 'auto')
+            ''' % OMIM_MARKER_ANNOT_TYPE, 'auto')
     markerannots1 = {}
     for r in results:
         key = r['_term_key']
