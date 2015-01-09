@@ -200,6 +200,9 @@ CRT = reportlib.CRT
 MP_MARKER_ANNOT_TYPE = 1015
 OMIM_MARKER_ANNOT_TYPE = 1016
 
+NOT_QUALIFIER = 1614157
+NORMAL_QUALIFIER = 2181424
+
 #
 # URL prefxies
 #
@@ -297,7 +300,7 @@ def iphone_genes():
     #	and m._marker_type_key = 1
     #
     db.sql('''
-	    select m._marker_key, m.symbol, m.name, m.chromosome, o.offset, a.accid
+	    select m._marker_key, m.symbol, m.name, m.chromosome, o.offset, a.accid, a.numericPart
 	    into #markers
 	    from MRK_Marker m, ACC_Accession a, MRK_Offset o
 	    where m._organism_key = 1
@@ -393,7 +396,8 @@ def iphone_genes():
 	    and aa._term_key = a._object_key
 	    and a._mgitype_key = 13
 	    and a.preferred = 1
-            ''' % MP_MARKER_ANNOT_TYPE, 'auto')
+	    and aa._Qualifier_key != %d
+            ''' % (MP_MARKER_ANNOT_TYPE, NORMAL_QUALIFIER), 'auto')
     phenoannots = {}
     for r in results:
         key = r['_marker_key']
@@ -415,7 +419,8 @@ def iphone_genes():
 	    and aa._term_key = a._object_key
 	    and a._mgitype_key = 13
 	    and a.preferred = 1
-            ''' % OMIM_MARKER_ANNOT_TYPE, 'auto')
+	    and aa._Qualifier_key != %d
+            ''' % (OMIM_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
     omimgenotype = {}
     for r in results:
         key = r['_marker_key']
@@ -472,7 +477,7 @@ def iphone_genes():
     #
     # report
     #
-    results = db.sql('select * from #markers', 'auto')
+    results = db.sql('select * from #markers order by numericPart', 'auto')
     
     for r in results:
     
@@ -685,7 +690,8 @@ def iphone_mp():
 	    and a._logicaldb_key = 1
 	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
-            ''' % MP_MARKER_ANNOT_TYPE, 'auto')
+	    and aa._Qualifier_key != %d
+            ''' % (MP_MARKER_ANNOT_TYPE, NORMAL_QUALIFIER), 'auto')
     markerannots = {}
     for r in results:
         key = r['_term_key']
@@ -850,7 +856,8 @@ def iphone_omim():
 	    and a._logicaldb_key = 1
 	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
-            ''' % OMIM_MARKER_ANNOT_TYPE, 'auto')
+	    and aa._Qualifier_key != %d
+            ''' % (OMIM_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
     markerannots1 = {}
     for r in results:
         key = r['_term_key']
