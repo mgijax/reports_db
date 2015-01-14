@@ -57,6 +57,7 @@ TAB = reportlib.TAB
 PAGE = reportlib.PAGE
 
 OMIM_GENOTYPE = 1005		# from VOC_AnnotType
+OMIM_MARKER_ANNOT_TYPE = 1016
 NOT_QUALIFIER = 1614157		# from VOC_Term
 TERM_MGITYPE = 13		# from ACC_MGIType
 DRIVER_NOTE = 1034		# from MGI_NoteType
@@ -274,81 +275,13 @@ for row in humanResults:
 # get the disease associations for mouse markers.  These annotations are
 # pulled up from genotype to allele to marker, wherever there is a valid path
 # from the marker to the genotype.  We exclude paths involving:
-#	1. recombinase alleles (ones with driver notes)
-#	2. wild-type alleles
-#	3. complex, not conditional genotypes
-#	4. complex, not conditional genotypes with transgenes
-#	5. marker Gt(ROSA)
-#	6. annotations with NOT qualifiers
-#
 
-# First we need to identify the complex-not-conditional genotypes.  To do this
-# we work through a series of queries...
-
-allQuery = '''select _Genotype_key from gxd_genotype'''
-
-homozygoteQuery = '''select _Genotype_key
-	from gxd_allelepair
-	where _Compound_key = 847167
-		and _PairState_key = 847138'''
-		
-heterozygoteQuery = '''select _Genotype_key
-	from gxd_allelepair
-	where _Compound_key = 847167
-		and _PairState_key = 847137'''
-
-transgeneQuery = '''select distinct g._Genotype_key
-	from gxd_allelegenotype g, all_allele a
-	where g._Allele_key = a._Allele_key
-		and a._Allele_Type_key = 847126'''
-
-complexQuery = '''select _Genotype_key, count(1)
-	from gxd_allelepair
-	group by _Genotype_key
-	having count(1) > 1'''
-
-conditionalQuery = '''select _Genotype_key
-	from gxd_genotype
-	where isConditional = 1'''
-
-# queries and their respective abbreviations; later queries take
-# precedence when setting the type for a genotype
-queries = [ (allQuery, 'ot'),
-		(homozygoteQuery, 'hm'),
-		(heterozygoteQuery, 'ht'),
-		(transgeneQuery, 'tg'),
-		(complexQuery, 'cx'),
-		(conditionalQuery, 'cn') ]
-
-genotypeTypes = {}		# genotype key -> two letter type abbreviation
-
-for (query, abbrev) in queries:
-	rows = db.sql(query, 'auto')
-
-	for row in rows:
-		genotypeTypes[row['_Genotype_key']] = abbrev
-
-# Now having identified the type of each genotype, we can proceed with pulling
-# OMIM annotations up to markers, remembering the six rules above.
-
-cmd = '''select distinct gag._Marker_key,
-		gag._Genotype_key,
+cmd = '''select distinct va._Object_key as _Marker_key,
 		va._Term_key
-	from gxd_genotype gg,
-		gxd_allelegenotype gag,
-		voc_annot va,
-		all_allele a
-	where gg._Genotype_key = gag._Genotype_key
-		and gg._Genotype_key = va._Object_key
-		and va._AnnotType_key = %d
-		and va._Qualifier_key != %d
-		and gag._Allele_key = a._Allele_key
-		and a.isWildType = 0
-		and not exists (select 1 from MGI_Note mn
-			where mn._NoteType_key = %d
-			and mn._Object_key = gag._Allele_key)
-		and gag._Marker_key != %d''' % (
-	OMIM_GENOTYPE, NOT_QUALIFIER, DRIVER_NOTE, GT_ROSA)
+	from voc_annot va,
+	where va._AnnotType_key = %d
+		and va._Qualifier_key != %d''' % (
+	OMIM_MARKER_ANNOT_TYPE, NOT_QUALIFIER)
 
 rows = db.sql(cmd, 'auto')
 
@@ -361,11 +294,6 @@ alreadySeen = {}		# (marker key, term key) = 1
 for row in rows:
 	termKey = row['_Term_key']
 	markerKey = row['_Marker_key']
-	genotypeKey = row['_Genotype_key']
-
-	# skip complex-not-conditional genotypes
-	if genotypeTypes[genotypeKey] == 'cx':
-		continue
 
 	pair = (markerKey, termKey)
 	if alreadySeen.has_key(pair):
