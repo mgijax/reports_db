@@ -278,7 +278,7 @@ for row in humanResults:
 
 cmd = '''select distinct va._Object_key as _Marker_key,
 		va._Term_key
-	from voc_annot va,
+	from voc_annot va
 	where va._AnnotType_key = %d
 		and va._Qualifier_key != %d''' % (
 	OMIM_MARKER_ANNOT_TYPE, NOT_QUALIFIER)

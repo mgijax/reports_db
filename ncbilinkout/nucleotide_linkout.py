@@ -9,6 +9,9 @@
 # Usage:
 #       Nucleotide_LinkOut.py
 #
+# sc	01/15/2015
+#	- TR11846 - update marker URL
+#
 # lec	09/30/2008
 #	- generation of NCBI LinkOut file (nucleotide-mgd.xml)
 #	- copied from MRK_Sequence.py
