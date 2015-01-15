@@ -1,3 +1,17 @@
+TAG: reports_db-5-2-1-4
+DATE: 01/15/2015
+STAFF: sc 
+CHANGES: TR11846 - NCBI Linkout changes
+1) Configuration.default - updated NCBILINKOUT_ICON with new URL
+2) ncbilinkout/nucleotide_linkout.py - updated to reflect current MGI marker URL
+3) ncbilinkout/pubmed_linkout.py - update with URL to larger image, added generation 
+    of a UID file, updated report to one link referencing the UID file. Not certain
+    the the report itself is correct because it references &lo.id; which is not a
+    defined ENTITY in the report. rmb and drs decided to just put the report in prod-
+    uction and check things after they pick up the files as we have no way to test this.
+4) MGI_OMIM.py - removed extraneous comma in a query that was inadvertently committed
+    on the trunk
+
 TAG: reports_db-5-2-1-3
 DATE: 01/09/2015
 STAFF: jsb

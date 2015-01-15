@@ -72,7 +72,7 @@ setenv KOMP_GENELIST		${DATALOADSOUTPUT}/komp/kompreports/output/geneList.txt
 setenv KOMP_TARGETLIST		${DATALOADSOUTPUT}/komp/kompreports/output/geneListNoKo.txt
 
 # NCBI LinkOut stuff
-setenv NCBILINKOUT_ICON		"http://www.informatics.jax.org/mgihome/other/favicon.ico"
+setenv NCBILINKOUT_ICON		"http://www.informatics.jax.org/mgihome/homepages/images/MGILinkout.jpg"
 setenv NCBILINKOUT_BASE		"http://www.informatics.jax.org/marker/"
 setenv NCBILINKOUT_HOST		ftp-private.ncbi.nlm.nih.gov
 setenv NCBILINKOUT_USER		mgd
