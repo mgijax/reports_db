@@ -26,13 +26,13 @@ setenv REPORTOUTPUTDIR		${PUBREPORTDIR}/output
 setenv REPORTLOGSDIR		${PUBREPORTDIR}/logs
 
 # daily reports directory
-setenv PUBDAILY                 ${PUBRPTS}/daily_sybase
+setenv PUBDAILY			${PUBRPTS}/daily_sybase
 
 # weekly reports directory
-setenv PUBWEEKLY_POSTGRES       ${PUBRPTS}/weekly_postgres
+setenv PUBWEEKLY_POSTGRES	${PUBRPTS}/weekly_postgres
 
 # weekly reports directory
-setenv PUBWEEKLY_SYBASE       ${PUBRPTS}/weekly_sybase
+setenv PUBWEEKLY_SYBASE		${PUBRPTS}/weekly_sybase
 
 # on-demand reports directory
 setenv ONDEMAND			${PUBRPTS}/ondemand
@@ -85,13 +85,10 @@ setenv PERLLIB			/usr/local/lib
 
 # Setting for Gene trap scripts
 # master file of all gene trap best single hits on the current genome version
-setenv MASTER_GFF_FILE ${DATADOWNLOADS}/ftp.ncbi.nih.gov/gtblatpipeline/output/best_blat_hits_single_Gbrowse.master.gff
+setenv MASTER_GFF_FILE		${DATADOWNLOADS}/ftp.ncbi.nih.gov/gtblatpipeline/output/best_blat_hits_single_Gbrowse.master.gff
 
 # set IMSR csv file
-setenv IMSR_STRAINS_CSV         ${DATADOWNLOADS}/emnet.informatics.jax.org/allStrains.csv
+setenv IMSR_STRAINS_CSV		${DATADOWNLOADS}/emnet.informatics.jax.org/allStrains.csv
 
 # Iphone archive
 setenv IPHONEARCHIVE		${FTPREPORTDIR}/archive/iphone
-
-# number of subprocesses to use in report generation (where applicable)
-setenv SUBPROCESSES	5

@@ -28,52 +28,53 @@
 
 cd `dirname $0` && source ../Configuration
 
-#
-# set postgres configuration to use the public instance
-#
-setenv PG_DBSERVER      ${PG_PUB_DBSERVER}
-setenv PG_DBNAME        ${PG_PUB_DBNAME}
-setenv PG_DBUSER        ${PG_PUB_DBUSER}
-
-echo "PG_DBSERVER: ${PG_DBSERVER}"
-echo "PG_DBNAME: ${PG_DBNAME}"
-echo "PG_DBUSER: ${PG_DBUSER}"
-
 umask 002
 
+#
+# Set this variable to either 'sybase' or 'postgres'.
+#
+setenv DB_TYPE		postgres
+
+#
+# Set postgres configuration to use the public instance.
+#
+setenv PG_DBSERVER	${PG_PUB_DBSERVER}
+setenv PG_DBNAME	${PG_PUB_DBNAME}
+setenv PG_DBUSER	${PG_PUB_DBUSER}
+
+#
+# Initialize the log file.
+#
 setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
 rm -rf ${LOG}
 touch ${LOG}
 
-echo 'begin NCBI LinkOut', `date` | tee -a ${LOG}
+echo `date`: Start NCBI LinkOut | tee -a ${LOG}
 
 foreach i (*.py)
-    echo | tee -a ${LOG}
-    echo $i, `date` | tee -a ${LOG}
+    echo `date`: $i | tee -a ${LOG}
     $i >>& ${LOG}
-    echo $i, `date` | tee -a ${LOG}
-    echo | tee -a ${LOG}
 end
 
 cp providerinfo.xml ${REPORTOUTPUTDIR}
 
-# if running this from production...
-
+#
+# If this is production, FTP the files to the NCBI LinkOut host.
+#
 if ( ${INSTALL_TYPE} == "prod" ) then
 
-echo 'sending data to NCBI LinkOut host...' | tee -a ${LOG}
+echo `date`: Send data to NCBI LinkOut host | tee -a ${LOG}
 cd ${REPORTOUTPUTDIR}
 ftp -in ${NCBILINKOUT_HOST} <<END | tee -a ${LOG}
 user ${NCBILINKOUT_USER} ${NCBILINKOUT_PASSWORD}
 cd holdings
 mput protein-mgd.xml
 mput providerinfo.xml
-mput pubmed-mgd-1.xml
+mput pubmed-mgd-*.xml
 mput nucleotide-mgd-*.xml
-mput pubmed-mgd.uid 
 quit
 END
 
 endif
 
-echo 'finished NCBI LinkOut', `date` | tee -a ${LOG}
+echo `date`: End NCBI LinkOut | tee -a ${LOG}
