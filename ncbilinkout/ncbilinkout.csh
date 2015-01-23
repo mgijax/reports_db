@@ -72,6 +72,7 @@ mput protein-mgd.xml
 mput providerinfo.xml
 mput pubmed-mgd-*.xml
 mput nucleotide-mgd-*.xml
+mput pubmed-mgd.uid
 quit
 END
 
