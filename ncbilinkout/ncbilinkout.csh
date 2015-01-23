@@ -70,7 +70,7 @@ user ${NCBILINKOUT_USER} ${NCBILINKOUT_PASSWORD}
 cd holdings
 mput protein-mgd.xml
 mput providerinfo.xml
-mput pubmed-mgd-*.xml
+mput pubmed-mgd-1.xml
 mput nucleotide-mgd-*.xml
 mput pubmed-mgd.uid
 quit
