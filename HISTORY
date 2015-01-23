@@ -1,3 +1,17 @@
+TAG: reports_db-5-2-1-6
+DATE: 01/23/2015
+STAFF: dbm
+CHANGES: Infrastructure project cleanup
+1) Configuration.default: Removed SUBPROCESSES setting
+2) run_daily_sybase.csh: DB_TYPE and logging cleanup
+3) run_weekly_sybase.csh: DB_TYPE and logging cleanup
+4) run_weekly_postgres.csh: DB_TYPE and logging cleanup
+5) runone_postgres_report.csh
+6) runone_sybase_report.csh: New - replaces runone_report.csh
+7) runone_report.csh: Removed
+8) run_in_parallel.py: Removed
+9) ncbilinkout/ncbilinkout.csh: DB_TYPE and logging cleanup
+
 TAG: reports_db-5-2-1-5
 DATE: 01/22/2015
 STAFF: sc
