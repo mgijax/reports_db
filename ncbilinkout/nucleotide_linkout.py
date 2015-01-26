@@ -111,7 +111,7 @@ for r in results:
         fpLinkOut = reportlib.init(newfile, fileExt = '.xml', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
         fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "LinkOut.dtd"\n[' + CRT)
         fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
-        fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + 'marker/' + '">' + CRT)
+        fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + '">' + CRT)
         fpLinkOut.write(']>' + CRT + '<LinkSet>' + CRT)
 
     fpLinkOut.write('<Link>' + CRT)
