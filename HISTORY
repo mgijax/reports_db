@@ -1,3 +1,10 @@
+TAG: reports_db-5-2-1-8
+DATE: 01/30/2015
+STAFF: sc
+CHANGE: TR11879 - Fix: non-protein coding genes in gp2protein file
+1) weekly_postgres/GO_gp2protein.py - move RNA genes assoc with uniprot from
+    protein to rna file
+
 TAG: reports_db-5-2-1-7
 DATE: 01/26/2015
 STAFF: sc

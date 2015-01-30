@@ -24,6 +24,10 @@
 #
 # History:
 #
+# 01/30/2015	sc
+#	- TR11879  Fix: non-protein coding genes in gp2protein file
+#	- exclude RNA genes associated with uniprot in the gp2protein file
+#
 # 10/31/2013	lec
 #	- TR11510/re-organize reports to include 'feature type' rules
 #
@@ -229,22 +233,28 @@ results = db.sql('select * from #allgenes', 'auto')
 for r in results:
 
     accID = "MGI:" + r['accID']
+    tdcTerm = r['term']
     markerKey = r['_Marker_key']
     featureType = r['term']
     isfp1 = 0
 
     # fp1 (protein)
-    if uniprotkbDict.has_key(markerKey):
-	l = uniprotkbDict[markerKey]
-	seqID = l[0]
-	logicalDB = l[1]
-	isfp1 = 1
-
+    if uniprotkbDict.has_key(markerKey): 
+	if tdcTerm == 'protein coding gene':
+	    l = uniprotkbDict[markerKey]
+	    seqID = l[0]
+	    logicalDB = l[1]
+	    isfp1 = 1
+	else:
+	    print 'RNA w/uniprot seq assoc: %s' % accID
     elif proteinDict.has_key(markerKey):
-	l = proteinDict[markerKey]
-	seqID = l[0]
-	logicalDB = l[1]
-	isfp1 = 1
+	if tdcTerm == 'protein coding gene':
+	    l = proteinDict[markerKey]
+	    seqID = l[0]
+	    logicalDB = l[1]
+	    isfp1 = 1
+	else:
+	    print 'RNA w/rep protein seq assoc: %s' % accID
 
     # fp2 (rna)
     elif transcriptDict.has_key(markerKey):
