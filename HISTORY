@@ -1,3 +1,10 @@
+TAG: reports_db-5-2-1-9
+DATE: 02/02/2015
+STAFF: sc
+CHANGE: TR11867, add two new provider to goaload 
+1) daily_sybase/GO_gene_association.py - special handkling for 
+GO_Central --> GO Central
+
 TAG: reports_db-5-2-1-8
 DATE: 01/30/2015
 STAFF: sc
