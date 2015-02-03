@@ -176,7 +176,7 @@ except:
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 UNIPROTKB = 'uniprotload'
-GOCENTRAL = 'GO Central'
+GOCENTRAL = 'GOA_GO_Central'
 assignedByList = ['RGD', 'GOC', 'RefGenome']
 
 TAB = reportlib.TAB
