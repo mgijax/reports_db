@@ -38,10 +38,6 @@
 #
 # History:
 #
-# sc	01/30/2015
-#	-TR11870 / translate new provider 'GOA_GO_Central' to 'GO Central'
-#	    not the typical removal of the GOA_ prefix to  'GO_Central'
-#
 # sc	11/06/2014
 #	- TR11772/Modification of GAF file references
 #
@@ -176,7 +172,6 @@ except:
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 UNIPROTKB = 'uniprotload'
-GOCENTRAL = 'GOA_GO_Central'
 assignedByList = ['RGD', 'GOC', 'RefGenome']
 
 TAB = reportlib.TAB
@@ -633,9 +628,7 @@ def doFinish():
 	    # column 15; assigned by
             if r['assignedBy'] == UNIPROTKB:
                 reportRow = reportRow + 'UniProtKB' + TAB
-	    # GOA_GO_Central maps to 'GO Central' NOT 'GO_Central'
- 	    elif r['assignedBy'] == GOCENTRAL:
-		reportRow = reportRow + 'GO Central' + TAB
+
 	    # remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
             elif string.find(r['assignedBy'], 'GOA_') >= 0:
                 assignedBy = re.sub('GOA_', '', r['assignedBy'])
@@ -755,5 +748,4 @@ except:
     pass
 
 reportlib.finish_nonps(fp)
-
 db.useOneConnection(0)
