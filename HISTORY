@@ -1,3 +1,12 @@
+TAG: reports_db-5-2-1-12
+DATE: 03/17/2015
+STAFF: dbm
+CHANGE: 
+1) Configuration.default: Remove SP2FASTA and PERLLIB
+2) inparanoid/sp_to_fasta: Added
+3) inparanoid/inparanoid.csh: Invoke new copy of sp_to_fasta
+4) inparanoid/MGI_InParanoid_FASTA.py: Postgres support
+
 TAG: reports_db-5-2-1-11
 DATE: 02/05/2015
 STAFF: sc
