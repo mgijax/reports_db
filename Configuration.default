@@ -79,10 +79,6 @@ setenv NCBILINKOUT_USER		mgd
 setenv NCBILINKOUT_PASSWORD	keUPdTuD
 setenv NCBILINKOUT_COUNT	10000
 
-# Setting for the InParanoid script
-setenv SP2FASTA			/usr/local/bin/sp_to_fasta
-setenv PERLLIB			/usr/local/lib
-
 # Setting for Gene trap scripts
 # master file of all gene trap best single hits on the current genome version
 setenv MASTER_GFF_FILE		${DATADOWNLOADS}/ftp.ncbi.nih.gov/gtblatpipeline/output/best_blat_hits_single_Gbrowse.master.gff
