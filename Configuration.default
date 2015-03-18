@@ -13,12 +13,6 @@ endif
 
 source ${MGICONFIG}/master.config.csh
 
-# even though this product no longer directly uses this variable
-# it must remain set because dependent products expect it to be set
-# DB_TYPE is being set in the individual run scripts so that we can
-# run these as either postgres or sybase
-#setenv DB_TYPE			postgres
-
 # report output directory
 setenv REPORTOUTPUTDIR		${PUBREPORTDIR}/output
 
@@ -26,13 +20,10 @@ setenv REPORTOUTPUTDIR		${PUBREPORTDIR}/output
 setenv REPORTLOGSDIR		${PUBREPORTDIR}/logs
 
 # daily reports directory
-setenv PUBDAILY			${PUBRPTS}/daily_sybase
+setenv PUBDAILY			${PUBRPTS}/daily
 
 # weekly reports directory
-setenv PUBWEEKLY_POSTGRES	${PUBRPTS}/weekly_postgres
-
-# weekly reports directory
-setenv PUBWEEKLY_SYBASE		${PUBRPTS}/weekly_sybase
+setenv PUBWEEKLY		${PUBRPTS}/weekly
 
 # on-demand reports directory
 setenv ONDEMAND			${PUBRPTS}/ondemand
