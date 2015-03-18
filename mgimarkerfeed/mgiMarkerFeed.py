@@ -165,10 +165,19 @@ import sys
 import os
 import string
 import reportlib
-import db
 import mgi_utils
 
-db.set_sqlLogFunction(db.sqlLogAll)
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslateBE()
+    else:
+        import db
+except:
+    import db
+
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
@@ -1350,12 +1359,12 @@ def genotypes():
 	qualifier = q.term, c.omimCategory3,
         convert(char(20), a.creation_date, 100) as cdate, 
         convert(char(20), a.modification_date, 100) as mdate 
-	from #genotypes g, VOC_Annot a, VOC_Term q, MRK_OMIM_Cache c
-	where g._Genotype_key = a._Object_key 
-	and a._AnnotType_key in (1002, 1005) 
-	and a._Qualifier_key = q._Term_key
-	and g._Genotype_key *= c._Genotype_key
-	and a._Term_key *= c._Term_key
+	from #genotypes g
+	INNER JOIN VOC_Annot a on (g._Genotype_key = a._Object_key
+                                   and a._AnnotType_key in (1002, 1005))
+	INNER JOIN VOC_Term q on (a._Qualifier_key = q._Term_key)
+	LEFT OUTER JOIN MRK_OMIM_Cache c on (g._Genotype_key = c._Genotype_key
+                                             and a._Term_key = c._Term_key)
 	order by g._Genotype_key
 	''', 'auto')
 
