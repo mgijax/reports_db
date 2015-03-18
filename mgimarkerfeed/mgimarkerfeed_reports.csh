@@ -26,8 +26,8 @@ mgiMarkerFeed.py >>& ${LOG}
 echo `date`: Create tar file | tee -a ${LOG}
 cd ${REPORTOUTPUTDIR}/mgimarkerfeed
 tar cvf ${TARFILE} *.bcp >>& ${LOG}
-compress -f ${TARFILE} >>& ${LOG}
+gzip ${TARFILE} >>& ${LOG}
 echo `date`: Copy tar file to FTP site | tee -a ${LOG}
-cp ${TARFILE}.Z ${MGIFEEDFTPDIR}
+cp ${TARFILE}.gz ${MGIFEEDFTPDIR}
 
 echo `date`: End MGI marker feed reports | tee -a ${LOG}
