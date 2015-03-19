@@ -58,10 +58,6 @@ setenv GOANNOT_RELATIONSHIP	/mgi/all/wts_projects/11100/11112/annotation_relatio
 # GO ANNOTATION ERROR FILE
 setenv GOANNOT_ERROR		/mgi/all/wts_projects/11100/11112/annotation_relationships.error
 
-# KOMP files
-setenv KOMP_GENELIST		${DATALOADSOUTPUT}/komp/kompreports/output/geneList.txt
-setenv KOMP_TARGETLIST		${DATALOADSOUTPUT}/komp/kompreports/output/geneListNoKo.txt
-
 # NCBI LinkOut stuff
 setenv NCBILINKOUT_ICON		"http://www.informatics.jax.org/mgihome/homepages/images/MGILinkout.jpg"
 setenv NCBILINKOUT_BASE		"http://www.informatics.jax.org/marker/"

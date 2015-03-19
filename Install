@@ -67,5 +67,5 @@ endif
 
 cd ${PUBRPTS}
 chmod 664 Configuration* HISTORY *.html
-chmod 775 *.sh */*.py */*.sql Install
-chmod 775 daily_sybase weekly_sybase weekly_postgres
+chmod 775 *.csh */*.py Install
+chmod 775 daily weekly
