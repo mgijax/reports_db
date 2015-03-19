@@ -4,8 +4,8 @@ STAFF: dbm
 CHANGE: 
 1) daily_sybase directory: renamed to daily
 2) weekly_sybase, weekly_postgres directories: merged into weekly
-3) Configuration.default: Removed DB_TYPE and changed path settings to use
-                          daily and weekly directories
+3) Configuration.default: Removed DB_TYPE, KOMP_GENELIST and KOMP_TARGETLIST
+                          and changed paths for daily and weekly directories
 4) run_daily_sybase.csh: renamed to run_daily.csh
 5) run_weekly_sybase.csh, run_weekly_postgres.csh: merged into run_weekly.csh
 6) mgimarkerfeed/mgimarkerfeed_reports.csh: use gzip for compression
