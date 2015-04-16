@@ -111,7 +111,7 @@ def printResults(cmd):
 # Main
 #
 #Note: for now the generated report should be stored under the tr directory
-#     When done testing, we will set outputdir=os.environ['REPORTDIR']
+#     When done testing, we will set outputdir=os.environ['REPORTOUTPUTDIR']
 #
 
 fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
@@ -168,7 +168,7 @@ db.sql('''
     and acc._mgitype_key = 13
     ''', None)
 db.sql('create index marker_key_idx on #goEvQualifier(_marker_key)', None)
-db.sql('create index ref_idx on #goEvQualifier(_refs_key', None)
+db.sql('create index ref_idx on #goEvQualifier(_refs_key)', None)
 
 #
 # Add GO Ref to the list
@@ -201,7 +201,7 @@ cmd ="""
    g.stanza,g.sequencenum,g.goid,g.go_term,g.gaf_qualifier
    from #goEvRefs g, acc_accession acc, mrk_marker m 
    where g.ecoCodeNote like '%ECO%' and g._marker_key=acc._object_key 
-   and and acc2._logicaldb_key = 1
+   and acc._logicaldb_key = 1
    and acc._mgitype_key = 2 and acc.prefixpart = 'MGI:' and acc.preferred=1
    and g._marker_key=m._marker_key and m._Marker_Status_key=1
 """
