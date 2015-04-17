@@ -64,9 +64,7 @@ except:
 
 
 CRT = reportlib.CRT
-#CRT = "\n"
 TAB = reportlib.TAB
-#TAB = "\t"
 
 def printResults(cmd):
     
@@ -125,6 +123,7 @@ def printResults(cmd):
 #
 fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
 log = reportlib.init(sys.argv[0], fileExt = '.log', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
+
 i = datetime.now()
 fp.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
 log.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
@@ -222,6 +221,7 @@ printResults(cmd)
 i = datetime.now()
 log.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
 print "\nProgram Complete\n"
+
 reportlib.finish_nonps(fp)
 reportlib.finish_nonps(log)
 
