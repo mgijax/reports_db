@@ -30,10 +30,20 @@ foreach i (*.py)
     $i >>& ${LOG}
 end
 
+#
+# After generating the gaf file from step above,
+# We need to add step to generate the gpad and gpi files
+#
+#
 cd ${REPORTOUTPUTDIR}
 
 echo `date`: Copy reports | tee -a ${LOG}
 foreach i (gene_association.mgi)
+    echo `date`: $i | tee -a ${LOG}
+    #${GAF_FPROCESSOR}/gaf2gpad.py --gaf=$i
+    cp $i* ${FTPREPORTDIR}
+end
+foreach i (GO_eco_association.rpt)
     echo `date`: $i | tee -a ${LOG}
     cp $i ${FTPREPORTDIR}
 end

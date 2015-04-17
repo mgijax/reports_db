@@ -69,7 +69,6 @@ TAB = reportlib.TAB
 def printResults(cmd):
     
     results = db.sql(cmd, 'auto')
-    fp.write('#Total: %s\n' % (len(results)))
     log.write('#Total: %s\n' % (len(results)))
     fp.write('mgiid' + TAB)
     fp.write('symbol' + TAB)
@@ -118,14 +117,12 @@ def printResults(cmd):
 #
 # Main
 #
-#Note: for now the generated report should be stored under the tr directory
-#     When done testing, we will set outputdir=os.environ['REPORTOUTPUTDIR']
 #
-fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
+fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir=os.environ['REPORTOUTPUTDIR'], printHeading = None)
+#fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
 log = reportlib.init(sys.argv[0], fileExt = '.log', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
 
 i = datetime.now()
-fp.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
 log.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
 
 #
