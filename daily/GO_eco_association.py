@@ -64,13 +64,15 @@ except:
 
 
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
+#CRT = "\n"
 TAB = reportlib.TAB
-PAGE = reportlib.PAGE
+#TAB = "\t"
 
 def printResults(cmd):
+    
     results = db.sql(cmd, 'auto')
     fp.write('#Total: %s\n' % (len(results)))
+    log.write('#Total: %s\n' % (len(results)))
     fp.write('mgiid' + TAB)
     fp.write('symbol' + TAB)
     fp.write('go_term' + TAB)
@@ -87,25 +89,33 @@ def printResults(cmd):
     fp.write('stanza' + TAB)
     fp.write('sequencenum' + 2*CRT)
     for r in results:
-        fp.write(r['mgiid'] + TAB)
-        fp.write(r['symbol'] + TAB)
-        fp.write(r['go_term'] + TAB)
-        fp.write(r['goid'] + TAB)
-        fp.write(r['gaf_qualifier'] + TAB)
+        fp.write(r['mgiid'].strip() + TAB)
+        fp.write(r['symbol'].strip() + TAB)
+        fp.write(r['go_term'].strip() + TAB)
+        fp.write(r['goid'].strip() + TAB)
+        if r['gaf_qualifier']:
+            fp.write(r['gaf_qualifier'].strip() + TAB)
+        else: fp.write("" + TAB)
         fp.write(r['evCode'] + TAB)
         fp.write(r['ref'] + TAB)
         fp.write(r['mgiref'] + TAB)
-        fp.write(r['pubmedid'] + TAB)
-        fp.write(r['author'] + TAB)
+        if r['pubmedid']:
+            fp.write("PMID:"+r['pubmedid'] + TAB)
+        else: fp.write("" + TAB)
+        if r['author']:   
+            fp.write(r['author'] + TAB)
+        else: fp.write("" + TAB)
         ecolist=r['evidence_note'].split(";")
         eco=""
         for eco in ecolist:
             if "ECO:" in eco:break
         fp.write(r['evidence_note'] + TAB)
         fp.write(eco + TAB)
-        fp.write(r['inferredfrom'] + TAB)
-        fp.write(r['stanza'] + TAB)
-        fp.write(r['sequencenum'] + CRT)
+        if r['inferredfrom']:
+            fp.write(r['inferredfrom'] + TAB)
+        else: fp.write("" + TAB)
+        fp.write("%d%s"%(r['stanza'],TAB))
+        fp.write("%d%s"%(r['sequencenum'],CRT))
 
 #
 # Main
@@ -113,10 +123,11 @@ def printResults(cmd):
 #Note: for now the generated report should be stored under the tr directory
 #     When done testing, we will set outputdir=os.environ['REPORTOUTPUTDIR']
 #
-
 fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
+log = reportlib.init(sys.argv[0], fileExt = '.log', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
 i = datetime.now()
 fp.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
+log.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
 
 #
 #
@@ -127,8 +138,8 @@ fp.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
 # GO ECO code: voc_evidenceproperties.value of voc_term._term_key=6481772 
 #              where voc_vocab._vocab_key=82 (EOCO code evidence)
 #
-db.sql('''
-    select vp.value as ecoCodeNote ,vt2.abbreviation as evCode,
+
+db.sql('''select vp.value as ecoCodeNote ,vt2.abbreviation as evCode,
     ve._refs_key,ve._annot_key,ve.inferredfrom,vp.stanza, vp.sequencenum
     into #goEvProperties
     from voc_evidence_property  vp, voc_term vt2, voc_evidence ve,voc_term vt
@@ -208,6 +219,9 @@ cmd ="""
 
 printResults(cmd)
 
+i = datetime.now()
+log.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
 print "\nProgram Complete\n"
 reportlib.finish_nonps(fp)
+reportlib.finish_nonps(log)
 
