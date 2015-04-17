@@ -1,3 +1,9 @@
+TAG: reports_db-5-2-1-16
+DATE: 04/17/2015
+STAFF: lnh
+CHANGE:
+1) TR11992 - Added a new public report to run daily  daily/GO_gene_association.py
+
 TAG: reports_db-5-2-1-15
 DATE: 03/19/2015
 STAFF: dbm
