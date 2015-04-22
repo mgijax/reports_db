@@ -175,7 +175,7 @@ except:
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 UNIPROTKB = 'uniprotload'
-assignedByList = ['RGD', 'GOC']
+assignedByList = ['RGD', 'GOC', 'GO_Central']
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -635,11 +635,6 @@ def doFinish():
 	    # remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
             elif string.find(r['assignedBy'], 'GOA_') >= 0:
                 assignedBy = re.sub('GOA_', '', r['assignedBy'])
-                reportRow = reportRow + assignedBy + TAB
-
-	    # remove "GO_"
-            elif string.find(r['assignedBy'], 'GO_') >= 0:
-                assignedBy = re.sub('GO_', '', r['assignedBy'])
                 reportRow = reportRow + assignedBy + TAB
 
 	    # check list
