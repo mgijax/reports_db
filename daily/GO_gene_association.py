@@ -38,6 +38,9 @@
 #
 # History:
 #
+# lec	04/22/2015
+#	- TR11932/added "GO_" (for GO_Central) to set proper assignedBy value
+#
 # sc	11/06/2014
 #	- TR11772/Modification of GAF file references
 #
@@ -172,7 +175,7 @@ except:
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
 UNIPROTKB = 'uniprotload'
-assignedByList = ['RGD', 'GOC', 'RefGenome']
+assignedByList = ['RGD', 'GOC']
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -632,6 +635,11 @@ def doFinish():
 	    # remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
             elif string.find(r['assignedBy'], 'GOA_') >= 0:
                 assignedBy = re.sub('GOA_', '', r['assignedBy'])
+                reportRow = reportRow + assignedBy + TAB
+
+	    # remove "GO_"
+            elif string.find(r['assignedBy'], 'GO_') >= 0:
+                assignedBy = re.sub('GO_', '', r['assignedBy'])
                 reportRow = reportRow + assignedBy + TAB
 
 	    # check list
