@@ -323,7 +323,15 @@
         </TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>3. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
+
+	<TR><TD><B>3. Mouse Genes with HomoloGene, HGNC and CCDS IDs</B></TD></TR>
+	<TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>NCBI Gene ID</TD><TD>NCBI Gene Chromosome</TD><TD>NCBI Gene start</TD><TD>NCBI Gene end</TD><TD>NCBI Gene strand</TD><TD>Ensembl Gene ID</TD><TD>Ensembl Gene chromosome</TD><TD>Ensembl Gene start</TD><TD>Ensembl Gene end</TD><TD>Ensembl Gene strand</TD><TD>VEGA Gene ID</TD><TD>VEGA Gene chromosome</TD><TD>VEGA Gene start</TD><TD>VEGA Gene end</TD><TD>VEGA Gene strand</TD><TD>CCDS IDs (comma delimited)</TD><TD>HGNC ID</TD><TD>HomoloGene ID</TD></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Gene.rpt">MGI_Gene.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
+        <TR><TD><B>4. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>HomoloGene ID</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>High-level Mammalian Phenotype ID<BR>(space-delimited)</T
 D></TABLE>
@@ -332,7 +340,6 @@ D></TABLE>
     </TABLE></TD></TR>
 
     </TABLE></TD></TR>
-
 </TABLE><BR>
 
 <!-- -->
