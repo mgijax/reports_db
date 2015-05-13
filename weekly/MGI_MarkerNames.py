@@ -24,6 +24,9 @@
 #
 # History:
 #
+# lec	05/13/2015
+#	- TR11654/convert to MRK_Cluster
+#
 # lec	01/19/2012
 #	- include MRK_History + MGI_Synonym
 #
@@ -116,11 +119,17 @@ for r in results:
 # non-mouse symbols
 #
 results = db.sql('''
-	select distinct m._Marker_key, h.marker2 || '|' || o.commonName as synonym
-	from #markers m, HMD_Homology_Pairs_View h, MGI_Organism o
-	where m._Marker_key = h.markerkey1
-	and h.organismkey2 in (2,40)
-	and h.organismkey2 = o._Organism_key
+	select distinct m._Marker_key, mm.symbol || '|' || o.commonName as synonym
+	from #markers m,
+		MRK_Cluster mc, MRK_ClusterMember mcm, MRK_ClusterMember mcm2, 
+		MRK_Marker mm, MGI_Organism o
+	where mc._ClusterSource_key = 9272151
+	and mc._Cluster_key = mcm._Cluster_key
+	and mcm._Marker_key = m._Marker_key
+	and mcm._Cluster_key = mcm2._Cluster_key
+	and mcm2._Marker_key = mm._Marker_key
+	and mm._Organism_key in (2,40)
+	and mm._Organism_key = o._Organism_key
 	''', 'auto')
 mgiNonMouse = {}
 for r in results:
@@ -132,11 +141,16 @@ for r in results:
 
 results = db.sql('''
 	select distinct m._Marker_key, s.synonym || '|' || o.commonName as synonym
-	from #markers m, HMD_Homology_Pairs_View h, MGI_Organism o, MGI_Synonym s
-	where m._Marker_key = h.markerkey1
-	and h.organismkey2 in (2,40)
-	and h.organismkey2 = o._Organism_key
-	and h.markerkey2 = s._Object_key
+	from #markers m, MRK_Cluster mc, MRK_ClusterMember mcm, MRK_ClusterMember mcm2, 
+		MRK_Marker mm, MGI_Organism o, MGI_Synonym s
+        where mc._ClusterSource_key = 9272151
+        and mc._Cluster_key = mcm._Cluster_key
+        and mcm._Marker_key = m._Marker_key
+        and mcm._Cluster_key = mcm2._Cluster_key
+        and mcm2._Marker_key = mm._Marker_key
+        and mm._Organism_key in (2,40)
+        and mm._Organism_key = o._Organism_key
+	and mm._Marker_key = s._Object_key
 	and s._MGIType_key = 2
 	''', 'auto')
 for r in results:
