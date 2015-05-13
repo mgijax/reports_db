@@ -19,6 +19,9 @@
 #
 # History:
 #
+# lec	05/12/2015
+#	- TR12020/use ALL_Allele._Marker_key
+#
 # lec	05/14/2009
 #	- TR9405/gene trap less filling
 #
@@ -58,10 +61,9 @@ db.sql('''
         and o.source = 0 
         and m._Marker_Status_key = s._Marker_Status_key 
         and m._Marker_Type_key = t._Marker_Type_key 
-	and exists (select 1 from ALL_Marker_Assoc am, ALL_Allele a 
-	where m._Marker_key = am._Marker_key 
-	and am._Allele_key = a._Allele_key 
-        and a.isMixed = 0 
+	and exists (select 1 from ALL_Allele a 
+	where m._Marker_key = a._Marker_key
+	and a.isMixed = 0 
 	and a._Allele_Type_key = 847121)
 	''', None)
 db.sql('create index idx1 on #markers(_Marker_key)', None)
@@ -88,9 +90,8 @@ for r in results:
 
 results = db.sql('''
 	select distinct m._Marker_key, c.cellLine 
-        from #markers m, ALL_Marker_Assoc am, ALL_Allele a, ALL_Allele_CellLine ac, ALL_Cellline c 
-        where m._Marker_key = am._Marker_key 
-        and am._Allele_key  = a._Allele_key 
+        from #markers m, ALL_Allele a, ALL_Allele_CellLine ac, ALL_Cellline c 
+        where m._Marker_key = a._Marker_key 
         and a._Allele_Type_key = 847121 
         and a.isMixed = 0 
         and a._Allele_key = ac._Allele_key 

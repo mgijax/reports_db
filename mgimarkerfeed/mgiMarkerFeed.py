@@ -1524,18 +1524,10 @@ def references():
 	   ''', None)
 
     #
-    # references annotated to an Allele via the Marker
     # references annotated to an Allele via the Derivation
     #
 
     db.sql('''
-	   select distinct r._Refs_key, 
-	   convert(char(20), r.creation_date, 100) as cdate, 
-	   convert(char(20), r.modification_date, 100) as mdate 
-	   into #allrefs2 
-	   from ALL_Marker_Assoc r 
-	   where r._Refs_key is not null
-	   union 
            select distinct r._Refs_key, 
 	   convert(char(20), r.creation_date, 100) as cdate, 
 	   convert(char(20), r.modification_date, 100) as mdate 

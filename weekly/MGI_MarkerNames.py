@@ -25,7 +25,7 @@
 # History:
 #
 # lec	05/13/2015
-#	- TR11654/convert to MRK_Cluster
+#	- TR11652/convert to MRK_Cluster
 #
 # lec	01/19/2012
 #	- include MRK_History + MGI_Synonym

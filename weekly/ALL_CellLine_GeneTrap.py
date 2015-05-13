@@ -43,6 +43,9 @@
 #   15. id.version
 #   16. tag = Tag Method
 #
+# lec   05/12/2015
+#       - TR12020/use ALL_Allele._Marker_key
+#
 # kstone 12/18/2014
 #	- Removed IMSR db query, replaced with Sorl csv file
 #
@@ -185,6 +188,7 @@ fp.write('tag' + CRT)
 #
 db.sql('''
 	select a._Allele_key, 
+	       a._Marker_key,
 	       a.symbol, 
 	       a.name,
 	       t1.term as alleleType,
@@ -208,9 +212,8 @@ db.sql('create index genetrap_idx2 on #genetrap(alleleID)', None)
 db.sql('''
 	select a._Allele_key, m.symbol as markersymbol, ma.accID as markerID
 	into #markers
-	from #genetrap a, ALL_Marker_Assoc ama, MRK_Marker m, ACC_Accession ma
-	where a._Allele_key = ama._Allele_key
-	and ama._Marker_key = m._Marker_key
+	from #genetrap a, MRK_Marker m, ACC_Accession ma
+	where a._Marker_key = m._Marker_key
         and m._Marker_key = ma._Object_key
         and ma._LogicalDB_key = 1
         and ma._MGIType_key = 2

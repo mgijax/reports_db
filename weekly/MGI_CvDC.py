@@ -37,6 +37,11 @@
 #	please list the JAX Registry number for Public strains 
 #	(i.e. "Private?" ="No") that are associated with the allele in column 1. 
 #
+# History
+#
+# lec   05/12/2015
+#       - TR12020/use ALL_Allele._Marker_key
+#
 # lec	05/01/2014
 #	- TR11669/missing gene info
 #
@@ -86,7 +91,7 @@ fp.write('# 10. MP IDs and terms ' + CRT)
 fp.write('# 11. JAX Strain Registry ID' + 2*CRT)
 
 db.sql('''
-	select distinct a._Allele_key, a.symbol, a.name, aa.accID, t.term as alleletype
+	select distinct a._Allele_key, a._Marker_key, a.symbol, a.name, aa.accID, t.term as alleletype
 	into temporary table allele
 	from ALL_Allele a, ACC_Accession aa, VOC_Term t, MGI_Reference_Assoc r
 	where a._Allele_Status_key in (847114)
@@ -104,14 +109,12 @@ db.sql('create index idx_allele on allele(_Allele_key)', None)
 
 #
 # genes
-# ALL_Marker_Assoc
 #
 
 results = db.sql('''
 	select a._Allele_key, m.symbol, m.name, m.chromosome, aa.accID
-	from allele a, ALL_Marker_Assoc ama, MRK_Marker m, ACC_Accession aa
-	where a._Allele_key = ama._Allele_key
-	and ama._Marker_key = m._Marker_key
+	from allele a, MRK_Marker m, ACC_Accession aa
+	where a._Marker_key = m._Marker_key
 	and m._Marker_key = aa._Object_key
 	and aa._MGIType_key = 2
 	and aa._LogicalDB_key = 1

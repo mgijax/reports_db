@@ -166,6 +166,9 @@
 #
 # History:
 #
+# lec   05/12/2015
+#       - TR12020/use ALL_Allele._Marker_key
+#
 # lnh  08/07/2014
 #      - TR11732 : trim down iphone app reports
 #
@@ -335,7 +338,7 @@ def iphone_genes():
     #
     results = db.sql('''
             select distinct m._marker_key, a.accid
-            from #markers m, ALL_Marker_Assoc aa, ACC_Accession a
+            from #markers m, ALL_Allele aa, ACC_Accession a
             where m._marker_key = aa._marker_key
 	    and aa._allele_key = a._object_key
 	    and a._mgitype_key = 11
