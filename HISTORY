@@ -1,9 +1,12 @@
+TAG: reports_db-5-2-1-23
 TAG: reports_db-5-2-1-22
 DATE: 05/13/2015
 STAFF: lec
 CHANGE:
 TR11652/convert to MRK_Cluster
 weekly/MGI_MarkerNames.py
+obsolete
+weekly/MRK_NomenUpdates.py
 
 TAG: reports_db-5-2-1-21
 DATE: 05/11/2015
