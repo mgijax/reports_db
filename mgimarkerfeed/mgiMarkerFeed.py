@@ -25,44 +25,41 @@
 #	10. allele_celllinetype.bcp
 #	11. allele_vector.bcp
 #	12. allele_vectortype.bcp
-#	13. allele_markerstatus.bcp
-#	14. allele_markerqualifier.bcp
-#       15. genotype_existsas.bcp
-#	16. strain_type.bcp
-#	17. mp_term.bcp
-#	18. mp_synonym.bcp
-#	19. mp_closure.bcp
-#	20. marker.bcp
-#	21. marker_label.bcp
-#	22. accession_marker.bcp
-#	23. allele_cellline.bcp
-#	24. accession_allele_cellline.bcp
-#	25. allele_derivation.bcp
-#	26. allele.bcp
-#	27. allele_allele_cellline.bcp
-#	28. allele_marker.bcp
-#	29. allele_label.bcp
-#	30. allele_note.bcp
-#	31. accession_allele.bcp
-#	32. allele_subtype_assoc.bcp
-#	33. strain.bcp
-#	34. strain_marker.bcp
-#	35. strain_synonym.bcp
-#	36. strain_strain_type.bcp
-#	37. accession_strain.bcp
-#	38. strain_species.bcp
-#       39. genotype.bcp
-#       40. genotype_mpt.bcp
-#       41. genotype_header.bcp
-#       42. strain_genotype.bcp
-#       43. allele_pair.bcp
-#	44. reference.bcp
-#	45. accession_reference.bcp
-#	46. genotype_mpt_reference.bcp
-#	47. allele_reference.bcp
-#	48. strain_reference.bcp
-#	49. marker_reference.bcp
-#	50. marker_omim.bcp
+#       13. genotype_existsas.bcp
+#	14. strain_type.bcp
+#	15. mp_term.bcp
+#	16. mp_synonym.bcp
+#	17. mp_closure.bcp
+#	18. marker.bcp
+#	19. marker_label.bcp
+#	20. accession_marker.bcp
+#	21. allele_cellline.bcp
+#	22. accession_allele_cellline.bcp
+#	23. allele_derivation.bcp
+#	24. allele.bcp
+#	25. allele_allele_cellline.bcp
+#	26. allele_label.bcp
+#	27. allele_note.bcp
+#	28. accession_allele.bcp
+#	29. allele_subtype_assoc.bcp
+#	30. strain.bcp
+#	31. strain_marker.bcp
+#	32. strain_synonym.bcp
+#	33. strain_strain_type.bcp
+#	34. accession_strain.bcp
+#	35. strain_species.bcp
+#       36. genotype.bcp
+#       37. genotype_mpt.bcp
+#       38. genotype_header.bcp
+#       39. strain_genotype.bcp
+#       40. allele_pair.bcp
+#	41. reference.bcp
+#	42. accession_reference.bcp
+#	43. genotype_mpt_reference.bcp
+#	44. allele_reference.bcp
+#	45. strain_reference.bcp
+#	46. marker_reference.bcp
+#	47. marker_omim.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
@@ -450,44 +447,6 @@ def vocabs():
     fp.close()
 
     #
-    # allele_markerstatus.bcp
-    #
-
-    fp = open(OUTPUTDIR + 'allele_markerstatus.bcp', 'w')
-
-    results = db.sql('''
-	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
-	    from VOC_Term where _Vocab_key = 73
-	    ''', 'auto', execute = 1)
-    for r in results:
-	    fp.write(`r['_Term_key']` + TAB + \
-		     r['term'] + TAB + \
-		     str(r['cdate']) + TAB + \
-		     str(r['mdate']) + CRT)
-    fp.close()
-
-    #
-    # allele_markerqualifier.bcp
-    #
-
-    fp = open(OUTPUTDIR + 'allele_markerqualifier.bcp', 'w')
-
-    results = db.sql('''
-	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
-	    from VOC_Term where _Vocab_key = 70
-	    ''', 'auto', execute = 1)
-    for r in results:
-	    fp.write(`r['_Term_key']` + TAB + \
-		     r['term'] + TAB + \
-		     str(r['cdate']) + TAB + \
-		     str(r['mdate']) + CRT)
-    fp.close()
-
-    #
     # genotype_existsas.bcp
     #
 
@@ -806,7 +765,6 @@ def alleles():
     # accession_allele_cellline
     # allele
     # allele_allele_cellline
-    # allele_marker
     # allele_label
     # allele_pair
     # allele_note
@@ -958,32 +916,6 @@ def alleles():
 	    fp.write(`r['_Assoc_key']` + TAB + \
 		     `r['_Allele_key']` + TAB + \
 		     `r['_MutantCellLine_key']` + TAB + \
-		     str(r['cdate']) + TAB + \
-		     str(r['mdate']) + CRT)
-    fp.close()
-
-    #
-    # select data fields for allele_marker.bcp
-    #
-
-    fp = open(OUTPUTDIR + 'allele_marker.bcp', 'w')
-
-    results = db.sql('''
-	    select m._Assoc_key, m._Allele_key, m._Marker_key, m._Qualifier_key, 
-	    	_Refs_key, _Status_key, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
-	    from #alleles a, ALL_Marker_Assoc m 
-	    where a._Allele_key = m._Allele_key 
-	    ''', 'auto')
-
-    for r in results:
-	    fp.write(`r['_Assoc_key']` + TAB + \
-		     `r['_Allele_key']` + TAB + \
-		     `r['_Marker_key']` + TAB + \
-		     `r['_Qualifier_key']` + TAB + \
-		     `r['_Refs_key']` + TAB + \
-		     `r['_Status_key']` + TAB + \
 		     str(r['cdate']) + TAB + \
 		     str(r['mdate']) + CRT)
     fp.close()
