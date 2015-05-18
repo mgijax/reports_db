@@ -1463,6 +1463,7 @@ def references():
            select distinct r._Refs_key, 
 	   convert(char(20), r.creation_date, 100) as cdate, 
 	   convert(char(20), r.modification_date, 100) as mdate 
+	   into #allrefs2
 	   from ALL_CellLine_Derivation r 
 	   where r._Refs_key is not null
 	   ''', None)
