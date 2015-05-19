@@ -1,3 +1,12 @@
+TAG: reports_db-5-2-1-27
+DATE: 05/19/2015
+STAFF: sc
+CHANGE:
+protein_linkout.py changed:
+<Rule>id=&lo.pacc;</Rule>
+to:
+<Rule>&lo.pacc;</Rule>
+
 TAG: reports_db-5-2-1-26
 TAG: reports_db-5-2-1-25
 DATE: 05/15/2015

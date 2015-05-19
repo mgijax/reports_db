@@ -68,7 +68,7 @@ fpLinkOut.write('''         </ObjectList>
          </ObjectSelector>
          <ObjectUrl>
             <Base>&base;</Base>
-            <Rule>id=&lo.pacc;</Rule>
+            <Rule>&lo.pacc;</Rule>
          </ObjectUrl>
       </Link>
 </LinkSet>
