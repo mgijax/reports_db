@@ -38,9 +38,8 @@
 #
 '''
  
-import sys 
-import os
-import string
+import sys, os
+import string,re
 import reportlib
 from datetime import datetime
 
@@ -85,6 +84,7 @@ def printResults(cmd):
     fp.write('inferredfrom' + TAB)
     fp.write('stanza' + TAB)
     fp.write('sequencenum' + 2*CRT)
+    eco_p= re.compile("ECO:\d+")
     for r in results:
         fp.write(r['mgiid'].strip() + TAB)
         fp.write(r['symbol'].strip() + TAB)
@@ -102,10 +102,12 @@ def printResults(cmd):
         if r['author']:   
             fp.write(r['author'] + TAB)
         else: fp.write("" + TAB)
-        ecolist=r['evidence_note'].split(";")
-        eco=""
-        for eco in ecolist:
-            if "ECO:" in eco:break
+        #ecolist=r['evidence_note'].split(";")
+        #eco=""
+        #for eco in ecolist:
+        #    if "ECO:" in eco:break
+        ecolist=eco_p.findall(r['evidence_note'])
+        eco="|".join(ecolist)
         fp.write(r['evidence_note'] + TAB)
         fp.write(eco + TAB)
         if r['inferredfrom']:
@@ -118,8 +120,8 @@ def printResults(cmd):
 # Main
 #
 #
-fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir=os.environ['REPORTOUTPUTDIR'], printHeading = None)
-#fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
+#fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir=os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
 log = reportlib.init(sys.argv[0], fileExt = '.log', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
 
 i = datetime.now()
