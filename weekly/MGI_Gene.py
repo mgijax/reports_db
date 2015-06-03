@@ -170,6 +170,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 fp.write('MGI Accession ID' + TAB)
 fp.write('Marker Symbol' + TAB)
 fp.write('Marker Name' + TAB)
+fp.write('Feature Type' + TAB)
 
 fp.write('EntrezGene ID' + TAB)
 fp.write('NCBI Gene chromosome' + TAB)
@@ -193,18 +194,20 @@ fp.write('HGNC ID' + TAB)
 fp.write('HomoloGene ID' + CRT)
 # all active markers
 
-db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, t.name as markerType
-        into #markers 
-        from MRK_Marker m, MRK_Types t, ACC_Accession a 
-        where m._Organism_key = 1 
-        and m._Marker_Status_key in (1,3) 
-	and m._Marker_Type_key = 1
-        and m._Marker_key = a._Object_key 
-        and a._MGIType_key = 2 
-        and a.prefixPart = 'MGI:' 
-        and a._LogicalDB_key = 1 
-        and a.preferred = 1 
-        and m._Marker_Type_key = t._Marker_Type_key
+db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, t.term as featureType
+        into #markers
+        from MRK_Marker m, ACC_Accession a, VOC_Annot v, VOC_Term t
+        where m._Organism_key = 1
+        and m._Marker_Status_key in (1,3)
+        and m._Marker_Type_key = 1
+        and m._Marker_key = a._Object_key
+        and a._MGIType_key = 2
+        and a.prefixPart = 'MGI:'
+        and a._LogicalDB_key = 1
+        and a.preferred = 1
+        and m._Marker_key = v._Object_key
+        and v._AnnotType_key = 1011
+	and v._Term_key = t._Term_key
 	''', None)
 
 db.sql('create index idx1 on #markers(_Marker_key)', None)
@@ -232,7 +235,7 @@ for r in results:
     fp.write(r['accID'] + TAB)
     fp.write(r['symbol'] + TAB)
     fp.write(r['name'] + TAB)
-
+    fp.write(r['featureType'] + TAB)
     # NCBI coordinate (4-8)
 
     if ncbiCoords.has_key(key):
