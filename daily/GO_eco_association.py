@@ -7,26 +7,27 @@
 # Report:
 #       
 # Generate a report of GO annotations that have
-# the ECO code int the notes. This report will be
-# publicly available and used by the gaf_fprocessor programs
+# the ECO code in the evidence notes. This report will be
+# publicly available and used by the goa_fprocessor programs
 # to map the Evidence code to the ECO code
 #
 #
-# Fields:
+# Report Fields:
 # 1) mgiid
 # 2) symbol
-# 3) qualifier (GO term) 
+# 3) go_term
 # 4) goid
 # 5) gaf_qualifier
-# 6) evcode,
+# 6) evcode
 # 7) ref (J#)
 # 8) mgiref
 # 9) pubmedid
 # 10)author
-# 11)value (eco note) 
-# 12)inferredfrom
-# 13)stanza
-# 14)sequencenum
+# 11)evidence_note
+# 12) ecoCode (pipe separated list for multiple eco codes) 
+# 13)inferredfrom
+# 14)stanza
+# 15)sequencenum
 #
 # Usage:
 #      GO_eco_association.py 
@@ -102,7 +103,7 @@ def printResults(cmd):
             fp.write(r['author'] + TAB)
         else: fp.write("" + TAB)
         eco=r['evidence_note']
-        ecolist=re.findall(eco)
+        ecolist=re.findall('ECO:\d+',eco)
         eco="|".join(ecolist)
         fp.write(r['evidence_note'] + TAB)
         fp.write(eco + TAB)
@@ -205,7 +206,7 @@ cmd ="""
    g.ref,g.mgiref,g.author,g.pubmedid,g.evCode,g.inferredfrom,
    g.stanza,g.sequencenum,g.goid,g.go_term,g.gaf_qualifier
    from #goEvRefs g, acc_accession acc, mrk_marker m 
-   where g.ecoCodeNote like '%ECO%' and g._marker_key=acc._object_key 
+   where g.ecoCodeNote like '%ECO:%' and g._marker_key=acc._object_key 
    and acc._logicaldb_key = 1
    and acc._mgitype_key = 2 and acc.prefixpart = 'MGI:' and acc.preferred=1
    and g._marker_key=m._marker_key and m._Marker_Status_key=1
