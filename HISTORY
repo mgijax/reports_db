@@ -1,3 +1,10 @@
+TAG: reports_db-5-2-2-4
+DATE: 06/17/2015
+STAFF: dbm
+CHANGES:
+1) daily/GO_eco_association.py: invoke /usr/local/bin/python so it doesn't
+                                fail on Linux
+
 TAG: reports_db-5-2-2-3
 DATE: 06/03/2015
 STAFF: sc
