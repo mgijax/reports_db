@@ -40,7 +40,8 @@ cd ${REPORTOUTPUTDIR}
 echo `date`: Copy reports | tee -a ${LOG}
 foreach i (gene_association.mgi)
     echo `date`: $i | tee -a ${LOG}
-    #${GAF_FPROCESSOR}/gaf2gpad.py --gaf=$i
+    echo "Generating GPAD/GPI files for GAF file $i"
+    ${GAF_FPROCESSOR}/gaf2gpad.py --gaf=$i
     cp $i* ${FTPREPORTDIR}
 end
 foreach i (GO_eco_association.rpt)
