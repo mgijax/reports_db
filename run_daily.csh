@@ -31,9 +31,7 @@ foreach i (*.py)
 end
 
 #
-# After generating the gaf file from step above,
-# We need to add step to generate the gpad and gpi files
-#
+# Copy reports to ftp site
 #
 cd ${REPORTOUTPUTDIR}
 
