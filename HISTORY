@@ -1,3 +1,10 @@
+TAG: reports_db-5-2-2-6
+DATE: 06/24/2015
+STAFF: lnh
+CHANGES:
+1) generateGPAD.csh: Added a new script to run gaf_fprocessor.gaf2gpad to convert GAF files to GPAD/GPI
+2) run_daily.csh: Removed call to gaf_fprocessor.gaf2gpad 
+
 TAG: reports_db-5-2-2-5
 DATE: 06/23/2015
 STAFF: lnh
