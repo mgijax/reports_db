@@ -45,7 +45,7 @@ if ( ! -d ${CVDCDIR} ) then
     mkdir -p ${CVDCDIR}
 endif
 
-if ( ${SERVER_NAME} == "lindon" ) then
+if ( ${SERVER_NAME} == "bhmgiapp01" ) then
     # provide a link to the Mammalian Phenotype vocabulary
     cd ${REPORTOUTPUTDIR}
     foreach f (${MPFILES})
