@@ -45,17 +45,11 @@ import os
 import string
 import mgi_utils
 import reportlib
+import db
 
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 db.useOneConnection(1)
 
@@ -156,13 +150,14 @@ def initialize():
     # cache the marker key:mgi id
     #
 
-    results = db.sql('select s._Marker_key, a.accID ' + \
-	    'from #sequences s, ACC_Accession a ' + \
-	    'where s._Marker_key = a._Object_key ' + \
-	    'and a._MGIType_key = 2 ' + \
-	    'and a._LogicalDB_key = 1 ' + \
-	    'and a.prefixPart = "MGI:" ' + \
-	    'and a.preferred = 1', 'auto')
+    results = db.sql('''select s._Marker_key, a.accID 
+	    from #sequences s, ACC_Accession a 
+	    where s._Marker_key = a._Object_key 
+	    and a._MGIType_key = 2 
+	    and a._LogicalDB_key = 1 
+	    and a.prefixPart = 'MGI:' 
+	    and a.preferred = 1
+	    ''', 'auto')
     for r in results:
         key = r['_Marker_key']
         value = r['accID']

@@ -78,8 +78,8 @@ import os
 import string
 import mgi_utils
 import reportlib
-import pg_db
-db = pg_db
+import db
+
 db.setTrace()
 db.setAutoTranslate(False)
 db.setAutoTranslateBE()

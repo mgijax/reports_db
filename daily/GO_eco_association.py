@@ -41,27 +41,13 @@
  
 import sys, os
 import string,re
+import mgi_utils
 import reportlib
-from datetime import datetime
+import db
 
-#
-#Set up email contact
-#
-sender = "mgiadmin@lindon.informatics.jax.org"
-receiver = "Mgi-go@jax.org"
-#receiver = "lnh@jax.org"
-
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
-
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -120,9 +106,7 @@ def printResults(cmd):
 fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir=os.environ['REPORTOUTPUTDIR'], printHeading = None)
 #fp = reportlib.init(sys.argv[0], fileExt = '.rpt', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
 log = reportlib.init(sys.argv[0], fileExt = '.log', outputdir = '/mgi/all/wts_projects/11900/11992/', printHeading = None)
-
-i = datetime.now()
-log.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
+log.write("Date: %s\n\n" % (mgi_utils.date()))
 
 #
 #
@@ -213,10 +197,7 @@ cmd ="""
 """
 
 printResults(cmd)
-
-i = datetime.now()
-log.write("Date:"+i.strftime('%Y/%m/%d %I:%M:%S \n\n'))
-print "\nProgram Complete\n"
+log.write("Date: %s\n\n" % (mgi_utils.date()))
 
 reportlib.finish_nonps(fp)
 reportlib.finish_nonps(log)

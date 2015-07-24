@@ -163,17 +163,11 @@ import os
 import string
 import reportlib
 import mgi_utils
+import db
 
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -600,20 +594,21 @@ def markers():
     # the split symbol).
     #
 
-    db.sql('select m._Marker_key, m._Organism_key, m.symbol, m.name ' + \
-	    'into #markers ' + \
-	    'from MRK_Marker m ' + \
-	    'where m._Organism_key = 1 ' + \
-	    'and exists (select 1 from ACC_Accession a ' + \
-	    'where m._Marker_key = a._Object_key ' + \
-	    'and a._MGIType_key = 2 ' + \
-	    'and a.prefixPart = "MGI:" ' + \
-	    'and a._LogicalDB_key = 1 ' + \
-	    'and a.preferred = 1) ' + \
-	    'union ' + \
-	    'select m._Marker_key, m._Organism_key, m.symbol, m.name ' + \
-	    'from MRK_Marker m ' + \
-	    'where m._Organism_key != 1', None)
+    db.sql('''select m._Marker_key, m._Organism_key, m.symbol, m.name 
+	    into #markers 
+	    from MRK_Marker m 
+	    where m._Organism_key = 1 
+	    and exists (select 1 from ACC_Accession a 
+	    where m._Marker_key = a._Object_key 
+	    and a._MGIType_key = 2 
+	    and a.prefixPart = 'MGI:' 
+	    and a._LogicalDB_key = 1 
+	    and a.preferred = 1) 
+	    union 
+	    select m._Marker_key, m._Organism_key, m.symbol, m.name 
+	    from MRK_Marker m 
+	    where m._Organism_key != 1
+	    ''', None)
 
     db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
 
@@ -672,7 +667,7 @@ def markers():
 	    convert(char(20), getdate(), 100) as cdate
 	    from #markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
-	    and m.labelType = "MS"
+	    and m.labelType = 'MS'
 	    and k.symbol = m.label 
 	    ''', 'auto')
 
@@ -689,7 +684,7 @@ def markers():
 	    	convert(char(20), getdate(), 100) as cdate
 	    from #markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
-	    and m.labelType = "MN" 
+	    and m.labelType = 'MN' 
 	    and k.name = m.label
 	    ''', 'auto')
 
@@ -706,7 +701,7 @@ def markers():
 	    	convert(char(20), getdate(), 100) as cdate
 	    from #markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
-	    and m.labelType in ("MS", "MN", "MY") 
+	    and m.labelType in ('MS', 'MN', 'MY') 
 	    and k.symbol != m.label and k.name != m.label 
 	    ''', 'auto')
 
@@ -734,7 +729,7 @@ def markers():
 	    from #markers k, ACC_Accession m, ACC_LogicalDB l 
 	    where k._Marker_key = m._Object_key 
 	    	and m._MGIType_key = 2 
-	    	and m.prefixPart = "MGI:" 
+	    	and m.prefixPart = 'MGI:' 
 	    	and m._LogicalDB_key = 1 
 	    	and m._LogicalDB_key = l._LogicalDB_key 
 	    union 
@@ -802,7 +797,7 @@ def alleles():
     fp = open(OUTPUTDIR + 'accession_allele_cellline.bcp', 'w')
 
     results = db.sql('''
-	    select m.accID, LogicalDB = l.name, m._Object_key, m.preferred, 
+	    select m.accID, l.name as LogicalDB, m._Object_key, m.preferred, 
 	    	convert(char(20), m.creation_date, 100) as cdate, 
 	    	convert(char(20), m.modification_date, 100) as mdate 
 	    from ALL_Cellline c, ACC_Accession m, ACC_LogicalDB l 
@@ -849,7 +844,7 @@ def alleles():
     fp.close()
 
     #
-    # select all alleles with a status of "approved" or "autoload"
+    # select all alleles with a status of 'approved' or 'autoload'
     # all other statuses are private/confidential alleles
     #
     # only include non-nomen symbols (where nomenSymbol is null)
@@ -859,7 +854,7 @@ def alleles():
 	select m._Allele_key into #alleles 
 	from ALL_Allele m, VOC_Term t 
 	where nomenSymbol is null and m._Allele_Status_key = t._Term_key 
-	and t.term in ("Approved", "Autoload") 
+	and t.term in ('Approved', 'Autoload') 
 	''', None)
     db.sql('create index alleles_idx1 on #alleles(_Allele_key)', None)
 
@@ -930,19 +925,19 @@ def alleles():
     fp = open(OUTPUTDIR + 'allele_label.bcp', 'w')
 
     results = db.sql('''
-	    select m._Allele_key, m.name, "AN" as labelType, 1 as status, 
+	    select m._Allele_key, m.name, 'AN' as labelType, 1 as status, 
 	    	convert(char(20), m.creation_date, 100) as cdate, 
 	    	convert(char(20), m.modification_date, 100) as mdate 
 	    from #alleles a, ALL_Allele m 
 	    where a._Allele_key = m._Allele_key 
 	    union 
-	    select m._Allele_key, m.symbol, "AS" as labelType, 1 as status, 
+	    select m._Allele_key, m.symbol, 'AS' as labelType, 1 as status, 
 	    	convert(char(20), m.creation_date, 100) as cdate, 
 	    	convert(char(20), m.modification_date, 100) as mdate 
 	    from #alleles a, ALL_Allele m 
 	    where a._Allele_key = m._Allele_key 
 	    union 
-	    select m._Allele_key, s.synonym, "AY" as labelType, 0 as status, 
+	    select m._Allele_key, s.synonym, 'AY' as labelType, 0 as status, 
 	    	convert(char(20), m.creation_date, 100) as cdate, 
 	    	convert(char(20), m.modification_date, 100) as mdate 
 	    from #alleles a, ALL_Allele m, MGI_Synonym s 
@@ -995,13 +990,13 @@ def alleles():
     fp = open(OUTPUTDIR + 'accession_allele.bcp', 'w')
 
     results = db.sql('''
-	    select m.accID, LogicalDB = l.name, m._Object_key, m.preferred, 
+	    select m.accID, l.name as LogicalDB, m._Object_key, m.preferred, 
 	    	convert(char(20), m.creation_date, 100) as cdate, 
 	    	convert(char(20), m.modification_date, 100) as mdate 
 	    from #alleles k, ACC_Accession m, ACC_LogicalDB l 
 	    where k._Allele_key = m._Object_key 
 	    and m._MGIType_key = 11 
-	    and m.prefixPart = "MGI:" 
+	    and m.prefixPart = 'MGI:' 
 	    and m._LogicalDB_key = 1 
 	    and m._LogicalDB_key = l._LogicalDB_key
 	    ''', 'auto')
@@ -1104,7 +1099,7 @@ def strains():
     fp = open(OUTPUTDIR + 'strain_marker.bcp', 'w')
 
     results = db.sql('''
-	  select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.private, qualifier = t.term, 
+	  select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.private, t.term as qualifier, 
           	convert(char(20), m.creation_date, 100) as cdate, 
           	convert(char(20), m.modification_date, 100) as mdate 
           from #strains s, PRB_Strain_Marker m, VOC_Term t 
@@ -1135,7 +1130,7 @@ def strains():
           from #strains s, MGI_Synonym_Strain_View m 
           where s._Strain_key = m._Object_key
 	  ''', 'auto')
-#	  and m.synonym not like "nm[0-9]%" ', 'auto')
+#	  and m.synonym not like 'nm[0-9]%' ', 'auto')
 
     for r in results:
 	    fp.write(`r['_Synonym_key']` + TAB + \
@@ -1175,7 +1170,7 @@ def strains():
     fp = open(OUTPUTDIR + 'accession_strain.bcp', 'w')
     
     results = db.sql('''
-	select distinct a.accID, LogicalDB = l.name, a._Object_key, a.preferred, s.private, 
+	select distinct a.accID, l.name as LogicalDB, a._Object_key, a.preferred, s.private, 
           convert(char(20), a.creation_date, 100) as cdate, 
           convert(char(20), a.modification_date, 100) as mdate 
           from #strains s, ACC_Accession a, ACC_LogicalDB l 
@@ -1288,7 +1283,7 @@ def genotypes():
 
     results = db.sql('''
 	select distinct g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, 
-	qualifier = q.term, c.omimCategory3,
+	q.term as qualifier, c.omimCategory3,
         convert(char(20), a.creation_date, 100) as cdate, 
         convert(char(20), a.modification_date, 100) as mdate 
 	from #genotypes g
@@ -1325,7 +1320,7 @@ def genotypes():
     fp = open(OUTPUTDIR + 'genotype_header.bcp', 'w')
 
     results = db.sql('''
-	select g._Genotype_key, headerTerm = h._Term_key, h.sequenceNum, 
+	select g._Genotype_key, h._Term_key as headerTerm, h.sequenceNum, 
         convert(char(20), h.creation_date, 100) as cdate, 
         convert(char(20), h.modification_date, 100) as mdate 
 	from #genotypes g, VOC_AnnotHeader h 
@@ -1570,7 +1565,7 @@ def references():
 
     fp = open(OUTPUTDIR + 'accession_reference.bcp', 'w')
     results = db.sql('''
-	    select a.accID, LogicalDB = l.name, a._Object_key, a.preferred, 
+	    select a.accID, l.name as LogicalDB, a._Object_key, a.preferred, 
 	    convert(char(20), a.creation_date, 100) as cdate, 
 	    convert(char(20), a.modification_date, 100) as mdate 
 	    from #refs r, ACC_Accession a, ACC_LogicalDB l 

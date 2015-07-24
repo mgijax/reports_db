@@ -22,17 +22,11 @@
 import sys 
 import os
 import reportlib
+import db
 
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslateBE()
-    else:
-        import db
-except:
-    import db
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE

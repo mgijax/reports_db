@@ -23,9 +23,10 @@ import os
 import string
 import mgi_utils
 import reportlib
-import pg_db
-db = pg_db
+import db
+
 db.setTrace()
+db.setAutoTranslate(False)
 db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
@@ -63,13 +64,14 @@ db.sql('create index markers_idx2 on #markers(symbol)', None)
 
 # MGI ids
 
-results = db.sql('select distinct m._Marker_key, a.accID ' + \
-      'from #markers m, ACC_Accession a ' + \
-      'where m._Marker_key = a._Object_key ' + \
-      'and a._MGIType_key = 2 ' + \
-      'and a._LogicalDB_key = 1 ' + \
-      'and a.prefixPart = "MGI:" ' + \
-      'and a.preferred = 1', 'auto')
+results = db.sql('''select distinct m._Marker_key, a.accID
+      from #markers m, ACC_Accession a
+      where m._Marker_key = a._Object_key
+      and a._MGIType_key = 2 
+      and a._LogicalDB_key = 1 
+      and a.prefixPart = 'MGI:'
+      and a.preferred = 1
+      ''', 'auto')
 mgiID = {}
 for r in results:
     key = r['_Marker_key']

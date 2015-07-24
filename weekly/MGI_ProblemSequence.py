@@ -42,8 +42,8 @@ import os
 import string
 import mgi_utils
 import reportlib
-import pg_db
-db = pg_db
+import db
+
 db.setTrace()
 db.setAutoTranslate(False)
 db.setAutoTranslateBE()
@@ -59,7 +59,7 @@ db.sql('''
 	select p._Probe_key, p.name 
         into #probes 
         from PRB_Notes n, PRB_Probe p 
-        where n.note like '%staff have found evidence of artifact in the sequence of this molecular%'
+        where lower(n.note) like '%staff have found evidence of artifact in the sequence of this molecular%'
         and n._Probe_key = p._Probe_key
 	''', None)
 db.sql('create index probes_idx1 on #probes(_Probe_key)', None)

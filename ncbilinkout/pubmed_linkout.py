@@ -25,9 +25,10 @@ import os
 import string
 import mgi_utils
 import reportlib
-import pg_db
-db = pg_db
+import db
+
 db.setTrace()
+db.setAutoTranslate(False)
 db.setAutoTranslateBE()
 
 CRT = reportlib.CRT
@@ -70,17 +71,18 @@ fpLinkOut.write('</Link>' + CRT)
 fpLinkOut.write('</LinkSet>' + CRT)
 
 # retrieve all PubMed Ids
-results = db.sql('select a.accID, b.accID as pubMedID ' + \
-       'from ACC_Accession a, ACC_Accession b ' + \
-       'where a._MGIType_key = 1 ' + \
-       'and a._LogicalDB_key = 1 ' + \
-       'and a.prefixPart = "MGI:" ' + \
-       'and a._LogicalDB_key = 1 ' + \
-       'and a.preferred = 1 ' + \
-       'and a._Object_key = b._Object_key ' + \
-       'and b._MGIType_key = 1 ' + \
-       'and b._LogicalDB_key = 29 ' + \
-       'order by a.accID', 'auto')
+results = db.sql('''select a.accID, b.accID as pubMedID 
+       from ACC_Accession a, ACC_Accession b 
+       where a._MGIType_key = 1 
+       and a._LogicalDB_key = 1 
+       and a.prefixPart = 'MGI:' 
+       and a._LogicalDB_key = 1 
+       and a.preferred = 1 
+       and a._Object_key = b._Object_key 
+       and b._MGIType_key = 1 
+       and b._LogicalDB_key = 29 
+       order by a.accID
+       ''', 'auto')
 
 for r in results:
     fpUid.write(r['pubMedID'] + CRT)

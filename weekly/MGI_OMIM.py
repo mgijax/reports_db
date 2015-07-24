@@ -45,8 +45,8 @@ import os
 import string
 import reportlib
 import symbolsort
-import pg_db
-db = pg_db
+import db
+
 db.setTrace()
 db.setAutoTranslate(False)
 db.setAutoTranslateBE()
