@@ -37,7 +37,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -83,6 +83,7 @@ def getProviderCache():
     # as the display name)
 
     # sequence-based coordinates first
+    # and mlc.strand = scc.strand
 
     results = db.sql ('''select mlc._Marker_key, mcc.name
 	from MRK_Location_Cache mlc,
@@ -96,7 +97,6 @@ def getProviderCache():
 		and smc._Sequence_key = scc._Sequence_key
 		and mlc.startCoordinate = scc.startCoordinate
 		and mlc.endCoordinate = scc.endCoordinate
---		and mlc.strand = scc.strand
 		and mlc.provider = mcc.abbreviation
 		and scc._Map_key = mc._Map_key
 		and mc._Collection_key = mcc._Collection_key''', 'auto')
@@ -107,6 +107,7 @@ def getProviderCache():
 	    providers[row['_Marker_key']] = row['name']
 
     # then coordinates directly attached to markers
+    # and mlc.strand = mcf.strand
 
     results = db.sql ('''select mlc._Marker_key, mcc.name
     	from MRK_Location_Cache mlc,
@@ -116,7 +117,6 @@ def getProviderCache():
 	where mlc._Organism_key = 1
 		and mlc.startCoordinate = mcf.startCoordinate
 		and mlc.endCoordinate = mcf.endCoordinate
---		and mlc.strand = mcf.strand
 		and mlc._Marker_key = mcf._Object_key
 		and mcf._MGIType_key = 2
 		and mlc.provider = mcc.abbreviation
@@ -136,8 +136,8 @@ def getCoordinates():
 		mm.name,
 		mlc.chromosome,
 		mlc.genomicChromosome,
-		cast(mlc.startCoordinate as int) as startCoordinate,
-		cast(mlc.endCoordinate as int) as endCoordinate,
+		mlc.startCoordinate::int as startCoordinate,
+		mlc.endCoordinate::int as endCoordinate,
 		mlc.strand,
 		mlc.provider as displayName,
 		aa.accID

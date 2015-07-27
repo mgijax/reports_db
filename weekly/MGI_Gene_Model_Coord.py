@@ -50,7 +50,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -86,9 +86,9 @@ def getCoords(logicalDBkey, provider):
         results = db.sql('''
 		select m._Marker_key, a.accID, 
                        c.chromosome, c.strand, 
-                       convert(int, c.startCoordinate) as startC, 
-                       convert(int, c.endCoordinate) as endC 
-                    from #markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a 
+                       c.startCoordinate::int as startC,
+                       c.endCoordinate::int as endC 
+                    from markers m, SEQ_Marker_Cache mc, SEQ_Coord_Cache c, ACC_Accession a 
                     where m._Marker_key = mc._Marker_key 
                     and mc._Sequence_key = c._Sequence_key 
                     and mc._Sequence_key = a._Object_key 
@@ -141,7 +141,7 @@ fp.write('20. VEGA gene strand' + CRT)
 # all active markers
 
 db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, t.name as markerType
-        into #markers 
+        into temporary table markers 
         from MRK_Marker m, MRK_Types t, ACC_Accession a 
         where m._Organism_key = 1 
         and m._Marker_Status_key in (1,3) 
@@ -153,7 +153,7 @@ db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, t.name
         and m._Marker_Type_key = t._Marker_Type_key
 	''', None)
 
-db.sql('create index idx1 on #markers(_Marker_key)', None)
+db.sql('create index idx1 on markers(_Marker_key)', None)
 
 # get coordinates
 
@@ -179,7 +179,7 @@ else:
 
 # process results
 
-results = db.sql('select * from #markers order by numericPart', 'auto')
+results = db.sql('select * from markers order by numericPart', 'auto')
 
 for r in results:
     key = r['_Marker_key']

@@ -39,7 +39,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -90,8 +90,8 @@ for r in results:
 
 results = db.sql('''select c.genomicChromosome as chromosome, c.strand, m.symbol, m._Marker_key,
 	mt.name as markerType, a.accID, 
-        convert(int, c.startCoordinate) as startC, 
-        convert(int, c.endCoordinate) as endC 
+        c.startCoordinate::int as startC, 
+        c.endCoordinate::int as endC 
         from MRK_Location_Cache c, MRK_Marker m,
 	     MRK_Types mt, ACC_Accession a, MRK_Chromosome cc
         where m._Organism_key = 1 
@@ -133,8 +133,8 @@ for r in results:
 # mapped sequence features that don't have marker associations
 
 results = db.sql('''select f.strand, c.chromosome, a.accID, 
-        convert(int, f.startCoordinate) as startC, 
-        convert(int, f.endCoordinate) as endC 
+        f.startCoordinate::int as startC, 
+        f.endCoordinate::int as endC 
         from MAP_Coordinate cc, MAP_Coord_Feature f, MRK_Chromosome c, ACC_Accession a 
         where f._MGIType_key = 19 
 	and f._Object_key = a._Object_key 

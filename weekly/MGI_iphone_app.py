@@ -193,7 +193,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -303,26 +303,24 @@ def iphone_genes():
     #	and m._marker_type_key = 1
     #
     db.sql('''
-	    select m._marker_key, m.symbol, m.name, m.chromosome, o.offset, a.accid, a.numericPart
-	    into #markers
-	    from MRK_Marker m, ACC_Accession a, MRK_Offset o
+	    select m._marker_key, m.symbol, m.name, m.chromosome, a.accid, a.numericPart
+	    into temporary table markers
+	    from MRK_Marker m, ACC_Accession a
 	    where m._organism_key = 1
 	    and m._marker_status_key in (1,3)
-	    and m._marker_key = o._marker_key
-	    and o.source = 0
 	    and m._marker_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 1
 	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
 	    ''', None)
-    db.sql('create index marker_idx on #markers(_marker_key)', None)
+    db.sql('create index marker_idx on markers(_marker_key)', None)
     #
     # refs
     #
     results = db.sql('''
             select distinct m._marker_key, r.mgiid
-            from #markers m, MRK_Reference r
+            from markers m, MRK_Reference r
             where m._marker_key = r._marker_key
             ''', 'auto')
     refs = {}
@@ -338,7 +336,7 @@ def iphone_genes():
     #
     results = db.sql('''
             select distinct m._marker_key, a.accid
-            from #markers m, ALL_Allele aa, ACC_Accession a
+            from markers m, ALL_Allele aa, ACC_Accession a
             where m._marker_key = aa._marker_key
 	    and aa._allele_key = a._object_key
 	    and a._mgitype_key = 11
@@ -359,7 +357,7 @@ def iphone_genes():
     #
     results = db.sql('''
             select distinct m._marker_key, a.accid,d.dag
-            from #markers m, VOC_Annot aa, ACC_Accession a,VOC_term t, DAG_Node_View d
+            from markers m, VOC_Annot aa, ACC_Accession a,VOC_term t, DAG_Node_View d
             where m._marker_key = aa._object_key
 	    and aa._annottype_key = 1000
 	    and aa._term_key = a._object_key
@@ -393,7 +391,7 @@ def iphone_genes():
     #
     results = db.sql('''
             select distinct m._marker_key, a.accid
-            from #markers m, VOC_Annot aa, ACC_Accession a
+            from markers m, VOC_Annot aa, ACC_Accession a
             where m._marker_key = aa._object_key
 	    and aa._annottype_key = %d
 	    and aa._term_key = a._object_key
@@ -416,7 +414,7 @@ def iphone_genes():
     #
     results = db.sql('''
 	    select distinct m._marker_key, a.accid
-	    from #markers m, VOC_Annot aa, ACC_Accession a
+	    from markers m, VOC_Annot aa, ACC_Accession a
 	    where m._marker_key = aa._object_key
 	    and aa._annottype_key = %d
 	    and aa._term_key = a._object_key
@@ -437,7 +435,7 @@ def iphone_genes():
     # OMIM human disease (_annottype_key = 1006)
     #
     db.sql('''select c.clusterID, cm.*, m._Organism_key
-        into #mouse
+        into temporary table mouse
         from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
         where c._ClusterType_key = 9272150
         and c._ClusterSource_key = 9272151
@@ -445,10 +443,10 @@ def iphone_genes():
         and cm._Marker_key = m._Marker_key
         and m._Organism_key = 1''', None)
 
-    db.sql('create index mouse_idx on #mouse(clusterID)', None)
+    db.sql('create index mouse_idx on mouse(clusterID)', None)
 
     db.sql('''select c.clusterID, cm.*, m._Organism_key
-        into #human
+        into temporary table human
         from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
         where c._ClusterType_key = 9272150
         and c._ClusterSource_key = 9272151
@@ -456,10 +454,10 @@ def iphone_genes():
         and cm._Marker_key = m._Marker_key
         and m._Organism_key = 2''', None)
 
-    db.sql('create index human_idx on #human(clusterID)', None)
+    db.sql('create index human_idx on human(clusterID)', None)
 
     results = db.sql('''select distinct m._marker_key, a.accid
-            from #markers m, #mouse hm, #human hh,
+            from markers m, mouse hm, human hh,
 	    VOC_Annot aa, ACC_Accession a
             where m._marker_key = hm._marker_key
             and hm.clusterID = hh.clusterID
@@ -480,7 +478,7 @@ def iphone_genes():
     #
     # report
     #
-    results = db.sql('select * from #markers order by numericPart', 'auto')
+    results = db.sql('select * from markers order by numericPart', 'auto')
     
     for r in results:
     
@@ -609,7 +607,7 @@ def iphone_mp():
     #
     db.sql('''
             select t._term_key, t.term, a.accid
-	    into #mp
+	    into temporary table mp
             from VOC_Term t, ACC_Accession a
             where t._Vocab_key = 5
 	    and t._term_key = a._object_key
@@ -618,14 +616,14 @@ def iphone_mp():
 	    order by a.accid
             ''', None)
 
-    db.sql('create index mp_idx on #mp(_term_key)', None)
+    db.sql('create index mp_idx on mp(_term_key)', None)
 
     #
     # definitions
     #
     results = db.sql('''    
         select m._term_key, x.note
-        from #mp m, VOC_Text x
+        from mp m, VOC_Text x
         where m._term_key = x._term_key
 	order by m._term_key, x.sequencenum
             ''', 'auto')
@@ -642,7 +640,7 @@ def iphone_mp():
     #
     results = db.sql('''
             select distinct m._term_key, r.mgiid
-            from #mp m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
+            from mp m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1002
 	    and aa._annot_key = e._annot_key
@@ -661,7 +659,7 @@ def iphone_mp():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #mp m, VOC_Annot aa, ACC_Accession a
+            from mp m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1002
 	    and aa._object_key = a._object_key
@@ -685,7 +683,7 @@ def iphone_mp():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #mp m, VOC_Annot aa, ACC_Accession a
+            from mp m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = %d
 	    and aa._object_key = a._object_key
@@ -709,7 +707,7 @@ def iphone_mp():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #mp m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
+            from mp m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1002
 	    and aa._object_key = g._genotype_key
@@ -730,7 +728,7 @@ def iphone_mp():
     #
     # report
     #
-    results = db.sql('select * from #mp', 'auto')
+    results = db.sql('select * from mp', 'auto')
     
     for r in results:
     
@@ -793,7 +791,7 @@ def iphone_omim():
     #
     db.sql('''
             select t._term_key, t.term, a.accid
-	    into #omim
+	    into temporary table omim
             from VOC_Term t, ACC_Accession a
             where t._Vocab_key = 44
 	    and t._term_key = a._object_key
@@ -802,14 +800,14 @@ def iphone_omim():
 	    order by a.accid
             ''', None)
 
-    db.sql('create index omim_idx on #omim(_term_key)', None)
+    db.sql('create index omim_idx on omim(_term_key)', None)
 
     #
     # OMIM/Genotype/References
     #
     results = db.sql('''
             select distinct m._term_key, r.mgiid
-            from #omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
+            from omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1005
 	    and aa._annot_key = e._annot_key
@@ -828,7 +826,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #omim m, VOC_Annot aa, ACC_Accession a
+            from omim m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1005
 	    and aa._object_key = a._object_key
@@ -851,7 +849,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #omim m, VOC_Annot aa, ACC_Accession a
+            from omim m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = %d
 	    and aa._object_key = a._object_key
@@ -875,7 +873,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #omim m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
+            from omim m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1005
 	    and aa._object_key = g._genotype_key
@@ -899,7 +897,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, r.mgiid
-            from #omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
+            from omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1006
 	    and aa._annot_key = e._annot_key
@@ -918,7 +916,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from #omim m, VOC_Annot aa, ACC_Accession a
+            from omim m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1006
 	    and aa._object_key = a._object_key
@@ -938,7 +936,7 @@ def iphone_omim():
     #
     # report
     #
-    results = db.sql('select * from #omim', 'auto')
+    results = db.sql('select * from omim', 'auto')
     
     for r in results:
     

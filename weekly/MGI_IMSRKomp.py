@@ -26,7 +26,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -67,7 +67,7 @@ results = db.sql('''
         and al._Marker_key = ma._Object_key
         and ma._MGIType_key = 2
         and ma._LogicalDB_key = 1
-        and ma.prefixPart = "MGI:"
+        and ma.prefixPart = 'MGI:'
         and ma.preferred = 1
         group by m._Marker_key, m.symbol, ma.accID
 	''', 'auto')

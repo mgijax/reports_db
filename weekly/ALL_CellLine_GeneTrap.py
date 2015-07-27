@@ -81,7 +81,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -160,7 +160,7 @@ db.useOneConnection(1)
 #create report
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-fp.write('#mclID' + TAB)
+fp.write('mclID' + TAB)
 fp.write('vector' + TAB)
 fp.write('mclCreator' + TAB)
 fp.write('mclLibrary' + TAB)
@@ -187,7 +187,7 @@ db.sql('''
 	       a.name,
 	       t1.term as alleleType,
 	       ac.accID as alleleID
-	into #genetrap
+	into temporary table genetrap
 	from ALL_Allele a, VOC_Term t1, ACC_Accession ac
 	where a._Allele_Status_key in (847114, 3983021)
 	and a._Allele_Type_key = t1._Term_key
@@ -197,32 +197,32 @@ db.sql('''
         and ac._MGIType_key = 11 
         and ac.preferred = 1
 	''', None)
-db.sql('create index genetrap_idx1 on #genetrap(_Allele_key)', None)
-db.sql('create index genetrap_idx2 on #genetrap(alleleID)', None)
+db.sql('create index genetrap_idx1 on genetrap(_Allele_key)', None)
+db.sql('create index genetrap_idx2 on genetrap(alleleID)', None)
 
 #
 # gene trap/markers
 #
 db.sql('''
 	select a._Allele_key, m.symbol as markersymbol, ma.accID as markerID
-	into #markers
-	from #genetrap a, MRK_Marker m, ACC_Accession ma
+	into temporary table markers
+	from genetrap a, MRK_Marker m, ACC_Accession ma
 	where a._Marker_key = m._Marker_key
         and m._Marker_key = ma._Object_key
         and ma._LogicalDB_key = 1
         and ma._MGIType_key = 2
         and ma.preferred = 1
 	''', 'auto')
-db.sql('create index markers_idx1 on #markers(_Allele_key)', None)
-db.sql('create index markers_idx2 on #markers(markerID)', None)
+db.sql('create index markers_idx1 on markers(_Allele_key)', None)
+db.sql('create index markers_idx2 on markers(markerID)', None)
 
 #
 # gene trap sequences
 #
 db.sql('''
 	select g._Allele_key, s.accID, ss.version, t.term as tag
-	into #sequences 
-	from #genetrap g, 
+	into temporary table sequences 
+	from genetrap g, 
 	     SEQ_Summary_View s, 
 	     SEQ_Sequence ss, 
 	     SEQ_GeneTrap sg, 
@@ -236,7 +236,7 @@ db.sql('''
 	and s._Object_key = sg._Sequence_key 
 	and sg._TagMethod_key = t._Term_key 
 	''', None)
-db.sql('create index sequences_idx1 on #sequences (_Allele_key)', None)
+db.sql('create index sequences_idx1 on sequences (_Allele_key)', None)
 
 #
 # cell line info
@@ -249,11 +249,11 @@ db.sql('''
 	       cv.vector, 
 	       cv.parentCellLine, 
 	       cv.derivationName as mclLibrary
-	into #celllines
-	from #genetrap g, ALL_Allele_CellLine_View cv
+	into temporary table celllines
+	from genetrap g, ALL_Allele_CellLine_View cv
 	where g._Allele_key = cv._Allele_key and cv.isMutant = 1  
 	''', None)
-db.sql('create index celllines_idx1 on #celllines (_Allele_key)', None)
+db.sql('create index celllines_idx1 on celllines (_Allele_key)', None)
 
 # get imsr allele & marker ID => providers for ES Cells, and for Mice
 es = createImsrEsDict()
@@ -280,9 +280,9 @@ results = db.sql('''
 	    cv.vector, 
 	    cv.parentCellLine, 
 	    cv.mclLibrary
-	from #genetrap g 
-		LEFT OUTER JOIN #markers m on (g._Allele_key = m._Allele_key),
-	     #sequences s, #celllines cv
+	from genetrap g 
+		LEFT OUTER JOIN markers m on (g._Allele_key = m._Allele_key),
+	     sequences s, celllines cv
 	where g._Allele_key = s._Allele_key
 	      and g._Allele_key = cv._Allele_key
 	    ''', 'auto')

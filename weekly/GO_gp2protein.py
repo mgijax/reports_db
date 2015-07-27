@@ -95,7 +95,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 #
 # Main
@@ -116,7 +116,7 @@ db.useOneConnection(1)
 #
 db.sql('''
     select distinct mm._Marker_key, a.accID, tdc.term
-    into #allgenes
+    into temporary table allgenes
     from MRK_Marker mm, ACC_Accession a, VOC_Annot_View tdc
     where mm._Marker_Status_key in (1,3)
     and mm._Marker_Type_key = 1
@@ -130,7 +130,7 @@ db.sql('''
     and tdc._LogicalDB_key = 146    
     and (tdc.term in ('protein coding gene') or tdc.term like '%RNA gene')
     ''', None)
-db.sql('create index allgenes_idx1 on #allgenes(_Marker_key)', None)
+db.sql('create index allgenes_idx1 on allgenes(_Marker_key)', None)
 
 #
 # representative transcripts by marker
@@ -138,14 +138,14 @@ db.sql('create index allgenes_idx1 on #allgenes(_Marker_key)', None)
 #
 db.sql('''
     select distinct mm._Marker_key, mm.accID, mc.accID as seqID, mc._LogicalDB_key
-    into #transcripts
-    from SEQ_Marker_Cache mc, #allgenes mm
+    into temporary table transcripts
+    from SEQ_Marker_Cache mc, allgenes mm
     where mc._Marker_key = mm._Marker_key
     and mc._Qualifier_key = 615420
     ''', None)
-db.sql('create index transcripts_idx1 on #transcripts(_Marker_key)', None)
+db.sql('create index transcripts_idx1 on transcripts(_Marker_key)', None)
 
-results = db.sql('''select * from #transcripts''', 'auto')
+results = db.sql('''select * from transcripts''', 'auto')
 transcriptDict = {}
 for r in results:
     transcriptDict [r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
@@ -156,14 +156,14 @@ for r in results:
 #
 db.sql('''
     select distinct mm._Marker_key, mm.accID, mc.accID as seqID, mc._LogicalDB_key
-    into #proteins
-    from SEQ_Marker_Cache mc, #allgenes mm
+    into temporary table proteins
+    from SEQ_Marker_Cache mc, allgenes mm
     where mc._Marker_key = mm._Marker_key
     and mc._Qualifier_key = 615421
     ''', None)
-db.sql('create index proteins_idx1 on #proteins(_Marker_key)', None)
+db.sql('create index proteins_idx1 on proteins(_Marker_key)', None)
 
-results = db.sql('''select * from #proteins''', 'auto')
+results = db.sql('''select * from proteins''', 'auto')
 proteinDict = {}
 for r in results:
     proteinDict[r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
@@ -173,14 +173,14 @@ for r in results:
 #
 db.sql('''
     select distinct mm._Marker_key, mm.accID, mc.accID as seqID, mc._LogicalDB_key
-    into #uniprotkb
-    from SEQ_Marker_Cache mc, #allgenes mm
+    into temporary table uniprotkb
+    from SEQ_Marker_Cache mc, allgenes mm
     where mc._Marker_key = mm._Marker_key
     and mc._LogicalDB_key in (13)
     ''', None)
-db.sql('create index uniprotkb_idx1 on #proteins(_Marker_key)', None)
+db.sql('create index uniprotkb_idx1 on proteins(_Marker_key)', None)
 
-results = db.sql('''select * from #uniprotkb''', 'auto')
+results = db.sql('''select * from uniprotkb''', 'auto')
 uniprotkbDict = {}
 for r in results:
     uniprotkbDict[r['_Marker_key']] = [ r['seqID'],r['_LogicalDB_key'] ]
@@ -197,7 +197,7 @@ for r in results:
 #
 db.sql('''
     select distinct a.accID
-    into #noTransProt
+    into temporary table noTransProt
     from SEQ_Marker_Cache mc, MRK_Marker mm, ACC_Accession a, VOC_Annot_View tdc
     where mm._Marker_Status_key in (1,3)
     and mm._Marker_Type_key = 1
@@ -209,8 +209,8 @@ db.sql('''
     and mm._Marker_key = mc._Marker_key
     and mc._Qualifier_key = 615419
     and mc._LogicalDB_key in (59,60,85)
-    and mm._Marker_key not in (select _Marker_key from #transcripts)
-    and mm._Marker_key not in (select _Marker_key from #proteins)
+    and mm._Marker_key not in (select _Marker_key from transcripts)
+    and mm._Marker_key not in (select _Marker_key from proteins)
     and mm._Marker_key = tdc._Object_key
     and tdc._AnnotType_key = 1011    
     and tdc._LogicalDB_key = 146    
@@ -229,7 +229,7 @@ db.sql('''
 # of interest list:  13,41,9,27,131,132,133,134
 #
 
-results = db.sql('select * from #allgenes', 'auto')
+results = db.sql('select * from allgenes', 'auto')
 for r in results:
 
     accID = "MGI:" + r['accID']
@@ -298,7 +298,7 @@ for r in results:
 #
 # markers that have neither transcript nor protein
 #
-results = db.sql('select * from #noTransProt', 'auto')
+results = db.sql('select * from noTransProt', 'auto')
 for r in results:
     accID = "MGI:" + r['accID']
     fp3.write(accID + TAB + CRT)

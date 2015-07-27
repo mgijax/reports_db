@@ -50,7 +50,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -81,7 +81,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 #
 
 db.sql('''select c.clusterID, cm.*
-    into #mouse
+    into temporary table mouse
     from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
     where c._ClusterType_key = 9272150
     and c._ClusterSource_key = 9272151
@@ -89,10 +89,10 @@ db.sql('''select c.clusterID, cm.*
     and cm._Marker_key = m._Marker_key
     and m._Organism_key = 1''', None)
 
-db.sql('create index mouse_idx1 on #mouse(_Cluster_key)', None)
+db.sql('create index mouse_idx1 on mouse(_Cluster_key)', None)
 
 db.sql('''select cm.*
-    into #human
+    into temporary table human
     from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
     where c._ClusterType_key = 9272150
     and c._ClusterSource_key = 9272151
@@ -100,7 +100,7 @@ db.sql('''select cm.*
     and cm._Marker_key = m._Marker_key
     and m._Organism_key = 2''', None)
 
-db.sql('create index human_idx1 on #human(_Cluster_key)', None)
+db.sql('create index human_idx1 on human(_Cluster_key)', None)
 
 db.sql('''
 	select distinct hm._Marker_key as mouseKey, 
@@ -108,17 +108,17 @@ db.sql('''
 			hm.clusterID,
 	                hh._Marker_key as humanKey, 
 			m2.symbol as humanSym 
-	into #homology 
-	from #mouse hm, #human hh, 
+	into temporary table homology 
+	from mouse hm, human hh, 
 	MRK_Marker m1, MRK_Marker m2 
 	where hm._Cluster_key = hh._Cluster_key
 	and hm._Marker_key = m1._Marker_key 
 	and hh._Marker_key = m2._Marker_key 
 	''', None)
 
-db.sql('create index index_mouseKey on #homology(mouseKey)', None)
-db.sql('create index index_humanKey on #homology(humanKey)', None)
-db.sql('create index index_humanSym on #homology(humanSym)', None)
+db.sql('create index index_mouseKey on homology(mouseKey)', None)
+db.sql('create index index_humanKey on homology(humanKey)', None)
+db.sql('create index index_humanSym on homology(humanSym)', None)
 
 #
 # Get the MGI IDs for the mouse markers
@@ -126,7 +126,7 @@ db.sql('create index index_humanSym on #homology(humanSym)', None)
 
 results = db.sql('''
 	select a._Object_key, a.accID 
-	from #homology h, ACC_Accession a 
+	from homology h, ACC_Accession a 
 	where a._Object_key = h.mouseKey 
 	and a._MGIType_key = 2 
 	and a._LogicalDB_key = 1 
@@ -141,7 +141,7 @@ mmgi = createDict(results, '_Object_key', 'accID')
 
 results = db.sql('''
 	select a._Object_key, a.accID 
-        from #homology h, ACC_Accession a 
+        from homology h, ACC_Accession a 
         where a._Object_key = h.humanKey 
         and a._MGIType_key = 2 
         and a._LogicalDB_key = 55
@@ -155,7 +155,7 @@ hlocus = createDict(results, '_Object_key', 'accID')
 
 results = db.sql('''
 	select distinct h.mouseKey, a.accID 
-        from #homology h, GXD_AlleleGenotype g, VOC_AnnotHeader v, ACC_Accession a 
+        from homology h, GXD_AlleleGenotype g, VOC_AnnotHeader v, ACC_Accession a 
         where h.mouseKey = g._Marker_key 
         and g._Genotype_key = v._Object_key 
         and v._AnnotType_key = 1002 
@@ -167,7 +167,7 @@ results = db.sql('''
 	''', 'auto')
 mpheno = createDict(results, 'mouseKey', 'accID')
 
-results = db.sql('select * from #homology order by humanSym, mouseSym', 'auto')
+results = db.sql('select * from homology order by humanSym, mouseSym', 'auto')
 
 for r in results:
     fp.write(r['humanSym'] + TAB)

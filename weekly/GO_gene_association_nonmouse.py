@@ -82,7 +82,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 FIELD1 = 'UniProt'
 FIELD12 = 'protein'
@@ -174,7 +174,7 @@ db.sql('''
 	select a._Term_key, ta.accID as termID, q.term as qualifier, a._Object_key, 
 	         e._AnnotEvidence_key, e.inferredFrom as uniprotIDs, 
 	         e.modification_date, e._Refs_key
-	into #gomarker1 
+	into temporary table gomarker1 
 	from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, 
 	     VOC_Term et, VOC_Term q, MGI_User u 
 	where a._AnnotType_key = 1000 
@@ -193,8 +193,8 @@ db.sql('''
 	and u.login not like 'GOA%'
 	''', None)
 
-db.sql('create index gomarker1_idx1 on #gomarker1(_Object_key)', None)
-db.sql('create index gomarker1_idx2 on #gomarker1(_Refs_key)', None)
+db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
+db.sql('create index gomarker1_idx2 on gomarker1(_Refs_key)', None)
 
 #
 # resolve pub med id
@@ -202,20 +202,20 @@ db.sql('create index gomarker1_idx2 on #gomarker1(_Refs_key)', None)
 db.sql('''select g._AnnotEvidence_key, g._Term_key, g.termID, g.qualifier, g.uniprotIDs,
 	         to_char(g.modification_date, 'YYYYMMDD') as mDate,
 	         b.accID as refID
-	into #gomarker2
-	from #gomarker1 g LEFT OUTER JOIN ACC_Accession b on
+	into temporary table gomarker2
+	from gomarker1 g LEFT OUTER JOIN ACC_Accession b on
 		(g._Refs_key = b._Object_key 
 		and b._MGIType_key = 1 
 		and b._LogicalDB_key = 29)
 	''', None)
-db.sql('create index gomarker2_idx1 on #gomarker2(_AnnotEvidence_key)', None)
+db.sql('create index gomarker2_idx1 on gomarker2(_AnnotEvidence_key)', None)
 
 #
 # properties
 # external ref = 6481778
 #
 results = db.sql('''select g._AnnotEvidence_key, p.value
-        from #gomarker2 g, VOC_Evidence_Property p
+        from gomarker2 g, VOC_Evidence_Property p
         where g._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 6481778
         order by g._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
@@ -251,7 +251,7 @@ for r in results:
 # process results
 #
 
-results = db.sql('select * from #gomarker2 order by uniprotIDs', 'auto')
+results = db.sql('select * from gomarker2 order by uniprotIDs', 'auto')
 
 for r in results:
 

@@ -63,7 +63,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -165,7 +165,7 @@ db.sql('''
 	    c.vector, c.creator as mclCreator, c.derivationName as library,  
 	    c.parentCellLineStrain, ac._Allele_key, aa.accID as alleleID, 
 	    avv._Marker_key, ma.accID as markerID 
-	into #gt_seqs 
+	into temporary table gt_seqs 
 	from ALL_CellLine_View c, ALL_Allele_CellLine ac, 
 		ACC_Accession cc, ACC_Accession aa, ACC_Accession ma,
 		ALL_Allele avv
@@ -188,10 +188,10 @@ db.sql('''
 	    and ma.preferred = 1
 	    ''', None)
 	
-db.sql('create index idx_mrk on #gt_seqs (markerID)', None)
-db.sql('create index idx_allp on #gt_seqs (alleleID)', None)
-db.sql('create index idx_gtallid on #gt_seqs (_Allele_key)', None)
-db.sql('create index idx_gtmrkid on #gt_seqs (_Marker_key)', None)
+db.sql('create index idx_mrk on gt_seqs (markerID)', None)
+db.sql('create index idx_allp on gt_seqs (alleleID)', None)
+db.sql('create index idx_gtallid on gt_seqs (_Allele_key)', None)
+db.sql('create index idx_gtmrkid on gt_seqs (_Marker_key)', None)
 
 # get imsr allele & marker ID => providers for ES Cells, and for Mice
 es = createImsrEsDict()
@@ -203,7 +203,7 @@ results = db.sql('''
 	    g.alleleID, al.symbol as alleleSymbol, 
 	    al.name as alleleName, t.term as alleleType,  
 	    mrk.symbol as markerSymbol, g.markerID 
-	from #gt_seqs g, ALL_Allele_View al, MRK_Marker mrk, VOC_Term t
+	from gt_seqs g, ALL_Allele_View al, MRK_Marker mrk, VOC_Term t
 	where g._Allele_key = al._Allele_key 
 	    and al._Allele_Type_key = t._Term_key 
 	    and g._Marker_key = mrk._Marker_key

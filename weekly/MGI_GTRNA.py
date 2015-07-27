@@ -53,7 +53,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 #
 # Constants
@@ -154,7 +154,7 @@ sys.stdout.flush()
 db.sql('''
 	SELECT mcf.strand, mcf._Object_key as _Sequence_key, 
     	chr.chromosome 
-    	INTO #coords 
+    	INTO TEMPORARY TABLE coords 
     	FROM MAP_Coord_Collection mcc, MAP_Coordinate mc, 
     	MAP_Coord_Feature mcf, MRK_Chromosome chr 
     	WHERE mcc.name = '%s'
@@ -163,33 +163,33 @@ db.sql('''
     	AND mc._Object_key = chr._Chromosome_key
 	''' % (collection), None)
 
-db.sql('CREATE INDEX coords_idx1 on #coords(_Sequence_key)', None)
+db.sql('CREATE INDEX coords_idx1 on coords(_Sequence_key)', None)
 
 # reduce to just RNA and grab sequence tag method
 db.sql('''
 	SELECT c.*, v.term as seqTagMethod 
-    	INTO #rnaCoords 
-    	FROM #coords c, SEQ_GeneTrap s, VOC_Term v 
+    	INTO TEMPORARY TABLE rnaCoords 
+    	FROM coords c, SEQ_GeneTrap s, VOC_Term v 
     	WHERE c._Sequence_key = s._Sequence_key 
     	AND s._TagMethod_key = v._Term_key 
     	AND v.term in (%s)
 	''' % (rnaMethods), None)
-db.sql('CREATE INDEX rnaCoords_idx1 on #rnaCoords(_Sequence_key)', None)
+db.sql('CREATE INDEX rnaCoords_idx1 on rnaCoords(_Sequence_key)', None)
 
 # get seqID
 db.sql('''
 	SELECT c.*, a.accID as seqId 
-    	INTO #rcSeqs 
-    	FROM #rnaCoords c, ACC_Accession a 
+    	INTO TEMPORARY TABLE rcSeqs 
+    	FROM rnaCoords c, ACC_Accession a 
     	WHERE c._Sequence_key = a._Object_key 
     	AND a._MGIType_key = 19 
     	AND a._LogicalDB_key = 9 
     	AND a.preferred = 1 
 	''', None)
 
-db.sql('CREATE INDEX rcSeqs_idx1 on #rcSeqs(_Sequence_key)', None)
+db.sql('CREATE INDEX rcSeqs_idx1 on rcSeqs(_Sequence_key)', None)
 
-results = db.sql('SELECT * from #rcSeqs', 'auto')
+results = db.sql('SELECT * from rcSeqs', 'auto')
 
 # load gtCoordDictBySeqKey and seqIdDictBySeqKey
 findText = "' "
@@ -208,7 +208,7 @@ for r in results:
 # get dbGSS sequence tag IDs
 results = db.sql('''
 	SELECT c._Sequence_key, a.accId as seqTagId 
-    	FROM #rcSeqs c, ACC_Accession a 
+    	FROM rcSeqs c, ACC_Accession a 
     	WHERE a._MGIType_key = 19 
     	AND a._LogicalDB_key != 9 
     	AND a.preferred = 1 
@@ -225,8 +225,8 @@ for r in results:
 # get MGI ID of the allele associated with the sequence
 db.sql('''
 	SELECT c._Sequence_key, sa._Allele_key, a.accID as mgiID 
-    	INTO #mgiIDs 
-    	FROM #rnaCoords c, SEQ_Allele_Assoc sa, ALL_Allele aa, 
+    	INTO TEMPORARY TABLE mgiIDs 
+    	FROM rnaCoords c, SEQ_Allele_Assoc sa, ALL_Allele aa, 
     	ACC_Accession a 
     	where c._Sequence_key = sa._Sequence_key 
     	and sa._Allele_key = aa._Allele_key 
@@ -238,9 +238,9 @@ db.sql('''
     	and a.prefixPart = 'MGI:'
 	''', None)
 
-db.sql('CREATE INDEX mgiIDS_idx1 on #mgiIDs(_Allele_key)', None)
+db.sql('CREATE INDEX mgiIDS_idx1 on mgiIDs(_Allele_key)', None)
 
-results = db.sql('SELECT * from #mgiIDs', 'auto')
+results = db.sql('SELECT * from mgiIDs', 'auto')
 
 # load mapping from sequence key to allele key. A sequence is associated
 # with one allele, but an allele can be associated with multiple sequences
@@ -252,7 +252,7 @@ for r in results:
 # get allele creator
 results = db.sql('''
 	SELECT c.*, t.term as creator 
-    	FROM #mgiIDs c, ALL_Allele_CellLine aca, ALL_CellLine ac, 
+    	FROM mgiIDs c, ALL_Allele_CellLine aca, ALL_CellLine ac, 
     	ALL_CellLine_Derivation acd, VOC_Term t 
     	WHERE c._Allele_key = aca._Allele_key 
     	AND aca._MutantCellLine_key =  ac._CellLine_key 

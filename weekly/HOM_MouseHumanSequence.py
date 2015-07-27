@@ -28,7 +28,7 @@ HOM_MouseHumanSequence.py
 # History:
 #
 #  sc  11/27/2014
-#       - removed substring and cast on offset and coordinates - causing query
+#       - removed substring and cast on cmoffset and coordinates - causing query
 #	  to return blank
 #
 """
@@ -41,7 +41,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -231,7 +231,7 @@ db.sql('''
                m._Marker_key,
                m.symbol,
                a3.accID as entrezgeneID
-        into #temp1
+        into temporary table temp1
         from ACC_Accession a1,
              MRK_Cluster c,
              MRK_ClusterMember cm,
@@ -256,7 +256,7 @@ db.sql('''
               a3._LogicalDB_key = 55
         ''', None)
 
-db.sql('create index idx1 on #temp1 (_Marker_key)', None)
+db.sql('create index idx1 on temp1 (_Marker_key)', None)
 
 
 #
@@ -265,7 +265,7 @@ db.sql('create index idx1 on #temp1 (_Marker_key)', None)
 results = db.sql('''
         select t._Marker_key,
                a.accID
-        from #temp1 t,
+        from temp1 t,
              ACC_Accession a
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
@@ -285,7 +285,7 @@ for r in results:
 results = db.sql('''
         select t._Marker_key,
                a.accID
-        from #temp1 t,
+        from temp1 t,
              ACC_Accession a
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
@@ -305,7 +305,7 @@ for r in results:
 results = db.sql('''
         select t._Marker_key,
                a.accID
-        from #temp1 t,
+        from temp1 t,
              ACC_Accession a
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
@@ -320,23 +320,23 @@ for r in results:
 
 #
 # Build lookups for genetic location and genome coordinates for each marker key.
-# NOTE: The offset is converted to a string with 2 digits to the right of the
+# NOTE: The cmoffset is converted to a string with 2 digits to the right of the
 #       decimal point. The start/end coordinates are converted to string with
 #       no decimal positions.
 #
-# For example: offset 12.349999999999999 becomes 12.35
+# For example: cmoffset 12.349999999999999 becomes 12.35
 #              startCoordinate 1234567.0 becomes 1234567
 #
 results = db.sql('''
         select t._Marker_key,
                lc.chromosome,
                lc.cytogeneticOffset,
-               cast(lc.offset as varchar) as offset,
+               cast(lc.cmoffset as varchar) as cmoffset,
                lc.genomicChromosome,
                cast(lc.startCoordinate as varchar) as startCoordinate,
                cast(lc.endCoordinate as varchar) as endCoordinate,
                lc.strand
-        from #temp1 t,
+        from temp1 t,
              MRK_Location_Cache lc
         where t._Marker_key = lc._Marker_key and
               lc._Organism_key in (1,2)
@@ -367,27 +367,27 @@ for r in results:
                                      r['endCoordinate'].strip() + strand
 
     #
-    # Use the genetic chromosome with one of the offsets (if available) to
+    # Use the genetic chromosome with one of the cmoffsets (if available) to
     # build the genetic location string.
     #
     geneticChr = r['chromosome']
-    offset = r['offset']
+    cmoffset = r['cmoffset']
     cytogeneticOffset = r['cytogeneticOffset']
 
     #
-    # If there is an offset, use it to build the genetic location string.
+    # If there is an cmoffset, use it to build the genetic location string.
     #
-    if offset != None:
-        offset = offset.strip()
-        if offset == '-999':
+    if cmoffset != None:
+        cmoffset = cmoffset.strip()
+        if cmoffset == '-999':
             location = 'Chr' + geneticChr
-        elif offset == '-1':
+        elif cmoffset == '-1':
             location = 'Chr' + geneticChr + ' syntenic'
         else:
-            location = 'Chr' + geneticChr + ' ' + offset + ' cM'
+            location = 'Chr' + geneticChr + ' ' + cmoffset + ' cM'
 
     #
-    # If there is a cytogenetic offset, use it to build the genetic location
+    # If there is a cytogenetic cmoffset, use it to build the genetic location
     # string.
     #
     elif cytogeneticOffset != None:
@@ -411,7 +411,7 @@ for r in results:
 results = db.sql('''
         select t._Marker_key,
                a.accID
-        from #temp1 t,
+        from temp1 t,
              ACC_Accession a
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
@@ -442,7 +442,7 @@ nRefSeqID[markerKey] = idList
 results = db.sql('''
         select t._Marker_key,
                a.accID
-        from #temp1 t,
+        from temp1 t,
              ACC_Accession a
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
@@ -473,7 +473,7 @@ pRefSeqID[markerKey] = idList
 results = db.sql('''
         select t._Marker_key,
                a.accID
-        from #temp1 t,
+        from temp1 t,
              ACC_Accession a
         where t._Marker_key = a._Object_key and
               a._MGIType_key = 2 and
@@ -509,7 +509,7 @@ results = db.sql('''
                _Marker_key,
                symbol,
                entrezgeneID
-        from #temp1 
+        from temp1 
         order by homologeneID,
                  _Organism_key,
                  symbol

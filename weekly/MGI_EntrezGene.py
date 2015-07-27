@@ -48,7 +48,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -63,9 +63,9 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 db.sql('''
   select m._Marker_key, m.symbol, m.name, m._Marker_key as _Current_key, 
-  	str(o.offset,10,2) as offset, m.chromosome, t.name as markerType, 1 as isPrimary, 
+  	o.cmoffset, m.chromosome, t.name as markerType, 1 as isPrimary, 
   	upper(substring(s.status, 1, 1)) as markerStatus
-  into #markers 
+  into temporary table markers 
   from MRK_Marker m, MRK_Offset o, MRK_Types t, MRK_Status s 
   where m._Organism_key = 1 
   and m._Marker_Status_key in (1,3) 
@@ -75,7 +75,7 @@ db.sql('''
   and m._Marker_Status_key = s._Marker_Status_key 
   union 
   select m._Marker_key, m.symbol, m.name, c._Current_key, 
-  str(o.offset,10,2) as offset, m.chromosome, t.name as markerType, 0 as isPrimary, 
+  o.cmoffset, m.chromosome, t.name as markerType, 0 as isPrimary, 
   upper(substring(s.status, 1, 1)) as markerStatus 
   from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Types t, MRK_Status s 
   where m._Organism_key = 1 
@@ -86,13 +86,13 @@ db.sql('''
   and m._Marker_Type_key = t._Marker_Type_key 
   and m._Marker_Status_key = s._Marker_Status_key 
   ''', None)
-db.sql('create index idx_key on #markers(_Marker_key)', None)
+db.sql('create index idx_key on markers(_Marker_key)', None)
 
 # MGI ids
 
 results = db.sql('''
 	select m._Current_key, a.accID 
-	from #markers m, ACC_Accession a 
+	from markers m, ACC_Accession a 
   	where m._Current_key = a._Object_key 
   	and a._MGIType_key = 2 
   	and a.prefixPart = 'MGI:' 
@@ -108,7 +108,7 @@ for r in results:
 # Get EntrezGene ID for Primary Markers
 results = db.sql('''
 	select m._Marker_key, a.accID 
-	from #markers m, ACC_Accession a 
+	from markers m, ACC_Accession a 
 	where m.isPrimary = 1 
 	and m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
@@ -123,7 +123,7 @@ for r in results:
 # Get Secondary MGI Ids for Primary Marker
 results = db.sql('''
 	select m._Marker_key, a.accID 
-	from #markers m, ACC_Accession a 
+	from markers m, ACC_Accession a 
 	where m.isPrimary = 1 
 	and m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
@@ -140,7 +140,7 @@ for r in results:
 # Get Synonyms for Primary Marker
 results = db.sql('''
 	select m._Marker_key, s.synonym 
-	from #markers m, MGI_Synonym s, MGI_SynonymType st 
+	from markers m, MGI_Synonym s, MGI_SynonymType st 
 	where m.isPrimary = 1 
 	and m._Marker_key = s._Object_key 
 	and s._MGIType_key = 2 
@@ -158,7 +158,7 @@ for r in results:
 # Get BioType for Primary Marker
 results = db.sql('''
 	select distinct m._Marker_key, s.rawbiotype 
-	from #markers m, SEQ_Marker_Cache s 
+	from markers m, SEQ_Marker_Cache s 
 	where m.isPrimary = 1 
 	and m._Marker_key = s._Marker_key 
 	and s.rawbiotype is not null
@@ -174,7 +174,7 @@ for r in results:
 # Get Feature Type for Primary Marker
 results = db.sql('''
 	select m._Marker_key, s.term, s._MCVTerm_key
-	from #markers m, MRK_MCV_Cache s 
+	from markers m, MRK_MCV_Cache s 
 	where m.isPrimary = 1 
 	and m._Marker_key = s._Marker_key 
 	and s.qualifier = 'D'
@@ -203,10 +203,10 @@ for r in results:
 results = db.sql('''	
     select m._marker_key,
            c.strand, 
-	   convert(int, c.startCoordinate) as startC,
-	   convert(int, c.endCoordinate) as endC,
+	   c.startCoordinate::int as startC,
+	   c.endCoordinate::int as endC,
 	   c.genomicChromosome
-    from #markers m, MRK_Location_Cache c
+    from markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
 	''', 'auto')
 coords = {}
@@ -220,14 +220,14 @@ for r in results:
 #
 # final query
 #
-results = db.sql('select * from #markers order by _Current_key, isPrimary desc', 'auto')
+results = db.sql('select * from markers order by _Current_key, isPrimary desc', 'auto')
 for r in results:
 
 	# column 1: mgi id
 	# column 2: symbol
 	# column 3: status
 	# column 4: name
-	# column 5: offset
+	# column 5: cmoffset
 	# column 6: chromosome
 	# column 7: marker type
 	key = r['_Marker_key']
@@ -258,7 +258,7 @@ for r in results:
 	 	r['symbol'] + TAB + \
 		r['markerStatus'] + TAB + \
 	 	r['name'] + TAB + \
-	 	r['offset'] + TAB + \
+	 	str(r['cmoffset']) + TAB + \
 	 	chromosome + TAB + \
 		r['markerType'] + TAB)
 

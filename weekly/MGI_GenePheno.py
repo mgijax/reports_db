@@ -72,7 +72,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -92,22 +92,22 @@ fp3 = reportlib.init('MGI_Geno_NotDisease', outputdir = os.environ['REPORTOUTPUT
 #
 
 db.sql('''select distinct a._Object_key, a._Term_key, e._Refs_key 
-	into #mp 
+	into temporary table mp 
 	from VOC_Annot a, VOC_Evidence e, VOC_Term t 
 	where a._AnnotType_key = 1002 
 	and a._Qualifier_key = t._Term_key 
 	and t.term is null 
 	and a._Annot_key = e._Annot_key
 	''', None)
-db.sql('create index idx1 on #mp(_Object_key)', None)
-db.sql('create index idx2 on #mp(_Term_key)', None)
-db.sql('create index idx3 on #mp(_Refs_key)', None)
+db.sql('create index idx1 on mp(_Object_key)', None)
+db.sql('create index idx2 on mp(_Term_key)', None)
+db.sql('create index idx3 on mp(_Refs_key)', None)
 
 #
 # resolve MP ids
 #
 results = db.sql('''select distinct m._Term_key, a.accID 
-	from #mp m, ACC_Accession a 
+	from mp m, ACC_Accession a 
 	where m._Term_key = a._Object_key 
 	and a._MGIType_key = 13 
 	and a.preferred = 1
@@ -122,7 +122,7 @@ for r in results:
 # resolve References
 #
 results = db.sql('''select distinct m._Object_key, m._Term_key, a.accID 
-	from #mp m, ACC_Accession a 
+	from mp m, ACC_Accession a 
 	where m._Refs_key = a._Object_key 
 	and a._LogicalDB_key = 29
 	''', 'auto')
@@ -139,7 +139,7 @@ for r in results:
 # only include conditional = 0 (i.e. exclude conditional)
 #
 results = db.sql('''select distinct m._Object_key, s.strain 
-	from #mp m, GXD_Genotype g, PRB_Strain s 
+	from mp m, GXD_Genotype g, PRB_Strain s 
 	where m._Object_key = g._Genotype_key 
 	and g.isConditional = 0 
 	and g._Strain_key = s._Strain_key
@@ -154,7 +154,7 @@ for r in results:
 # resolve Allele Combination display
 #
 results = db.sql('''select distinct m._Object_key, nc.note 
-	from #mp m, MGI_Note n, MGI_NoteChunk nc 
+	from mp m, MGI_Note n, MGI_NoteChunk nc 
 	where m._Object_key = n._Object_key 
 	and n._NoteType_key = 1016 
 	and n._Note_key = nc._Note_key
@@ -171,7 +171,7 @@ for r in results:
 # only include single allele pairs
 #
 results = db.sql('''select distinct m._Object_key, a.symbol, aa.accID, a.isWildType
-	from #mp m, GXD_AlleleGenotype ag, ALL_Allele a, MRK_Marker mm, ACC_Accession aa
+	from mp m, GXD_AlleleGenotype ag, ALL_Allele a, MRK_Marker mm, ACC_Accession aa
 	where m._Object_key = ag._Genotype_key 
 	and ag._Allele_key = a._Allele_key 
 	and ag._Marker_key = mm._Marker_key 
@@ -205,7 +205,7 @@ for r in results:
 # resolve Marker ID
 #
 results = db.sql('''select distinct m._Object_key, a.accID
-	from #mp m, GXD_AlleleGenotype g, ACC_Accession a
+	from mp m, GXD_AlleleGenotype g, ACC_Accession a
 	where m._Object_key = g._Genotype_key
 	and g._Marker_key = a._Object_key
 	and a._MGIType_key = 2
@@ -225,7 +225,7 @@ for r in results:
 # resolve Genotype ID
 #
 results = db.sql('''select distinct m._Object_key, a.accID
-	from #mp m, GXD_AlleleGenotype g, ACC_Accession a
+	from mp m, GXD_AlleleGenotype g, ACC_Accession a
 	where m._Object_key = g._Genotype_key
 	and g._Genotype_key = a._Object_key
 	and a._MGIType_key = 12
@@ -245,7 +245,7 @@ for r in results:
 # OMIM annotations that do not have "NOT" qualifier
 #
 results = db.sql('''select distinct m._Object_key, a.accID
-           from #mp m, VOC_Annot va, ACC_Accession a
+           from mp m, VOC_Annot va, ACC_Accession a
            where m._Object_key = va._Object_key 
            and va._AnnotType_key in (1005) 
 	   and va._Qualifier_key = 1614158
@@ -265,7 +265,7 @@ for r in results:
 # OMIM annotations that have "NOT" qualifier
 #
 results = db.sql('''select distinct m._Object_key, a.accID
-           from #mp m, VOC_Annot va, ACC_Accession a
+           from mp m, VOC_Annot va, ACC_Accession a
            where m._Object_key = va._Object_key 
            and va._AnnotType_key in (1005) 
 	   and va._Qualifier_key = 1614157
@@ -285,7 +285,7 @@ for r in results:
 # process results
 #
 results = db.sql('select distinct _Object_key, _Term_key ' + \
-	'from #mp order by _Object_key, _Term_key', 'auto')
+	'from mp order by _Object_key, _Term_key', 'auto')
 
 for r in results:
 

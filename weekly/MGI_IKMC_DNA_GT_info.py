@@ -72,7 +72,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 #
 # constants
@@ -141,7 +141,7 @@ fp = reportlib.init(sys.argv[0], outputdir = \
 # main query of 1:1 info about sequence tags
 db.sql('''select a._Allele_key, a._Marker_key, a.isMixed, ac._CellLine_key, 
 	    t1.term as creator, t2.term as vector 
-	    into #cellines
+	    into temporary table cellines
 	    from ALL_Allele a , ALL_Allele_CellLine aca, ALL_CellLine ac, 
 	    ALL_CellLine_Derivation acd, VOC_Term t1, VOC_Term t2 
 	    where a._Allele_key = aca._Allele_key 
@@ -150,28 +150,28 @@ db.sql('''select a._Allele_key, a._Marker_key, a.isMixed, ac._CellLine_key,
 	    and acd._Creator_key = t1._Term_key 
 	    and t1.term in ('CMHD', 'ESDB', 'EUCOMM', 'TIGM')
 	    and acd._Vector_key = t2._Term_key''' , None)
-db.sql('''create index celllines_idx1 on #cellines(_Allele_key)''', None)
+db.sql('''create index celllines_idx1 on cellines(_Allele_key)''', None)
 
 db.sql('''select distinct c._Allele_key, c._Marker_key
-	    into #alleleMarkers
-	    from #cellines c''', None)
-db.sql('''create index alleleMarkers_idx1 on #alleleMarkers(_Marker_key)''', None)
+	    into temporary table alleleMarkers
+	    from cellines c''', None)
+db.sql('''create index alleleMarkers_idx1 on alleleMarkers(_Marker_key)''', None)
 
 db.sql('''select m.*, smc._Sequence_key
-	    into #markerRepSeq
-	    from #alleleMarkers m, SEQ_Marker_Cache smc
+	    into temporary table markerRepSeq
+	    from alleleMarkers m, SEQ_Marker_Cache smc
 	    where m._Marker_key = smc._Marker_key
 	    and smc._Qualifier_key = 615419''', None) 
-db.sql('''create index markerRepSeq_idx1 on #markerRepSeq(_Sequence_key)''', None)
-db.sql('''create index markerRepSeq_idx2 on #markerRepSeq(_Marker_key)''', None)
+db.sql('''create index markerRepSeq_idx1 on markerRepSeq(_Sequence_key)''', None)
+db.sql('''create index markerRepSeq_idx2 on markerRepSeq(_Marker_key)''', None)
 
 db.sql('''select m.*, scc.chromosome, 
-	    cast(scc.startCoordinate as int) as startCoordinate,
-	    cast(scc.endCoordinate as int) as endCoordinate,
+	    scc.startCoordinate::int as startCoordinate,
+	    scc.endCoordinate::int as endCoordinate,
 	    scc.strand, v.mgiID, v.symbol, 
 	    a.accid as repSeqID, ldb.name as provider
-	    into #markerRepCoord
-	    from #markerRepSeq m, SEQ_Coord_Cache scc, MRK_Mouse_View v, 
+	    into temporary table markerRepCoord
+	    from markerRepSeq m, SEQ_Coord_Cache scc, MRK_Mouse_View v, 
 	    ACC_Accession a, ACC_LogicalDB ldb
 	    where m._Sequence_key = scc._Sequence_key
 	    and m._Marker_key = v._Marker_key
@@ -179,40 +179,40 @@ db.sql('''select m.*, scc.chromosome,
 	    and a._MGIType_key = 19
 	    and a.preferred = 1
 	    and a._LogicalDB_key = ldb._LogicalDB_key''', None)
-db.sql('''create index markerRepCoord_idx1 on #markerRepCoord(_Marker_key)''', None)
+db.sql('''create index markerRepCoord_idx1 on markerRepCoord(_Marker_key)''', None)
 
 db.sql('''select c.*, saa._Sequence_key, a.accid as seqTagID
-	    into #seqTags
-	    from #cellines c, SEQ_Allele_Assoc saa, ACC_Accession a
+	    into temporary table seqTags
+	    from cellines c, SEQ_Allele_Assoc saa, ACC_Accession a
 	    where c._Allele_key = saa._Allele_key
 	    and saa._Sequence_key = a._Object_key
 	    and a._MGIType_key = 19
 	    and a._LogicalDB_key != 9
 	    and a.preferred = 1''', None)
-db.sql('''create index seqTags_idx1 on #seqTags(_Allele_key)''', None)
+db.sql('''create index seqTags_idx1 on seqTags(_Allele_key)''', None)
 
 db.sql('''select s.*, a.accid as genbankID
-	    into #seqGB
-	    from #seqTags s, ACC_Accession a
+	    into temporary table seqGB
+	    from seqTags s, ACC_Accession a
 	    where s._Sequence_key = a._Object_key
 	    and a._MGIType_key = 19
 	    and a._LogicalDB_key = 9
 	    and a.preferred = 1''', None)
-db.sql('''create index seqGB_idx1 on #seqGB(_CellLine_key)''', None)
+db.sql('''create index seqGB_idx1 on seqGB(_CellLine_key)''', None)
 
 db.sql('''select s.*, a.accid as mclID
-	    into #mclIDs
-	    from #seqGB s, ACC_Accession a
+	    into temporary table mclIDs
+	    from seqGB s, ACC_Accession a
 	    where s._CellLine_key = a._Object_key
 	    and a._MGIType_key = 28
 	    and a.preferred = 1''', None)
-db.sql('''create index mclIDs_idx1 on #mclIDs(_Sequence_key)''', None)
+db.sql('''create index mclIDs_idx1 on mclIDs(_Sequence_key)''', None)
 
 results = db.sql('''select m.*, sgt.goodHitCount, 
-	    cast(sgt.pointCoordinate as int) as pointCoordinate, 
+	    sgt.pointCoordinate::int as pointCoordinate, 
 	    t1.term as seqTagMethod
-	    into #seqTagsAll
-	    from #mclIDs m, SEQ_GeneTrap sgt, VOC_Term t1
+	    into temporary table seqTagsAll
+	    from mclIDs m, SEQ_GeneTrap sgt, VOC_Term t1
 	    where m._Sequence_key = sgt._Sequence_key
 	    and sgt._TagMethod_key = t1._Term_key
 	    and t1._Term_key not in (3983000, 3983001)''', None) # 5' RACE
@@ -221,7 +221,7 @@ print 'Loading lookups ...'
 sys.stdout.flush()
 
 # Lookup of marker rep sequence attributes
-results = db.sql(''' select * from #markerRepCoord''', 'auto')
+results = db.sql(''' select * from markerRepCoord''', 'auto')
 for r in results:
     alleleKey = r['_Allele_key']
     chr = r['chromosome']
@@ -239,10 +239,10 @@ for r in results:
 # which have no representative sequences.
 
 results = db.sql ('''select a._Allele_key, mlc.genomicChromosome as chromosome,
-		cast(mlc.startCoordinate as int) as startCoordinate,
-		cast(mlc.endCoordinate as int) as endCoordinate,
+		mlc.startCoordinate::int as startCoordinate,
+		mlc.endCoordinate::int as endCoordinate,
 		mlc.strand, mlc.provider, v.mgiID, v.symbol
-	from #alleleMarkers a,
+	from alleleMarkers a,
 		MRK_Location_Cache mlc,
 		MRK_Mouse_View v
 	where a._Marker_key = mlc._Marker_key
@@ -282,17 +282,17 @@ for r in results:
 # Lookup of allele rep sequence attributes
 db.sql('''select distinct saa._Sequence_key, saa._Allele_key,
             a.accid as allRepSeqId
-            into #alleleRepSeq
+            into temporary table alleleRepSeq
             from SEQ_Allele_Assoc saa,  ACC_Accession a
             where saa._Qualifier_key = 3983018
             and saa._Sequence_key = a._Object_key
             and a._MGIType_key = 19
             and a._LogicalDB_key = 9
             and a.preferred = 1''', None)
-db.sql('''create index alleleRepSeq_idx1 on #alleleRepSeq(_Sequence_key)''', None)
+db.sql('''create index alleleRepSeq_idx1 on alleleRepSeq(_Sequence_key)''', None)
 
 results = db.sql('''select s.*, f.strand
-        from #alleleRepSeq s, MAP_Coord_feature f
+        from alleleRepSeq s, MAP_Coord_feature f
         where s._Sequence_key = f._Object_key
         and f._MGIType_key = 19''', 'auto')
 for r in results:
@@ -303,8 +303,8 @@ for r in results:
 
 # Lookup of gene trap sequence tag alignments
 results = db.sql('''select c.chromosome, 
-	    cast(f.startCoordinate as int) as startCoordinate,
-            cast(f.endCoordinate as int) as endCoordinate,
+	    f.startCoordinate::int as startCoordinate,
+            f.endCoordinate::int as endCoordinate,
             f.strand, f._Object_key as _Sequence_key
             from MAP_Coord_Collection mcc, MAP_Coordinate mc,
             MRK_Chromosome c, MAP_Coord_Feature f
@@ -321,7 +321,7 @@ for r in results:
     seqTagAlignmentsBySeqKey[seqKey] = [chr, start, end, strand]
 
 # write the report
-results = db.sql('''select * from #seqTagsAll
+results = db.sql('''select * from seqTagsAll
 		order by mclID''', 'auto')
 
 for r in results:
