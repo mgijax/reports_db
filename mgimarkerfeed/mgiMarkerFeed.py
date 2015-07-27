@@ -167,7 +167,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -219,8 +219,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Marker_Type_key, name, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+		to_char(creation_date, 'YYYYMMDD') as cdate,
+		to_char(modification_date, 'YYYYMMDD') as mdate
 	    from MRK_Types
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -238,8 +238,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Organism_key, commonName, latinName, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from MGI_Organism_Marker_View
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -258,8 +258,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 38
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -277,8 +277,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 35
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -296,8 +296,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 39
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -315,8 +315,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 61
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -334,8 +334,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 92
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -353,8 +353,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 93
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -372,8 +372,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 62
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -391,8 +391,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 63
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -410,8 +410,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 72
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -429,8 +429,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 64
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -448,8 +448,8 @@ def vocabs():
 
     results = db.sql('''
 	    select _Term_key, term, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from VOC_Term where _Vocab_key = 60
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -467,8 +467,8 @@ def vocabs():
     
     results = db.sql('''
 	  select _Term_key, term, 
-          	convert(char(20), creation_date, 100) as cdate, 
-          	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
           from VOC_Term where _Vocab_key = 27
 	  ''', 'auto')
 
@@ -507,8 +507,8 @@ def vocabs():
 
     results = db.sql('''
 	  select a.accID, t.term, t._Term_key, v.name, 
-          	convert(char(20), t.creation_date, 100) as cdate, 
-          	convert(char(20), t.modification_date, 100) as mdate 
+                to_char(t.creation_date, 'YYYYMMDD') as cdate,
+                to_char(t.modification_date, 'YYYYMMDD') as mdate
           from VOC_Vocab v, VOC_Term t, ACC_Accession a 
 	  where t._Vocab_key in (5, 44) 
 	  and t._Vocab_key = v._Vocab_key 
@@ -542,8 +542,8 @@ def vocabs():
     
     results = db.sql('''
 	  select t._Term_key, s.synonym, 
-          	convert(char(20), s.creation_date, 100) as cdate, 
-          	convert(char(20), s.modification_date, 100) as mdate 
+                to_char(s.creation_date, 'YYYYMMDD') as cdate,
+                to_char(s.modification_date, 'YYYYMMDD') as mdate
           from VOC_Term t, MGI_Synonym s 
 	  where t._Vocab_key in (5, 44) 
 	  and t._Term_key = s._Object_key 
@@ -595,7 +595,7 @@ def markers():
     #
 
     db.sql('''select m._Marker_key, m._Organism_key, m.symbol, m.name 
-	    into #markers 
+	    into temporary table markers 
 	    from MRK_Marker m 
 	    where m._Organism_key = 1 
 	    and exists (select 1 from ACC_Accession a 
@@ -610,7 +610,7 @@ def markers():
 	    where m._Organism_key != 1
 	    ''', None)
 
-    db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
+    db.sql('create index markers_idx1 on markers(_Marker_key)', None)
 
     #
     # select data fields for marker.bcp
@@ -621,9 +621,9 @@ def markers():
     results = db.sql('''
 	    select k._Marker_key, k._Organism_key, m._Marker_Type_key, s.status, 
 	    m.symbol, m.name, m.chromosome, m.cytogeneticOffset, o.offset, 
-	    convert(char(20), m.creation_date, 100) as cdate, 
-	    convert(char(20), m.modification_date, 100) as mdate 
-	    from #markers k, MRK_Marker m, MRK_Status s, MRK_Offset o 
+            to_char(m.creation_date, 'YYYYMMDD') as cdate,
+            to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from markers k, MRK_Marker m, MRK_Status s, MRK_Offset o 
 	    where k._Marker_key = m._Marker_key 
 	    and m._Marker_Status_key = s._Marker_Status_key 
 	    and k._Marker_key = o._Marker_key 
@@ -631,9 +631,9 @@ def markers():
 	    union 
             select m._Marker_key, m._Organism_key, m._Marker_Type_key, s.status, 
 	    m.symbol, m.name, m.chromosome, m.cytogeneticOffset,  null, 
-	    convert(char(20), m.creation_date, 100) as cdate, 
-	    convert(char(20), m.modification_date, 100) as mdate 
-	    from #markers k, MRK_Marker m, MRK_Status s 
+            to_char(m.creation_date, 'YYYYMMDD') as cdate,
+            to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from markers k, MRK_Marker m, MRK_Status s 
 	    where k._Organism_key != 1 
 	    and k._Marker_key = m._Marker_key 
 	    and m._Marker_Status_key = s._Marker_Status_key
@@ -664,8 +664,8 @@ def markers():
 
     results = db.sql('''
 	    select distinct m._Marker_key, m.label, m.labelType, 1 as status, 
-	    convert(char(20), getdate(), 100) as cdate
-	    from #markers k, MRK_Label m 
+            to_char(current_date, 'YYYYMMDD') as cdate
+	    from markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
 	    and m.labelType = 'MS'
 	    and k.symbol = m.label 
@@ -681,8 +681,8 @@ def markers():
 
     results = db.sql('''
 	    select distinct m._Marker_key, m.label, m.labelType, 1 as status, 
-	    	convert(char(20), getdate(), 100) as cdate
-	    from #markers k, MRK_Label m 
+                to_char(current_date, 'YYYYMMDD') as cdate
+	    from markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
 	    and m.labelType = 'MN' 
 	    and k.name = m.label
@@ -698,8 +698,8 @@ def markers():
 
     results = db.sql('''
 	    select distinct m._Marker_key, m.label, m.labelType, 0 as status, 
-	    	convert(char(20), getdate(), 100) as cdate
-	    from #markers k, MRK_Label m 
+                to_char(current_date, 'YYYYMMDD') as cdate
+	    from markers k, MRK_Label m 
 	    where k._Marker_key = m._Marker_key 
 	    and m.labelType in ('MS', 'MN', 'MY') 
 	    and k.symbol != m.label and k.name != m.label 
@@ -724,9 +724,9 @@ def markers():
 
     results = db.sql('''
 	    select m.accID, l.name as LogicalDB, m._Object_key, m.preferred, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
-	    from #markers k, ACC_Accession m, ACC_LogicalDB l 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from markers k, ACC_Accession m, ACC_LogicalDB l 
 	    where k._Marker_key = m._Object_key 
 	    	and m._MGIType_key = 2 
 	    	and m.prefixPart = 'MGI:' 
@@ -734,9 +734,9 @@ def markers():
 	    	and m._LogicalDB_key = l._LogicalDB_key 
 	    union 
             select m.accID, l.name as LogicalDB, m._Object_key, m.preferred, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
-	    from #markers k, ACC_Accession m, ACC_LogicalDB l 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from markers k, ACC_Accession m, ACC_LogicalDB l 
 	    where k._Organism_key != 1 
 	    	and k._Marker_key = m._Object_key 
 	    	and m._MGIType_key = 2 
@@ -775,8 +775,8 @@ def alleles():
     
     results = db.sql('''
 	    select _CellLine_key, cellLine, _CellLine_Type_key, _Strain_key, _Derivation_key, isMutant, 
-	    	convert(char(20), creation_date, 100) as cdate, 
-	    	convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
 	    from ALL_CellLine
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -798,8 +798,8 @@ def alleles():
 
     results = db.sql('''
 	    select m.accID, l.name as LogicalDB, m._Object_key, m.preferred, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
 	    from ALL_Cellline c, ACC_Accession m, ACC_LogicalDB l 
 	    where c._CellLine_key = m._Object_key 
 	    and m._MGIType_key = 28 
@@ -826,8 +826,8 @@ def alleles():
 	    _Vector_key, _VectorType_key, 
 	    _ParentCellLine_key, _DerivationType_key, 
 	    _Creator_key, _Refs_key, 
-	    convert(char(20), creation_date, 100) as cdate, 
-	    convert(char(20), modification_date, 100) as mdate 
+            to_char(creation_date, 'YYYYMMDD') as cdate,
+            to_char(modification_date, 'YYYYMMDD') as mdate
 	    from ALL_CellLine_Derivation
 	    ''', 'auto', execute = 1)
     for r in results:
@@ -851,12 +851,12 @@ def alleles():
     #
 
     db.sql('''
-	select m._Allele_key into #alleles 
+	select m._Allele_key into temporary table alleles 
 	from ALL_Allele m, VOC_Term t 
 	where nomenSymbol is null and m._Allele_Status_key = t._Term_key 
 	and t.term in ('Approved', 'Autoload') 
 	''', None)
-    db.sql('create index alleles_idx1 on #alleles(_Allele_key)', None)
+    db.sql('create index alleles_idx1 on alleles(_Allele_key)', None)
 
     #
     # select data fields for allele.bcp
@@ -868,9 +868,9 @@ def alleles():
 	select m._Allele_key, m._Marker_key, m._Mode_key, m._Allele_Type_key, m._Transmission_key, 
 	m._Strain_key, m._Collection_key, m.isWildType, m.isExtinct, m.isMixed, 
 	m.symbol, m.name, t.term as status, 
-	convert(char(20), m.creation_date, 100) as cdate, 
-	convert(char(20), m.modification_date, 100) as mdate 
-	from #alleles a, ALL_Allele m, VOC_Term t 
+        to_char(m.creation_date, 'YYYYMMDD') as cdate,
+        to_char(m.modification_date, 'YYYYMMDD') as mdate
+	from alleles a, ALL_Allele m, VOC_Term t 
 	where a._Allele_key = m._Allele_key 
 	and m._Allele_Status_key = t._Term_key
 	''', 'auto')
@@ -901,9 +901,9 @@ def alleles():
 
     results = db.sql('''
 	    select m._Assoc_key, m._Allele_key, m._MutantCellLine_key, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
-	    from #alleles a, ALL_Allele_Cellline m 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from alleles a, ALL_Allele_Cellline m 
 	    where a._Allele_key = m._Allele_key 
 	    ''', 'auto')
 
@@ -926,21 +926,21 @@ def alleles():
 
     results = db.sql('''
 	    select m._Allele_key, m.name, 'AN' as labelType, 1 as status, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
-	    from #alleles a, ALL_Allele m 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from alleles a, ALL_Allele m 
 	    where a._Allele_key = m._Allele_key 
 	    union 
 	    select m._Allele_key, m.symbol, 'AS' as labelType, 1 as status, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
-	    from #alleles a, ALL_Allele m 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from alleles a, ALL_Allele m 
 	    where a._Allele_key = m._Allele_key 
 	    union 
 	    select m._Allele_key, s.synonym, 'AY' as labelType, 0 as status, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
-	    from #alleles a, ALL_Allele m, MGI_Synonym s 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from alleles a, ALL_Allele m, MGI_Synonym s 
 	    where a._Allele_key = m._Allele_key 
 	    and a._Allele_key = s._Object_key 
 	    and s._MGIType_key = 11
@@ -963,9 +963,9 @@ def alleles():
 
     results = db.sql('''
 	    select a._Allele_key, rtrim(nc.note) as note, nc.sequenceNum, nt.noteType, 
-	    	convert(char(20), n.creation_date, 100) as cdate, 
-	    	convert(char(20), n.modification_date, 100) as mdate 
-	    from #alleles a, MGI_Note n, MGI_NoteChunk nc, MGI_NoteType nt 
+                to_char(n.creation_date, 'YYYYMMDD') as cdate,
+                to_char(n.modification_date, 'YYYYMMDD') as mdate
+	    from alleles a, MGI_Note n, MGI_NoteChunk nc, MGI_NoteType nt 
 	    where a._Allele_key = n._Object_key 
 	    and n._MGIType_key = 11 
 	    and n._Note_key = nc._Note_key 
@@ -991,9 +991,9 @@ def alleles():
 
     results = db.sql('''
 	    select m.accID, l.name as LogicalDB, m._Object_key, m.preferred, 
-	    	convert(char(20), m.creation_date, 100) as cdate, 
-	    	convert(char(20), m.modification_date, 100) as mdate 
-	    from #alleles k, ACC_Accession m, ACC_LogicalDB l 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+	    from alleles k, ACC_Accession m, ACC_LogicalDB l 
 	    where k._Allele_key = m._Object_key 
 	    and m._MGIType_key = 11 
 	    and m.prefixPart = 'MGI:' 
@@ -1018,9 +1018,9 @@ def alleles():
 
     results = db.sql('''
 	    select a._Allele_key, va._Term_key, 
-	    	convert(char(20), va.creation_date, 100) as cdate, 
-	    	convert(char(20), va.modification_date, 100) as mdate 
-	    from #alleles a, VOC_Annot va
+                to_char(va.creation_date, 'YYYYMMDD') as cdate,
+                to_char(va.modification_date, 'YYYYMMDD') as mdate
+	    from alleles a, VOC_Annot va
 	    where a._Allele_key = va._Object_key
 	    and va._AnnotType_key = 1014
 	    ''', 'auto')
@@ -1052,28 +1052,28 @@ def strains():
 
     db.sql('''
 	  select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
-          	convert(char(20), s.creation_date, 100) as cdate, 
-          	convert(char(20), s.modification_date, 100) as mdate 
-          into #strains 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
+          into temporary table strains 
           from PRB_Strain s, ACC_Accession a 
           where s._Strain_key = a._Object_key 
           and a._MGIType_key = 10 
           and a._LogicalDB_key in (22, 38) 
           union 
           select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
-          	convert(char(20), s.creation_date, 100) as cdate, 
-          	convert(char(20), s.modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
           from PRB_Strain s, ALL_Allele a 
 	  where s._Strain_key = a._Strain_key 
           union 
           select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
-          	convert(char(20), s.creation_date, 100) as cdate, 
-          	convert(char(20), s.modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
           from PRB_Strain s, ALL_CellLine a 
 	  where s._Strain_key = a._Strain_key
 	  ''', None)
 
-    db.sql('create index strains_idx1 on #strains(_Strain_key)', None)
+    db.sql('create index strains_idx1 on strains(_Strain_key)', None)
 
     #
     # strain.bcp
@@ -1081,7 +1081,7 @@ def strains():
 
     fp = open(OUTPUTDIR + 'strain.bcp', 'w')
 
-    results = db.sql('select * from #strains', 'auto')
+    results = db.sql('select * from strains', 'auto')
 
     for r in results:
 	    fp.write(`r['_Strain_key']` + TAB + \
@@ -1100,9 +1100,9 @@ def strains():
 
     results = db.sql('''
 	  select distinct m._Strain_key, m._Marker_key, m._Allele_key, s.private, t.term as qualifier, 
-          	convert(char(20), m.creation_date, 100) as cdate, 
-          	convert(char(20), m.modification_date, 100) as mdate 
-          from #strains s, PRB_Strain_Marker m, VOC_Term t 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+          from strains s, PRB_Strain_Marker m, VOC_Term t 
           where s._Strain_key = m._Strain_key 
 	  and m._Qualifier_key = t._Term_key
 	  ''', 'auto')
@@ -1125,9 +1125,9 @@ def strains():
     
     results = db.sql('''
 	  select m._Synonym_key, m._Object_key, m.synonym, s.private, m.synonymType, 
-          	convert(char(20), m.creation_date, 100) as cdate, 
-          	convert(char(20), m.modification_date, 100) as mdate 
-          from #strains s, MGI_Synonym_Strain_View m 
+                to_char(m.creation_date, 'YYYYMMDD') as cdate,
+                to_char(m.modification_date, 'YYYYMMDD') as mdate
+          from strains s, MGI_Synonym_Strain_View m 
           where s._Strain_key = m._Object_key
 	  ''', 'auto')
 #	  and m.synonym not like 'nm[0-9]%' ', 'auto')
@@ -1150,7 +1150,7 @@ def strains():
 
     results = db.sql('''
 	select m._Strain_key, m._Term_key, s.private, s.cdate, s.mdate 
-        from #strains s, PRB_Strain_Attribute_View m 
+        from strains s, PRB_Strain_Attribute_View m 
         where s._Strain_key = m._Strain_key
 	''', 'auto')
 
@@ -1171,9 +1171,9 @@ def strains():
     
     results = db.sql('''
 	select distinct a.accID, l.name as LogicalDB, a._Object_key, a.preferred, s.private, 
-          convert(char(20), a.creation_date, 100) as cdate, 
-          convert(char(20), a.modification_date, 100) as mdate 
-          from #strains s, ACC_Accession a, ACC_LogicalDB l 
+               to_char(a.creation_date, 'YYYYMMDD') as cdate,
+               to_char(a.modification_date, 'YYYYMMDD') as mdate
+          from strains s, ACC_Accession a, ACC_LogicalDB l 
           where s._Strain_key = a._Object_key 
           and a._MGIType_key = 10 
           and a._LogicalDB_key = l._LogicalDB_key
@@ -1197,8 +1197,8 @@ def strains():
 
     results = db.sql('''
 	select _Term_key, term, 
-          convert(char(20), creation_date, 100) as cdate, 
-          convert(char(20), modification_date, 100) as mdate 
+                to_char(creation_date, 'YYYYMMDD') as cdate,
+                to_char(modification_date, 'YYYYMMDD') as mdate
           from VOC_Term where _Vocab_key = 26
 	  ''', 'auto')
     
@@ -1226,18 +1226,18 @@ def genotypes():
 
     db.sql('''
 	   select distinct g._Genotype_key 
-	   into #genotypes 
-	   from #strains s, GXD_Genotype g, VOC_Annot a 
+	   into temporary table genotypes 
+	   from strains s, GXD_Genotype g, VOC_Annot a 
 	   where s._Strain_key = g._Strain_key 
 	   and g._Genotype_key = a._Object_key 
 	   and a._AnnotType_key in (1002, 1005) 
 	   union 
 	   select distinct g._Genotype_key 
-	   from #strains s, PRB_Strain_Genotype g 
+	   from strains s, PRB_Strain_Genotype g 
 	   where s._Strain_key = g._Strain_key
 	   ''', 'auto')
 
-    db.sql('create index genotypes_idx1 on #genotypes(_Genotype_key)', None)
+    db.sql('create index genotypes_idx1 on genotypes(_Genotype_key)', None)
 
     #
     # genotype.bcp
@@ -1247,9 +1247,9 @@ def genotypes():
 
     results = db.sql('''
 	  select g._Genotype_key, s.strain, p.isConditional, p._ExistsAs_key, c.note, 
-          convert(char(20), p.creation_date, 100) as cdate, 
-          convert(char(20), p.modification_date, 100) as mdate 
-	  from #genotypes g, GXD_Genotype p, PRB_Strain s, MGI_Note n, MGI_NoteChunk c 
+                to_char(p.creation_date, 'YYYYMMDD') as cdate,
+                to_char(p.modification_date, 'YYYYMMDD') as mdate
+	  from genotypes g, GXD_Genotype p, PRB_Strain s, MGI_Note n, MGI_NoteChunk c 
 	  where g._Genotype_key = p._Genotype_key 
 	  and p._Strain_key = s._Strain_key 
 	  and g._Genotype_key = n._Object_key 
@@ -1284,9 +1284,9 @@ def genotypes():
     results = db.sql('''
 	select distinct g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, 
 	q.term as qualifier, c.omimCategory3,
-        convert(char(20), a.creation_date, 100) as cdate, 
-        convert(char(20), a.modification_date, 100) as mdate 
-	from #genotypes g
+                to_char(a.creation_date, 'YYYYMMDD') as cdate,
+                to_char(a.modification_date, 'YYYYMMDD') as mdate
+	from genotypes g
 	INNER JOIN VOC_Annot a on (g._Genotype_key = a._Object_key
                                    and a._AnnotType_key in (1002, 1005))
 	INNER JOIN VOC_Term q on (a._Qualifier_key = q._Term_key)
@@ -1321,9 +1321,9 @@ def genotypes():
 
     results = db.sql('''
 	select g._Genotype_key, h._Term_key as headerTerm, h.sequenceNum, 
-        convert(char(20), h.creation_date, 100) as cdate, 
-        convert(char(20), h.modification_date, 100) as mdate 
-	from #genotypes g, VOC_AnnotHeader h 
+                to_char(h.creation_date, 'YYYYMMDD') as cdate,
+                to_char(h.modification_date, 'YYYYMMDD') as mdate
+	from genotypes g, VOC_AnnotHeader h 
 	where g._Genotype_key = h._Object_key 
 	and h._AnnotType_key = 1002 
 	''', 'auto')
@@ -1346,9 +1346,9 @@ def genotypes():
 
     results = db.sql('''
 	  select p._Strain_key, p._Genotype_key, t.term, 
-          convert(char(20), p.creation_date, 100) as cdate, 
-          convert(char(20), p.modification_date, 100) as mdate 
-          from #strains s, #genotypes g, PRB_Strain_Genotype p, VOC_Term t 
+                to_char(p.creation_date, 'YYYYMMDD') as cdate,
+                to_char(p.modification_date, 'YYYYMMDD') as mdate
+          from strains s, genotypes g, PRB_Strain_Genotype p, VOC_Term t 
           where s._Strain_key = p._Strain_key 
 	  and g._Genotype_key = p._Genotype_key 
           and p._Qualifier_key = t._Term_key
@@ -1372,17 +1372,17 @@ def genotypes():
 	    (
             select p._AllelePair_key, p._Allele_key_1, p._Allele_key_2, 
             p._Marker_key, p._Genotype_key, p._PairState_key, p.sequenceNum,
-	    convert(char(20), p.creation_date, 100) as cdate, 
-	    convert(char(20), p.modification_date, 100) as mdate 
-	    from #alleles a, #genotypes g, GXD_AllelePair p 
+            to_char(p.creation_date, 'YYYYMMDD') as cdate,
+            to_char(p.modification_date, 'YYYYMMDD') as mdate
+	    from alleles a, genotypes g, GXD_AllelePair p 
 	    where a._Allele_key = p._Allele_key_1 
 	    and g._Genotype_key = p._Genotype_key 
 	    union 
             select p._AllelePair_key, p._Allele_key_1, p._Allele_key_2, 
             p._Marker_key, p._Genotype_key, p._PairState_key, p.sequenceNum,
-	    convert(char(20), p.creation_date, 100) as cdate, 
-	    convert(char(20), p.modification_date, 100) as mdate 
-	    from #alleles a, #genotypes g, GXD_AllelePair p 
+            to_char(p.creation_date, 'YYYYMMDD') as cdate,
+            to_char(p.modification_date, 'YYYYMMDD') as mdate
+	    from alleles a, genotypes g, GXD_AllelePair p 
 	    where a._Allele_key = p._Allele_key_2 
 	    and g._Genotype_key = p._Genotype_key 
 	    )
@@ -1415,10 +1415,10 @@ def references():
 
     db.sql('''
 	   select distinct e._Refs_key, g._Genotype_key, a._Annot_key, e._AnnotEvidence_key, 
-	   convert(char(20), e.creation_date, 100) as cdate, 
-	   convert(char(20), e.modification_date, 100) as mdate 
-	   into #genoreferences 
-	   from #genotypes g, VOC_Annot a, VOC_Evidence e 
+           to_char(e.creation_date, 'YYYYMMDD') as cdate,
+           to_char(e.modification_date, 'YYYYMMDD') as mdate
+	   into temporary table genoreferences 
+	   from genotypes g, VOC_Annot a, VOC_Evidence e 
 	   where g._Genotype_key = a._Object_key 
 	   and a._AnnotType_key in (1002, 1005) 
 	   and a._Annot_key = e._Annot_key
@@ -1431,19 +1431,19 @@ def references():
 
     db.sql('''
 	   select distinct r._Refs_key, ag._Allele_key, rt.assocType, 
-	   convert(char(20), r.creation_date, 100) as cdate, 
-	   convert(char(20), r.modification_date, 100) as mdate 
-	   into #allrefs 
-	   from #genotypes g, GXD_AlleleGenotype ag, MGI_Reference_Assoc r, MGI_RefAssocType rt 
+           to_char(r.creation_date, 'YYYYMMDD') as cdate,
+           to_char(r.modification_date, 'YYYYMMDD') as mdate
+	   into temporary table allrefs 
+	   from genotypes g, GXD_AlleleGenotype ag, MGI_Reference_Assoc r, MGI_RefAssocType rt 
 	   where g._Genotype_key = ag._Genotype_key 
 	   and ag._Allele_key = r._Object_key 
 	   and r._MGIType_key = 11 
 	   and r._RefAssocType_key = rt._RefAssocType_key 
 	   union 
            select distinct r._Refs_key, sm._Allele_key, rt.assocType, 
-	   convert(char(20), r.creation_date, 100) as cdate, 
-	   convert(char(20), r.modification_date, 100) as mdate 
-	   from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r, MGI_RefAssocType rt 
+           to_char(r.creation_date, 'YYYYMMDD') as cdate,
+           to_char(r.modification_date, 'YYYYMMDD') as mdate
+	   from strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r, MGI_RefAssocType rt 
 	   where s._Strain_key = sm._Strain_key 
 	   and sm._Allele_key = r._Object_key 
 	   and r._MGIType_key = 11 
@@ -1456,9 +1456,9 @@ def references():
 
     db.sql('''
            select distinct r._Refs_key, 
-	   convert(char(20), r.creation_date, 100) as cdate, 
-	   convert(char(20), r.modification_date, 100) as mdate 
-	   into #allrefs2
+           to_char(r.creation_date, 'YYYYMMDD') as cdate,
+           to_char(r.modification_date, 'YYYYMMDD') as mdate
+	   into temporary table allrefs2
 	   from ALL_CellLine_Derivation r 
 	   where r._Refs_key is not null
 	   ''', None)
@@ -1469,10 +1469,10 @@ def references():
 
     db.sql('''
 	   select r._Refs_key, r._Object_key, rt.assocType, 
-           convert(char(20), r.creation_date, 100) as cdate, 
-           convert(char(20), r.modification_date, 100) as mdate 
-           into #strainreferences 
-           from #strains s, MGI_Reference_Assoc r, MGI_RefAssocType rt 
+           to_char(r.creation_date, 'YYYYMMDD') as cdate,
+           to_char(r.modification_date, 'YYYYMMDD') as mdate
+           into temporary table strainreferences 
+           from strains s, MGI_Reference_Assoc r, MGI_RefAssocType rt 
            where s._Strain_key = r._Object_key 
            and r._MGIType_key = 10 
            and r._RefAssocType_key = rt._RefAssocType_key
@@ -1485,13 +1485,13 @@ def references():
 
     db.sql('''
 	   select distinct r._Refs_key, r._Marker_key 
-	   into #mrkreferences 
-	   from #genotypes g, GXD_AlleleGenotype ag, MRK_Reference r 
+	   into temporary table mrkreferences 
+	   from genotypes g, GXD_AlleleGenotype ag, MRK_Reference r 
 	   where g._Genotype_key = ag._Genotype_key 
 	   and ag._Marker_key = r._Marker_key 
 	   union 
            select distinct r._Refs_key, sm._Marker_key 
-	   from #strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r 
+	   from strains s, PRB_Strain_Marker sm, MGI_Reference_Assoc r 
 	   where s._Strain_key = sm._Strain_key 
 	   and sm._Marker_key = r._Object_key 
 	   and r._MGIType_key = 2 
@@ -1503,39 +1503,39 @@ def references():
 
     db.sql('''
 	   select distinct e._Refs_key, 
-	   convert(char(20), e.creation_date, 100) as cdate, 
-	   convert(char(20), e.modification_date, 100) as mdate 
-	   into #omimreferences 
+           to_char(e.creation_date, 'YYYYMMDD') as cdate,
+           to_char(e.modification_date, 'YYYYMMDD') as mdate
+	   into temporary table omimreferences 
 	   from VOC_Annot a, VOC_Evidence e 
 	   where a._AnnotType_key = 1006 
 	   and a._Annot_key = e._Annot_key
 	   ''', None)
 
-    db.sql('create index genoreferences_idx1 on #genoreferences(_Refs_key)', None)
-    db.sql('create index allrefs_idx1 on #allrefs(_Refs_key)', None)
-    db.sql('create index allrefs2_idx1 on #allrefs2(_Refs_key)', None)
-    db.sql('create index strainreferences_idx1 on #strainreferences(_Refs_key)', None)
-    db.sql('create index mrkreferences_idx1 on #mrkreferences(_Refs_key)', None)
-    db.sql('create index omimreferences_idx1 on #omimreferences(_Refs_key)', None)
+    db.sql('create index genoreferences_idx1 on genoreferences(_Refs_key)', None)
+    db.sql('create index allrefs_idx1 on allrefs(_Refs_key)', None)
+    db.sql('create index allrefs2_idx1 on allrefs2(_Refs_key)', None)
+    db.sql('create index strainreferences_idx1 on strainreferences(_Refs_key)', None)
+    db.sql('create index mrkreferences_idx1 on mrkreferences(_Refs_key)', None)
+    db.sql('create index omimreferences_idx1 on omimreferences(_Refs_key)', None)
 
     db.sql('''
-	   select distinct _Refs_key into #refs from #genoreferences 
-	   union select distinct _Refs_key from #allrefs 
-	   union select distinct _Refs_key from #allrefs2 
-	   union select distinct _Refs_key from #strainreferences 
-	   union select distinct _Refs_key from #mrkreferences 
-	   union select distinct _Refs_key from #omimreferences
+	   select distinct _Refs_key into temporary table refs from genoreferences 
+	   union select distinct _Refs_key from allrefs 
+	   union select distinct _Refs_key from allrefs2 
+	   union select distinct _Refs_key from strainreferences 
+	   union select distinct _Refs_key from mrkreferences 
+	   union select distinct _Refs_key from omimreferences
 	   ''', None)
-    db.sql('create index references_idx1 on #refs(_Refs_key)', None)
+    db.sql('create index references_idx1 on refs(_Refs_key)', None)
 
     results = db.sql('''
 	    select r._Refs_key, b.refType, b.authors, b.authors2, 
 	    b.title, b.title2, b.journal, b.vol, b.issue, b.pgs, b.year, 
 	    b.isReviewArticle, 
 	    k.book_au, k.book_title, k.publisher, k.place, k.series_ed, 
-	    convert(char(20), b.creation_date, 100) as cdate, 
-	    convert(char(20), b.modification_date, 100) as mdate 
-	    from #refs r, BIB_Refs b LEFT OUTER JOIN BIB_Books k on (b._Refs_key = k._Refs_key)
+            to_char(b.creation_date, 'YYYYMMDD') as cdate,
+            to_char(b.modification_date, 'YYYYMMDD') as mdate
+	    from refs r, BIB_Refs b LEFT OUTER JOIN BIB_Books k on (b._Refs_key = k._Refs_key)
 	    where r._Refs_key = b._Refs_key 
 	    ''', 'auto')
 
@@ -1566,9 +1566,9 @@ def references():
     fp = open(OUTPUTDIR + 'accession_reference.bcp', 'w')
     results = db.sql('''
 	    select a.accID, l.name as LogicalDB, a._Object_key, a.preferred, 
-	    convert(char(20), a.creation_date, 100) as cdate, 
-	    convert(char(20), a.modification_date, 100) as mdate 
-	    from #refs r, ACC_Accession a, ACC_LogicalDB l 
+            to_char(a.creation_date, 'YYYYMMDD') as cdate,
+            to_char(a.modification_date, 'YYYYMMDD') as mdate
+	    from refs r, ACC_Accession a, ACC_LogicalDB l 
 	    where r._Refs_key = a._Object_key 
 	    and a._MGIType_key = 1 
 	    and a._LogicalDB_key = l._LogicalDB_key
@@ -1591,7 +1591,7 @@ def references():
 
     results = db.sql('''
 	select g._Refs_key, g._Genotype_key, g._Annot_key, g.cdate, g.mdate 
-	from #genoreferences g 
+	from genoreferences g 
 	where not exists (select 1 from MGI_Note_VocEvidence_View n 
 	where g._AnnotEvidence_key = n._Object_key) 
 	order by g._Genotype_key 
@@ -1609,7 +1609,7 @@ def references():
     results = db.sql('''
 	select g._Refs_key, g._Genotype_key, g._Annot_key, g._AnnotEvidence_key, g.cdate, g.mdate, 
 	n._Note_key, n.noteType, n.sequenceNum, n.note 
-	from #genoreferences g, MGI_Note_VocEvidence_View n 
+	from genoreferences g, MGI_Note_VocEvidence_View n 
 	where g._AnnotEvidence_key = n._Object_key 
 	order by g._Genotype_key, g._AnnotEvidence_key, n.sequenceNum
 	''', 'auto')
@@ -1630,7 +1630,7 @@ def references():
 
     fp = open(OUTPUTDIR + 'allele_reference.bcp', 'w')
 
-    results = db.sql('select * from #allrefs', 'auto')
+    results = db.sql('select * from allrefs', 'auto')
     for r in results:
 	    fp.write(`r['_Allele_key']` + TAB + \
 		     `r['_Refs_key']` + TAB + \
@@ -1645,7 +1645,7 @@ def references():
 
     fp = open(OUTPUTDIR + 'strain_reference.bcp', 'w')
 
-    results = db.sql('select * from #strainreferences', 'auto')
+    results = db.sql('select * from strainreferences', 'auto')
     for r in results:
             fp.write(`r['_Object_key']` + TAB + \
                      `r['_Refs_key']` + TAB + \
@@ -1660,7 +1660,7 @@ def references():
 
     fp = open(OUTPUTDIR + 'marker_reference.bcp', 'w')
 
-    results = db.sql('select * from #mrkreferences', 'auto')
+    results = db.sql('select * from mrkreferences', 'auto')
     for r in results:
 	    fp.write(`r['_Marker_key']` + TAB + \
 		     `r['_Refs_key']` + CRT)
@@ -1678,8 +1678,8 @@ def omim():
 
     results = db.sql('''
 	select a._Term_key, a._Object_key, e._Refs_key, 
-         convert(char(20), a.creation_date, 100) as cdate, 
-         convert(char(20), a.modification_date, 100) as mdate 
+               to_char(a.creation_date, 'YYYYMMDD') as cdate,
+               to_char(a.modification_date, 'YYYYMMDD') as mdate
 	from VOC_Annot a, VOC_Evidence e 
 	where a._AnnotType_key = 1006 
 	and a._Annot_key = e._Annot_key

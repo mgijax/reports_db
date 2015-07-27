@@ -39,11 +39,6 @@ set DIRNAME = `echo $1 | cut -d'/' -f1`
 set RPTNAME = `echo $1 | cut -d'/' -f2`
 
 #
-# Set this variable to either 'sybase' or 'postgres'.
-#
-setenv DB_TYPE		postgres
-
-#
 # Set postgres configuration to use the public instance.
 #
 if $?PG_PUB_DBSERVER then

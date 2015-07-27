@@ -161,7 +161,7 @@ for item in results:
 
 db.sql('''
 	select distinct cm._Marker_key, a.accID 
-	into #tmp_accID
+	into temporary table tmp_accID
 	from CRS_Matrix cm 
 		LEFT OUTER JOIN ACC_Accession a on (
 			cm._Marker_key = a._Object_key 
@@ -173,7 +173,7 @@ db.sql('''
 results = db.sql('''
 	select mc._Marker_key, a.accID
 	from MRK_Current mc, ACC_Accession a
-	where mc._Marker_key in (select _Marker_key from #tmp_accID where accID = null)
+	where mc._Marker_key in (select _Marker_key from tmp_accID where accID = null)
 	and mc._Current_key = a._Object_key 
 	and a.prefixPart = 'MGI:'
 	and a.private = 0 

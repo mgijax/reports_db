@@ -31,11 +31,6 @@ cd `dirname $0` && source ../Configuration
 umask 002
 
 #
-# Set this variable to either 'sybase' or 'postgres'.
-#
-setenv DB_TYPE		postgres
-
-#
 # Set postgres configuration to use the public instance.
 #
 setenv PG_DBSERVER	${PG_PUB_DBSERVER}
