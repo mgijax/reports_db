@@ -164,7 +164,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 DBABBREV = 'MGI'
 SPECIES = 'taxon:10090'
@@ -237,7 +237,7 @@ def doSetup():
     	    e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
     	    e._Refs_key, e._ModifiedBy_key, 
     	    m.symbol, m.name, lower(mt.name) as markerType
-        into #gomarker1 
+        into temporary table gomarker1 
         from VOC_Annot a, 
 	     ACC_Accession ta, 
 	     VOC_Term t, 
@@ -257,17 +257,17 @@ def doSetup():
         and m._Marker_Type_key = mt._Marker_Type_key 
         and a._Qualifier_key = q._Term_key 
         ''', None)
-    db.sql('create index gomarker1_idx1 on #gomarker1(_Object_key)', None)
-    db.sql('create index gomarker1_idx2 on #gomarker1(_EvidenceTerm_key)', None)
-    db.sql('create index gomarker1_idx3 on #gomarker1(_Refs_key)', None)
-    db.sql('create index gomarker1_idx4 on #gomarker1(_ModifiedBy_key)', None)
-    db.sql('create index gomarker1_idx5 on #gomarker1(_AnnotEvidence_key)', None)
+    db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
+    db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
+    db.sql('create index gomarker1_idx3 on gomarker1(_Refs_key)', None)
+    db.sql('create index gomarker1_idx4 on gomarker1(_ModifiedBy_key)', None)
+    db.sql('create index gomarker1_idx5 on gomarker1(_AnnotEvidence_key)', None)
 
     #
     # retrieve synonyms for markers in data set
     #
     results = db.sql('''select distinct g._Object_key, s.synonym 
-        from #gomarker1 g, MGI_Synonym s, MGI_SynonymType st 
+        from gomarker1 g, MGI_Synonym s, MGI_SynonymType st 
         where g._Object_key = s._Object_key 
         and s._MGIType_key = 2 
         and s._SynonymType_key = st._SynonymType_key 
@@ -290,8 +290,8 @@ def doSetup():
     	    b.accID as refID, 
     	    rtrim(t.abbreviation) as eCode, 
     	    u.login as assignedBy
-        into #gomarker2 
-        from #gomarker1 g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u 
+        into temporary table gomarker2 
+        from gomarker1 g, ACC_Accession ma, ACC_Accession b, VOC_Term t, MGI_User u 
         where g._Object_key = ma._Object_key 
         and ma._MGIType_key = 2 
         and ma.prefixPart = 'MGI:' 
@@ -304,16 +304,16 @@ def doSetup():
         and g._EvidenceTerm_key = t._Term_key 
         and g._ModifiedBy_key = u._User_key
 	''', None)
-    db.sql('create index gomarker2_idx1 on #gomarker2(symbol)', None)
-    db.sql('create index gomarker2_idx2 on #gomarker2(_Refs_key)', None)
-    db.sql('create index gomarker2_idx3 on #gomarker2(_AnnotEvidence_key)', None)
-    db.sql('create index gomarker2_idx4 on #gomarker2(_Object_key)', None)
-    db.sql('create index gomarker2_idx5 on #gomarker2(_EvidenceTerm_key)', None)
+    db.sql('create index gomarker2_idx1 on gomarker2(symbol)', None)
+    db.sql('create index gomarker2_idx2 on gomarker2(_Refs_key)', None)
+    db.sql('create index gomarker2_idx3 on gomarker2(_AnnotEvidence_key)', None)
+    db.sql('create index gomarker2_idx4 on gomarker2(_Object_key)', None)
+    db.sql('create index gomarker2_idx5 on gomarker2(_EvidenceTerm_key)', None)
     
     #
     # resolve PubMed IDs for References
     #
-    results = db.sql('''select distinct r._Refs_key, a.accID from #gomarker2 r, ACC_Accession a 
+    results = db.sql('''select distinct r._Refs_key, a.accID from gomarker2 r, ACC_Accession a 
         where r._Refs_key = a._Object_key 
         and a._MGIType_key = 1 
         and a._LogicalDB_key = 29''', 'auto')
@@ -347,7 +347,7 @@ def doCol16():
     #
 
     results = db.sql('''select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
-	    from #gomarker2 r, VOC_Evidence_Property p, VOC_Term t
+	    from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
 	    where r._EvidenceTerm_key not in (3251466)
             and r._AnnotEvidence_key = p._AnnotEvidence_key
 	    and p._PropertyTerm_key = t._Term_key
@@ -415,7 +415,7 @@ def doIsoform():
     isoformsProtein = {}
     forPROC = {}
     results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
-	from #gomarker2 r, VOC_Evidence_Property p
+	from gomarker2 r, VOC_Evidence_Property p
 	where r._AnnotEvidence_key = p._AnnotEvidence_key
 	and p._PropertyTerm_key = 6481775
 	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
@@ -494,13 +494,13 @@ def doProtein():
 
     results = db.sql('''
         select distinct r.symbol, mc._Marker_key, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
-        from #gomarker2 r, SEQ_Marker_Cache mc 
+        from gomarker2 r, SEQ_Marker_Cache mc 
         where r._Object_key = mc._Marker_key 
         and mc._Marker_Type_key = 1 
         and mc._Qualifier_key = 615421 
         union 
         select distinct r.symbol, mc._Marker_key, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
-        from #gomarker2 r, SEQ_Marker_Cache mc, MRK_MCV_Cache mcv
+        from gomarker2 r, SEQ_Marker_Cache mc, MRK_MCV_Cache mcv
         where r._Object_key = mc._Marker_key 
         and mc._Marker_Type_key = 1
         and mc._Qualifier_key = 615420
@@ -556,7 +556,7 @@ def doFinish():
     #
     # process results
     #
-    results = db.sql('select * from #gomarker2 order by symbol, termID', 'auto')
+    results = db.sql('select * from gomarker2 order by symbol, termID', 'auto')
     for r in results:
 
         reportRow = ''    
