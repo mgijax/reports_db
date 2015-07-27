@@ -620,7 +620,7 @@ def markers():
 
     results = db.sql('''
 	    select k._Marker_key, k._Organism_key, m._Marker_Type_key, s.status, 
-	    m.symbol, m.name, m.chromosome, m.cytogeneticOffset, o.offset, 
+	    m.symbol, m.name, m.chromosome, m.cytogeneticOffset, o.cmoffset, 
             to_char(m.creation_date, 'YYYYMMDD') as cdate,
             to_char(m.modification_date, 'YYYYMMDD') as mdate
 	    from markers k, MRK_Marker m, MRK_Status s, MRK_Offset o 
@@ -648,7 +648,7 @@ def markers():
 		     strip_newline(r['name']) + TAB + \
 		     r['chromosome'] + TAB + \
 		     mgi_utils.prvalue(r['cytogeneticOffset']) + TAB + \
-		     mgi_utils.prvalue(r['offset']) + TAB + \
+		     mgi_utils.prvalue(r['cmoffset']) + TAB + \
 		     str(r['cdate']) + TAB + \
 		     str(r['mdate']) + CRT)
 
@@ -1052,8 +1052,8 @@ def strains():
 
     db.sql('''
 	  select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
-                to_char(creation_date, 'YYYYMMDD') as cdate,
-                to_char(modification_date, 'YYYYMMDD') as mdate
+                to_char(s.creation_date, 'YYYYMMDD') as cdate,
+                to_char(s.modification_date, 'YYYYMMDD') as mdate
           into temporary table strains 
           from PRB_Strain s, ACC_Accession a 
           where s._Strain_key = a._Object_key 
@@ -1061,14 +1061,14 @@ def strains():
           and a._LogicalDB_key in (22, 38) 
           union 
           select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
-                to_char(creation_date, 'YYYYMMDD') as cdate,
-                to_char(modification_date, 'YYYYMMDD') as mdate
+                to_char(s.creation_date, 'YYYYMMDD') as cdate,
+                to_char(s.modification_date, 'YYYYMMDD') as mdate
           from PRB_Strain s, ALL_Allele a 
 	  where s._Strain_key = a._Strain_key 
           union 
           select distinct s._Strain_key, s._Species_key, s._StrainType_key, s.strain, s.private, 
-                to_char(creation_date, 'YYYYMMDD') as cdate,
-                to_char(modification_date, 'YYYYMMDD') as mdate
+                to_char(s.creation_date, 'YYYYMMDD') as cdate,
+                to_char(s.modification_date, 'YYYYMMDD') as mdate
           from PRB_Strain s, ALL_CellLine a 
 	  where s._Strain_key = a._Strain_key
 	  ''', None)
