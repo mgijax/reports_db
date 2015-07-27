@@ -55,7 +55,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -73,16 +73,16 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 db.sql('''
 	select sa._Sequence_key_1 as transcriptKey, 
         sa._Sequence_key_2 as genomicKey 
-        into #transGen 
+        into temporary table transGen 
         from SEQ_Sequence_Assoc sa 
         where sa._Qualifier_key = 5445464
 	''', None)  
-db.sql('create index idx1 on #transGen(transcriptKey)', None)
-db.sql('create index idx2 on #transGen(genomicKey)', None)
+db.sql('create index idx1 on transGen(transcriptKey)', None)
+db.sql('create index idx2 on transGen(genomicKey)', None)
 
 results = db.sql('''
 	select a1.accID as genomicID, a2.accID as transcriptID 
-        from #transGen t, ACC_Accession a1, ACC_Accession a2 
+        from transGen t, ACC_Accession a1, ACC_Accession a2 
         where t.genomicKey = a1._Object_key 
         and a1._MGIType_key = 19 
         and a1.preferred = 1 
@@ -105,15 +105,15 @@ for r in results:
 db.sql('''
     select tg.genomicKey, 
     sa._Sequence_key_1 as proteinKey 
-    into #protGen 
-    from #transGen tg, SEQ_Sequence_Assoc sa 
+    into temporary table protGen 
+    from transGen tg, SEQ_Sequence_Assoc sa 
     where sa._Qualifier_key = 5445465 
     and tg.transcriptKey =  sa._Sequence_key_2
     ''', None)
 
 results = db.sql('''
 	select a1.accID as genomicID, a2.accID as proteinID 
-        from #protGen t, ACC_Accession a1, ACC_Accession a2 
+        from protGen t, ACC_Accession a1, ACC_Accession a2 
         where t.genomicKey = a1._Object_key 
         and a1._MGIType_key = 19 
         and a1.preferred = 1 
@@ -136,10 +136,10 @@ db.sql('''
 	     m.symbol, 
 	     m.name, 
 	     m.chromosome, 
-	     o.offset, 
+	     o.cmoffset, 
 	     a2.accID as ensembl,
 	     mlc.genomicChromosome
-      into #markers
+      into temporary table markers
       from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Offset o,
       	    MRK_Location_Cache mlc
       where a1._Object_key = a2._Object_key and 
@@ -154,14 +154,14 @@ db.sql('''
 	    m._Marker_key = mlc._Marker_key and
             o.source = 0 
 	''', None)
-db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
+db.sql('create index markers_idx1 on markers(_Marker_key)', None)
 
 #
 # feature types
 #
 results = db.sql('''
 	select m._marker_key, s.term 
-        from #markers m, MRK_MCV_Cache s 
+        from markers m, MRK_MCV_Cache s 
         where m._marker_key = s._marker_key 
         and s.qualifier = 'D'
 	''', 'auto')
@@ -179,9 +179,9 @@ for r in results:
 results = db.sql('''	
     select m._marker_key,
            c.strand, 
-	   convert(int, c.startCoordinate) as startC,
-	   convert(int, c.endCoordinate) as endC
-    from #markers m, MRK_Location_Cache c
+	   c.startCoordinate::int as startC,
+	   c.endCoordinate::int as endC
+    from markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
 	''', 'auto')
 coords = {}
@@ -197,7 +197,7 @@ for r in results:
 #
 results = db.sql('''
 	select distinct m._Marker_key, s.rawbiotype 
-	from #markers m, SEQ_Marker_Cache s 
+	from markers m, SEQ_Marker_Cache s 
 	where m._Marker_key = s._Marker_key 
 	and s.rawbiotype is not null
 	''', 'auto')
@@ -209,7 +209,7 @@ for r in results:
 		bioTypes[key] = []
 	bioTypes[key].append(value)
 
-results = db.sql('select * from #markers order by genomicChromosome, symbol', 'auto')
+results = db.sql('select * from markers order by genomicChromosome, symbol', 'auto')
 
 for r in results:
 
@@ -230,7 +230,7 @@ for r in results:
     fp.write(r['mgi'] + TAB + 
 	    r['symbol'] + TAB + 
 	    r['name'] + TAB +
-	    str(r['offset']) + TAB +
+	    str(r['cmoffset']) + TAB +
             chromosome + TAB + 
             genomicID + TAB)
 

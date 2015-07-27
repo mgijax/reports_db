@@ -34,7 +34,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 #
 # Main
@@ -49,7 +49,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 db.sql('''
       (
       select m._Marker_key, a.accID as mgiID, m.symbol, m.name, m.chromosome 
-      into #markers 
+      into temporary table markers 
       from MRK_Marker m, ACC_Accession a 
       where m._Marker_Type_key = 1 
       and m._Organism_key = 1 
@@ -75,7 +75,7 @@ db.sql('''
 
 results = db.sql('''
 	select m._Marker_key, a.accID 
-	from #markers m, ACC_Accession a 
+	from markers m, ACC_Accession a 
         where m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
         and a._LogicalDB_key = 9 
@@ -87,7 +87,7 @@ for r in results:
 	seqIDs[r['_Marker_key']] = []
     seqIDs[r['_Marker_key']].append(r['accID'])
 
-results = db.sql('select * from #markers order by symbol, mgiID', 'auto')
+results = db.sql('select * from markers order by symbol, mgiID', 'auto')
 for r in results:
 
 	fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \

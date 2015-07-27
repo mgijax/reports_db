@@ -36,7 +36,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 #
 # Main
@@ -48,7 +48,7 @@ fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], pri
 
 db.sql('''
 	select s.strain, s.strainType, a.accID 
-	into #strain 
+	into temporary table strain 
 	from PRB_Strain_View s, ACC_Accession a 
 	where s.standard = 1 
 	and s.private = 0 
@@ -58,7 +58,7 @@ db.sql('''
 	and a.preferred = 1
 	''', None)
 
-results = db.sql('select * from #strain order by strain', 'auto')
+results = db.sql('select * from strain order by strain', 'auto')
 for r in results:
 
 	fp1.write(r['accID'] + reportlib.TAB)

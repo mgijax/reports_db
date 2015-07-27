@@ -39,7 +39,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 #
 # Main
@@ -57,7 +57,7 @@ fp.write('#For details of nomenclature rules, see http://www.informatics.jax.org
 
 db.sql('''
 	select a._Allele_key, a._Marker_key, a.symbol, a.name, t2.term as alleleType, m.symbol as marker
-	into #alleles 
+	into temporary table alleles 
 	from ALL_Allele a, VOC_Term t1, VOC_Term t2, MRK_Marker m 
 	where a._Allele_Status_key = t1._Term_key 
 	and t1.term = 'Approved' 
@@ -66,13 +66,13 @@ db.sql('''
 	and a._Marker_key = m._Marker_key 
 	and m._Marker_Type_key = 6
 	''', None)
-db.sql('create index idx1 on #alleles(_Allele_key)', None)
+db.sql('create index idx1 on alleles(_Allele_key)', None)
 
 # Retrieve MGI Accession number for Allele
 
 results = db.sql('''
 	select s._Allele_key, a.accID 
-	from #alleles s, ACC_Accession a 
+	from alleles s, ACC_Accession a 
 	where s._Allele_key = a._Object_key 
 	and a._MGIType_key = 11 
 	and a._LogicalDB_key = 1 
@@ -88,7 +88,7 @@ for r in results:
 
 results = db.sql('''
 	select s._Marker_key, a.accID 
-	from #alleles s, ACC_Accession a 
+	from alleles s, ACC_Accession a 
 	where s._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 
 	and a._LogicalDB_key = 1 
@@ -103,7 +103,7 @@ for r in results:
 
 results = db.sql('''
 	select s._Allele_key, b.accID 
-	from #alleles s, MGI_Reference_Assoc r, MGI_RefAssocType rt, ACC_Accession b 
+	from alleles s, MGI_Reference_Assoc r, MGI_RefAssocType rt, ACC_Accession b 
 	where s._Allele_key = r._Object_key 
 	and r._MGIType_key = 11 
 	and r._RefAssocType_key = rt._RefAssocType_key 
@@ -120,7 +120,7 @@ for r in results:
 
 results = db.sql('''
 	select s._Marker_key, a.accID 
-	from #alleles s, ACC_Accession a 
+	from alleles s, ACC_Accession a 
 	where s._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 
 	and a._LogicalDB_key = 27 
@@ -134,7 +134,7 @@ for r in results:
 
 results = db.sql('''
 	select s._Marker_key, a.accID 
-	from #alleles s, ACC_Accession a 
+	from alleles s, ACC_Accession a 
 	where s._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 
 	and a._LogicalDB_key = 60 
@@ -146,8 +146,8 @@ for r in results:
 # Retrieve marker coordinates
 
 results = db.sql ('''select _Marker_key, chromosome, genomicChromosome,
-		cast(startCoordinate as int) as startCoordinate,
-		cast(endCoordinate as int) as endCoordinate,
+		startCoordinate::int as startCoordinate,
+		endCoordinate::int as endCoordinate,
 		strand, version
 	from MRK_Location_Cache
 	where _Organism_key = 1
@@ -161,7 +161,7 @@ for r in results:
 
 results = db.sql('''
 	select distinct s._Allele_key, a.accID 
-	from #alleles s, GXD_AlleleGenotype ga, VOC_AnnotHeader na, ACC_Accession a 
+	from alleles s, GXD_AlleleGenotype ga, VOC_AnnotHeader na, ACC_Accession a 
 	where s._Allele_key = ga._Allele_key 
 	and ga._Genotype_key = na._Object_key 
 	and na._AnnotType_key = 1002 
@@ -176,7 +176,7 @@ for r in results:
 		mpIDs[r['_Allele_key']] = []
 	mpIDs[r['_Allele_key']].append(r['accID'])
 	
-results = db.sql('select * from #alleles order by marker, symbol', 'auto')
+results = db.sql('select * from alleles order by marker, symbol', 'auto')
 
 for r in results:
 	fp.write(amgiIDs[r['_Allele_key']] + reportlib.TAB + \

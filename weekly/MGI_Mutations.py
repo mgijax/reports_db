@@ -39,7 +39,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -177,7 +177,7 @@ def process():
 
     db.sql('''
 	select m._Marker_key, m.symbol, substring(m.name,1,75) as name, ma.accID 
-	into #markers1 
+	into temporary table markers1 
 	from MRK_Marker m, ACC_Accession ma 
 	where m._Organism_key = 1 
 	and m._Marker_Type_key = 1 
@@ -191,7 +191,7 @@ def process():
 	and exists (select 1 from SEQ_Marker_Cache c where m._Marker_key = c._Marker_key 
 	and c._LogicalDB_key in (59, 60, 85))
 	''', None)
-    db.sql('create index markers1_idx1 on #markers1(_Marker_key)', None)
+    db.sql('create index markers1_idx1 on markers1(_Marker_key)', None)
 
     #
     # select all genes with mutations
@@ -202,8 +202,8 @@ def process():
 
     db.sql('''
 	select m.*, a._Allele_Type_key, t.term
-	into #markers2 
-	from #markers1 m, ALL_Allele a, VOC_Term t
+	into temporary table markers2 
+	from markers1 m, ALL_Allele a, VOC_Term t
 	where m._Marker_key = a._Marker_key 
 	and a.isWildType = 0 
 	and a._Allele_Type_key != 847130 
@@ -211,9 +211,9 @@ def process():
 	and a._Allele_Type_key = t._Term_key
 	order by m.symbol
 	''', None)
-    db.sql('create index markers2_idx1 on #markers2(_Marker_key)', None)
+    db.sql('create index markers2_idx1 on markers2(_Marker_key)', None)
 
-    results = db.sql('select * from #markers2', 'auto')
+    results = db.sql('select * from markers2', 'auto')
 
     for r in results:
 
@@ -252,7 +252,7 @@ def process():
 
 	markers[key] = c
 
-    results = db.sql('select distinct m._Marker_key, m.symbol, m.name, m.accID from #markers2 m order by m.symbol', 'auto')
+    results = db.sql('select distinct m._Marker_key, m.symbol, m.name, m.accID from markers2 m order by m.symbol', 'auto')
     for r in results:
         fpHTML.write('<td>%s</td>' % (writeHTML(r)))
 	fpTAB.write(writeTAB(r))

@@ -55,7 +55,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 db.useOneConnection(1)
 
@@ -246,28 +246,28 @@ printHeaderTAB()
 db.sql('''
        select distinct c._Allele_key, c.symbol, c.name, c.driverNote, 
 		c.accID, rtrim(m.name) as markerName
-       into #cre
+       into temporary table cre
        from ALL_Cre_Cache c, ALL_Allele aa, MRK_Marker m
        where c._Allele_key = aa._Allele_key
        and aa._Marker_key = m._Marker_key
        ''', None)
 
-db.sql('create index cre_idx1 on #cre(_Allele_key)', None)
+db.sql('create index cre_idx1 on cre(_Allele_key)', None)
 
 # anatomical systems of expressed structures
 
 db.sql('''
       select distinct cc._Allele_key, cc._System_key, cc.system, c.accID
-      into #expressed
-      from #cre c, ALL_Cre_Cache cc
+      into temporary table expressed
+      from cre c, ALL_Cre_Cache cc
       where c._Allele_key = cc._Allele_key
       and cc.expressed = 1
       ''', None)
-db.sql('create index expressed_idx1 on #expressed(_Allele_key)', None)
+db.sql('create index expressed_idx1 on expressed(_Allele_key)', None)
 
 expressedTAB = {}
 expressedHTML = {}
-results = db.sql('select * from #expressed', 'auto')
+results = db.sql('select * from expressed', 'auto')
 for r in results:
     key = r['_Allele_key']
     value = r['system']
@@ -286,10 +286,10 @@ for r in results:
 
 results = db.sql('''
       select distinct cc._Allele_key, cc._System_key, cc.system
-      from #cre c, ALL_Cre_Cache cc
+      from cre c, ALL_Cre_Cache cc
       where c._Allele_key = cc._Allele_key
       and cc.expressed = 0
-      and not exists (select 1 from #expressed e
+      and not exists (select 1 from expressed e
 			where cc._Allele_key = e._Allele_key
 			and cc.system = e.system)
       ''', 'auto')
@@ -314,7 +314,7 @@ for r in results:
 
 results = db.sql('''
         select distinct c.accID
-        from #cre c
+        from cre c
         ''', 'auto')
 
 # map of imsr allele ID to strain names
@@ -342,7 +342,7 @@ for r in results:
 #
 # process results
 #
-results = db.sql('select * from #cre order by driverNote', 'auto')
+results = db.sql('select * from cre order by driverNote', 'auto')
 
 for r in results:
     writeHTML(r, imsrHTML)

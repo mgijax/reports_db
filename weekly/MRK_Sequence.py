@@ -77,7 +77,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -114,17 +114,17 @@ fp.write('UniGene ID\n')
 
 # deleted sequences
 
-db.sql('select s._Sequence_key into #deleted from SEQ_Sequence s where s._SequenceStatus_key = 316343', None)
-db.sql('create index deleted_idx1 on #deleted(_Sequence_key)', None)
+db.sql('select s._Sequence_key into temporary table deleted from SEQ_Sequence s where s._SequenceStatus_key = 316343', None)
+db.sql('create index deleted_idx1 on deleted(_Sequence_key)', None)
 
 db.sql('''
     select a.accID, a._LogicalDB_key 
-    into #deletedIDs from #deleted d, ACC_Accession a 
+    into temporary table deletedIDs from deleted d, ACC_Accession a 
     where d._Sequence_key = a._Object_key 
     and a._MGIType_key = 19
     ''', None)
-db.sql('create index deletedIDS_idx1 on #deletedIDs(accID)', None)
-db.sql('create index deletedIDS_idx2 on #deletedIDs(_LogicalDB_key)', None)
+db.sql('create index deletedIDS_idx1 on deletedIDs(accID)', None)
+db.sql('create index deletedIDS_idx2 on deletedIDs(_LogicalDB_key)', None)
 
 # all official/interim mouse markers that have at least one Sequence ID
 #
@@ -137,8 +137,8 @@ db.sql('create index deletedIDS_idx2 on #deletedIDs(_LogicalDB_key)', None)
 db.sql('''
 	select m._Marker_key, m.symbol, m.name, m.chromosome, 
 	mlc.genomicChromosome,
-	o.offset, upper(substring(s.status, 1, 1)) as markerStatus, t.name as markerType
-	into #markers 
+	o.cmoffset, upper(substring(s.status, 1, 1)) as markerStatus, t.name as markerType
+	into temporary table markers 
 	from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t,
 		MRK_Location_Cache mlc
 	where m._Organism_key = 1 
@@ -151,14 +151,14 @@ db.sql('''
 	and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key 
 	and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27, 131, 133) and a.prefixPart not in ('XP_', 'NP_'))
 	''', None)
-db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
-db.sql('create index markers_idx2 on #markers(symbol)', None)
+db.sql('create index markers_idx1 on markers(_Marker_key)', None)
+db.sql('create index markers_idx2 on markers(symbol)', None)
 
 # MGI ids
 
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 1 
@@ -177,9 +177,9 @@ for r in results:
 results = db.sql('''	
     select m._marker_key,
            c.strand, 
-	   convert(int, c.startCoordinate) as startC,
-	   convert(int, c.endCoordinate) as endC
-    from #markers m, MRK_Location_Cache c
+	   c.startCoordinate::int as startC,
+	   c.endCoordinate::int as endC
+    from markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
 	''', 'auto')
 coords = {}
@@ -193,11 +193,11 @@ for r in results:
 # GenBank ids
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 9 
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 gbID = {}
 for r in results:
@@ -210,11 +210,11 @@ for r in results:
 
 results = db.sql('''
       select distinct m._Marker_key, a.accID
-      from #markers m, ACC_Accession a
+      from markers m, ACC_Accession a
       where m._Marker_key = a._Object_key
       and a._MGIType_key = 2
       and a._LogicalDB_key = 23
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a. _LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a. _LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 ugID = {}
 for r in results:
@@ -227,12 +227,12 @@ for r in results:
 # RefSeq transcript ids
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 27 
       and a.prefixPart not in ('XP_', 'NP_') 
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 rstrans = {}
 for r in results:
@@ -245,12 +245,12 @@ for r in results:
 # RefSeq protein ids
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 27 
       and a.prefixPart in ('XP_', 'NP_') 
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 rsprot = {}
 for r in results:
@@ -263,11 +263,11 @@ for r in results:
 # Ensembl transript IDs
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 133 
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 enstrans = {}
 for r in results:
@@ -280,11 +280,11 @@ for r in results:
 # Ensembl protein IDs
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 134 
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 ensprot = {}
 for r in results:
@@ -297,11 +297,11 @@ for r in results:
 # VEGA transcript IDs
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 131 
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 vegatrans = {}
 for r in results:
@@ -314,11 +314,11 @@ for r in results:
 # VEGA protein IDs
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 132 
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 vegaprot = {}
 for r in results:
@@ -331,11 +331,11 @@ for r in results:
 # UniProt ids
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 13
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 uniprotID = {}
 for r in results:
@@ -348,11 +348,11 @@ for r in results:
 # TrEMBL ids
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
-      from #markers m, ACC_Accession a 
+      from markers m, ACC_Accession a 
       where m._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 41
-      and not exists (select 1 from #deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
+      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
       ''', 'auto')
 tremblID = {}
 for r in results:
@@ -364,7 +364,7 @@ for r in results:
 
 # process
 
-results = db.sql('select * from #markers order by symbol', 'auto')
+results = db.sql('select * from markers order by symbol', 'auto')
 
 for r in results:
 
@@ -378,12 +378,12 @@ for r in results:
 	    #print 'not gb', symbol
 	    continue
 
-	if r['offset'] == -1.0:
-		offset = 'syntenic'
-	elif r['offset'] == -999.0:
-		offset = 'N/A'
+	if r['cmoffset'] == -1.0:
+		cmoffset = 'syntenic'
+	elif r['cmoffset'] == -999.0:
+		cmoffset = 'N/A'
 	else:
-		offset = str(r['offset'])
+		cmoffset = str(r['cmoffset'])
 
 #	1:  MGI Marker Accession ID
 #	2:  Marker Symbol
@@ -403,7 +403,7 @@ for r in results:
 	       	 r['markerStatus'] + TAB + \
 	         r['markerType'] + TAB + \
 	         r['name'] + TAB + \
-	         offset + TAB + \
+	         cmoffset + TAB + \
 	         chromosome + TAB)
 
 	# genome coordinates: column 8-9-10

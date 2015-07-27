@@ -43,7 +43,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 SPACE = reportlib.SPACE
@@ -74,7 +74,7 @@ fp.write('#\n\n')
 
 db.sql('''select a._Allele_key, a._Marker_key, a.symbol, a.name,
 	aa.accID as projectID, ldb.name as ldb, m.symbol as markerSymbol
-	into #norcomm
+	into temporary table norcomm
 	from ALL_Allele a, ACC_Accession aa, ACC_LogicalDB ldb, MRK_Marker m 
         where a._Allele_key = aa._Object_key 
         and aa._MGIType_key = 11 
@@ -82,15 +82,15 @@ db.sql('''select a._Allele_key, a._Marker_key, a.symbol, a.name,
         and aa._LogicalDB_key = ldb._LogicalDB_key 
 	and a._Marker_key = m._Marker_key''', None)
 
-db.sql('create index idx1 on #norcomm(_Allele_key)', None)
-db.sql('create index idx2 on #norcomm(_Marker_key)', None)
+db.sql('create index idx1 on norcomm(_Allele_key)', None)
+db.sql('create index idx2 on norcomm(_Marker_key)', None)
 
 #
 # allele ids
 #
 
 results = db.sql('''select k._Allele_key, a.accID 
-      from #norcomm k, ACC_Accession a 
+      from norcomm k, ACC_Accession a 
       where k._Allele_key = a._Object_key 
       and a._MGIType_key = 11 
       and a._LogicalDB_key = 1 
@@ -105,7 +105,7 @@ for r in results:
 # marker ids
 
 results = db.sql('''select distinct k._Marker_key, a.accID
-      from #norcomm k, ACC_Accession a 
+      from norcomm k, ACC_Accession a 
       where k._Marker_key = a._Object_key 
       and a._MGIType_key = 2 
       and a._LogicalDB_key = 1 
@@ -122,7 +122,7 @@ for r in results:
 #
 
 results = db.sql('''select distinct k._Allele_key, a.accID
-	from #norcomm k, ALL_Allele_CellLine c, ACC_Accession a
+	from norcomm k, ALL_Allele_CellLine c, ACC_Accession a
         where k._Allele_key = c._Allele_key
 	and c._MutantCellLine_key = a._Object_key
         and a._MGIType_key = 28
@@ -138,7 +138,7 @@ for r in results:
 #
 # process results
 #
-results = db.sql('select * from #norcomm order by projectID', 'auto')
+results = db.sql('select * from norcomm order by projectID', 'auto')
 
 for r in results:
 

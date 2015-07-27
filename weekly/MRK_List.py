@@ -39,7 +39,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -75,11 +75,11 @@ db.sql('''
     mlc.genomicChromosome,
     t.name as markertype,
         case
-        when o.offset >= 0 then str(o.offset,10,2)
-        when o.offset = -999.0 then '       N/A'
-        when o.offset = -1.0 then '  syntenic'
+        when o.cmoffset >= 0 then to_char(o.cmOffset, \'999.99\')
+        when o.cmoffset = -999.0 then '       N/A'
+        when o.cmoffset = -1.0 then '  syntenic'
         end as cmposition
-    into #markers
+    into temporary table markers
     from MRK_Marker m, MRK_Status s, MRK_Types t, MRK_Offset o,
     	MRK_Location_Cache mlc
     where m._organism_key = 1
@@ -89,8 +89,8 @@ db.sql('''
     and m._marker_type_key = t._marker_type_key
     and m._marker_status_key = s._marker_status_key
     ''', None)
-db.sql('create index markers_idx1 on #markers(_Marker_key)', None)
-db.sql('create index markers_idx2 on #markers(symbol)', None)
+db.sql('create index markers_idx1 on markers(_Marker_key)', None)
+db.sql('create index markers_idx2 on markers(symbol)', None)
 
 #
 # coordinates
@@ -98,9 +98,9 @@ db.sql('create index markers_idx2 on #markers(symbol)', None)
 results = db.sql('''	
     select m._marker_key,
            c.strand, 
-	   convert(int, c.startCoordinate) as startC,
-	   convert(int, c.endCoordinate) as endC
-    from #markers m, MRK_Location_Cache c
+	   c.startCoordinate::int as startC,
+	   c.endCoordinate::int as endC
+    from markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
 	''', 'auto')
 coords = {}
@@ -116,7 +116,7 @@ for r in results:
 #
 results = db.sql('''
 	select m._marker_key, s.term, s._MCVTerm_key
-        from #markers m, MRK_MCV_Cache s 
+        from markers m, MRK_MCV_Cache s 
         where m._marker_key = s._marker_key 
         and s.qualifier = 'D'
 	''', 'auto')
@@ -139,7 +139,7 @@ for r in results:
 #
 results = db.sql('''	
     select m._marker_key, s.synonym
-    from #markers m, MGI_Synonym s, MGI_SynonymType st
+    from markers m, MGI_Synonym s, MGI_SynonymType st
     where m._marker_key = s._object_key
     and s._mgitype_key = 2
     and s._synonymtype_key = st._synonymtype_key
@@ -167,7 +167,7 @@ query1 = '''
 	   m.markerstatus, 
 	   m.name, 
 	   m.markertype
-    from #markers m, ACC_Accession a
+    from markers m, ACC_Accession a
     where m._marker_status_key in (1, 3)
     and m._marker_key = a._object_key
     and a._mgitype_key = 2
@@ -186,7 +186,7 @@ query2 = '''
            m.markerstatus, 
            m.name, 
            m.markertype
-    from #markers m
+    from markers m
     where m._marker_status_key = 2
     '''
 

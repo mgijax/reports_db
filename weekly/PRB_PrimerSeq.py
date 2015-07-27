@@ -16,7 +16,7 @@
 #	- created
 #
 # dbm	02/11/2003
-#	- added marker AccID, chromosome and offset for TR 4506
+#	- added marker AccID, chromosome and cmoffset for TR 4506
 #
 # dbm	02/12/2003
 #	- added marker name
@@ -32,7 +32,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -46,18 +46,18 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 db.sql('''
 	select p._Probe_key, p.name as pname, p.primer1sequence, p.primer2sequence, p.productSize, pm._Marker_key, 
                m.symbol, m.name as mname, m.chromosome 
-        into #primers 
+        into temporary table primers 
         from PRB_Probe p, PRB_Marker pm, MRK_Marker m 
         where p._SegmentType_key = 63473 
         and p._Probe_key = pm._Probe_key 
         and pm._Marker_key = m._Marker_key
 	''', None)
-db.sql('create index idx1 on #primers(_Probe_key)', None)
-db.sql('create index idx2 on #primers(_Marker_key)', None)
+db.sql('create index idx1 on primers(_Probe_key)', None)
+db.sql('create index idx2 on primers(_Marker_key)', None)
 
 results = db.sql('''
-       select p.*, a1.accID as probeID, a2.accID as markerID, o.offset 
-       from #primers p, ACC_Accession a1, ACC_Accession a2, MRK_Offset o 
+       select p.*, a1.accID as probeID, a2.accID as markerID, o.cmoffset 
+       from primers p, ACC_Accession a1, ACC_Accession a2, MRK_Offset o 
        where p._Probe_key = a1._Object_key 
 	     and a1._MGIType_key = 3 
              and a1._LogicalDB_key = 1 
@@ -89,6 +89,6 @@ for r in results:
 	mgi_utils.prvalue(p2seq) + TAB + 
 	mgi_utils.prvalue(prodSize) + TAB +
         r['chromosome'] + TAB + 
-	str(r['offset']) + CRT)
+	str(r['cmoffset']) + CRT)
 
 reportlib.finish_nonps(fp)
