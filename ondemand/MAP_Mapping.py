@@ -38,7 +38,7 @@ import db
 
 db.setTrace()
 db.setAutoTranslate(False)
-db.setAutoTranslateBE()
+db.setAutoTranslateBE(False)
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -110,7 +110,7 @@ for key in typings:
 	
 results = db.sql('''
 	select _Cross_key, whoseCross, femaleStrain, maleStrain,
-		convert(char(20), modification_date, 100) as modification_date, 
+		to_char(g.modification_date, 'YYYYMMDD') as mDate,
 		abbrevHT, abbrevHO, strainHT, strainHO 
 	from crs_cross_view
 	where _Cross_key in (1839, 8, 7, 2944, 3241, 4867, 4868, 4377, 4378, 2941, 3383, 4347, 6, 4869)

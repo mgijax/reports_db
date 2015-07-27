@@ -285,7 +285,7 @@ def doSetup():
     #
     db.sql('''select distinct g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
     	    g._Object_key, g._AnnotEvidence_key, g._EvidenceTerm_key, g.symbol, g.name, g.markerType, 
-    	    convert(varchar(10), g.modification_date, 112) as mDate, 
+	    to_char(g.modification_date, 'YYYYMMDD') as mDate,
     	    ma.accID as markerID, 
     	    b.accID as refID, 
     	    rtrim(t.abbreviation) as eCode, 
