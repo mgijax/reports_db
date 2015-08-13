@@ -115,14 +115,6 @@ foreach i (*)
 end
 rm -rf ${FTPREPORTDIR}/iphone*[0-9]*
 
-echo `date`: Copy inparanoid files to ${FTPCUSTOM}/inparanoid | tee -a ${LOG}
-rm -f ${FTPCUSTOM}/inparanoid/Mus-musculus*
-cd ${INPARANOIDDIR}
-foreach i (Mus-musculus* aaseq*)
-    echo `date`: $i | tee -a ${LOG}
-    cp $i ${FTPCUSTOM}/inparanoid
-end
-
 echo `date`: Copy CvDC files to ${FTPREPORTDIR}/cvdc | tee -a ${LOG}
 rm -f ${FTPREPORTDIR}/cvdc/*html
 cd ${CVDCDIR}

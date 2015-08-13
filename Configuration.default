@@ -36,17 +36,8 @@ setenv MPFILES			"MPheno_OBO.ontology mp.owl"
 setenv MAVOCSOURCE		${DATALOADSOUTPUT}/mgi/vocload/runTimeMA
 setenv MAFILES			"adult_mouse_anatomy.obo"
 
-# InParanoid directory
-setenv INPARANOIDDIR		${PUBREPORTDIR}/inparanoid
-
 # CvDC directory
 setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
-
-# InParanoid files
-setenv REFSEQFASTAGZ		/data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa.gz
-setenv REFSEQFASTA		/data/downloads/ftp.ncbi.nih.gov/refseq/mouse.protein.faa
-setenv UNIPROTDAT		/data/seqdbs/blast/uniprot.build/uniprotmus.dat
-setenv UNIPROTFASTA		${INPARANOIDDIR}/uniprot.fasta
 
 # GOA file
 setenv GOAMGI			${DATALOADSOUTPUT}/goa/goaload/output/goa.mgi

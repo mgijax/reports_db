@@ -33,10 +33,6 @@ if ( ! -d ${REPORTLOGSDIR} ) then
     mkdir -p ${REPORTLOGSDIR}
 endif
 
-if ( ! -d ${INPARANOIDDIR} ) then
-    mkdir -p ${INPARANOIDDIR}
-endif
-
 if ( ! -d ${IPHONEARCHIVE} ) then
     mkdir -p ${IPHONEARCHIVE}
 endif
