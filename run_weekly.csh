@@ -43,12 +43,6 @@ end
 echo `date`: ncbilinkout.csh | tee -a ${LOG}
 ${PUBRPTS}/ncbilinkout/ncbilinkout.csh >>& ${LOG}
 
-#
-# Generate inparanoid files.
-#
-echo `date`: inparanoid.csh | tee -a ${LOG}
-${PUBRPTS}/inparanoid/inparanoid.csh >>& ${LOG}
-
 echo `date`: End weekly public reports | tee -a ${LOG}
 
 exit 0
