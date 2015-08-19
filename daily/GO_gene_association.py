@@ -356,7 +356,7 @@ def doCol16():
 
     for r in results:
 	objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
-	value = r['value']
+	value = r['value'].replace('MGI:', 'MGI:MGI:')
 
 	#
 	# curator's may enter addtional information in the 'value' 
