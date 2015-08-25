@@ -1529,8 +1529,8 @@ def references():
     db.sql('create index references_idx1 on refs(_Refs_key)', None)
 
     results = db.sql('''
-	    select r._Refs_key, b.refType, b.authors, b.authors2, 
-	    b.title, b.title2, b.journal, b.vol, b.issue, b.pgs, b.year, 
+	    select r._Refs_key, b.refType, b.authors,
+	    b.title, b.journal, b.vol, b.issue, b.pgs, b.year, 
 	    b.isReviewArticle, 
 	    k.book_au, k.book_title, k.publisher, k.place, k.series_ed, 
             to_char(b.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
@@ -1542,8 +1542,8 @@ def references():
     for r in results:
 	    fp.write(`r['_Refs_key']` + TAB + \
 	             r['refType'] + TAB + \
-		     mgi_utils.prvalue(r['authors']) + mgi_utils.prvalue(r['authors2']) + TAB + \
-		     mgi_utils.prvalue(r['title']) + mgi_utils.prvalue(r['title2']) + TAB + \
+		     mgi_utils.prvalue(r['authors']) + TAB + \
+		     mgi_utils.prvalue(r['title']) + TAB + \
 		     mgi_utils.prvalue(r['journal']) + TAB + \
 		     mgi_utils.prvalue(r['vol']) + TAB + \
 		     mgi_utils.prvalue(r['issue']) + TAB + \
