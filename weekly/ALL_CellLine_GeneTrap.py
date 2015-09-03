@@ -43,6 +43,9 @@
 #   15. id.version
 #   16. tag = Tag Method
 #
+# lec   09/02/2015
+#	- missing '#' in header
+#
 # lec   05/12/2015
 #       - TR12020/use ALL_Allele._Marker_key
 #
@@ -160,7 +163,7 @@ db.useOneConnection(1)
 #create report
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-fp.write('mclID' + TAB)
+fp.write('#mclID' + TAB)
 fp.write('vector' + TAB)
 fp.write('mclCreator' + TAB)
 fp.write('mclLibrary' + TAB)
