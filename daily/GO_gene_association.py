@@ -160,6 +160,7 @@ import string
 import re
 import mgi_utils
 import reportlib
+import go_annot_extensions
 import db
 
 db.setTrace()
@@ -346,32 +347,37 @@ def doCol16():
     # exclude: annotations where evidence = ISO (3251466)
     #
 
-    results = db.sql('''select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
-	    from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
-	    where r._EvidenceTerm_key not in (3251466)
+    # Query the valid _term_keys for properties and evidence codes
+    extensionProcessor = go_annot_extensions.Processor()
+    sanctionedPropertyKeys = extensionProcessor.querySanctionedPropertyTermKeys()
+    sanctionedEvidenceTermKeys = extensionProcessor.querySanctionedEvidenceTermKeys()
+
+    propertyKeyClause = ",".join([str(k) for k in sanctionedPropertyKeys])
+    evidenceKeyClause = ",".join([str(k) for k in sanctionedEvidenceTermKeys])
+
+    cmd = '''
+    select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
+            from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
+            where r._EvidenceTerm_key in (%s)
             and r._AnnotEvidence_key = p._AnnotEvidence_key
-	    and p._PropertyTerm_key = t._Term_key
-	    and t._Term_key > 6481780
-	    order by r.symbol, r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum, property''', 'auto')
+            and p._PropertyTerm_key = t._Term_key
+            and p._PropertyTerm_key in (%s)
+            order by r.symbol, 
+		r._Object_key, 
+		r._AnnotEvidence_key, 
+		p.stanza, 
+		p.sequenceNum, 
+		property
+    ''' % ( evidenceKeyClause, propertyKeyClause )
+
+    results = db.sql(cmd, 'auto')
 
     for r in results:
 	objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
 	value = r['value'].replace('MGI:', 'MGI:MGI:')
 
-	#
-	# curator's may enter addtional information in the 'value' 
-	# this additional information needs to be excluded from the GAF
-	#
-	# example for Hk1:  "ATP ; ChEBI:33221" ==> "ChEBI:33221"
-	#
-	# always grab the second value for the GAF
-	#
-	if value.find(';') > 0:
-		try:
-			values = value.split('; ')
-			value = values[1]
-		except:
-			pass
+        # process out the comments, etc
+        value = extensionProcessor.processValue(value)
 
 	if not col16PrintLookup.has_key(objectKey):
 		col16PrintLookup[objectKey] = []
