@@ -161,6 +161,7 @@ import re
 import mgi_utils
 import reportlib
 import go_annot_extensions
+import go_isoforms
 import db
 
 db.setTrace()
@@ -404,65 +405,44 @@ def doIsoform():
     global isoformsProtein
     global forPROC
 
-    #
-    # isoformsProtein hash
-    # select all "gene_product:" properties
-    # key = marker key:annotation/evidence key ()
-    # values = [UniProt:XXXXX,UniProt:XXXXX]
-    #
-
-    r1 = re.compile(r'([^\s\\\n]*)', re.I)
-    isoformPattern1 = re.compile(r'UniProtKB:', re.I)
-    isoformPattern2 = re.compile(r'protein_id', re.I)
-    isoformPattern3 = re.compile(r'NCBI:NP_', re.I)
-    isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
-    isoformPattern5 = re.compile(r'PR:', re.I)
-
     isoformsProtein = {}
     forPROC = {}
+
+    # Query the valid _term_keys for properties
+    isoformProcessor = go_isoforms.Processor()
+    sanctionedPropertyKeys = isoformProcessor.querySanctionedPropertyTermKeys()
+
+
+    propertyKeyClause = ",".join([str(k) for k in sanctionedPropertyKeys])
+
     results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
 	from gomarker2 r, VOC_Evidence_Property p
 	where r._AnnotEvidence_key = p._AnnotEvidence_key
-	and p._PropertyTerm_key = 6481775
-	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
+	and p._PropertyTerm_key in (%s)
+	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum
+    ''' % propertyKeyClause, 'auto')
 
     for r in results:
 
         key = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
         value = r['value']
 
-        for a in r1.findall(value):
-	    for b in a.split('|'):
-	        b = b.strip()
+	isoformValues = isoformProcessor.processValue(value)
 
-                # Only certain patterns actually count, they are listed above.
-                if isoformPattern1.match(b) != None or \
-	           isoformPattern2.match(b) != None or \
-                   isoformPattern3.match(b) != None or \
-	           isoformPattern4.match(b) != None or \
-	           isoformPattern5.match(b) != None:
+        for isoform in isoformValues:
 
-	           # TR10652
-	           # convert 'NCBI:' to 'RefSeq'
-	           # once TR10044 is implemented and all NCBI are migrated to RefSeq,
-	           # this will no longer be necessary
+	    isoformsProtein.setdefault(key, []).append(isoform)
 
-	           b = b.replace('NCBI:', 'RefSeq:')
+	    #
+	    # TR11060
+	    # if UniProtKB:xxxx (any UniProtKB)
+	    # if PR:xxxx
+	    #
+	    if isoform.find('UniProtKB:') >= 0 or \
+	      isoform.find('PR:') >= 0:
 
-                   if not isoformsProtein.has_key(key):
-	               isoformsProtein[key] = []
-                   isoformsProtein[key].append(b)
+		forPROC.setdefault(key, []).append(isoform)
 
-	           #
-	           # TR11060
-	           # if UniProtKB:xxxx (any UniProtKB)
-		   # if PR:xxxx
-	           #
-		   if string.find(b, 'UniProtKB:') >= 0 or \
-		      string.find(b, 'PR:') >= 0:
-                       if not forPROC.has_key(key):
-	                   forPROC[key] = []
-                       forPROC[key].append(b)
 #
 # end doIsoform()
 #
