@@ -32,6 +32,12 @@
 #
 # History:
 #
+# sc	09/16/2015
+#	-TR11957 - remove constraint of requiring Marker assoc to both
+#		genbank and refseq sequences to be included in this 
+#		report
+#		- add feature type to column 21
+#
 # sc	06/07/2013
 #	-TR11402 - add UniGene ID column (was removed in tag 5-0-0-18 
 #		in May of 2012, but don't know why
@@ -101,16 +107,17 @@ fp.write('Chromosome\t')
 fp.write('Genome Coordinate Start\t')
 fp.write('Genome Coordinate End\t')
 fp.write('Strand\t')
-fp.write('GenBank ID\t')
-fp.write('RefSeq transcript ID\t')
-fp.write('VEGA transcript ID\t')
-fp.write('Ensembl transcript ID\t')
-fp.write('UniProt ID\t')
-fp.write('TrEMBL ID\t')
-fp.write('VEGA protein ID\t')
-fp.write('Ensembl protein ID\t')
-fp.write('RefSeq protein ID\t')
-fp.write('UniGene ID\n')
+fp.write('GenBank IDs\t')
+fp.write('RefSeq transcript IDs\t')
+fp.write('VEGA transcript IDs\t')
+fp.write('Ensembl transcript IDs\t')
+fp.write('UniProt IDs\t')
+fp.write('TrEMBL IDs\t')
+fp.write('VEGA protein IDs\t')
+fp.write('Ensembl protein IDs\t')
+fp.write('RefSeq protein IDs\t')
+fp.write('UniGene IDs\n')
+fp.write('Feature Type\n')
 
 # deleted sequences
 
@@ -171,6 +178,20 @@ for r in results:
     value = r['accID']
     mgiID[key] = value
 
+# 
+# Feature types
+# 
+results = db.sql('''
+	select distinct _Marker_key, term
+	from MRK_MCV_Cache
+	where qualifier = 'D' ''', 'auto')
+mcvTerms = {}
+for r in results:
+    key = r['_Marker_key']
+    term = r['term']
+    if not mcvTerms.has_key(key):
+	mcvTerms[key] = []
+    mcvTerms[key].append(term)
 #
 # coordinates
 #
@@ -373,10 +394,10 @@ for r in results:
 
 	#
 	# skipping markers that do not cotain a genbank and refseq transcript id
-	#
-	if not gbID.has_key(key) and not rstrans.has_key(key):
-	    #print 'not gb', symbol
-	    continue
+	# sc - 9/16/15, TR11957, remove this constraint
+	#if not gbID.has_key(key) and not rstrans.has_key(key):
+	#    #print 'not gb', symbol
+	#    continue
 
 	if r['cmoffset'] == -1.0:
 		cmoffset = 'syntenic'
@@ -461,6 +482,11 @@ for r in results:
 #	20: UniGene ID
         if ugID.has_key(key):
                 fp.write(string.join(ugID[key], '|'))
+        fp.write(TAB)
+
+#	21: MCV Term
+	if mcvTerms.has_key(key):
+		fp.write(string.join(mcvTerms[key], '|'))
 	fp.write(CRT)
 
 reportlib.finish_nonps(fp)

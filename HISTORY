@@ -1,3 +1,11 @@
+TAG: reports_db-6-0-0-9
+DATE: 09/16/2015
+STAFF: sc
+CHANGES: TR11957 
+1) remove constraint of requiring Marker assoc to both genbank and refseq 
+	sequences to be included in this report
+2) add feature type to column 21
+
 TAG: reports_db-tr12070-BP
 DATE: 09/09/2015
 STAFF: kstone
