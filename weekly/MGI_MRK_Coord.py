@@ -23,6 +23,9 @@
 #
 # History:
 #
+# 9/30/2015	lec
+#	- removed un-used variables
+#
 # 10/09/2013 - lec - TR11502/add _Organims_key to version query
 #
 # 07/26/2012 - jsb - initial addition
@@ -42,25 +45,7 @@ db.setAutoTranslateBE(False)
 CRT = reportlib.CRT
 TAB = reportlib.TAB
 
-coordDisplay = '(%s:%s-%s (%s))'
 noneDisplay = 'null'
-repGenomicKey = 615419
-sequenceType = 19
-mgiMarkerType = 2
-vega = 85
-vegaprovider = 'VEGA Gene Model'
-ncbi = 59
-ncbiprovider = 'NCBI Gene Model'
-ensembl = 60
-ensemblprovider = 'Ensembl Gene Model'
-unists = 80
-unistsprovider = 'NCBI UniSTS'
-qtl = 1
-qtlprovider = 'MGI QTL'
-mirbase = 83
-mirbaseprovider = 'miRBase'
-roopenian = 1
-roopenianprovider = 'Roopenian STS'
 
 def getFeatureTypeCache():
     # get the feature type for each marker
