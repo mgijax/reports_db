@@ -34,9 +34,13 @@
 #   14. Modification Date (YYYYMMDD)
 #   15. Assigned By
 #   16. Properites/Values (occurs_in, part_of, etc.)
-#   17. Isorform/Protein Data/MGI ID (Depending on data)
+#   17. Isorform
 #
 # History:
+#
+# kstone 09/14/2015
+#	- TR12070 Refactored col16 and col17 logic into 'go_annot_extensions' and 'go_isoforms' modules
+#		Removed extra protein values for col17. Use only isoform 'gene product' GO properties now
 #
 # lec	04/22/2015
 #	- TR11932/added "GO_" (for GO_Central) to set proper assignedBy value
@@ -160,6 +164,8 @@ import string
 import re
 import mgi_utils
 import reportlib
+import go_annot_extensions
+import go_isoforms
 import db
 
 db.setTrace()
@@ -185,7 +191,6 @@ forPROC = {}
 
 # see doProtein()
 proteins = {}
-proteinsGene = {}
 
 # see doCol16
 # list of column 16 object/evidence/printable format
@@ -346,32 +351,37 @@ def doCol16():
     # exclude: annotations where evidence = ISO (3251466)
     #
 
-    results = db.sql('''select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
-	    from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
-	    where r._EvidenceTerm_key not in (3251466)
+    # Query the valid _term_keys for properties and evidence codes
+    extensionProcessor = go_annot_extensions.Processor()
+    sanctionedPropertyKeys = extensionProcessor.querySanctionedPropertyTermKeys()
+    sanctionedEvidenceTermKeys = extensionProcessor.querySanctionedEvidenceTermKeys()
+
+    propertyKeyClause = ",".join([str(k) for k in sanctionedPropertyKeys])
+    evidenceKeyClause = ",".join([str(k) for k in sanctionedEvidenceTermKeys])
+
+    cmd = '''
+    select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
+            from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
+            where r._EvidenceTerm_key in (%s)
             and r._AnnotEvidence_key = p._AnnotEvidence_key
-	    and p._PropertyTerm_key = t._Term_key
-	    and t._Term_key > 6481780
-	    order by r.symbol, r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum, property''', 'auto')
+            and p._PropertyTerm_key = t._Term_key
+            and p._PropertyTerm_key in (%s)
+            order by r.symbol, 
+		r._Object_key, 
+		r._AnnotEvidence_key, 
+		p.stanza, 
+		p.sequenceNum, 
+		property
+    ''' % ( evidenceKeyClause, propertyKeyClause )
+
+    results = db.sql(cmd, 'auto')
 
     for r in results:
 	objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
 	value = r['value'].replace('MGI:', 'MGI:MGI:')
 
-	#
-	# curator's may enter addtional information in the 'value' 
-	# this additional information needs to be excluded from the GAF
-	#
-	# example for Hk1:  "ATP ; ChEBI:33221" ==> "ChEBI:33221"
-	#
-	# always grab the second value for the GAF
-	#
-	if value.find(';') > 0:
-		try:
-			values = value.split('; ')
-			value = values[1]
-		except:
-			pass
+        # process out the comments, etc
+        value = extensionProcessor.processValue(value)
 
 	if not col16PrintLookup.has_key(objectKey):
 		col16PrintLookup[objectKey] = []
@@ -398,65 +408,44 @@ def doIsoform():
     global isoformsProtein
     global forPROC
 
-    #
-    # isoformsProtein hash
-    # select all "gene_product:" properties
-    # key = marker key:annotation/evidence key ()
-    # values = [UniProt:XXXXX,UniProt:XXXXX]
-    #
-
-    r1 = re.compile(r'([^\s\\\n]*)', re.I)
-    isoformPattern1 = re.compile(r'UniProtKB:', re.I)
-    isoformPattern2 = re.compile(r'protein_id', re.I)
-    isoformPattern3 = re.compile(r'NCBI:NP_', re.I)
-    isoformPattern4 = re.compile(r'NCBI:XP_', re.I)
-    isoformPattern5 = re.compile(r'PR:', re.I)
-
     isoformsProtein = {}
     forPROC = {}
+
+    # Query the valid _term_keys for properties
+    isoformProcessor = go_isoforms.Processor()
+    sanctionedPropertyKeys = isoformProcessor.querySanctionedPropertyTermKeys()
+
+
+    propertyKeyClause = ",".join([str(k) for k in sanctionedPropertyKeys])
+
     results = db.sql('''select r._Object_key, r._AnnotEvidence_key, p.value
 	from gomarker2 r, VOC_Evidence_Property p
 	where r._AnnotEvidence_key = p._AnnotEvidence_key
-	and p._PropertyTerm_key = 6481775
-	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum''', 'auto')
+	and p._PropertyTerm_key in (%s)
+	order by r._Object_key, r._AnnotEvidence_key, p.stanza, p.sequenceNum
+    ''' % propertyKeyClause, 'auto')
 
     for r in results:
 
         key = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
         value = r['value']
 
-        for a in r1.findall(value):
-	    for b in a.split('|'):
-	        b = b.strip()
+	isoformValues = isoformProcessor.processValue(value)
 
-                # Only certain patterns actually count, they are listed above.
-                if isoformPattern1.match(b) != None or \
-	           isoformPattern2.match(b) != None or \
-                   isoformPattern3.match(b) != None or \
-	           isoformPattern4.match(b) != None or \
-	           isoformPattern5.match(b) != None:
+        for isoform in isoformValues:
 
-	           # TR10652
-	           # convert 'NCBI:' to 'RefSeq'
-	           # once TR10044 is implemented and all NCBI are migrated to RefSeq,
-	           # this will no longer be necessary
+	    isoformsProtein.setdefault(key, []).append(isoform)
 
-	           b = b.replace('NCBI:', 'RefSeq:')
+	    #
+	    # TR11060
+	    # if UniProtKB:xxxx (any UniProtKB)
+	    # if PR:xxxx
+	    #
+	    if isoform.find('UniProtKB:') >= 0 or \
+	      isoform.find('PR:') >= 0:
 
-                   if not isoformsProtein.has_key(key):
-	               isoformsProtein[key] = []
-                   isoformsProtein[key].append(b)
+		forPROC.setdefault(key, []).append(isoform)
 
-	           #
-	           # TR11060
-	           # if UniProtKB:xxxx (any UniProtKB)
-		   # if PR:xxxx
-	           #
-		   if string.find(b, 'UniProtKB:') >= 0 or \
-		      string.find(b, 'PR:') >= 0:
-                       if not forPROC.has_key(key):
-	                   forPROC[key] = []
-                       forPROC[key].append(b)
 #
 # end doIsoform()
 #
@@ -466,7 +455,6 @@ def doIsoform():
 #
 def doProtein():
     global proteins
-    global proteinsGene
 
     #
     # protein hash
@@ -479,17 +467,10 @@ def doProtein():
     #    132 = VEGA Protein
     #    134 = Ensembl Protein
     #
-    # proteinsGene
-    #    representative transcript (615420) for marker type "gene" (1)
-    #    marker symbol like 'mir%' (microRNAs)
-    #    9 = GenBank
-    #    27 = RefSeq
     #
     # example of counts:
     #  3935 go-uniprot.txt   proteins
     #  4519 go-npxp.txt      proteins
-    #     0 go-genbank.txt   proteinsGene
-    # 16946 go-all.txt       proteinsGene
     #
 
     results = db.sql('''
@@ -509,7 +490,6 @@ def doProtein():
         ''', 'auto')
     
     proteins = {}
-    proteinsGene = {}
     
     for r in results:
         key = r['_Marker_key']
@@ -536,14 +516,6 @@ def doProtein():
         elif logicalDB in [134]:
             proteins[key] = 'ENSEMBL:' + r['seqID']
 
-        # GenBank
-        elif logicalDB in [9]:
-	    #print 'ldb 9: ', str(symbol), str(seqID)
-            proteinsGene[key] = 'EMBL:' + seqID
-
-        else:
-	    #print 'all else: ', str(symbol), str(seqID)
-            proteinsGene[key] = 'RefSeq:' + seqID
 #
 # end doProtein()
 #
@@ -657,34 +629,13 @@ def doFinish():
 	    # if isoformProtein = true
 	    #    then use isoformsProtein
 	    #
-	    # else if isoformProtein = false, proteins = true
-	    #    then use proteins
-	    #
-	    # else if isoformProtein = false, proteins = false, proteinsGene = true
-	    #    then use proteinsGene
-	    #
-	    # else if isoformProtein = false, proteins = false, proteinsGene = false
-	    #    then leave blank
 	    #
 
             if isoformsProtein.has_key(objectKey):
 	        #print 'isoform:  ', str(r['symbol']), string.join(isoformsProtein[objectKey])
                 reportRow = reportRow + string.join(isoformsProtein[objectKey], '|') + CRT
             else:
-	        row = ''
-                if proteins.has_key(r['_Object_key']):
-	            #print 'protein:  ', str(r['symbol']), str(symbol), str(proteins[r['_Object_key']])
-                    row = str(proteins[r['_Object_key']])
-    
-                elif proteinsGene.has_key(r['_Object_key']):
-	            #print 'protein/gene:  ', str(r['symbol']), str(proteinsGene[r['_Object_key']])
-                    row = str(proteinsGene[r['_Object_key']])
-
-	        # intentionally commented out
-                #else:
-	        #    print 'blank:  ', str(r['symbol'])
-
-	        reportRow = reportRow + row + CRT
+	        reportRow = reportRow + '' + CRT
 
             fp.write(reportRow)
 
