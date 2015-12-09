@@ -1,3 +1,10 @@
+TAG: reports_db-6-0-2-2
+DATE: 12/09/2015
+STAFF: sc
+CHANGES: TR 11968 HGNC report
+1) MGI_Gene.py - removed and replaces with HGNC_homologene.rpt
+   The report was updated to report the union of HGNC and Homologene
+
 TAG: reports_db-6-0-2-1
 DATE: 12/02/2015
 STAFF: lec
