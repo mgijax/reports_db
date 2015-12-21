@@ -1,3 +1,9 @@
+TAG: reports_db-6-0-2-3
+DATE: 12/21/2015
+STAFF: lec
+CHANGES: TR 12122
+1) daily/GO_gene_association.py/"!gaf-version: 2.1"
+
 TAG: reports_db-6-0-2-2
 DATE: 12/09/2015
 STAFF: sc
