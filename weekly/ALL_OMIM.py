@@ -57,7 +57,7 @@ PAGE = reportlib.PAGE
 
 #--------------------------------------------------------------------------------------------
 # Most of the work is done with regular expression matching and replacement on values
-# found in the genotypeDisplay1 and genotypeDisplay2 columns of the MRK_OMIM_Cache table.
+# found in the genotypeDisplay1 columns of the MRK_OMIM_Cache table.
 #
 # This regex matches mutant alleles, which are coded like:
 #	\Allele(MGI:1931521|Fgfr3<tm1Dor>|)
@@ -93,8 +93,6 @@ def generate(r):
 
     # glue the two genotypeDisplay fields together, if the second one has a value
     g = r['genotypeDisplay1']
-    if r['genotypeDisplay2'] is not None:
-	g+=r['genotypeDisplay2']
     g = g.strip().replace(CRT, SPACE)
 
     # plain text
@@ -125,7 +123,7 @@ def main():
     cmd = '''
 	select distinct 
 	    moc.term, moc.termID, moc._term_key, moc._genotype_key, 
-	    moc.genotypeDisplay1, moc.genotypeDisplay2, moc.strain
+	    moc.genotypeDisplay1, moc.strain
 	from mrk_omim_cache moc
 	where moc._genotype_key is not null
 	and moc.genotypeDisplay1 is not null
