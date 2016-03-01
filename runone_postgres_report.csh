@@ -39,19 +39,6 @@ set DIRNAME = `echo $1 | cut -d'/' -f1`
 set RPTNAME = `echo $1 | cut -d'/' -f2`
 
 #
-# Set postgres configuration to use the public instance.
-#
-if $?PG_PUB_DBSERVER then
-    setenv PG_DBSERVER	${PG_PUB_DBSERVER}
-endif
-if $?PG_PUB_DBNAME then
-    setenv PG_DBNAME	${PG_PUB_DBNAME}
-endif
-if $?PG_PUB_DBUSER then
-    setenv PG_DBUSER	${PG_PUB_DBUSER}
-endif
-
-#
 # Initialize the log file.
 #
 setenv LOG ${REPORTLOGSDIR}/`basename $0`.log

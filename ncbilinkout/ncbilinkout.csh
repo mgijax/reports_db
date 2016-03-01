@@ -31,13 +31,6 @@ cd `dirname $0` && source ../Configuration
 umask 002
 
 #
-# Set postgres configuration to use the public instance.
-#
-setenv PG_DBSERVER	${PG_PUB_DBSERVER}
-setenv PG_DBNAME	${PG_PUB_DBNAME}
-setenv PG_DBUSER	${PG_PUB_DBUSER}
-
-#
 # Initialize the log file.
 #
 setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
