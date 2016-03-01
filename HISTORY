@@ -1,3 +1,12 @@
+TAG: reports_db-6-0-2-5
+DATE: 03/01/2016
+STAFF: dbm
+CHANGES:
+1) ncbilinkout/ncbilinkout.csh: Remove usage of "_PUB" db settings
+2) ondemand_reports.csh: Remove usage of "_PUB" db settings
+3) runone_postgres_report.csh: Remove usage of "_PUB" db settings
+4) run_weekly.csh: Remove usage of "_PUB" db settings
+
 TAG: reports_db-tr12223-BP
 DATE: 02/24/2016
 STAFF: lec
