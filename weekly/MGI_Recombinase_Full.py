@@ -29,11 +29,14 @@
 #
 # History:
 #
+# lec	03/24/2016
+#	- TR12223/gxd anatomy II/replace AD with cre system
+#
 # kstone 12/18/2014
 # 	- removed IMSR db query, replaced with Solr csv file
 #
 # lec   10/24/2014
-#       - TR11750/postres complient
+#       - TR11750/postgres complient
 #
 # lec   03/28/2012
 #       - TR 11027; WI_URL changes for MGI 5.0
