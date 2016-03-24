@@ -13,9 +13,9 @@
 #	field 2: Allele Symbol
 #	field 3: Name
 #	field 4: Detected In 
-#		pipe-deimited list of anatomical system with expressed assay results (expressed = true)
+#		pipe-deimited list of cre system with expressed assay results (expressed = true)
 #	field 5: Absent in
-#		pipe-deimited list of anatomical system with expressed assay results (expressed = false)
+#		pipe-deimited list of cre system with expressed assay results (expressed = false)
 #		if system already exists in field 6, skip it
 #	field 6: IMSR Strain
 #		pipe-delimited list of IMSR lines available (cell lines and non-cell lines)
@@ -109,7 +109,7 @@ ENDTD = '</font></td>'
 BREAK = '<br>'
 BLANKFIELD = '%s&nbsp;%s' % (BEGTD, ENDTD)
 
-CRE_ANCHOR = '<A HREF="%srecombinase/specificity?id=%s&systemKey=%s">'
+CRE_ANCHOR = '<A HREF="%srecombinase/specificity?id=%s&system=%s">'
 CLOSE_ANCHOR = '</A>'
 
 def printHeaderHTML():
@@ -140,8 +140,8 @@ def printHeaderTAB():
     fpTAB.write('# field 1: Driver\n')
     fpTAB.write('# field 2: Allele Symbol\n')
     fpTAB.write('# field 3: Name\n')
-    fpTAB.write('# field 4: Detected in (anatomical systems with expressed assay results)\n')
-    fpTAB.write('# field 5: Absent in (anatomical systems with notexpressed assay results)\n')
+    fpTAB.write('# field 4: Detected in (Cre systems with expressed assay results)\n')
+    fpTAB.write('# field 5: Absent in (Cre systems with notexpressed assay results)\n')
     fpTAB.write('# field 6: IMSR Strain (list of IMSR lines available (cell lines, cryo materials, and live)\n')
     fpTAB.write('# field 7: Allele ID\n')
     fpTAB.write(CRT*2)
@@ -254,10 +254,10 @@ db.sql('''
 
 db.sql('create index cre_idx1 on cre(_Allele_key)', None)
 
-# anatomical systems of expressed structures
+# cre systems of expressed structures
 
 db.sql('''
-      select distinct cc._Allele_key, cc._System_key, cc.system, c.accID
+      select distinct cc._Allele_key, cc.cresystemlabel, c.accID
       into temporary table expressed
       from cre c, ALL_Cre_Cache cc
       where c._Allele_key = cc._Allele_key
@@ -270,40 +270,42 @@ expressedHTML = {}
 results = db.sql('select * from expressed', 'auto')
 for r in results:
     key = r['_Allele_key']
-    value = r['system']
+    value = r['cresystemlabel']
 
     if not expressedTAB.has_key(key):
         expressedTAB[key] = []
     expressedTAB[key].append(value)
 
-    value = CRE_ANCHOR % (WI_URL, r['accID'], r['_System_key']) + r['system'] + CLOSE_ANCHOR
+    crevalue = r['cresystemlabel'].replace(' ', '+')
+    value = CRE_ANCHOR % (WI_URL, r['accID'], crevalue) + r['cresystemlabel'] + CLOSE_ANCHOR
     if not expressedHTML.has_key(key):
         expressedHTML[key] = []
     expressedHTML[key].append(value)
 
-# anatomical systems of not-expressed structures
+# cre systems of not-expressed structures
 # where the system does not exist in the expressed group
 
 results = db.sql('''
-      select distinct cc._Allele_key, cc._System_key, cc.system
+      select distinct cc._Allele_key, cc.cresystemlabel, cc.accID
       from cre c, ALL_Cre_Cache cc
       where c._Allele_key = cc._Allele_key
       and cc.expressed = 0
       and not exists (select 1 from expressed e
 			where cc._Allele_key = e._Allele_key
-			and cc.system = e.system)
+			and cc.cresystemlabel = e.cresystemlabel)
       ''', 'auto')
 notexpressedTAB = {}
 notexpressedHTML = {}
 for r in results:
     key = r['_Allele_key']
-    value = r['system']
+    value = r['cresystemlabel']
 
     if not notexpressedTAB.has_key(key):
         notexpressedTAB[key] = []
     notexpressedTAB[key].append(value)
 
-    value = CRE_ANCHOR % (WI_URL, key, r['_System_key']) + r['system'] + CLOSE_ANCHOR
+    crevalue = r['cresystemlabel'].replace(' ', '+')
+    value = CRE_ANCHOR % (WI_URL, r['accID'], crevalue) + r['cresystemlabel'] + CLOSE_ANCHOR
     if not notexpressedHTML.has_key(key):
         notexpressedHTML[key] = []
     notexpressedHTML[key].append(value)
