@@ -51,6 +51,7 @@ import sys
 import os
 import string
 import reportlib
+import urlib
 import db
 
 db.setTrace()
@@ -276,8 +277,7 @@ for r in results:
         expressedTAB[key] = []
     expressedTAB[key].append(value)
 
-    crevalue = r['cresystemlabel'].replace(' ', '+')
-    value = CRE_ANCHOR % (WI_URL, r['accID'], crevalue) + r['cresystemlabel'] + CLOSE_ANCHOR
+    value = CRE_ANCHOR % (WI_URL, r['accID'], urllib.quote_plus(r['cresystemlabel']) + r['cresystemlabel'] + CLOSE_ANCHOR
     if not expressedHTML.has_key(key):
         expressedHTML[key] = []
     expressedHTML[key].append(value)
@@ -304,8 +304,7 @@ for r in results:
         notexpressedTAB[key] = []
     notexpressedTAB[key].append(value)
 
-    crevalue = r['cresystemlabel'].replace(' ', '+')
-    value = CRE_ANCHOR % (WI_URL, r['accID'], crevalue) + r['cresystemlabel'] + CLOSE_ANCHOR
+    value = CRE_ANCHOR % (WI_URL, r['accID'], urllib.quote_plus(r['cresystemlabel']) + r['cresystemlabel'] + CLOSE_ANCHOR
     if not notexpressedHTML.has_key(key):
         notexpressedHTML[key] = []
     notexpressedHTML[key].append(value)
