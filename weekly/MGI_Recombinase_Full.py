@@ -91,7 +91,7 @@ introBLOG = '''
 This report provides a list of all recombinase-containing alleles in the MGI database.
 <p>
 Each allele symbol is linked to its respective MGI Allele Detail page, containing phenotypic
-and disease model data; each Anatomical System for an allele is linked to its MGI Recombinase Detail page.
+and disease model data; each Cre System for an allele is linked to its MGI Recombinase Detail page.
 A link is provided to the International Mouse Strain Resource (IMSR) strain if a repository holds mice
 carrying the listed allele.
 <p>
