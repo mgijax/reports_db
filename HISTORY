@@ -1,3 +1,10 @@
+TAG: reports_db-?
+DATE: 02/24/2016
+STAFF: lec
+CHANGES:
+1) weekly/ALL_OMIM.py : obsolete
+2) weekly/MGI_Recombinase_Full.py
+
 TAG: reports_db-tr12223-BP
 DATE: 02/24/2016
 STAFF: lec

@@ -60,6 +60,7 @@
 #	45. strain_reference.bcp
 #	46. marker_reference.bcp
 #	47. marker_omim.bcp
+#	48: mgi_relationship/mgi_relationship_category/mgi_relationship_property
 #
 # Usage:
 #       mgiMarkerFeed.py
@@ -1694,17 +1695,200 @@ def omim():
 
     fp.close()
 
+def mgi_relationship():
+
+    #
+    # mgi_relationship
+    # mgi_relationship_category
+    # mgi_relationship_property
+    #
+    # selecting info for 'mutation_involves' (1003)
+    # and 'expresses_component' (1004)
+    #
+
+
+    fp = open(OUTPUTDIR + 'mgi_relationship_de.bcp', 'w')
+
+    results = db.sql('''
+        select c._category_key, c.name, 
+               aa._allele_key, aa.symbol as allele_symbol, 
+               m._marker_key, m.symbol as marker_symbol, 
+               a._refs_key,
+               p._propertyname_key, t.term, 
+               p._relationshipproperty_key, p.value, p.sequenceNum,
+	       to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+	       to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+        from mgi_relationship a, mgi_relationship_category c, mgi_relationship_property p,
+                all_allele aa, mrk_marker m, voc_term t
+        where a._category_key in (1003,1004)
+        and a._category_key = c._category_key
+        and c._mgitype_key_1 = 11
+        and a._object_key_1 = aa._allele_key
+        and c._mgitype_key_2 = 2 
+        and a._object_key_2 = m._marker_key
+        and a._relationship_key = p._relationship_key
+        and p._propertyname_key = t._term_key
+        order by aa.symbol, m.symbol, p._relationshipproperty_key, p.sequenceNum
+        ''', 'auto')
+
+    for r in results:
+	fp.write(`r['_category_key']` + TAB + \
+                  r['name'] + TAB + \
+	         `r['_allele_key']` + TAB + \
+                  r['allele_symbol'] + TAB + \
+	         `r['_marker_key']` + TAB + \
+                  r['marker_symbol'] + TAB + \
+	         `r['_refs_key']` + TAB + \
+	         `r['_propertyname_key']` + TAB + \
+                  r['term'] + TAB + \
+	         `r['_relationshipproperty_key']` + TAB + \
+                  r['value'] + TAB + \
+	         `r['sequenceNum']` + TAB + \
+		 str(r['cdate']) + TAB + \
+		 str(r['mdate']) + CRT)
+
+    results = db.sql('''
+        select c._category_key, c.name, 
+               aa._allele_key, aa.symbol as allele_symbol, 
+               m._marker_key, m.symbol as marker_symbol, 
+               a._refs_key,
+	       to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+	       to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+        from mgi_relationship a, mgi_relationship_category c, 
+                all_allele aa, mrk_marker m
+        where a._category_key in (1003,1004)
+        and a._category_key = c._category_key
+        and c._mgitype_key_1 = 11
+        and a._object_key_1 = aa._allele_key
+        and c._mgitype_key_2 = 2 
+        and a._object_key_2 = m._marker_key
+        and not exists (select 1 from mgi_relationship_property p where a._relationship_key = p._relationship_key)
+        order by aa.symbol, m.symbol
+        ''', 'auto')
+
+    for r in results:
+	fp.write(`r['_category_key']` + TAB + \
+                  r['name'] + TAB + \
+	         `r['_allele_key']` + TAB + \
+                  r['allele_symbol'] + TAB + \
+	         `r['_marker_key']` + TAB + \
+                  r['marker_symbol'] + TAB + \
+	         `r['_refs_key']` + TAB + \
+	         TAB + \
+                 TAB + \
+	         TAB + \
+                 TAB + \
+	         TAB + \
+		 str(r['cdate']) + TAB + \
+		 str(r['mdate']) + CRT)
+
+    fp.close()
+
+    fp = open(OUTPUTDIR + 'mgi_relationship.bcp', 'w')
+
+    results = db.sql('''
+    	select a.*,
+	       to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+	       to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	from mgi_relationship a 
+	where a._category_key in (1003,1004)
+	''', 'auto')
+
+    for r in results:
+	fp.write(`r['_relationship_key']` + TAB + \
+	         `r['_category_key']` + TAB + \
+	         `r['_object_key_1']` + TAB + \
+	         `r['_object_key_2']` + TAB + \
+	         `r['_relationshipterm_key']` + TAB + \
+	         `r['_qualifier_key']` + TAB + \
+	         `r['_evidence_key']` + TAB + \
+	         `r['_refs_key']` + TAB + \
+		 str(r['cdate']) + TAB + \
+		 str(r['mdate']) + CRT)
+
+    fp.close()
+
+    fp = open(OUTPUTDIR + 'mgi_relationship_category.bcp', 'w')
+
+    results = db.sql('''
+    	select a.*,
+	       to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+	       to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	from mgi_relationship_category a
+	where a._category_key in (1003,1004)
+	''', 'auto')
+
+    for r in results:
+	fp.write(`r['_category_key']` + TAB + \
+	         r['name'] + TAB + \
+	         `r['_relationshipvocab_key']` + TAB + \
+	         `r['_relationshipdag_key']` + TAB + \
+	         `r['_mgitype_key_1']` + TAB + \
+	         `r['_mgitype_key_2']` + TAB + \
+	         `r['_qualifiervocab_key']` + TAB + \
+	         `r['_evidencevocab_key']` + TAB + \
+		 str(r['cdate']) + TAB + \
+		 str(r['mdate']) + CRT)
+
+    fp.close()
+
+    fp = open(OUTPUTDIR + 'mgi_relationship_property.bcp', 'w')
+
+    results = db.sql('''
+    	select p.*,
+	       to_char(p.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+	       to_char(p.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	from mgi_relationship_property p, mgi_relationship a
+	where a._category_key in (1003,1004)
+	and a._relationship_key = p._relationship_key
+	''', 'auto')
+
+    for r in results:
+	fp.write(`r['_relationshipproperty_key']` + TAB + \
+	         `r['_relationship_key']` + TAB + \
+	         `r['_propertyname_key']` + TAB + \
+	         r['value'] + TAB + \
+	         `r['sequenceNum']` + TAB + \
+		 str(r['cdate']) + TAB + \
+		 str(r['mdate']) + CRT)
+
+    fp.close()
+
+    #
+    # mgi_relationship_terms.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'mgi_relationship_terms.bcp', 'w')
+
+    results = db.sql('''
+	    select v.name, t._Vocab_key, t._Term_key, t.term, 
+                to_char(t.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+                to_char(t.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	    from VOC_Term t, VOC_Vocab v 
+	    where t._Vocab_key in (94, 95, 96, 97)
+	    and t._Vocab_key = v._Vocab_key
+	    ''', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Vocab_key']` + TAB + \
+	             `r['_Term_key']` + TAB + \
+	             r['name'] + TAB + \
+		     r['term'] + TAB + \
+		     str(r['cdate']) + TAB + \
+		     str(r['mdate']) + CRT)
+    fp.close()
+
 #
 # Main
 #
 
 db.useOneConnection(1)
-vocabs()
-alleles()
-markers()
-strains()
-genotypes()
-references()
-omim()
+#vocabs()
+#alleles()
+#markers()
+#strains()
+#genotypes()
+#references()
+#omim()
+mgi_relationship()
 db.useOneConnection(0)
 
