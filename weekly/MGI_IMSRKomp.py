@@ -6,7 +6,7 @@
 #
 # Input:
 # 	IMSR data file: 
-#	/data/downloads/emnet.informatics.jax.org:48080/imsrwi/imsrwi/report/kompCounts.txt
+#	/data/downloads/www.findmice.org/report/kompCounts.txt
 #
 # Output:
 #	1: gene symbol
@@ -42,7 +42,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 fp.write('Marker Symbol\tMGI Marker Accession ID\tTotal number of IMSR Strains\tTotal number of Alleles\n')
 
-inFile = open('/data/downloads/emnet.informatics.jax.org:48080/imsrwi/imsrwi/report/kompCounts.txt', 'rU')
+inFile = open('/data/downloads/www.findmice.org/report/kompCounts.txt', 'rU')
 
 #
 # field 1 : MGI id (allele or marker)
