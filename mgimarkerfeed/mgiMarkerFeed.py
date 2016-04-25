@@ -10,6 +10,7 @@
 #	TR 5565 - JaxStrain additions
 #	TR 10460 - add mutant cell line accession ids
 #	TR 11515 - added Allele/Collection
+#	TR 12027 - added MGI_Relationship
 #	MPR
 #
 # bcp files
@@ -60,11 +61,15 @@
 #	45. strain_reference.bcp
 #	46. marker_reference.bcp
 #	47. marker_omim.bcp
+#	48: mgi_relationship/mgi_relationship_category/mgi_relationship_property
 #
 # Usage:
 #       mgiMarkerFeed.py
 #
 # History:
+#
+# lec	04/25/2016
+#	- TR12027/mgi_relationship
 #
 # lec	01/05/2014
 #	- TR11515/allele.bcp/allele_type.bcp/allele_collection.bcp, 
@@ -1694,6 +1699,110 @@ def omim():
 
     fp.close()
 
+def mgi_relationship():
+
+    #
+    # mgi_relationship
+    # mgi_relationship_category
+    # mgi_relationship_property
+    #
+    # selecting info for 'mutation_involves' (1003)
+    # and 'expresses_component' (1004)
+    #
+
+    fp = open(OUTPUTDIR + 'mgi_relationship.bcp', 'w')
+
+    results = db.sql('''
+    	select a.*,
+	       to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+	       to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	from mgi_relationship a 
+	where a._category_key in (1003,1004)
+	''', 'auto')
+
+    for r in results:
+	fp.write(`r['_relationship_key']` + TAB + \
+	         `r['_category_key']` + TAB + \
+	         `r['_object_key_1']` + TAB + \
+	         `r['_object_key_2']` + TAB + \
+	         `r['_relationshipterm_key']` + TAB + \
+	         `r['_qualifier_key']` + TAB + \
+	         `r['_evidence_key']` + TAB + \
+	         `r['_refs_key']` + TAB + \
+		 str(r['cdate']) + TAB + \
+		 str(r['mdate']) + CRT)
+
+    fp.close()
+
+    fp = open(OUTPUTDIR + 'mgi_relationship_category.bcp', 'w')
+
+    results = db.sql('''
+    	select a.*,
+	       to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+	       to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	from mgi_relationship_category a
+	where a._category_key in (1003,1004)
+	''', 'auto')
+
+    for r in results:
+	fp.write(`r['_category_key']` + TAB + \
+	         r['name'] + TAB + \
+	         `r['_relationshipvocab_key']` + TAB + \
+	         `r['_relationshipdag_key']` + TAB + \
+	         `r['_mgitype_key_1']` + TAB + \
+	         `r['_mgitype_key_2']` + TAB + \
+	         `r['_qualifiervocab_key']` + TAB + \
+	         `r['_evidencevocab_key']` + TAB + \
+		 str(r['cdate']) + TAB + \
+		 str(r['mdate']) + CRT)
+
+    fp.close()
+
+    fp = open(OUTPUTDIR + 'mgi_relationship_property.bcp', 'w')
+
+    results = db.sql('''
+    	select p.*,
+	       to_char(p.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+	       to_char(p.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	from mgi_relationship_property p, mgi_relationship a
+	where a._category_key in (1003,1004)
+	and a._relationship_key = p._relationship_key
+	''', 'auto')
+
+    for r in results:
+	fp.write(`r['_relationshipproperty_key']` + TAB + \
+	         `r['_relationship_key']` + TAB + \
+	         `r['_propertyname_key']` + TAB + \
+	         r['value'] + TAB + \
+	         `r['sequenceNum']` + TAB + \
+		 str(r['cdate']) + TAB + \
+		 str(r['mdate']) + CRT)
+
+    fp.close()
+
+    #
+    # mgi_relationship_terms.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'mgi_relationship_terms.bcp', 'w')
+
+    results = db.sql('''
+	    select v.name, t._Vocab_key, t._Term_key, t.term, 
+                to_char(t.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+                to_char(t.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	    from VOC_Term t, VOC_Vocab v 
+	    where t._Vocab_key in (94, 95, 96, 97)
+	    and t._Vocab_key = v._Vocab_key
+	    ''', 'auto', execute = 1)
+    for r in results:
+	    fp.write(`r['_Vocab_key']` + TAB + \
+	             `r['_Term_key']` + TAB + \
+	             r['name'] + TAB + \
+		     r['term'] + TAB + \
+		     str(r['cdate']) + TAB + \
+		     str(r['mdate']) + CRT)
+    fp.close()
+
 #
 # Main
 #
@@ -1706,5 +1815,6 @@ strains()
 genotypes()
 references()
 omim()
+mgi_relationship()
 db.useOneConnection(0)
 
