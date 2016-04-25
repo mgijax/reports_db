@@ -10,6 +10,7 @@
 #	TR 5565 - JaxStrain additions
 #	TR 10460 - add mutant cell line accession ids
 #	TR 11515 - added Allele/Collection
+#	TR 12027 - added MGI_Relationship
 #	MPR
 #
 # bcp files
@@ -66,6 +67,9 @@
 #       mgiMarkerFeed.py
 #
 # History:
+#
+# lec	04/25/2016
+#	- TR12027/mgi_relationship
 #
 # lec	01/05/2014
 #	- TR11515/allele.bcp/allele_type.bcp/allele_collection.bcp, 
@@ -1706,84 +1710,6 @@ def mgi_relationship():
     # and 'expresses_component' (1004)
     #
 
-
-    fp = open(OUTPUTDIR + 'mgi_relationship_de.bcp', 'w')
-
-    results = db.sql('''
-        select c._category_key, c.name, 
-               aa._allele_key, aa.symbol as allele_symbol, 
-               m._marker_key, m.symbol as marker_symbol, 
-               a._refs_key,
-               p._propertyname_key, t.term, 
-               p._relationshipproperty_key, p.value, p.sequenceNum,
-	       to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
-	       to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
-        from mgi_relationship a, mgi_relationship_category c, mgi_relationship_property p,
-                all_allele aa, mrk_marker m, voc_term t
-        where a._category_key in (1003,1004)
-        and a._category_key = c._category_key
-        and c._mgitype_key_1 = 11
-        and a._object_key_1 = aa._allele_key
-        and c._mgitype_key_2 = 2 
-        and a._object_key_2 = m._marker_key
-        and a._relationship_key = p._relationship_key
-        and p._propertyname_key = t._term_key
-        order by aa.symbol, m.symbol, p._relationshipproperty_key, p.sequenceNum
-        ''', 'auto')
-
-    for r in results:
-	fp.write(`r['_category_key']` + TAB + \
-                  r['name'] + TAB + \
-	         `r['_allele_key']` + TAB + \
-                  r['allele_symbol'] + TAB + \
-	         `r['_marker_key']` + TAB + \
-                  r['marker_symbol'] + TAB + \
-	         `r['_refs_key']` + TAB + \
-	         `r['_propertyname_key']` + TAB + \
-                  r['term'] + TAB + \
-	         `r['_relationshipproperty_key']` + TAB + \
-                  r['value'] + TAB + \
-	         `r['sequenceNum']` + TAB + \
-		 str(r['cdate']) + TAB + \
-		 str(r['mdate']) + CRT)
-
-    results = db.sql('''
-        select c._category_key, c.name, 
-               aa._allele_key, aa.symbol as allele_symbol, 
-               m._marker_key, m.symbol as marker_symbol, 
-               a._refs_key,
-	       to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
-	       to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
-        from mgi_relationship a, mgi_relationship_category c, 
-                all_allele aa, mrk_marker m
-        where a._category_key in (1003,1004)
-        and a._category_key = c._category_key
-        and c._mgitype_key_1 = 11
-        and a._object_key_1 = aa._allele_key
-        and c._mgitype_key_2 = 2 
-        and a._object_key_2 = m._marker_key
-        and not exists (select 1 from mgi_relationship_property p where a._relationship_key = p._relationship_key)
-        order by aa.symbol, m.symbol
-        ''', 'auto')
-
-    for r in results:
-	fp.write(`r['_category_key']` + TAB + \
-                  r['name'] + TAB + \
-	         `r['_allele_key']` + TAB + \
-                  r['allele_symbol'] + TAB + \
-	         `r['_marker_key']` + TAB + \
-                  r['marker_symbol'] + TAB + \
-	         `r['_refs_key']` + TAB + \
-	         TAB + \
-                 TAB + \
-	         TAB + \
-                 TAB + \
-	         TAB + \
-		 str(r['cdate']) + TAB + \
-		 str(r['mdate']) + CRT)
-
-    fp.close()
-
     fp = open(OUTPUTDIR + 'mgi_relationship.bcp', 'w')
 
     results = db.sql('''
@@ -1882,13 +1808,13 @@ def mgi_relationship():
 #
 
 db.useOneConnection(1)
-#vocabs()
-#alleles()
-#markers()
-#strains()
-#genotypes()
-#references()
-#omim()
+vocabs()
+alleles()
+markers()
+strains()
+genotypes()
+references()
+omim()
 mgi_relationship()
 db.useOneConnection(0)
 
