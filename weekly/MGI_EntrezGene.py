@@ -254,7 +254,8 @@ for r in results:
 		# genetic chromosome, if marker has no coordinates
 		chromosome = r['chromosome']
 
-	fp.write(mgiID[r['_Current_key']] + TAB + \
+        if mgiID.has_key(r['_Current_key']):
+	    fp.write(mgiID[r['_Current_key']] + TAB + \
 	 	r['symbol'] + TAB + \
 		r['markerStatus'] + TAB + \
 	 	r['name'] + TAB + \
