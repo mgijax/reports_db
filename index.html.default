@@ -21,7 +21,6 @@
 <TR><TD><A HREF="#expression">Gene Expression</A></TD></TR>
 <TR><TD><A HREF="#pheno">Alleles and Phenotypes</A></TD></TR>
 <TR><TD><A HREF="#cre">Recombinase (cre) Specificity</A></TD></TR>
-<TR><TD><A HREF="#nomen">Nomenclature</A></TD></TR>
 <TR><TD><A HREF="#refs">References</A></TD></TR>
 <TR><TD><A HREF="#clonecoll">Clone Collections</A></TD></TR>
 <TR><TD><A HREF="#dnamap">DNA Mapping Panels</a></TD></TR>
@@ -359,29 +358,6 @@ D></TABLE>
         <TABLE BORDER CELLPADDING=2><TR><TD>Ontology</TD><TD>GO ID</TD><TD>GO Term</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_terms.mgi">go_terms.mgi</A> (only those terms annotated to MGI markers are included)</TD></TR>
-    </TABLE></TD></TR>
-
-</TABLE><BR>
-
-<!-- -->
-<A NAME="strain"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Strains and Polymorphisms</B></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>1. Official Strain Nomenclature (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Strain ID</TD><TD>Strain Name</TD><TD>Strain Type</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Strain.rpt">MGI_Strain.rpt</A>
-        <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(sorted alphabetically by strain name)</TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>2. List of ES Cell Line Names and Strains of Origin (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>ES Cell Line Name</TD><TD>Strain Name</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="ES_CellLine.rpt">ES_CellLine.rpt</A>
     </TABLE></TD></TR>
 
 </TABLE><BR>
