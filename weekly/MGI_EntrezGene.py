@@ -230,10 +230,14 @@ for r in results:
 	# column 5: cmoffset
 	# column 6: chromosome
 	# column 7: marker type
+
+        if not mgiID.has_key(r['_Current_key']):
+	   continue
+
 	key = r['_Marker_key']
+
 	# if the marker's feature type is not
 	# 'mutation defined region', key=11928467 write out to the report
-
 	# default feature type
 	fTypes = ''
 	if featureTypes.has_key(key):
@@ -242,7 +246,6 @@ for r in results:
 		continue
 	    else:
 		fTypes = (string.join(featureTypes[key],'|'))
-
 
 	chromosome = None
 
@@ -254,8 +257,7 @@ for r in results:
 		# genetic chromosome, if marker has no coordinates
 		chromosome = r['chromosome']
 
-        if mgiID.has_key(r['_Current_key']):
-	    fp.write(mgiID[r['_Current_key']] + TAB + \
+	fp.write(mgiID[r['_Current_key']] + TAB + \
 	 	r['symbol'] + TAB + \
 		r['markerStatus'] + TAB + \
 	 	r['name'] + TAB + \
