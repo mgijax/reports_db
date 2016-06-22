@@ -40,10 +40,6 @@ foreach i (gene_association.mgi)
     echo `date`: $i | tee -a ${LOG}
     cp $i ${FTPREPORTDIR}
 end
-foreach i (GO_eco_association.rpt)
-    echo `date`: $i | tee -a ${LOG}
-    cp $i ${FTPREPORTDIR}
-end
 
 echo `date`: End daily public reports | tee -a ${LOG}
 
