@@ -1,9 +1,11 @@
+TAG: reports_db-6-0-4-7
 TAG: reports_db-6-0-4-6
 DATE: 06/21/2016
 STAFF: lec
 CHANGES:
 TR12345/GO/GPAD file
 1) generateGPAD.csh: obsolete
+2) daily/GO_eco_association.py : obsolete
 
 TAG: reports_db-6-0-4-5
 DATE: 05/26/2016
