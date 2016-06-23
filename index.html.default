@@ -363,6 +363,29 @@ D></TABLE>
 </TABLE><BR>
 
 <!-- -->
+<A NAME="strain"></A>
+<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Strains and Polymorphisms</B></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>1. Official Strain Nomenclature (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Strain ID</TD><TD>Strain Name</TD><TD>Strain Type</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Strain.rpt">MGI_Strain.rpt</A>
+        <BR>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(sorted alphabetically by strain name)</TD></TR>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>2. List of ES Cell Line Names and Strains of Origin (tab-delimited)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>ES Cell Line Name</TD><TD>Strain Name</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="ES_CellLine.rpt">ES_CellLine.rpt</A>
+    </TABLE></TD></TR>
+
+</TABLE><BR>
+
+<!-- -->
 
 <A NAME="expression"></A>
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Gene Expression</B></TD></TR>
@@ -559,30 +582,6 @@ D></TABLE>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Recombinase_Full.html">MGI_Recombinase_Full.html</A></TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Recombinase_Full.rpt">MGI_Recombinase_Full.rpt</A> (Tab-delimited version)</TD></TR>
         </TD></TR>
-    </TABLE></TD></TR>
-
-</TABLE><BR>
-
-<!-- -->
-
-<A NAME="nomen"></A>
-<TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Nomenclature</B></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>1. Nomenclature Events in the Past Week</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Chromosome</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>J Number</TD><TD>First Author</TD><TD>MGI<BR>Marker Accession ID</TD><TD>GenBank<BR>Sequence ID<BR>(comma-delimited)</TD><TD>Human Ortholog</TD><TD>Other MGI IDs<BR>(comma-delimited)</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="Nomenclature-current.html">Nomenclature-current.html</A></TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="Nomenclature-current.rpt">Nomenclature-current.rpt</A>  (Tab-delimited version)</TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>2. Archived Nomenclature Reports (individual reports as above)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Chromosome</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>J Number</TD><TD>First Author</TD><TD>MGI<BR>Marker Accession ID</TD><TD>GenBank<BR>Sequence ID<BR>(comma-delimited)</TD><TD>Human Ortholog</TD><TD>Other MGI IDs<BR>(comma-delimited)</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="archive/nomen">archive/nomen</A></TD></TR>
     </TABLE></TD></TR>
 
 </TABLE><BR>
