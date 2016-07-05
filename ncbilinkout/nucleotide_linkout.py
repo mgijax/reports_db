@@ -103,7 +103,7 @@ count = 1
 for r in results:
     key = r['_Marker_key']
 
-    if not gbID.has_key(key) and not rsID.has_key(key):
+    if not gbID.has_key(key):
 	    continue
 
     # create a new file
