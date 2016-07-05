@@ -1,3 +1,10 @@
+TAG: reports_db-6-0-4-11
+DATE: 07/05/2016
+STAFF: dbm
+CHANGES:
+1) ncbilinkout/nucleotide_linkout.py: removed reference to rsID dictionary
+                                      that is never created
+
 TAG: reports_db-6-0-4-10
 DATE: 06/23/2016
 STAFF: lec
