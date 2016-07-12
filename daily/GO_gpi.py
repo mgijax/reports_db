@@ -56,6 +56,19 @@ fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
+fp.write('! 1. DB_Object_ID\n')
+fp.write('!     MGI:MGI:xxxxx (gene), PR:xxxx (protein), RNA (transcript)\n')
+fp.write('! 2. DB_Object_Symbol\n')   
+fp.write('! 3. DB_Object_Name\n')
+fp.write('! 4. DB_Object_Synonym(s)\n')
+fp.write('! 5. DB_ObjecT_Type\n')
+fp.write('! 6. Taxon (tax:10090)\n')
+fp.write('! 7. Parent_Object_ID\n')
+fp.write('! 	if DB_Object_ID = Isoform, then MGI:id of the Isoform\n')
+fp.write('! 8. DB_Xref(s)\n')
+fp.write('!     if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform\n')
+fp.write('! 9. Gene_Product_Properties\n')
+fp.write('!\n')
 
 #
 # markers
@@ -145,7 +158,7 @@ results = db.sql('''
 for r in results:
 	marker = r['accID']
 
-	fp.write(r['accID'] + TAB)
+	fp.write('MGI:' + r['accID'] + TAB)
 	fp.write(r['symbol'] + TAB)
 	fp.write(r['name'] + TAB)
 
@@ -260,23 +273,37 @@ for r in results:
 results = db.sql('''
 	WITH rna AS
 	(
-	select distinct sm.accID as rnaID, sm._Marker_key
+	select distinct sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key
         	from SEQ_Marker_Cache sm
         	where sm._SequenceType_key = 316346
         	and sm._Marker_Type_key = 1 
         	and sm._Organism_key = 1 
 	)
-	select rna.rnaID, a.accID as markerID
+	select rna.rnaID, a.accID as markerID, rna._LogicalDB_key
 	from rna, ACC_Accession a
 	where rnaID in (select rnaID from rna group by rnaID having count(*) = 1)
         and rna._Marker_key = a._Object_key
         and a._MGIType_key = 2
         and a._LogicalDB_key = 1
         and a.preferred = 1
+	order by rna._LogicalDB_key
    	''', 'auto')
 
 for r in results:
-	fp.write(r['rnaID'] + TAB)
+
+	ldb = r['_LogicalDB_key']
+	if ldb == 9:
+		ldbName = 'EMBL:'
+	elif ldb == 27:
+		ldbName = 'RefSeq:'
+	elif ldb == 133:
+		ldbName = 'ENSEMBL:'
+	elif ldb == 131:
+		ldbName = 'VEGA:'
+	else:
+		ldbName = ''
+
+	fp.write(ldbName + r['rnaID'] + TAB)
 	fp.write(r['rnaID'] + TAB)
 	fp.write(TAB)
 	fp.write(TAB)
