@@ -85,7 +85,7 @@ isoformByMarker = {}
 markerByIsoform = {}
 
 results = db.sql('''
-	select a1.accID as markerID, a2.accID as prID
+	select 'MGI:' || a1.accID as markerID, a2.accID as prID
 	from VOC_Annot v, ACC_Accession a1, ACC_Accession a2
 	where v._AnnotType_key = 1019
 	and v._Object_key = a1._Object_key
@@ -117,7 +117,7 @@ for r in results:
 markerSynonyms = {}
 
 results = db.sql('''
-	select a.accID, s.synonym
+	select 'MGI:' || a.accID as accID, s.synonym
 	from ACC_Accession a, MRK_Marker m, MGI_Synonym s
 	where a._MGIType_key = 2
 	and a._LogicalDB_key = 1
@@ -143,7 +143,7 @@ for r in results:
 #
 
 results = db.sql('''
-	select a.accID, m.symbol, m.name
+	select 'MGI:' || a.accID as accID, m.symbol, m.name
 	from ACC_Accession a, MRK_Marker m
 	where a._MGIType_key = 2
 	and a._LogicalDB_key = 1
@@ -158,7 +158,7 @@ results = db.sql('''
 for r in results:
 	marker = r['accID']
 
-	fp.write('MGI:' + r['accID'] + TAB)
+	fp.write(r['accID'] + TAB)
 	fp.write(r['symbol'] + TAB)
 	fp.write(r['name'] + TAB)
 
