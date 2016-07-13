@@ -10,17 +10,20 @@
 #
 # Output format:
 #
-#   1. DB_Object_ID
-#   2. DB_Object_Symbol                   
-#   3. DB_Object_Name          (optional)
-#   4. DB_Object_Synonym(s)    (optional)
-#   5. DB_ObjecT_Type
-#   6. Taxon                              tax:10090
-#   7. Parent_Object_ID        (optional) 
+# version 1.2
+#
+#   1. DB			cardinality
+#   2. DB_Object_ID
+#   3. DB_Object_Symbol                   
+#   4. DB_Object_Name          (optional)
+#   5. DB_Object_Synonym(s)    (optional)
+#   6. DB_ObjecT_Type
+#   7. Taxon                              tax:10090
+#   8. Parent_Object_ID        (optional) 
 #	if DB_Object_ID = Isoform, then MGI:id of the Isoform
-#   8. DB_Xref(s)              (optional) 
+#   9. DB_Xref(s)              (optional) 
 #	if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform
-#   9. Gene_Product_Properties (optional)
+#   10.Gene_Product_Properties (optional)
 #
 # History:
 #
@@ -39,6 +42,7 @@ db.setTrace()
 db.setAutoTranslate(False)
 db.setAutoTranslateBE(False)
 
+DB_PREFIX = 'MGI'
 SPECIES = 'taxon:10090'
 DBTYPE_MARKER = 'gene'
 DBTYPE_ISOFORM = 'protein'
@@ -51,23 +55,24 @@ db.useOneConnection(1)
 
 fp = reportlib.init('mgi_association', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-fp.write('!gpi-version: 1.0\n')
+fp.write('!gpi-version: 1.2\n')
 fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
-fp.write('! 1. DB_Object_ID\n')
-fp.write('!     MGI:MGI:xxxxx (gene), PR:xxxx (protein), RNA (transcript)\n')
-fp.write('! 2. DB_Object_Symbol\n')   
-fp.write('! 3. DB_Object_Name\n')
-fp.write('! 4. DB_Object_Synonym(s)\n')
-fp.write('! 5. DB_ObjecT_Type\n')
-fp.write('! 6. Taxon (tax:10090)\n')
-fp.write('! 7. Parent_Object_ID\n')
+fp.write('! 1. DB (MGI)\n')
+fp.write('! 2. DB_Object_ID\n')
+fp.write('!     MGI:xxxxx (gene), PR:xxxx (protein), RNA (transcript)\n')
+fp.write('! 3. DB_Object_Symbol\n')   
+fp.write('! 4. DB_Object_Name\n')
+fp.write('! 5. DB_Object_Synonym(s)\n')
+fp.write('! 6. DB_ObjecT_Type\n')
+fp.write('! 7. Taxon (tax:10090)\n')
+fp.write('! 8. Parent_Object_ID\n')
 fp.write('! 	if DB_Object_ID = Isoform, then MGI:id of the Isoform\n')
-fp.write('! 8. DB_Xref(s)\n')
+fp.write('! 9. DB_Xref(s)\n')
 fp.write('!     if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform\n')
-fp.write('! 9. Gene_Product_Properties\n')
+fp.write('! 10.Gene_Product_Properties\n')
 fp.write('!\n')
 
 #
@@ -85,7 +90,7 @@ isoformByMarker = {}
 markerByIsoform = {}
 
 results = db.sql('''
-	select 'MGI:' || a1.accID as markerID, a2.accID as prID
+	select a1.accID as markerID, a2.accID as prID
 	from VOC_Annot v, ACC_Accession a1, ACC_Accession a2
 	where v._AnnotType_key = 1019
 	and v._Object_key = a1._Object_key
@@ -117,7 +122,7 @@ for r in results:
 markerSynonyms = {}
 
 results = db.sql('''
-	select 'MGI:' || a.accID as accID, s.synonym
+	select a.accID as accID, s.synonym
 	from ACC_Accession a, MRK_Marker m, MGI_Synonym s
 	where a._MGIType_key = 2
 	and a._LogicalDB_key = 1
@@ -139,11 +144,18 @@ for r in results:
 	markerSynonyms[key].append(value)
 
 #
+# markerUniProtKB primary
+#
+# read: ${DATADOWNLOADS}/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz
+# 
+#
+
+#
 # markers:terms
 #
 
 results = db.sql('''
-	select 'MGI:' || a.accID as accID, m.symbol, m.name
+	select a.accID as accID, m.symbol, m.name
 	from ACC_Accession a, MRK_Marker m
 	where a._MGIType_key = 2
 	and a._LogicalDB_key = 1
@@ -158,6 +170,7 @@ results = db.sql('''
 for r in results:
 	marker = r['accID']
 
+	fp.write(DB_PREFIX + TAB)
 	fp.write(r['accID'] + TAB)
 	fp.write(r['symbol'] + TAB)
 	fp.write(r['name'] + TAB)
@@ -237,9 +250,11 @@ results = db.sql('''
    	''', 'auto')
 
 for r in results:
+	prefixPart, accID = r['accID'].split(':')
 	isoform = r['accID']
 
-	fp.write(isoform + TAB)
+	fp.write(prefixPart + TAB)
+	fp.write(accID + TAB)
 	fp.write(r['symbol'] + TAB)
 	fp.write(r['name'] + TAB)
 
@@ -252,7 +267,7 @@ for r in results:
 
 	# Parent_Object_ID/MGI id
 	if isoform in markerByIsoform:
-		fp.write(markerByIsoform[isoform][0])
+		fp.write('MGI:' + markerByIsoform[isoform][0])
 	fp.write(TAB)
 
 	# DB_Xref/UniProtKB id
@@ -293,23 +308,24 @@ for r in results:
 
 	ldb = r['_LogicalDB_key']
 	if ldb == 9:
-		ldbName = 'EMBL:'
+		ldbName = 'EMBL'
 	elif ldb == 27:
-		ldbName = 'RefSeq:'
+		ldbName = 'RefSeq'
 	elif ldb == 133:
-		ldbName = 'ENSEMBL:'
+		ldbName = 'ENSEMBL'
 	elif ldb == 131:
-		ldbName = 'VEGA:'
+		ldbName = 'VEGA'
 	else:
-		ldbName = ''
+		continue
 
-	fp.write(ldbName + r['rnaID'] + TAB)
+	fp.write(ldbName + TAB)
+	fp.write(r['rnaID'] + TAB)
 	fp.write(r['rnaID'] + TAB)
 	fp.write(TAB)
 	fp.write(TAB)
 	fp.write(DBTYPE_RNA + TAB)
 	fp.write(SPECIES + TAB)
-	fp.write(r['markerID'] + TAB)
+	fp.write('MGI:' + r['markerID'] + TAB)
 	fp.write(TAB)
 	fp.write(CRT)
 
