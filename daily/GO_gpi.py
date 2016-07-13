@@ -12,18 +12,20 @@
 #
 # version 1.2
 #
-#   1. DB			cardinality
-#   2. DB_Object_ID
-#   3. DB_Object_Symbol                   
-#   4. DB_Object_Name          (optional)
-#   5. DB_Object_Synonym(s)    (optional)
-#   6. DB_ObjecT_Type
-#   7. Taxon                              tax:10090
-#   8. Parent_Object_ID        (optional) 
-#	if DB_Object_ID = Isoform, then MGI:id of the Isoform
-#   9. DB_Xref(s)              (optional) 
-#	if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform
-#   10.Gene_Product_Properties (optional)
+#   1.  DB                     required  1             1             MGI
+#   2.  DB_Object_ID           required  1             2/17          MGI:87870
+#   3.  DB_Object_Symbol       required  1             3             Acat1
+#   4.  DB_Object_Name         optional  0 or greater  10            acetyl-Coenzyme A acetyltransferase 1
+#   5.  DB_Object_Synonym(s)   optional  0 or greater  11            Acat|6330585C21Rik
+#   6.  DB_Object_Type         required  1             12            gene
+#   7.  Taxon                  required  1             13            taxon:10090
+#   8.  Parent_Object_ID       optional  0 or 1        -             if DB_Object_ID = Isoform, then MGI:id of the Isoform
+#   9.  DB_Xref(s)             optional  0 or greater  -             if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform
+#   10. Properties             optional  0 or greater  -             blank
+#
+#   DB_Object_Type = 'gene', DB = 'MGI', DB_Object_ID = 'MGI:xxxx'
+#   DB_Object_Type = 'protein', DB = 'PR', DB_Object_ID = 'xxxx', Parent_Object_ID = 'MGI:MGI:xxxx', DB_Xref = 'UniProtDB:xxx'
+#   DB_Object_Type = 'transcript', DB = 'EMBL', 'RefSeq', 'ENSEMBL', 'VEGA', Parent_Object_ID = 'MGI:MGI:xxxx'
 #
 # History:
 #
@@ -34,6 +36,7 @@
 
 import sys
 import os
+import gzip
 import mgi_utils
 import reportlib
 import db
@@ -60,19 +63,19 @@ fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
-fp.write('! 1. DB (MGI)\n')
-fp.write('! 2. DB_Object_ID\n')
-fp.write('!     MGI:xxxxx (gene), PR:xxxx (protein), RNA (transcript)\n')
-fp.write('! 3. DB_Object_Symbol\n')   
-fp.write('! 4. DB_Object_Name\n')
-fp.write('! 5. DB_Object_Synonym(s)\n')
-fp.write('! 6. DB_ObjecT_Type\n')
-fp.write('! 7. Taxon (tax:10090)\n')
-fp.write('! 8. Parent_Object_ID\n')
-fp.write('! 	if DB_Object_ID = Isoform, then MGI:id of the Isoform\n')
-fp.write('! 9. DB_Xref(s)\n')
-fp.write('!     if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform\n')
-fp.write('! 10.Gene_Product_Properties\n')
+fp.write('!  DB                     required  1             1             MGI\n')
+fp.write('!  DB_Object_ID           required  1             2/17          MGI:87870\n')
+fp.write('!  DB_Object_Symbol       required  1             3             Acat1\n')
+fp.write('!  DB_Object_Name         optional  0 or greater  10            acetyl-Coenzyme A acetyltransferase 1\n')
+fp.write('!  DB_Object_Synonym(s)   optional  0 or greater  11            Acat|6330585C21Rik\n')
+fp.write('!  DB_Object_Type         required  1             12            gene\n')
+fp.write('!  Taxon                  required  1             13            taxon:10090\n')
+fp.write('!  Parent_Object_ID       optional  0 or 1        -             if DB_Object_ID = Isoform, then MGI:id of the Isoform\n')
+fp.write('!  DB_Xref(s)             optional  0 or greater  -             if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform\n')
+fp.write('!  Properties             optional  0 or greater  -             blank\n\n')
+fp.write('!  DB_Object_Type = "gene", DB = "MGI", DB_Object_ID = "MGI:xxxx"\n')
+fp.write('!  DB_Object_Type = "protein", DB = "PR", DB_Object_ID = "xxxx", Parent_Object_ID = "MGI:MGI:xxxx", DB_Xref = "UniProtDB:xxx"\n')
+fp.write('!  DB_Object_Type = "transcript", DB = "EMBL", "RefSeq", "ENSEMBL", "VEGA", Parent_Object_ID = "MGI:MGI:xxxx"\n')
 fp.write('!\n')
 
 #
@@ -146,9 +149,44 @@ for r in results:
 #
 # markerUniProtKB primary
 #
+# hard-coded (for now)...
 # read: ${DATADOWNLOADS}/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz
-# 
+# field 1 = UniProtKB 
+# field 2 = xxxxx
+# find marker _object_key where accID = 'xxxxx'
+#	and _logicaldb_key in (13, 14) and _mgitype_key = 2
+# add UniProtDB:xxxx to gpi field 8
 #
+
+uniprotGPI = []
+gpiFile = gzip.open(os.environ['DATADOWNLOADS'] + '/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz', 'r')
+for line in gpiFile.readlines():
+        if line[0] == '!':
+            continue
+        tokens = line[:-1].split('\t')
+	uniprotGPI.append(tokens[1])
+gpiFile.close()
+
+markerUniProtKB = {}
+results = db.sql('''
+        select sm.accID as uniprotID, a.accID as markerID, sm._LogicalDB_key
+        from SEQ_Marker_Cache sm, ACC_Accession a
+        where sm._LogicalDB_key in (13,41)
+        and sm._Marker_Type_key = 1 
+        and sm._Organism_key = 1 
+        and sm._Marker_key = a._Object_key
+        and a._MGIType_key = 2 
+        and a._LogicalDB_key = 1 
+        and a.preferred = 1 
+        order by sm._LogicalDB_key
+	''', 'auto')
+for r in results:
+	key = r['markerID']
+	value = r['uniprotID']
+	if value in uniprotGPI:
+	    if key not in markerUniProtKB:
+		    markerUniProtKB[key] = []
+	    markerUniProtKB[key].append('UniProtKB:' + value)
 
 #
 # markers:terms
@@ -181,7 +219,11 @@ for r in results:
 
 	fp.write(DBTYPE_MARKER + TAB)
 	fp.write(SPECIES + TAB)
+
+	if marker in markerUniProtKB:
+		fp.write("|".join(markerUniProtKB[marker]))
 	fp.write(TAB)
+
 	fp.write(TAB)
 	fp.write(CRT)
 
@@ -330,7 +372,6 @@ for r in results:
 	fp.write(CRT)
 
 # end RNAs
-#
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
