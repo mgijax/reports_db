@@ -1,9 +1,11 @@
+TAG: reports_db-6-0-4-15
 TAG: reports_db-6-0-4-14
 DATE: 07/14/2016
 STAFF: lnh
 CHANGES: TR12036
 1) ncbilinkout/ncbilinkout.csh: Removed code section that copies reports to NCBI host
 2) ncbilinkout/copy_rpt_2ncbi.csh:Added new script to copy reports to NCBI host
+3) public_rpt_release.csh: Added a call to copy the linkout reports to NCBI FTP site.
 
 TAG: reports_db-6-0-4-13
 DATE: 07/14/2016
