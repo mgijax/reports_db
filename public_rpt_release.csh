@@ -45,6 +45,7 @@
 #      3) Copy the non-mouse gene association file to the public FTP site.
 #      4) Copy the public reports to the public FTP site.
 #      5) Copy the inparanoid files to the public FTP site.
+#      6) Copy the linkout reports files to the NCBI FTP site.
 #
 #  Notes:  None
 #
@@ -122,6 +123,11 @@ foreach i (*)
     echo `date`: $i | tee -a ${LOG}
     cp $i ${FTPREPORTDIR}/cvdc
 end
+
+#
+## Copy the reports to NCBI FTP site.
+#
+${PUBRPTS}/ncbilinkout/copy_rpt_2ncbi.csh
 
 echo "${SCRIPT_NAME} completed successfully" | tee -a ${LOG}
 date | tee -a ${LOG}
