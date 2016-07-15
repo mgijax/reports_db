@@ -27,6 +27,9 @@
 #
 # History:
 #
+# lnh 07/14/2016
+#     - TR12373 -  print gene ID or gene symbol for all allele types including Transgenes
+#
 # lec	02/03/2014
 #	- TR11515/allele type change/add allele-attribute
 #
@@ -225,12 +228,9 @@ for r in results:
 		fp.write(pubIDs[r['_Allele_key']])
 	fp.write(reportlib.TAB)
 
-	# if Transgene, do not print gene ID or gene symbol
-	if string.find(r['symbol'], 'Tg(') < 0:
-		fp.write(mmgiIDs[r['_Marker_key']] + reportlib.TAB + \
-			r['marker'] + reportlib.TAB)
-	else:
-		fp.write(reportlib.TAB + reportlib.TAB)
+	#TR12373 -  print gene ID or gene symbol for all allele types including Transgenes
+	fp.write(mmgiIDs[r['_Marker_key']] + reportlib.TAB + \
+		r['marker'] + reportlib.TAB)
 
 	if refIDs.has_key(r['_Marker_key']):
 		fp.write(refIDs[r['_Marker_key']])

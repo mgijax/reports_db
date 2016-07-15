@@ -46,24 +46,4 @@ end
 
 cp providerinfo.xml ${REPORTOUTPUTDIR}
 
-#
-# If this is production, FTP the files to the NCBI LinkOut host.
-#
-if ( ${INSTALL_TYPE} == "prod" ) then
-
-echo `date`: Send data to NCBI LinkOut host | tee -a ${LOG}
-cd ${REPORTOUTPUTDIR}
-ftp -in ${NCBILINKOUT_HOST} <<END | tee -a ${LOG}
-user ${NCBILINKOUT_USER} ${NCBILINKOUT_PASSWORD}
-cd holdings
-mput protein-mgd.xml
-mput providerinfo.xml
-mput pubmed-mgd-1.xml
-mput nucleotide-mgd-*.xml
-mput pubmed-mgd.uid
-quit
-END
-
-endif
-
 echo `date`: End NCBI LinkOut | tee -a ${LOG}
