@@ -41,6 +41,7 @@ setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
 
 # GOA file
 setenv GOAMGI			${DATALOADSOUTPUT}/go/goamouse/output/goamouse.mgi
+setenv ECOFILE                   ${DATADOWNLOADS}/purl.obolibrary.org/obo/eco/eco.obo
 
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
 #       MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
