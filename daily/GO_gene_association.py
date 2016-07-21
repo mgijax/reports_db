@@ -624,11 +624,11 @@ def doGAFFinish():
     # The GO format has the following columns:
     #
     #   1.  Database designation (MGI)
-    #   2.  MGI Marker ID
+    #   2.  MGI Marker ID (MGI:xxxx)
     #   3.  Symbol
-    #   4.  NOT
+    #   4.  Qualifier
     #   5.  GO id
-    #   6.  MGI ID of Reference (in format MGI:MGI:####) (double MGI: necessary)
+    #   6.  MGI ID of Reference (MGI:MGI:xxxx|PMID:xxxx)
     #   7.  Evidence abbreviation
     #   8.  Inferred From
     #   9.  GO DAG Abbreviation (F, P, C)
@@ -771,7 +771,7 @@ def doGPADFinish():
     #   3. Qualifier    
     #   4. GO ID                    GO:xxxx
     #   5. DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx
-    #   6. Evidence code            ECO:xxxx
+    #   6. Evidence Code            ECO:xxxx
     #   7. With (or)From            (optional)
     #   8. Interacting taxon ID     (optional)
     #   9. Date                     YYYYMMDD
@@ -929,7 +929,24 @@ fp.write('!gaf-version: 2.1\n')
 fp.write('!software version: $Revision$\n')
 fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
-fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
+fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n\n')
+fp.write('!	1.  DB                       MGI\n')
+fp.write('!	2.  DB Object ID             MGI:xxxx\n')
+fp.write('!	3.  DB Object Symbol\n')
+fp.write('!	4.  Qualifier\n')
+fp.write('!	5.  GO ID                    GO:xxxx\n')
+fp.write('!	6.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
+fp.write('!	7.  Evidence Code            ECO:xxxx\n')
+fp.write('!	8.  With (or)From            optional\n')
+fp.write('!	9.  Aspect (GO DAG Abbreviation (F, P, C))\n')
+fp.write('!	10. DB Object Name           optional\n')
+fp.write('!	11. DB Object Synonym(s)     optional\n')
+fp.write('!	12. DB Object Type\n')
+fp.write('!	13. Taxon                    taxon:10090\n')
+fp.write('!	14. Date                     YYYYMMDD\n')
+fp.write('!	15. Assigned By\n')
+fp.write('!	16. Annotation Extension     same as GPAD/col 11\n')
+fp.write('!	17. Gene Product Form ID     Isorform\n')
 fp.write('!\n')
 
 doProtein()
@@ -960,7 +977,19 @@ fp.write('!gpa-version: 1.1\n')
 fp.write('!\n')
 fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
-fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
+fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n\n')
+fp.write('!	1.  DB                       MGI\n')
+fp.write('!	2.  DB Object ID             MGI:xxxx\n')
+fp.write('!	3.  Qualifier\n')
+fp.write('!	4.  GO ID                    GO:xxxx\n')
+fp.write('!	5.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
+fp.write('!	6.  Evidence Code            ECO:xxxx\n')
+fp.write('!	7.  With (or)From            optional\n')
+fp.write('!	8.  Interacting taxon ID     optional\n')
+fp.write('!	9.  Date                     YYYYMMDD\n')
+fp.write('!	10. Assigned By\n')
+fp.write('!	11. Annotation Extension     optional same as GAF/col 16\n')
+fp.write('!	12. Annotation Properties    optional\n')
 fp.write('!\n')
 
 doGPADFinish()
