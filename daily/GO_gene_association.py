@@ -807,8 +807,8 @@ def doGPADFinish():
 
         if isoformsProtein.has_key(objectKey):
 	    for i in isoformsProtein[objectKey]:
-	        prefixPart, ignoreIt = i.split(':')
-                reportRow = prefixPart + TAB + i + TAB
+	        prefixPart, numericPart = i.split(':')
+                reportRow = prefixPart + TAB + numericPart + TAB
 	        reportRow = addGPADReportRow(reportRow, r)
 	else:
             reportRow = MGIPREFIX + TAB + str(r['markerID']) + TAB
@@ -980,9 +980,9 @@ fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
-fp.write('!	1.  DB                       MGI\n')
-fp.write('!	2.  DB Object ID             MGI:xxxx\n')
-fp.write('!	3.  Qualifier\n')
+fp.write('!	1.  DB                       MGI or PR\n')
+fp.write('!	2.  DB Object ID             MGI:xxxx or xxxxx\n')
+fp.write('!	3.  Qualifier                enables, involved_in, part_of\n'
 fp.write('!	4.  GO ID                    GO:xxxx\n')
 fp.write('!	5.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
 fp.write('!	6.  Evidence Code            ECO:xxxx\n')
