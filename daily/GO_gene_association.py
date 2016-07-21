@@ -982,7 +982,7 @@ fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n'
 fp.write('!\n')
 fp.write('!	1.  DB                       MGI or PR\n')
 fp.write('!	2.  DB Object ID             MGI:xxxx or xxxxx\n')
-fp.write('!	3.  Qualifier                enables, involved_in, part_of\n'
+fp.write('!	3.  Qualifier                enables, involved_in, part_of\n')
 fp.write('!	4.  GO ID                    GO:xxxx\n')
 fp.write('!	5.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
 fp.write('!	6.  Evidence Code            ECO:xxxx\n')
