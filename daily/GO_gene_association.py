@@ -767,10 +767,10 @@ def doGPADFinish():
     # Output format:
     #
     #   1. DB                       MGI
-    #   2. DB Object ID             12345
+    #   2. DB Object ID             MGI:xxxx
     #   3. Qualifier    
     #   4. GO ID                    GO:xxxx
-    #   5. DB:Reference(s)          PMID:xxxx
+    #   5. DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx
     #   6. Evidence code            ECO:xxxx
     #   7. With (or)From            (optional)
     #   8. Interacting taxon ID     (optional)
