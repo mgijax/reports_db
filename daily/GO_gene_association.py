@@ -675,7 +675,7 @@ def doGAFFinish():
         if pubMed.has_key(r['_Refs_key']):
 	    references.append('PMID:' + pubMed[r['_Refs_key']])
 	else:
-	    if r['_Refs_key'] in goRefDict.keys():
+	    if r['_Refs_key'] in goRefDict:
 	        references.append(goRefDict[r['_Refs_key']])
         reportRow = reportRow + '|'.join(references) + TAB
 
@@ -844,11 +844,11 @@ def addGPADReportRow(reportRow, r):
         if pubMed.has_key(r['_Refs_key']):
 	    references.append('PMID:' + pubMed[r['_Refs_key']])
 	else:
-	    if r['_Refs_key'] in goRefDict.keys():
+	    if r['_Refs_key'] in goRefDict:
 	        references.append(goRefDict[r['_Refs_key']])
         reportRow = reportRow + '|'.join(references) + TAB
 
-	#   6. Evidence code
+	#   6. Evidence Code
 	if key in evidenceLookup:
             reportRow = reportRow + evidenceLookup[key][0]
 	elif r['evidenceCode'] in ecoLookupByEvidence:
@@ -995,7 +995,6 @@ fp.write('!	12. Annotation Properties    optional\n')
 fp.write('!\n')
 
 doGPADFinish()
-
 reportlib.finish_nonps(fp)
 
 db.useOneConnection(0)
