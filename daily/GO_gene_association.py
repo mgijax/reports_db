@@ -174,14 +174,14 @@ pubMed = {}
 # J:72247	73199          GO_REF:0000002
 # J:73065	74017          GO_REF:0000008
 # J:73796	74750          GO_REF:0000015
-goRefDict = {'156949':'GO_REF:0000096',
-             '162524':'GO_REF:0000033',
-             '165659':'GO_REF:0000096',
-             '61933':'GO_REF:0000004',
-             '73197':'GO_REF:0000003',
-             '73199':'GO_REF:0000002',
-             '74017':'GO_REF:0000008',
-             '74750':'GO_REF:0000015',
+goRefDict = {156949:'GO_REF:0000096',
+             162524:'GO_REF:0000033',
+             165659:'GO_REF:0000096',
+             61933:'GO_REF:0000004',
+             73197:'GO_REF:0000003',
+             73199:'GO_REF:0000002',
+             74017:'GO_REF:0000008',
+             74750:'GO_REF:0000015',
              }
 
 #
@@ -854,7 +854,6 @@ def addGPADReportRow(reportRow, r):
 	elif r['evidenceCode'] in ecoLookupByEvidence:
 	    reportRow = reportRow + ecoLookupByEvidence[r['evidenceCode']]
         else:
-	    print r['evidenceCode']
             reportRow = reportRow + 'NOT FOUND'
 	reportRow = reportRow + TAB
 
