@@ -143,7 +143,7 @@ import go_annot_extensions
 import go_isoforms
 import db
 
-goloadpath = os.environ['GOLOAD'] + '/goamousenoctua'
+goloadpath = os.environ['GOLOAD'] + '/lib'
 sys.path.insert(0, goloadpath)
 import ecolib
 
