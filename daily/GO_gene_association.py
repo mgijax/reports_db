@@ -858,7 +858,9 @@ def addGPADReportRow(reportRow, r):
 	reportRow = reportRow + TAB
 
 	#   7. With (or)From
-        reportRow = reportRow + mgi_utils.prvalue(r['inferredFrom']) + TAB
+        inferredFrom = mgi_utils.prvalue(r['inferredFrom']).replace('MGI:', 'MGI:MGI:')
+        #inferredFrom = inferredFrom.replace('MGI:MGI:MGI:MGI:', 'MGI:MGI:')
+        reportRow = reportRow + mgi_utils.prvalue(inferredFrom) + TAB
 
 	#   8. Interacting taxon ID
 	if key in taxonLookup:
