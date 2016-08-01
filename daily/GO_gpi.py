@@ -330,23 +330,27 @@ for r in results:
 results = db.sql('''
 	WITH rna AS
 	(
-	select distinct sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key
+	select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key
         	from SEQ_Marker_Cache sm
         	where sm._SequenceType_key = 316346
         	and sm._Marker_Type_key = 1 
         	and sm._Organism_key = 1 
 	)
-	select rna.rnaID, a.accID as markerID, rna._LogicalDB_key
-	from rna, ACC_Accession a
+	select rna.rnaID, a.accID as markerID, rna._LogicalDB_key, s.description
+	from rna, ACC_Accession a, SEQ_Sequence s
 	where rnaID in (select rnaID from rna group by rnaID having count(*) = 1)
         and rna._Marker_key = a._Object_key
         and a._MGIType_key = 2
         and a._LogicalDB_key = 1
         and a.preferred = 1
+	and rna._Sequence_key = s._Sequence_key
 	order by rna._LogicalDB_key
    	''', 'auto')
 
 for r in results:
+
+	if r['description'].find('PREDICTED:') >= 0:
+	    continue
 
 	ldb = r['_LogicalDB_key']
 	if ldb == 9:
