@@ -4,6 +4,8 @@ STAFF: lec
 CHANGES:
 TR12349/gone-dor & more
 TR12345/GPAD/GPI
+1) daily/GO_gene_association
+2) daily/GO_gpi.py
 
 TAG: reports_db-tr12349
 TAG: reports_db-tr12349-BP
