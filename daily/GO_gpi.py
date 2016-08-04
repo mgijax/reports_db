@@ -120,6 +120,7 @@ for r in results:
 
 #
 # markers:synonyms
+# exclude feature type "gene segment" (6238171)
 #
 
 markerSynonyms = {}
@@ -138,6 +139,12 @@ results = db.sql('''
 	and m._Marker_key = s._Object_key
 	and s._MGIType_key = 2
 	and s._SynonymType_key = 1004
+        and not exists (
+            select 1 from VOC_Annot a
+                      where m._Marker_key = a._Object_key
+                      and a._AnnotType_key = 1011
+                      and a._Term_key in (6238171)
+            )
    	''', 'auto')
 for r in results:
 	key = r['accID']
@@ -190,6 +197,7 @@ for r in results:
 
 #
 # markers:terms
+# exclude feature type "gene segment" (6238171)
 #
 
 results = db.sql('''
@@ -203,6 +211,12 @@ results = db.sql('''
 	and m._Marker_Type_key = 1
 	and m._Marker_Status_key in (1,3)
 	and m._Organism_key = 1
+        and not exists (
+            select 1 from VOC_Annot a
+                      where m._Marker_key = a._Object_key
+                      and a._AnnotType_key = 1011
+                      and a._Term_key in (6238171)
+            )
    	''', 'auto')
 
 for r in results:
