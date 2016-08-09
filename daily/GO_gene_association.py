@@ -403,6 +403,9 @@ def doSetup():
     # gpadCol11 : noctua (_CreatedBy_key = 1559)
     #	exclude older terms (sequenceNum 1-9, 90,91,92, 93)
     #
+    # note that noctua-generated properties will *always* have one stanza
+    # so there is no need to expect > 1 stanza (as is needed in gaf/col16)
+    #
     results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
             from gomarker2 a,
                  VOC_Evidence_Property p,  
@@ -717,7 +720,7 @@ def doGAFFinish():
 
 	# column 11
         if syns.has_key(r['_Object_key']):
-            syn_string = '|'.join(syns[r['_Object_key']])
+            syn_string = ','.join(syns[r['_Object_key']])
             reportRow = reportRow + syn_string + TAB
         else:
             reportRow = reportRow + TAB
@@ -918,7 +921,7 @@ def addGPADReportRow(reportRow, r):
 	if key in gpadCol11Lookup:
             properties = ','.join(gpadCol11Lookup[key])
 	elif gafCol16Lookup.has_key(objectKey):
-	        properties = ''.join(gafCol16Lookup[objectKey])
+	    properties = ''.join(gafCol16Lookup[objectKey])
         reportRow = reportRow + properties + TAB
 
 	#   12. Annotation Properties
