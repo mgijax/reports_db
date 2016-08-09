@@ -10,6 +10,22 @@
 #	gene_association_pro (GAF)
 #	mgi_association.gpad
 #
+#
+# gpad col vs gaf col
+#
+# DB			1	1
+# DB_Object_ID		2	2/17
+# Qualifier		3	4
+# GO ID			4	5
+# DB:Reference(s)	5	6
+# Evidence code		6	7
+# With (or) From	7	8
+# Interacting taxon ID	8	13
+# Date			9	14
+# Assigned_by		10	15
+# Annotation Extension	11	16
+# Annotation Properties	12
+# 
 # History:
 #
 # lec	07/14/2016
@@ -379,7 +395,7 @@ def doSetup():
 
     #
     # gpadCol11 : noctua (_CreatedBy_key = 1559)
-    #	exclude older terms (sequenceNum 1-9, 90, 91,92, 93)
+    #	exclude older terms (sequenceNum 1-9, 90,91,92, 93)
     #
     results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
             from gomarker2 a,
