@@ -982,10 +982,7 @@ fp.write('!\n')
 doProtein()
 doGAFFinish()
 
-#
-# append GOA annotations, if they exist
-# see goload/goamouse
-#
+# append GOA annotations, if exists : see goload/goamouse
 try:
     goaFile = open(os.environ['GOAGAFMGI'], 'r')
     for line in goaFile.readlines():
@@ -1024,6 +1021,16 @@ fp.write('!	12. Annotation Properties    optional\n')
 fp.write('!\n')
 
 doGPADFinish()
+
+# append GOA annotations, if exists : see goload/goamouse
+try:
+    goafile = open(os.environ['GOAGPADMGI'], 'r')
+    for line in goafile.readlines():
+	fp.write(line)
+    goafile.close()
+except:
+    pass
+
 reportlib.finish_nonps(fp)
 
 db.useOneConnection(0)
