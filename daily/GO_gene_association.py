@@ -238,7 +238,6 @@ gpadCol12Lookup = {}
 #
 def doSetup():
     global dag
-    global dagQualifierLookup
     global syns
     global pubMed
     global evidenceLookup
@@ -357,7 +356,6 @@ def doSetup():
     # ecoLookupByEvidence
     # evidenceLookup : evidence
     #
-
     # use goload/ecolib to lookup eco using evidencevidenceCode
     ecoLookupByEco, ecoLookupByEvidence = ecolib.processECO()
     #print ecoLookupByEvidence
@@ -989,9 +987,9 @@ doGAFFinish()
 # see goload/goamouse
 #
 try:
-    goaFile = open(os.environ['GOAMGI'], 'r')
+    goaFile = open(os.environ['GOAGAFMGI'], 'r')
     for line in goaFile.readlines():
-        fp.write(line.rstrip()+TAB+TAB+CRT)
+        fp.write(line)
     goaFile.close()
 except:
     pass

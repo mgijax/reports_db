@@ -40,7 +40,7 @@ setenv MAFILES			"adult_mouse_anatomy.obo"
 setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
 
 # GOA file
-setenv GOAMGI			${DATALOADSOUTPUT}/go/goamouse/output/goamouse.mgi
+setenv GOAMGI			${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gaf
 setenv ECOFILE                   ${DATADOWNLOADS}/purl.obolibrary.org/obo/eco/eco.obo
 
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
