@@ -26,6 +26,12 @@
 # Annotation Extension	11	16
 # Annotation Properties	12
 # 
+# IMPORTANT THINGS TO KNOW:
+#
+#    lib_py_report/go_annot_extensions.py is used to genereate GAF and to handle FEWI displays
+#    certain Properties are EXCLUDED from the GAF/GPAD
+#    certain Evidence Codes are EXCLUDED from the GAF but not the GPAD
+#
 # History:
 #
 # lec	07/14/2016
@@ -409,6 +415,7 @@ def doSetup():
     		'external ref', 'text', 'dual-taxon ID',
     		'lego-model-id', 'contributor', 'individual', 'go_qualifier'
 		)
+	    order by t.term, p.value
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
@@ -431,6 +438,7 @@ def doSetup():
             and a._AnnotEvidence_key = p._AnnotEvidence_key
 	    and p._PropertyTerm_key = t._Term_key
 	    and t.term not in ('occurs_in', 'part_of', 'go_qualifier', 'evidence')
+	    order by t.term, p.value
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
@@ -751,6 +759,7 @@ def doGAFFinish():
 	#
 	# column 16
 	# contains property/value information
+	# see lib_py_report/go_annot_extensions.py for list of excluded properties
 	properties = ''
         if gafCol16Lookup.has_key(objectKey):
 	    properties = ''.join(gafCol16Lookup[objectKey])
@@ -907,7 +916,7 @@ def addGPADReportRow(reportRow, r):
 	#   if GO_Nocuta, then use gpadCol11Lookup else use gafCol16Lookup
 	properties = ''
 	if key in gpadCol11Lookup:
-            properties = '|'.join(gpadCol11Lookup[key])
+            properties = ','.join(gpadCol11Lookup[key])
 	elif gafCol16Lookup.has_key(objectKey):
 	        properties = ''.join(gafCol16Lookup[objectKey])
         reportRow = reportRow + properties + TAB
