@@ -14,7 +14,7 @@
 # gpad col vs gaf col
 #
 # DB			1	1
-# DB_Object_ID		2	2/17
+# DB_Object_ID		2	2/17 (isoforms)
 # Qualifier		3	4
 # GO ID			4	5
 # DB:Reference(s)	5	6
@@ -28,9 +28,12 @@
 # 
 # IMPORTANT THINGS TO KNOW:
 #
-#    lib_py_report/go_annot_extensions.py is used to genereate GAF and to handle FEWI displays
-#    certain Properties are EXCLUDED from the GAF/GPAD
-#    certain Evidence Codes are EXCLUDED from the GAF but not the GPAD
+#    gaf/col11 (annotation extension) and gpad/col16 should be equal.
+#    except :  ISO annotations are excluded from gaf/col11 (blank)
+#    see "lib_py_report/go_annot_extensions.py" for the list of
+#	excluded Properties and excluded Evidence
+#
+#    gpad/col16 : will *never* contains > 1 stanza, and will always use the "," delimiter
 #
 # History:
 #
@@ -404,7 +407,6 @@ def doSetup():
     #	exclude older terms (sequenceNum 1-9, 90,91,92, 93)
     #
     # note that noctua-generated properties will *always* have one stanza
-    # so there is no need to expect > 1 stanza (as is needed in gaf/col16)
     #
     results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
             from gomarker2 a,
