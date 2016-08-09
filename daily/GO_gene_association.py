@@ -412,7 +412,8 @@ def doSetup():
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
-        value = r['term'] + '(' + r['value'] + ')'
+	value = r['value'].replace('MGI:', 'MGI:MGI:')
+        value = r['term'] + '(' + value + ')'
         if key not in gpadCol11Lookup:
     	    gpadCol11Lookup[key] = []
         gpadCol11Lookup[key].append(value)
