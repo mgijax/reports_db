@@ -327,51 +327,53 @@ for r in results:
 # RNAs that are associated with at most 1 marker
 #
 
-results = db.sql('''
-	WITH rna AS
-	(
-	select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key
-        	from SEQ_Marker_Cache sm, ACC_Accession a
-        	where sm._SequenceType_key = 316346
-        	and sm._Marker_Type_key = 1 
-        	and sm._Organism_key = 1 
-		and sm._LogicalDB_key in (9,27,131,133)
-		and sm._Sequence_key = a._Object_key
-		and a._MGIType_key = 19
-	        and a.prefixPart not in ('XR_', 'XM_')
-	)
-	select rna.rnaID, a.accID as markerID, rna._LogicalDB_key
-	from rna, ACC_Accession a
-	where rnaID in (select rnaID from rna group by rnaID having count(*) = 1)
-        and rna._Marker_key = a._Object_key
-        and a._MGIType_key = 2
-        and a._LogicalDB_key = 1
-        and a.preferred = 1
-	order by rna._LogicalDB_key
-   	''', 'auto')
+for ldbsearch in (9, 27, 131, 133):
 
-for r in results:
+    results = db.sql('''
+	    WITH rna AS
+	    (
+	    select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key
+        	    from SEQ_Marker_Cache sm, ACC_Accession a
+        	    where sm._SequenceType_key = 316346
+        	    and sm._Marker_Type_key = 1 
+        	    and sm._Organism_key = 1 
+		    and sm._LogicalDB_key = %s
+		    and sm._Sequence_key = a._Object_key
+		    and a._MGIType_key = 19
+	            and a.prefixPart not in ('XR_', 'XM_')
+	        )
+	    select rna.rnaID, a.accID as markerID, rna._LogicalDB_key
+	    from rna, ACC_Accession a
+	    where rnaID in (select rnaID from rna group by rnaID having count(*) = 1)
+            and rna._Marker_key = a._Object_key
+            and a._MGIType_key = 2
+            and a._LogicalDB_key = 1
+            and a.preferred = 1
+	    order by rna._LogicalDB_key
+   	    ''' % (ldbsearch), 'auto')
 
-	ldb = r['_LogicalDB_key']
-	if ldb == 9:
-		ldbName = 'EMBL'
-	elif ldb == 27:
-		ldbName = 'RefSeq'
-	elif ldb == 133:
-		ldbName = 'ENSEMBL'
-	elif ldb == 131:
-		ldbName = 'VEGA'
-
-	fp.write(ldbName + TAB)
-	fp.write(r['rnaID'] + TAB)
-	fp.write(r['rnaID'] + TAB)
-	fp.write(TAB)
-	fp.write(TAB)
-	fp.write(DBTYPE_RNA + TAB)
-	fp.write(SPECIES + TAB)
-	fp.write('MGI:' + r['markerID'] + TAB)
-	fp.write(TAB)
-	fp.write(CRT)
+    for r in results:
+    
+	    ldb = r['_LogicalDB_key']
+	    if ldb == 9:
+		    ldbName = 'EMBL'
+	    elif ldb == 27:
+		    ldbName = 'RefSeq'
+	    elif ldb == 133:
+		    ldbName = 'ENSEMBL'
+	    elif ldb == 131:
+		    ldbName = 'VEGA'
+    
+	    fp.write(ldbName + TAB)
+	    fp.write(r['rnaID'] + TAB)
+	    fp.write(r['rnaID'] + TAB)
+	    fp.write(TAB)
+	    fp.write(TAB)
+	    fp.write(DBTYPE_RNA + TAB)
+	    fp.write(SPECIES + TAB)
+	    fp.write('MGI:' + r['markerID'] + TAB)
+	    fp.write(TAB)
+	    fp.write(CRT)
 
 # end RNAs
 
