@@ -24,11 +24,11 @@ echo `date`: Start daily public reports | tee -a ${LOG}
 #
 # Generate daily public reports.
 #
-#cd ${PUBDAILY}
-#foreach i (*.py)
-#    echo `date`: $i | tee -a ${LOG}
-#    $i >>& ${LOG}
-#end
+cd ${PUBDAILY}
+foreach i (*.py)
+    echo `date`: $i | tee -a ${LOG}
+    $i >>& ${LOG}
+end
 
 #
 # Copy reports to ftp site
@@ -38,7 +38,7 @@ cd ${REPORTOUTPUTDIR}
 echo `date`: Copy reports | tee -a ${LOG}
 foreach i (gene_association.mgi gene_association_pro.mgi mgi.gpa mgi.gpi)
     echo `date`: $i | tee -a ${LOG}
-    cat $i | gzip -cf > ${FTPREPORTDIR}/$i.gz
+    cat $i | gzip -cf9 > ${FTPREPORTDIR}/$i.gz
 end
 
 echo `date`: End daily public reports | tee -a ${LOG}
