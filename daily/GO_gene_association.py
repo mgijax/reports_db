@@ -998,7 +998,7 @@ reportlib.finish_nonps(fp2)
 # GPAD
 #
 
-fp = reportlib.init('mgi_association', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init('mgi', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('!gpa-version: 1.1\n') 
 fp.write('!\n')
