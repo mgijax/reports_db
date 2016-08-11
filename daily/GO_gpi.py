@@ -56,7 +56,7 @@ CRT = reportlib.CRT
 
 db.useOneConnection(1)
 
-fp = reportlib.init('mgi_association', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init('mgi', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('!gpi-version: 1.2\n')
 fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
@@ -219,12 +219,12 @@ for r in results:
 
 	fp.write(DBTYPE_MARKER + TAB)
 	fp.write(SPECIES + TAB)
+	fp.write(TAB)
 
 	if marker in markerUniProtKB:
 		fp.write("|".join(markerUniProtKB[marker]))
 	fp.write(TAB)
 
-	fp.write(TAB)
 	fp.write(CRT)
 
 #
