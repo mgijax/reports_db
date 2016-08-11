@@ -36,7 +36,7 @@ echo `date`: Start daily public reports | tee -a ${LOG}
 cd ${REPORTOUTPUTDIR}
 
 echo `date`: Copy reports | tee -a ${LOG}
-foreach i (gene_association.mgi gene_association_pro.mgi mgi.gpad mgi.gpi)
+foreach i (gene_association.mgi gene_association_pro.mgi mgi.gpa mgi.gpi)
     echo `date`: $i | tee -a ${LOG}
     cat $i | gzip -cf > ${FTPREPORTDIR}/$i.gz
 end

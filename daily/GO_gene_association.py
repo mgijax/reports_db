@@ -8,7 +8,7 @@
 #       
 #	gene_association.mgi (GAF)
 #	gene_association_pro (GAF)
-#	mgi_association.gpad
+#	mgi.gpa
 #
 #
 # gpad col vs gaf col
@@ -998,7 +998,7 @@ reportlib.finish_nonps(fp2)
 # GPAD
 #
 
-fp = reportlib.init('mgi', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init('mgi', fileExt = '.gpa', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('!gpa-version: 1.1\n') 
 fp.write('!\n')
