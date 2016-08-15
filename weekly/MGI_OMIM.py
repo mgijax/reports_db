@@ -238,7 +238,7 @@ mgiIDs = buildCache(mgiResults, '_Marker_key', 'accID')
 #
 symbolResults = db.sql('''select m._Marker_key, m.symbol
 	from MRK_Marker m
-	where m._Marker_Status_key in (1,3)''', 'auto')
+	where m._Marker_Status_key = 1''', 'auto')
 
 symbols = buildCache(symbolResults, '_Marker_key', 'symbol')
 
