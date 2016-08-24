@@ -190,26 +190,9 @@ syns = {}
 pubMed = {}
 
 # mapping of load reference keys to GO_REF IDs/per TR11772
-# JNUM          _Refs_key      Desired addition
-# J:155856	156949         Rat2mouseISO     GO_REF:0000096 ???
-# J:161428	162524         GO_REF:0000033
-# J:164563	165659         human2mouseISO	 GO_REF:0000096 ???
-# J:60000	61933          GO_REF:0000004
-# J:72245	73197          GO_REF:0000003
-# J:72247	73199          GO_REF:0000002
-# J:73065	74017          GO_REF:0000008
-# J:73796	74750          GO_REF:0000015
-goRefDict = {156949:'GO_REF:0000096',
-             162524:'GO_REF:0000033',
-             165659:'GO_REF:0000096',
-             61933:'GO_REF:0000004',
-             73197:'GO_REF:0000003',
-             73199:'GO_REF:0000002',
-             74017:'GO_REF:0000008',
-             74750:'GO_REF:0000015',
-             }
+# see _LogicalDB_key = 185 (GO_REF)
+goRefDict = {}
 
-#
 # gaf lookups
 #
 # see doGAFCol16() : list of column 16 object/evidence/printable format
@@ -245,6 +228,7 @@ def doSetup():
     global ecoLookupByEco, ecoLookupByEvidence
     global gpadCol11Lookup
     global gpadCol12Lookup
+    global goRefDict
 
     #
     # retrieve all dag abbrevations for each term
@@ -450,6 +434,13 @@ def doSetup():
     	    gpadCol12Lookup[key] = []
         gpadCol12Lookup[key].append(value)
     #print gpadCol12Lookup
+
+    results = db.sql('select _Object_key, accID from ACC_Accession where _LogicalDB_key = 185', 'auto')
+    for r in results:
+        key = r['_Object_key']
+	value = r['accID']
+        goRefDict[key] = value
+    #print goRefDict
 
 #
 # end doSetup()
@@ -1026,7 +1017,7 @@ doGPADFinish()
 try:
     goafile = open(os.environ['GOAGPADMGI'], 'r')
     for line in goafile.readlines():
-	fp.write(line)
+        fp.write(line)
     goafile.close()
 except:
     pass
