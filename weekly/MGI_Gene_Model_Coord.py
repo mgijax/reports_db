@@ -144,7 +144,7 @@ db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, t.name
         into temporary table markers 
         from MRK_Marker m, MRK_Types t, ACC_Accession a 
         where m._Organism_key = 1 
-        and m._Marker_Status_key in (1,3) 
+        and m._Marker_Status_key = 1
         and m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
         and a.prefixPart = 'MGI:' 

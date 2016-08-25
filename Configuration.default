@@ -40,7 +40,13 @@ setenv MAFILES			"adult_mouse_anatomy.obo"
 setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
 
 # GOA file
+<<<<<<< HEAD
 setenv GOAMGI			${DATALOADSOUTPUT}/go/goamouse/output/goamouse.mgi
+=======
+setenv GOAGAFMGI		${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gaf
+setenv GOAGPADMGI               ${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gpad
+setenv ECOFILE                  ${DATADOWNLOADS}/purl.obolibrary.org/obo/eco/eco.obo
+>>>>>>> tr12349
 
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
 #       MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
