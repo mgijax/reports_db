@@ -6,12 +6,11 @@
 
 cd `dirname $0` && source ./Configuration
 
-# Create a copy of the default index page that has the proper FTPURL
-# substituted in it and copy it to the FTP report directory.
-#
-rm -f index.html
-sed "s/INCLUDE_FTPURL/$FTPURL/" index.html.default > index.html
-cp index.html ${FTPREPORTDIR}
+# create server side include file for ftp url
+echo "$FTPURL" > includes/ftp_url.html
+
+# link index page from FTP report directory
+ln -s ${FTPREPORTDIR}/index.shtml ${PUBRPTS}/index.shtml
 
 #
 # directories
