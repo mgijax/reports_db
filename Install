@@ -10,7 +10,7 @@ cd `dirname $0` && source ./Configuration
 # substituted in it and copy it to the FTP report directory.
 #
 rm -f index.html
-sed "s/FTPURL_GOES_HERE/$FTPURL/" index.html.default > index.html
+sed "s/INCLUDE_FTPURL/$FTPURL/" index.html.default > index.html
 cp index.html ${FTPREPORTDIR}
 
 #
