@@ -35,7 +35,7 @@
 #	- TR11272/split protein coding genes into protein coding/rna/neither reports
 #
 # 12/14/2012	lec
-#	- TR11242/inclulde _Marker_Status_key in (1,3) only
+#	- TR11242/inclulde _Marker_Status_key = 1
 #
 # 05/22/2012	lec
 #	- TR11034/UniProt trumps protein; add uniprotkbDict
@@ -118,7 +118,7 @@ db.sql('''
     select distinct mm._Marker_key, a.accID, tdc.term
     into temporary table allgenes
     from MRK_Marker mm, ACC_Accession a, VOC_Annot_View tdc
-    where mm._Marker_Status_key in (1,3)
+    where mm._Marker_Status_key = 1
     and mm._Marker_Type_key = 1
     and mm._Organism_key = 1
     and mm._Marker_key = a._Object_key
@@ -199,7 +199,7 @@ db.sql('''
     select distinct a.accID
     into temporary table noTransProt
     from SEQ_Marker_Cache mc, MRK_Marker mm, ACC_Accession a, VOC_Annot_View tdc
-    where mm._Marker_Status_key in (1,3)
+    where mm._Marker_Status_key = 1
     and mm._Marker_Type_key = 1
     and mm._Organism_key = 1
     and mm._Marker_key = a._Object_key

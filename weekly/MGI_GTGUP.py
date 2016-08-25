@@ -97,7 +97,7 @@ results = db.sql('''select c.genomicChromosome as chromosome, c.strand, m.symbol
         where m._Organism_key = 1 
 	and c.startCoordinate is not null 
 	and c._Marker_key = m._Marker_key 
-	and m._Marker_Status_key in (1,3) 
+	and m._Marker_Status_key = 1
 	and c._Marker_Type_key not in (2,6) 
 	and c._Marker_Type_key = mt._Marker_Type_key 
 	and c._Marker_key = a._Object_key 

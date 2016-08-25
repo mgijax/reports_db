@@ -1,8 +1,34 @@
+<<<<<<< HEAD
+TAG: reports_db-6-0-6-?
+DATE: 08/25/2016
+STAFF: lec
+CHANGES:
+TR12349/gone-dor & more
+TR12345/GPAD/GPI
+1) daily/GO_gene_association
+2) daily/GO_gpi.py
+_Marker_Status_key in (1,3) changed to "= 1"
+ ncbilinkout/nucleotide_linkout.py
+ weekly/GO_gp2protein.py
+ weekly/HGNC_homologene.py
+ weekly/MGI_EntrezGene.py
+ weekly/MGI_GTGUP.py
+ weekly/MGI_Gene_Model_Coord.py
+ weekly/MGI_MarkerNames.py
+ weekly/MGI_OMIM.py
+ weekly/MGI_iphone_app.py
+ weekly/MRK_GeneTrap.py
+ weekly/MRK_List.py
+ weekly/MRK_Reference.py
+ weekly/MRK_Sequence.py
+ weekly/MRK_SwissProt_Sequence.py 
+=======
 TAG: reports_db-?
 DATE: 08/25/2016
 STAFF: kstone
 CHANGES: changed ftp url
 
+>>>>>>> 5f2cd679753703823766d81f687e8f0ef10d5753
 
 TAG: reports_db-6-0-5-2
 DATE: 08/10/2016
