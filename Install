@@ -10,7 +10,7 @@ cd `dirname $0` && source ./Configuration
 echo "$FTPURL" > includes/ftp_url.html
 
 # link index page from FTP report directory
-rm ${FTPREPORTDIR}/index.shtml
+rm -f ${FTPREPORTDIR}/index.shtml
 ln -s ${PUBRPTS}/index.shtml ${FTPREPORTDIR}/index.shtml
 
 #
