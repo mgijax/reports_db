@@ -17,7 +17,7 @@
 # iphone-genes
 #
 #	Markers of all types
-#	Markers of status official or interum (_marker_status_key in (1,3)
+#	Markers of status official (_marker_status_key = 1)
 #
 #	1:  MGI Marker ID
 #	2:  Marker key
