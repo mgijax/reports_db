@@ -11,7 +11,7 @@ echo "$FTPURL" > includes/ftp_url.html
 
 # link index page from FTP report directory
 rm -f ${FTPREPORTDIR}/index.shtml
-rm -f ${FTPREPORTDIR}/includes
+rm -rf ${FTPREPORTDIR}/includes
 cp ${PUBRPTS}/index.shtml ${FTPREPORTDIR}/index.shtml
 cp -r ${PUBRPTS}/includes ${FTPREPORTDIR}/includes
 
