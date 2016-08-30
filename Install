@@ -10,9 +10,10 @@ cd `dirname $0` && source ./Configuration
 echo "$FTPURL" > includes/ftp_url.html
 
 # link index page from FTP report directory
-rm -f ${FTPREPORTDIR}/index.shtml
+rm -rf ${FTPREPORTDIR}/index.shtml ${FTPREPORTDIR}/index.html
 rm -rf ${FTPREPORTDIR}/includes
 cp ${PUBRPTS}/index.shtml ${FTPREPORTDIR}/index.shtml
+ln -s ${FTPREPORTDIR}/index.shtml ${FTPREPORTDIR}/index.html
 cp -r ${PUBRPTS}/includes ${FTPREPORTDIR}/includes
 
 #
@@ -58,17 +59,4 @@ if ( ${SERVER_NAME} == "bhmgiapp01" ) then
         ln -s ${MAVOCSOURCE}/$f .
     end
 endif
-
-#
-# permissions
-#
-
-cd ${PUBRPTS}
-chmod 664 Configuration* HISTORY *.html
-chmod 775 *.csh */*.py Install
-chmod 775 daily weekly
-
-cd ${REPORTOUTPUTDIR}
-rm -rf index.html index.shtml
-ln -s index.shtml index.html
 
