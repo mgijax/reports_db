@@ -67,3 +67,8 @@ cd ${PUBRPTS}
 chmod 664 Configuration* HISTORY *.html
 chmod 775 *.csh */*.py Install
 chmod 775 daily weekly
+
+cd ${REPORTOUTPUTDIR}
+rm -rf index.html index.shtml
+ln -s index.shtml index.html
+
