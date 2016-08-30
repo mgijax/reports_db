@@ -307,7 +307,7 @@ def iphone_genes():
 	    into temporary table markers
 	    from MRK_Marker m, ACC_Accession a
 	    where m._organism_key = 1
-	    and m._marker_status_key in (1,3)
+	    and m._marker_status_key = 1
 	    and m._marker_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 1
