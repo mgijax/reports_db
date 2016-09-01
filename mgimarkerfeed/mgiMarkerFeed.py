@@ -206,9 +206,6 @@ def mgi_status(status):
 	if status == "official":
 		return "O"
 
-	if status == "interim":
-		return "I"
-
 	if status == "withdrawn":
 		return "W"
 
