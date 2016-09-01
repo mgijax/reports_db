@@ -25,7 +25,7 @@ _Marker_Status_key in (1,3) changed to "= 1"
 4) Install : changes for ftp url
 5) includes : new for ftp url
 
-TAG: reports_db-?
+TAG: reports_db-6-0-5-7
 DATE: 08/25/2016
 STAFF: kstone
 CHANGES: changed ftp url
