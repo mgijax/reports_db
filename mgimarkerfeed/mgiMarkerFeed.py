@@ -855,7 +855,7 @@ def alleles():
     db.sql('''
 	select m._Allele_key into temporary table alleles 
 	from ALL_Allele m, VOC_Term t 
-	where nomenSymbol is null and m._Allele_Status_key = t._Term_key 
+	where m._Allele_Status_key = t._Term_key 
 	and t.term in ('Approved', 'Autoload') 
 	''', None)
     db.sql('create index alleles_idx1 on alleles(_Allele_key)', None)
