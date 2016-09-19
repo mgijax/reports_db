@@ -1,3 +1,17 @@
+TAG: reports_db-6-0-6-3
+DATE: 09/19/2016
+STAFF: dbm
+CHANGES: Split the report copying process because the NCBI linkout reports
+         need to be copied from bhmgidb03lp (where ftp is installed) and all
+         other reports need to be copied from bhmgiapp01 where sym links to
+         files under /data/loads exist
+1) public_rpt_release.csh: Remove
+2) rpt_release.csh: New
+3) rpt_release_wrapper.csh: New
+4) copy_rpt_2ncbi.csh: Remove
+5) copy_rpt.csh: New
+6) copy_rpt_wrapper.csh: New
+
 TAG: reports_db-6-0-6-2
 TAG: reports_db-6-0-6-1
 DATE: 09/08/2016
