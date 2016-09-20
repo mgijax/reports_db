@@ -849,8 +849,6 @@ def alleles():
     # select all alleles with a status of 'approved' or 'autoload'
     # all other statuses are private/confidential alleles
     #
-    # only include non-nomen symbols (where nomenSymbol is null)
-    #
 
     db.sql('''
 	select m._Allele_key into temporary table alleles 
