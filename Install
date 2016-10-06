@@ -13,7 +13,6 @@ echo "$FTPURL" > includes/ftp_url.html
 rm -rf ${FTPREPORTDIR}/index.shtml ${FTPREPORTDIR}/index.html
 rm -rf ${FTPREPORTDIR}/includes
 cp ${PUBRPTS}/index.shtml ${FTPREPORTDIR}/index.shtml
-ln -s ${FTPREPORTDIR}/index.shtml ${FTPREPORTDIR}/index.html
 cp -r ${PUBRPTS}/includes ${FTPREPORTDIR}/includes
 
 #
@@ -60,3 +59,5 @@ if ( ${SERVER_NAME} == "bhmgiapp01" ) then
     end
 endif
 
+cd ${FTPREPORTDIR}
+ln -s index.shtml index.html
