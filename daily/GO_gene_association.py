@@ -811,6 +811,9 @@ def doGPADFinish():
         if r['_Term_key'] not in dag:
 	    continue
 
+        if dag[r['_Term_key']] not in dagQualifier:
+            continue
+
 	#
         #   1. DB
         #   2. DB Object ID
