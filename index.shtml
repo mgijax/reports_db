@@ -12,7 +12,7 @@
 <TR><TD>
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF">
 <TR><TH>Table of Contents</TR></TH>
-<TR><TD><A HREF="#ftp">FTP Server</A></TD></TR>
+<TR><TD><A HREF="#ftp">Additional Reports</A></TD></TR>
 <TR><TD><A HREF="#marker">Mouse Genetic Markers</A></TD></TR>
 <TR><TD><A HREF="#seq">Sequence Data</A></TD></TR>
 <TR><TD><A HREF="#homology">Vertebrate Homology</A></TD></TR>
@@ -42,8 +42,8 @@
 </TD></TR></TABLE>
 
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD>
-<A NAME="ftp"><B>FTP Server</B></A><BR><BR>
-<P>All reports described on this page are within subdirectories of <B>/pub</B> on MGI's <A HREF="<!--#include file="includes/ftp_url.html" -->">FTP Server</A>.<BR><BR>
+<A NAME="ftp"><B>Additional Reports</B></A><BR><BR>
+<P>These files, along with some additional reports, are also available from this <A HREF="<!--#include file="includes/ftp_url.html" -->">Index</A>.<BR><BR>
 </TD></TR></TABLE>
 
 <!-- -->
