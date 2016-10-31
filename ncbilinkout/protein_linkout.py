@@ -36,7 +36,7 @@ fpLinkOut = reportlib.init('protein-mgd', fileExt = '.xml', outputdir = os.envir
 
 fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "LinkOut.dtd"\n[' + CRT)
 fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
-fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + '">' + CRT)
+fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE_MARKER'] + '">' + CRT)
 fpLinkOut.write(']>' + CRT)
 fpLinkOut.write('''<LinkSet>
    <Link>

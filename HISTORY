@@ -1,3 +1,13 @@
+TAG: reports_db-6-0-6-7
+DATE: 10/31/2016
+STAFF: lec
+CHANGES:
+TR12434/Change NCBI LinkOut PubMed XML
+#       modified:   Configuration.default
+#       modified:   ncbilinkout/nucleotide_linkout.py
+#       modified:   ncbilinkout/protein_linkout.py
+#       modified:   ncbilinkout/pubmed_linkout.py
+
 TAG: reports_db-6-0-6-6
 DATE: 10/10/2016
 STAFF: lec
