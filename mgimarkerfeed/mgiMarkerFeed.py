@@ -4,6 +4,7 @@
 #
 # Report:
 #       Create several tab-delimited (bcp) files for BioDataMart feed
+#	TR12427/Disase Ontology (DO)
 #	TR 2794
 #	TR 3137 - add MRK_Offset
 #	TR 3345 - add Strain info; incorporate marker offset into marker.bcp
@@ -205,9 +206,6 @@ def mgi_status(status):
 
 	if status == "official":
 		return "O"
-
-	if status == "interim":
-		return "I"
 
 	if status == "withdrawn":
 		return "W"
@@ -507,7 +505,10 @@ def vocabs():
 	notes[key].append(value)
 
     #
-    # MP (5) and OMIM (44) terms
+    # vocabulary terms
+    # MP (5) 
+    # OMIM (44)
+    # Disease Ontology (125)
     #
 
     results = db.sql('''
@@ -515,7 +516,7 @@ def vocabs():
                 to_char(t.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
                 to_char(t.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
           from VOC_Vocab v, VOC_Term t, ACC_Accession a 
-	  where t._Vocab_key in (5, 44) 
+	  where t._Vocab_key in (5, 44, 125) 
 	  and t._Vocab_key = v._Vocab_key 
 	  and t._Term_key = a._Object_key 
 	  and a._MGIType_key = 13 
@@ -852,13 +853,11 @@ def alleles():
     # select all alleles with a status of 'approved' or 'autoload'
     # all other statuses are private/confidential alleles
     #
-    # only include non-nomen symbols (where nomenSymbol is null)
-    #
 
     db.sql('''
 	select m._Allele_key into temporary table alleles 
 	from ALL_Allele m, VOC_Term t 
-	where nomenSymbol is null and m._Allele_Status_key = t._Term_key 
+	where m._Allele_Status_key = t._Term_key 
 	and t.term in ('Approved', 'Autoload') 
 	''', None)
     db.sql('create index alleles_idx1 on alleles(_Allele_key)', None)
@@ -1227,6 +1226,7 @@ def genotypes():
     #
     # MP/Genotype annotations (1002)
     # OMIM/Genotype annotations (1005)
+    # DO/Genotype annotations (1020)
     #
 
     db.sql('''
@@ -1235,7 +1235,7 @@ def genotypes():
 	   from strains s, GXD_Genotype g, VOC_Annot a 
 	   where s._Strain_key = g._Strain_key 
 	   and g._Genotype_key = a._Object_key 
-	   and a._AnnotType_key in (1002, 1005) 
+	   and a._AnnotType_key in (1002, 1005, 1020) 
 	   union 
 	   select distinct g._Genotype_key 
 	   from strains s, PRB_Strain_Genotype g 
@@ -1293,7 +1293,7 @@ def genotypes():
                 to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
 	from genotypes g
 	INNER JOIN VOC_Annot a on (g._Genotype_key = a._Object_key
-                                   and a._AnnotType_key in (1002, 1005))
+                                   and a._AnnotType_key in (1002, 1005, 1020))
 	INNER JOIN VOC_Term q on (a._Qualifier_key = q._Term_key)
 	LEFT OUTER JOIN MRK_OMIM_Cache c on (g._Genotype_key = c._Genotype_key
                                              and a._Term_key = c._Term_key)
@@ -1425,7 +1425,7 @@ def references():
 	   into temporary table genoreferences 
 	   from genotypes g, VOC_Annot a, VOC_Evidence e 
 	   where g._Genotype_key = a._Object_key 
-	   and a._AnnotType_key in (1002, 1005) 
+	   and a._AnnotType_key in (1002, 1005, 1020) 
 	   and a._Annot_key = e._Annot_key
 	   ''', None)
 
