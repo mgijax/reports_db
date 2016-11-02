@@ -50,7 +50,7 @@ db.sql('select a.accID, a._LogicalDB_key into temporary table deletedIDs from de
 db.sql('create index deletedIDs_idx1 on deletedIDs(accID)', None)
 db.sql('create index deletedIDs_idx2 on deletedIDs(_LogicalDB_key)', None)
 
-# all official/interim mouse markers that have at least one Sequence ID
+# all official mouse markers that have at least one Sequence ID
 
 db.sql('select m._Marker_key, m.symbol ' + \
 	'into temporary table markers ' + \
@@ -113,7 +113,7 @@ for r in results:
         fpLinkOut = reportlib.init(newfile, fileExt = '.xml', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
         fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "LinkOut.dtd"\n[' + CRT)
         fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
-        fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE'] + '">' + CRT)
+        fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE_MARKER'] + '">' + CRT)
         fpLinkOut.write(']>' + CRT + '<LinkSet>' + CRT)
 
     fpLinkOut.write('<Link>' + CRT)

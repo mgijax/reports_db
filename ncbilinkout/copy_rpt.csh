@@ -25,14 +25,14 @@
 
 cd `dirname $0` && source ../Configuration
 
+setenv SCRIPT_NAME `basename $0`
+
 umask 002
 
-#
-# Initialize the log file.
-#
-setenv LOG ${REPORTLOGSDIR}/`basename $0`.log
-rm -rf ${LOG}
+setenv LOG ${REPORTLOGSDIR}/${SCRIPT_NAME}.log
+rm -f ${LOG}
 touch ${LOG}
+
 #
 # If this is production, FTP the files to the NCBI LinkOut host.
 #
@@ -53,4 +53,6 @@ END
 
 endif
 
-echo `date`: reports copied to NCBI LinkOut host | tee -a ${LOG}
+echo "${SCRIPT_NAME} completed successfully" | tee -a ${LOG}
+date | tee -a ${LOG}
+exit 0

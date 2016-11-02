@@ -133,7 +133,7 @@ db.sql('''
 db.sql('create index deletedIDS_idx1 on deletedIDs(accID)', None)
 db.sql('create index deletedIDS_idx2 on deletedIDs(_LogicalDB_key)', None)
 
-# all official/interim mouse markers that have at least one Sequence ID
+# all official mouse markers that have at least one Sequence ID
 #
 #	9	GenBank
 #	27	RefSeq transcript (not "xp_" or "np_")

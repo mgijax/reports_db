@@ -40,13 +40,9 @@ setenv MAFILES			"adult_mouse_anatomy.obo"
 setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
 
 # GOA file
-<<<<<<< HEAD
-setenv GOAMGI			${DATALOADSOUTPUT}/go/goamouse/output/goamouse.mgi
-=======
 setenv GOAGAFMGI		${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gaf
 setenv GOAGPADMGI               ${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gpad
 setenv ECOFILE                  ${DATADOWNLOADS}/purl.obolibrary.org/obo/eco/eco.obo
->>>>>>> tr12349
 
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
 #       MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
@@ -57,7 +53,8 @@ setenv GOANNOT_ERROR		/mgi/all/wts_projects/11100/11112/annotation_relationships
 
 # NCBI LinkOut stuff
 setenv NCBILINKOUT_ICON		"http://www.informatics.jax.org/mgihome/homepages/images/MGILinkout.jpg"
-setenv NCBILINKOUT_BASE		"http://www.informatics.jax.org/marker/"
+setenv NCBILINKOUT_BASE_MARKER  "http://www.informatics.jax.org/marker/"
+setenv NCBILINKOUT_BASE_REF     "http://www.informatics.jax.org/reference/"
 setenv NCBILINKOUT_HOST		ftp-private.ncbi.nlm.nih.gov
 setenv NCBILINKOUT_USER		mgd
 setenv NCBILINKOUT_PASSWORD	keUPdTuD

@@ -31,6 +31,6 @@ echo `date`: Compress tar file | tee -a ${LOG}
 gzip -f ${TARFILE} >>& ${LOG}
 
 echo `date`: Copy file to FTP site | tee -a ${LOG}
-cp ${TARFILE}.gz ${MGIFEEDFTPDIR}
+cp ${TARFILE}.gz ${FTPREPORTDIR}
 
 echo `date`: End MGI marker feed reports | tee -a ${LOG}

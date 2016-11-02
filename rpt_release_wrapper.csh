@@ -1,16 +1,16 @@
 #!/bin/csh -f
 #
-#  public_rpt_release.csh
+#  rpt_release_wrapper.csh
 ###########################################################################
 #
 #  Purpose:
 #
-#      This script is a wrapper that controls the copying of the public
+#      This script is a wrapper around the process that copies the public
 #      reports to the public FTP site.
 #
 #  Usage:
 #
-#      public_rpt_release.csh
+#      rpt_release_wrapper.csh
 #
 #  Env Vars:
 #
@@ -26,8 +26,6 @@
 #
 #      - Log file for the script (${LOG})
 #
-#      - Process control flags
-#
 #  Exit Codes:
 #
 #      0:  Successful completion
@@ -42,10 +40,7 @@
 #      1) Source the configuration file to establish the environment.
 #      2) Wait for the flag to signal that the public webshare has been
 #         swapped. This indicates that the public release is proceeding.
-#      3) Copy the non-mouse gene association file to the public FTP site.
-#      4) Copy the public reports to the public FTP site.
-#      5) Copy the inparanoid files to the public FTP site.
-#      6) Copy the linkout reports files to the NCBI FTP site.
+#      3) Call the script that copies the reports.
 #
 #  Notes:  None
 #
@@ -58,9 +53,6 @@ setenv SCRIPT_NAME `basename $0`
 setenv LOG ${REPORTLOGSDIR}/${SCRIPT_NAME}.log
 rm -f ${LOG}
 touch ${LOG}
-
-echo "$0" | tee -a ${LOG}
-env | sort | tee -a ${LOG}
 
 #
 # Wait for the "Webshare Swapped" flag to be set. Stop waiting if the number
@@ -98,36 +90,10 @@ else if (${ABORT} == 1) then
 endif
 
 #
-# Copy the reports to the public FTP site.
+# Call the script to copy the reports.
 #
-cd ${REPORTOUTPUTDIR}
-
-echo `date`: Copy non-mouse gene association file to ${FTPCUSTOM} | tee -a ${LOG}
-echo `date`: gene_association.mgi_nonmouse | tee -a ${LOG}
-cp gene_association.mgi_nonmouse ${FTPCUSTOM}
-rm -f gene_association.mgi_nonmouse
-
-echo `date`: Copy reports to ${FTPREPORTDIR} | tee -a ${LOG}
-foreach i (*)
-    if ( ! -d $i ) then
-        echo `date`: $i | tee -a ${LOG}
-        cp $i ${FTPREPORTDIR}
-    endif
-end
-rm -rf ${FTPREPORTDIR}/iphone*[0-9]*
-
-echo `date`: Copy CvDC files to ${FTPREPORTDIR}/cvdc | tee -a ${LOG}
-rm -f ${FTPREPORTDIR}/cvdc/*html
-cd ${CVDCDIR}
-foreach i (*)
-    echo `date`: $i | tee -a ${LOG}
-    cp $i ${FTPREPORTDIR}/cvdc
-end
-
-#
-## Copy the reports to NCBI FTP site.
-#
-${PUBRPTS}/ncbilinkout/copy_rpt_2ncbi.csh
+echo 'Call the script to copy the reports' | tee -a ${LOG}
+${PUBRPTS}/rpt_release.csh
 
 echo "${SCRIPT_NAME} completed successfully" | tee -a ${LOG}
 date | tee -a ${LOG}

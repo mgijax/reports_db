@@ -59,7 +59,7 @@ db.setAutoTranslateBE(False)
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-# all official/interim mouse markers
+# all official mouse markers
 
 db.sql('''select m._Marker_key, m.symbol, m.name, a.accID, a.numericPart, t.name as markerType
         into temporary table markers 

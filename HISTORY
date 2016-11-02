@@ -1,13 +1,61 @@
-<<<<<<< HEAD
-TAG: reports_db-6-0-6-?
-DATE: 08/25/2016
+TAG: reports_db-6-0-6-8
+DATE: 10/31/2016
+STAFF: lec
+CHANGES:
+TR12434/Change NCBI LinkOut PubMed XML
+#       modified:   Configuration.default
+#       modified:   ncbilinkout/nucleotide_linkout.py
+#       modified:   ncbilinkout/protein_linkout.py
+#       modified:   ncbilinkout/pubmed_linkout.py
+
+TAG: reports_db-6-0-6-7
+DATE: ?
+STAFF: petefrost
+CHANGES:
+??
+
+TAG: reports_db-6-0-6-6
+DATE: 10/10/2016
+STAFF: lec
+CHANGES:
+GO_gene_association.py
+
+TAG: reports_db-6-0-6-5
+DATE: 10/06/2016
+STAFF: lec
+CHANGES:
+Install/synmlink/index.shtml
+
+TAG: reports_db-6-0-6-4
+DATE: 10/03/2016
+STAFF: lec
+CHANGES:
+mgimarkerfeed/mgimarkerfeed_reports.csh/copy gzip file to FTPREPORTDIR
+
+TAG: reports_db-6-0-6-3
+DATE: 09/19/2016
+STAFF: dbm
+CHANGES: Split the report copying process because the NCBI linkout reports
+         need to be copied from bhmgidb03lp (where ftp is installed) and all
+         other reports need to be copied from bhmgiapp01 where sym links to
+         files under /data/loads exist
+1) public_rpt_release.csh: Remove
+2) rpt_release.csh: New
+3) rpt_release_wrapper.csh: New
+4) copy_rpt_2ncbi.csh: Remove
+5) copy_rpt.csh: New
+6) copy_rpt_wrapper.csh: New
+
+TAG: reports_db-6-0-6-2
+TAG: reports_db-6-0-6-1
+DATE: 09/08/2016
 STAFF: lec
 CHANGES:
 TR12349/gone-dor & more
 TR12345/GPAD/GPI
 1) daily/GO_gene_association
 2) daily/GO_gpi.py
-_Marker_Status_key in (1,3) changed to "= 1"
+_Marker_Status_key in (1,3) changed to = 1
  ncbilinkout/nucleotide_linkout.py
  weekly/GO_gp2protein.py
  weekly/HGNC_homologene.py
@@ -22,13 +70,15 @@ _Marker_Status_key in (1,3) changed to "= 1"
  weekly/MRK_Reference.py
  weekly/MRK_Sequence.py
  weekly/MRK_SwissProt_Sequence.py 
-=======
-TAG: reports_db-?
+3) added to index.shtml TR12339 - new report weekly/MGI_Nonstandard_Strain.py
+4) Install : changes for ftp url
+5) includes : new for ftp url
+6) mgiMarkerfeed/mgiMarkerFeed.py
+
+TAG: reports_db-6-0-5-7
 DATE: 08/25/2016
 STAFF: kstone
 CHANGES: changed ftp url
-
->>>>>>> 5f2cd679753703823766d81f687e8f0ef10d5753
 
 TAG: reports_db-6-0-5-2
 DATE: 08/10/2016
