@@ -7,7 +7,7 @@ mgimarkerfeed/mgiMarkerFeed.py
 MGI_GeneOMIM.py : generates both OMIM & DO file
 MGI_GenePhenoDO.py/MGI_Geno_DiseaseDO
 MGI_GenePhenoDO.py/MGI_Geno_NotDiseaseDO
-MGI_DO.py
+mgi_DO.py
 
 TAG: reports_db-6-0-6-8
 DATE: 10/31/2016

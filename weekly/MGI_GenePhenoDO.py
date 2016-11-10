@@ -25,11 +25,11 @@
 #	field 7: MGI Marker Accession ID (comma-delimited)
 #	field 8: MGI Genotype Accession ID (comma-delimited)
 #
-#	MGI_Gene_Disease
+#	MGI_Gene_DiseaseDO
 #	field 8: DO ID(s) (comma-delimited)
 #	where DO annotations do not include NOT
 #
-#	MGI_Gene_NotDisease
+#	MGI_Gene_NotDiseaseDO
 #	field 9: DO ID(s) (comma-delimited)
 #	where DO annotations includes NOT
 #
@@ -136,7 +136,7 @@ for r in results:
 results = db.sql('''select distinct m._Object_key, nc.note 
 	from mp m, MGI_Note n, MGI_NoteChunk nc 
 	where m._Object_key = n._Object_key 
-	and n._NoteType_key = 1023 
+	and n._NoteType_key = 1016 
 	and n._Note_key = nc._Note_key
 	''', 'auto')
 mpDisplay = {}
