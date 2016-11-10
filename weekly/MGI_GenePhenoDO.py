@@ -2,11 +2,11 @@
 
 '''
 #
-# MGI_GenePheno.py
+# MGI_GenePhenoDO.py
 #
 # Report:
 #
-#	See MGI_PhenoGenoMP.py
+#	See MGI_GenePheno.py, MGI_PhenoGenoMP.py
 #
 #       Phenotype/Genotype MP Annotations
 #
@@ -14,7 +14,7 @@
 #	represents a Genotype annotation to a MP term
 #	and all of the references (J:) used to annotate that term.
 #
-#	MGI_GenePheno
+#	MGI_GenePhenoDO
 #
 #	field 1: Allelic Composition
 #	field 2: pipe-delimited list of Allele symbols
@@ -32,9 +32,6 @@
 #	MGI_Gene_NotDiseaseDO
 #	field 9: DO ID(s) (comma-delimited)
 #	where DO annotations includes NOT
-#
-# Usage:
-#       MGI_GenePheno.py
 #
 # History:
 #
