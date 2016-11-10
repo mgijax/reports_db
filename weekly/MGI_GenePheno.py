@@ -29,14 +29,25 @@
 #	field 8: OMIM ID(s) (comma-delimited)
 #	where OMIM annotations do not include NOT
 #
+#	MGI_Gene_DiseaseDO
+#	field 8: DO  ID(s) (comma-delimited)
+#	where DO annotations do not include NOT
+#
 #	MGI_Gene_NotDisease
 #	field 9: OMIM ID(s) (comma-delimited)
 #	where OMIM annotations includes NOT
+#
+#	MGI_Gene_NotDiseaseDO
+#	field 9: DO ID(s) (comma-delimited)
+#	where DO annotations includes NOT
 #
 # Usage:
 #       MGI_GenePheno.py
 #
 # History:
+#
+# lec   11/03/016
+#       - TR12427/Disease Ontology (DO)
 #
 # lec	04/30/2014
 #	- TR11660/add genotype ID
@@ -86,6 +97,8 @@ PAGE = reportlib.PAGE
 fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp2 = reportlib.init('MGI_Geno_Disease', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp3 = reportlib.init('MGI_Geno_NotDisease', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp4 = reportlib.init('MGI_Geno_DiseaseDO', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp5 = reportlib.init('MGI_Geno_NotDiseaseDO', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
 # select all MP annotations
@@ -282,6 +295,46 @@ for r in results:
     mpOMIM2[key].append(value)
 
 #
+# DO annotations that do not have "NOT" qualifier
+#
+results = db.sql('''select distinct m._Object_key, a.accID
+           from mp m, VOC_Annot va, ACC_Accession a
+           where m._Object_key = va._Object_key 
+           and va._AnnotType_key in (1020) 
+	   and va._Qualifier_key = 1614158
+	   and va._Term_key = a._Object_key
+	   and a._LogicalDB_key = 191
+	   and a.preferred = 1
+	   ''', 'auto')
+mpDO1 = {}
+for r in results:
+    key = r['_Object_key']
+    value = r['accID']
+    if not mpDO1.has_key(key):
+	mpDO1[key] = []
+    mpDO1[key].append(value)
+
+#
+# DO annotations that have "NOT" qualifier
+#
+results = db.sql('''select distinct m._Object_key, a.accID
+           from mp m, VOC_Annot va, ACC_Accession a
+           where m._Object_key = va._Object_key 
+           and va._AnnotType_key in (1020) 
+	   and va._Qualifier_key = 1614157
+	   and va._Term_key = a._Object_key
+	   and a._LogicalDB_key = 191
+	   and a.preferred = 1
+	   ''', 'auto')
+mpDO2 = {}
+for r in results:
+    key = r['_Object_key']
+    value = r['accID']
+    if not mpDO2.has_key(key):
+	mpDO2[key] = []
+    mpDO2[key].append(value)
+
+#
 # process results
 #
 results = db.sql('select distinct _Object_key, _Term_key ' + \
@@ -353,7 +406,45 @@ for r in results:
         fp3.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
         fp3.write(string.join(mpOMIM2[genotype], ',') + CRT)
 
+    #
+    # DO report 1
+    #
+
+    if mpDO1.has_key(genotype):
+
+        fp4.write(mpDisplay[genotype] + TAB)
+        fp4.write(string.join(mpAlleles[genotype], '|') + TAB)
+        if mpAlleleIDs.has_key(genotype):
+            fp4.write(string.join(mpAlleleIDs[genotype], '|'))
+        fp4.write(TAB)
+        fp4.write(mpStrain[genotype] + TAB)
+        fp4.write(mpID[term] + TAB)
+        if mpRef.has_key(refKey):
+            fp4.write(string.join(mpRef[refKey], ','))
+        fp4.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
+        fp4.write(string.join(mpDO1[genotype], ',') + CRT)
+
+    #
+    # DO report 2
+    #
+
+    if mpDO2.has_key(genotype):
+
+        fp5.write(mpDisplay[genotype] + TAB)
+        fp5.write(string.join(mpAlleles[genotype], '|') + TAB)
+        if mpAlleleIDs.has_key(genotype):
+            fp5.write(string.join(mpAlleleIDs[genotype], '|'))
+        fp5.write(TAB)
+        fp5.write(mpStrain[genotype] + TAB)
+        fp5.write(mpID[term] + TAB)
+        if mpRef.has_key(refKey):
+            fp5.write(string.join(mpRef[refKey], ','))
+        fp5.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
+        fp5.write(string.join(mpDO2[genotype], ',') + CRT)
+
 reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file
 reportlib.finish_nonps(fp3)	# non-postscript file
+reportlib.finish_nonps(fp4)	# non-postscript file
+reportlib.finish_nonps(fp5)	# non-postscript file
 
