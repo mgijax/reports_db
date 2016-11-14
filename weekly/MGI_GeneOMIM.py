@@ -87,31 +87,32 @@ for r in results:
     fp.write(r['omimID'] + CRT)
 
 #
+# only if someone asks us for it
 # Genotype/Markers that have DO annotations
 #
 
-results = db.sql('''select distinct a.accID doID, ma.accID, ag._Marker_key
-        from GXD_AlleleGenotype ag, VOC_Annot va, ACC_Accession a, ACC_Accession ma
-        where ag._Genotype_key = va._Object_key
-        and va._AnnotType_key = 1020
-        and va._Term_key = a._Object_key
-        and a._LogicalDB_key = 191
-        and a.preferred = 1
-        and ag._Marker_key = ma._Object_key 
-        and ma._MGIType_key = 2
-        and ma._LogicalDB_key = 1
-        and ma.prefixPart = 'MGI:'
-        and ma.preferred = 1
-	order by ma.accID
-	''', 'auto')
-
-fp2 = reportlib.init('MGI_GeneDO', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-for r in results:
-    if r['_Marker_key'] in excludedMarkerList:
-	continue
-    fp2.write(r['accID'] + TAB)
-    fp2.write(r['doID'] + CRT)
+#results = db.sql('''select distinct a.accID doID, ma.accID, ag._Marker_key
+#        from GXD_AlleleGenotype ag, VOC_Annot va, ACC_Accession a, ACC_Accession ma
+#        where ag._Genotype_key = va._Object_key
+#        and va._AnnotType_key = 1020
+#        and va._Term_key = a._Object_key
+#        and a._LogicalDB_key = 191
+#        and a.preferred = 1
+#        and ag._Marker_key = ma._Object_key 
+#        and ma._MGIType_key = 2
+#        and ma._LogicalDB_key = 1
+#        and ma.prefixPart = 'MGI:'
+#        and ma.preferred = 1
+#	order by ma.accID
+#	''', 'auto')
+#
+#fp2 = reportlib.init('MGI_GeneDO', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+#for r in results:
+#    if r['_Marker_key'] in excludedMarkerList:
+#	continue
+#    fp2.write(r['accID'] + TAB)
+#    fp2.write(r['doID'] + CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
-reportlib.finish_nonps(fp2)	# non-postscript file
+#reportlib.finish_nonps(fp2)	# non-postscript file
 
