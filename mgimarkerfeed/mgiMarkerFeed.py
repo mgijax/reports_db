@@ -1235,7 +1235,7 @@ def genotypes():
 	   from strains s, GXD_Genotype g, VOC_Annot a 
 	   where s._Strain_key = g._Strain_key 
 	   and g._Genotype_key = a._Object_key 
-	   and a._AnnotType_key in (1002, 1005, 1020) 
+	   and a._AnnotType_key in (1002,1005,1020) 
 	   union 
 	   select distinct g._Genotype_key 
 	   from strains s, PRB_Strain_Genotype g 
@@ -1293,7 +1293,7 @@ def genotypes():
                 to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
 	from genotypes g
 	INNER JOIN VOC_Annot a on (g._Genotype_key = a._Object_key
-                                   and a._AnnotType_key in (1002, 1005, 1020))
+                                   and a._AnnotType_key in (1002,1005,1020))
 	INNER JOIN VOC_Term q on (a._Qualifier_key = q._Term_key)
 	LEFT OUTER JOIN MRK_OMIM_Cache c on (g._Genotype_key = c._Genotype_key
                                              and a._Term_key = c._Term_key)
@@ -1425,7 +1425,7 @@ def references():
 	   into temporary table genoreferences 
 	   from genotypes g, VOC_Annot a, VOC_Evidence e 
 	   where g._Genotype_key = a._Object_key 
-	   and a._AnnotType_key in (1002, 1005, 1020) 
+	   and a._AnnotType_key in (1002,1005,1020) 
 	   and a._Annot_key = e._Annot_key
 	   ''', None)
 
