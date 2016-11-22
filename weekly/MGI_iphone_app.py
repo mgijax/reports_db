@@ -207,18 +207,6 @@ NOT_QUALIFIER = 1614157
 NORMAL_QUALIFIER = 2181424
 
 #
-# URL prefxies
-#
-# markers & references:  use reportlib.create_accession_anchor()
-#
-allele_urlprefix = 'http://www.informatics.jax.org/allele/'
-go_urlprefix = 'http://www.informatics.jax.org/searches/GO.cgi?id='
-mp_urlprefix = 'http://www.informatics.jax.org/searches/Phat.cgi?id='
-geno_urlprefix = 'http://www.informatics.jax.org/javawi2/servlet/WIFetch?page=mpAnnotSummary&id='
-omim_urlprefix = 'http://www.omim.org/entry/'
-omimdisease_urlprefix = 'http://www.informatics.jax.org/disease/'
-
-#
 # report directory, archive, etc.
 #
 reportDir = os.environ['REPORTOUTPUTDIR']
