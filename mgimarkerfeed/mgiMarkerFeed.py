@@ -1306,7 +1306,7 @@ def genotypes():
 	INNER JOIN VOC_Term q on (a._Qualifier_key = q._Term_key)
 	LEFT OUTER JOIN MRK_DO_Cache c on (g._Genotype_key = c._Genotype_key and a._Term_key = c._Term_key)
 	)
-	order by g._Genotype_key
+	order by _Genotype_key
 	''', 'auto')
 
     for r in results:
