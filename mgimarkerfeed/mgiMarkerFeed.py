@@ -1287,16 +1287,25 @@ def genotypes():
     fp = open(OUTPUTDIR + 'genotype_mpt.bcp', 'w')
 
     results = db.sql('''
+	(
 	select distinct g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, 
 	q.term as qualifier, c.omimCategory3,
                 to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
                 to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
 	from genotypes g
-	INNER JOIN VOC_Annot a on (g._Genotype_key = a._Object_key
-                                   and a._AnnotType_key in (1002,1005,1020))
+	INNER JOIN VOC_Annot a on (g._Genotype_key = a._Object_key and a._AnnotType_key in (1002,1005))
 	INNER JOIN VOC_Term q on (a._Qualifier_key = q._Term_key)
-	LEFT OUTER JOIN MRK_OMIM_Cache c on (g._Genotype_key = c._Genotype_key
-                                             and a._Term_key = c._Term_key)
+	LEFT OUTER JOIN MRK_OMIM_Cache c on (g._Genotype_key = c._Genotype_key and a._Term_key = c._Term_key)
+	union all
+	select distinct g._Genotype_key, a._AnnotType_key, a._Annot_key, a._Term_key, 
+	q.term as qualifier, c.omimCategory3,
+                to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+                to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+	from genotypes g
+	INNER JOIN VOC_Annot a on (g._Genotype_key = a._Object_key and a._AnnotType_key in (1002,1020))
+	INNER JOIN VOC_Term q on (a._Qualifier_key = q._Term_key)
+	LEFT OUTER JOIN MRK_DO_Cache c on (g._Genotype_key = c._Genotype_key and a._Term_key = c._Term_key)
+	)
 	order by g._Genotype_key
 	''', 'auto')
 
