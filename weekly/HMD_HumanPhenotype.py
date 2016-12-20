@@ -15,6 +15,8 @@
 #     Mouse Gene Symbol 
 #     MGI Accession ID 
 #     MP IDs associated with any allele of the mouse gene (space- or comma-separated) 
+#     Homologene ID
+#     HGNC yes/no
 #
 #     Sorted by:
 #     Human Gene Symbol. 
@@ -23,6 +25,9 @@
 #       HMD_HumanPhenotype.py
 #
 # History:
+#
+# sc	11/14/2016
+#	- TR12404 Use Hybrid Homology, report  Homologene cluster ID and HGNC y/n
 #
 # sc	04/19/2013
 #	- N2MO; update to use MRK_Cluster* tables and deal w/
@@ -76,15 +81,41 @@ def createDict(results, keyField, valueField):
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
+# create list of HGNC mouse keys
+hgncMouseList = []
+results = db.sql('''select mcm._Marker_Key
+    from MRK_Cluster mc, MRK_ClusterMember mcm, MRK_Marker m
+    where mc._ClusterSource_key = 13437099
+    and mc._Cluster_key = mcm._Cluster_key
+    and mcm._Marker_key = m._Marker_key
+    and m._Organism_key = 1''', 'auto')
+for r in results:
+    if r['_Marker_key'] in hgncMouseList:
+	print 'mouse in multi HGNC clusters: %s' % r['_Marker_key']
+    hgncMouseList.append(r['_Marker_key'])
+# create dictionary of HG mouse keys -> HG ID
+hgMouseDict = {}
+results = db.sql('''select mcm._Marker_Key, mc.clusterID
+    from MRK_Cluster mc, MRK_ClusterMember mcm, MRK_Marker m
+    where mc._ClusterSource_key = 9272151
+    and mc._Cluster_key = mcm._Cluster_key
+    and mcm._Marker_key = m._Marker_key
+    and m._Organism_key = 1''', 'auto')
+for r in results:
+    key = r['_Marker_key']
+    id = r['clusterId']
+    if key in hgMouseDict:
+	print 'mouse in multi HG clusters: %s %s %s' % (key, id, hgMouseDict[key])
+    hgMouseDict[key] = id
 #
 # Get mouse to human orthologous marker pair's symbols and keys
 #
-
+# Hybrid = 13764519 HomoloGene = 9272151
 db.sql('''select c.clusterID, cm.*
     into temporary table mouse
     from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
     where c._ClusterType_key = 9272150
-    and c._ClusterSource_key = 9272151
+    and c._ClusterSource_key = 13764519   
     and c._Cluster_key = cm._Cluster_key
     and cm._Marker_key = m._Marker_key
     and m._Organism_key = 1''', None)
@@ -95,7 +126,7 @@ db.sql('''select cm.*
     into temporary table human
     from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
     where c._ClusterType_key = 9272150
-    and c._ClusterSource_key = 9272151
+    and c._ClusterSource_key = 13764519   
     and c._Cluster_key = cm._Cluster_key
     and cm._Marker_key = m._Marker_key
     and m._Organism_key = 2''', None)
@@ -105,7 +136,7 @@ db.sql('create index human_idx1 on human(_Cluster_key)', None)
 db.sql('''
 	select distinct hm._Marker_key as mouseKey, 
 			m1.symbol as mouseSym, 
-			hm.clusterID,
+			/*hm.clusterID,*/
 	                hh._Marker_key as humanKey, 
 			m2.symbol as humanSym 
 	into temporary table homology 
@@ -170,23 +201,35 @@ mpheno = createDict(results, 'mouseKey', 'accID')
 results = db.sql('select * from homology order by humanSym, mouseSym', 'auto')
 
 for r in results:
+    hasHGNC = 'no'
+    clusterID = None
+
+    mouseKey = r['mouseKey']
+    if mouseKey in  hgncMouseList:
+        hasHGNC = 'yes'
+    if mouseKey in hgMouseDict:
+        clusterID = hgMouseDict[mouseKey]
+
     fp.write(r['humanSym'] + TAB)
 
     if hlocus.has_key(r['humanKey']):
         fp.write(hlocus[r['humanKey']] + TAB)
     else:
         fp.write(TAB)
-    fp.write(r['clusterID'] + TAB)
+    if clusterID == None:
+	fp.write(TAB)
+    else:
+	fp.write(clusterID + TAB)
+    fp.write(hasHGNC +  TAB)
     fp.write(r['mouseSym'] + TAB)
 
-    if mmgi.has_key(r['mouseKey']):
-        fp.write(mmgi[r['mouseKey']] + TAB)
+    if mmgi.has_key(mouseKey):
+        fp.write(mmgi[mouseKey] + TAB)
 
-    if mpheno.has_key(r['mouseKey']):
-        fp.write(mpheno[r['mouseKey']] + TAB)
+    if mpheno.has_key(mouseKey):
+        fp.write(mpheno[mouseKey] + TAB)
     else:
         fp.write(TAB)
-
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)
