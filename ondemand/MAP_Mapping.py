@@ -37,8 +37,6 @@ import reportlib
 import db
 
 db.setTrace()
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT

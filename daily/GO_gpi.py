@@ -42,8 +42,6 @@ import reportlib
 import db
 
 db.setTrace()
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 
 DB_PREFIX = 'MGI'
 SPECIES = 'taxon:10090'

@@ -58,8 +58,6 @@ import urllib
 import db
 
 db.setTrace()
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 
 db.useOneConnection(1)
 

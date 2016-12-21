@@ -173,8 +173,6 @@ sys.path.insert(0, goloadpath)
 import ecolib
 
 db.setTrace()
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 
 MGIPREFIX = 'MGI'
 SPECIES = 'taxon:10090'

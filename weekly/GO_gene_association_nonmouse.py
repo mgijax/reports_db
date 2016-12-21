@@ -81,8 +81,6 @@ import reportlib
 import db
 
 db.setTrace()
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 
 FIELD1 = 'UniProt'
 FIELD12 = 'protein'

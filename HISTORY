@@ -8,6 +8,7 @@ MGI_GeneOMIM.py : generates both OMIM & DO file
 MGI_GenePhenoDO.py/MGI_Geno_DiseaseDO
 MGI_GenePhenoDO.py/MGI_Geno_NotDiseaseDO
 mgi_DO.py
+obsolete : db.setAutoTranslate
 
 TAG: reports_db-6-0-7-1
 DATE: 12/20/2016
