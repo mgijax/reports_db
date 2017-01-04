@@ -65,7 +65,7 @@ setenv NCBILINKOUT_COUNT	10000
 setenv MASTER_GFF_FILE		${DATADOWNLOADS}/ftp.ncbi.nih.gov/gtblatpipeline/output/best_blat_hits_single_Gbrowse.master.gff
 
 # set IMSR csv file
-setenv IMSR_STRAINS_CSV		${DATADOWNLOADS}/emnet.informatics.jax.org/allStrains.csv
+setenv IMSR_STRAINS_CSV		${DATADOWNLOADS}/bhmgiimsr01.jax.org/allStrains.csv
 
 # Iphone archive
 setenv IPHONEARCHIVE		${FTPREPORTDIR}/archive/iphone
