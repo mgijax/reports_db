@@ -38,7 +38,7 @@
 # History:
 #
 # 05/02/2012	lec
-#	- use '5'' RACE', '3'' RACE' to handle single quotes for sybase/postgres
+#	- use '5'' RACE', '3'' RACE' to handle single quotes for postgres
 #
 # 6/2/2009 sc - created
 #
