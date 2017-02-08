@@ -3,6 +3,7 @@ DATE: 11/02/2016
 STAFF: lec
 CHANGES:
 TR12427/Disase Ontology (DO)
+TR12502/GO_gene_association.py/synonyms pipe needed
 mgimarkerfeed/mgiMarkerFeed.py
 MGI_GeneOMIM.py : generates both OMIM & DO file
 MGI_GenePhenoDO.py/MGI_Geno_DiseaseDO
