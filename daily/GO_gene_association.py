@@ -711,7 +711,7 @@ def doGAFFinish():
 
 	# column 11
         if syns.has_key(r['_Object_key']):
-            syn_string = ','.join(syns[r['_Object_key']])
+            syn_string = '|'.join(syns[r['_Object_key']])
             reportRow = reportRow + syn_string + TAB
         else:
             reportRow = reportRow + TAB
