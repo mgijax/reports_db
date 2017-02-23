@@ -38,8 +38,9 @@ cd ${REPORTOUTPUTDIR}
 echo `date`: Copy reports | tee -a ${LOG}
 foreach i (gene_association.mgi gene_association_pro.mgi mgi.gpa mgi.gpi)
     echo `date`: $i | tee -a ${LOG}
-    cat $i | gzip -cf9 > ${FTPREPORTDIR}/$i.gz
-    rm -f $i
+    cat $i | gzip -cf9 > $i.gz
+    touch $i $i.gz
+    cp -p $i $i.gz ${FTPREPORTDIR}
 end
 
 echo `date`: End daily public reports | tee -a ${LOG}
