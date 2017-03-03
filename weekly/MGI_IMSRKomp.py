@@ -1,3 +1,5 @@
+#!/usr/local/bin/python
+
 '''
 #
 # TR11615/IMSR/KOMP report
