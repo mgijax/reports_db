@@ -602,6 +602,7 @@ def markers():
 	    into temporary table markers 
 	    from MRK_Marker m 
 	    where m._Organism_key = 1 
+	    and m._Marker_Status_key in (1,2)
 	    and exists (select 1 from ACC_Accession a 
 	    where m._Marker_key = a._Object_key 
 	    and a._MGIType_key = 2 
