@@ -13,12 +13,13 @@
 #
 # 1) DO Disease ID
 # 2) DO Disease Name
-# 3) HomoloGene ID (for the homology class of the marker, if one)
-# 4) Common Organism Name
-# 5) NCBI Taxon ID (for the organism)
-# 6) Symbol (for the marker)
-# 7) EntrezGene ID
-# 8) Mouse MGI ID (mouse markers only)
+# 3) OMIM IDs (piped-delimited)
+# 4) HomoloGene ID (for the homology class of the marker, if one)
+# 5) Common Organism Name
+# 6) NCBI Taxon ID (for the organism)
+# 7) Symbol (for the marker)
+# 8) EntrezGene ID
+# 9) Mouse MGI ID (mouse markers only)
 #
 # Sort by: 2, 3, 5 (above)
 #
@@ -32,10 +33,10 @@
 
 import sys
 import os
-import string
-import reportlib
-import symbolsort
 import db
+import reportlib
+import mgi_utils
+import symbolsort
 
 db.setTrace()
 
@@ -120,11 +121,6 @@ def customSort (a, b):
 
 	return cmp(a, b)
 
-def maskNulls (s):
-	if s == None:
-		return ''
-	return str(s)
-
 ###--- Main Program ---###
 
 db.useOneConnection(1)
@@ -148,6 +144,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 fp.write('DO Disease ID' + TAB)
 fp.write('DO Disease Name' + TAB)
+fp.write('OMIM IDs' + TAB)
 fp.write('HomoloGene ID' + TAB)
 fp.write('Common Organism Name' + TAB)
 fp.write('NCBI Taxon ID' + TAB)
@@ -172,16 +169,30 @@ taxonIDs = buildCache(organismResults, '_Organism_key', 'accID')
 #
 # cache DO disease terms and IDs
 #
-termResults = db.sql('''select t._Term_key, t.term, a.accID
-	from VOC_Term t, ACC_Accession a
+termResults = db.sql('''select t._Term_key, t.term, a.accID, omim.accid as omimID
+	from VOC_Term t, ACC_Accession a, ACC_Accession omim
 	where t._Vocab_key = 125
-		and t._Term_key = a._Object_key
-		and a._MGIType_key = 13
-		and a.preferred = 1
-		and a._LogicalDB_key = 191''', 'auto')
+	and t._Term_key = a._Object_key
+	and a._MGIType_key = 13
+	and a.preferred = 1
+	and a._LogicalDB_key = 191
+	and a._Object_key = omim._Object_key
+	and omim._LogicalDB_key  = 15
+	''', 'auto')
 
 diseaseTerms = buildCache(termResults, '_Term_key', 'term')
 diseaseIDs = buildCache(termResults, '_Term_key', 'accID')
+
+#
+# new lookup just for omimIDs by _Term_key
+#
+omimIDs = {}
+for r in termResults:
+	key = r['_Term_key']
+	value = r['omimID']
+	if key not in omimIDs:
+		omimIDs[key] = []
+	omimIDs[key].append(value)
 
 #
 # cache the HomoloGene ID for each marker, where available
@@ -189,8 +200,8 @@ diseaseIDs = buildCache(termResults, '_Term_key', 'accID')
 homoloGeneResults = db.sql('''select mc.clusterID, mcm._Marker_key
 	from MRK_Cluster mc, MRK_ClusterMember mcm, VOC_Term vt
 	where mc._Cluster_key = mcm._Cluster_key
-		and mc._ClusterSource_key = vt._Term_key
-		and vt.term = 'HomoloGene' ''', 'auto')
+	and mc._ClusterSource_key = vt._Term_key
+	and vt.term = 'HomoloGene' ''', 'auto')
 
 homoloGeneIDs = buildCache(homoloGeneResults, '_Marker_key', 'clusterID')
 
@@ -200,10 +211,10 @@ homoloGeneIDs = buildCache(homoloGeneResults, '_Marker_key', 'clusterID')
 entrezGeneResults = db.sql('''select m._Marker_key, a.accID
 	from MRK_Marker m, ACC_Accession a
 	where m._Marker_key = a._Object_key
-		and a._MGIType_key = 2
-		and a.preferred = 1
-		and a._LogicalDB_key = 55
-		and a.private = 0''', 'auto')
+	and a._MGIType_key = 2
+	and a.preferred = 1
+	and a._LogicalDB_key = 55
+	and a.private = 0''', 'auto')
 
 entrezGeneIDs = buildCache(entrezGeneResults, '_Marker_key', 'accID')
 
@@ -213,10 +224,10 @@ entrezGeneIDs = buildCache(entrezGeneResults, '_Marker_key', 'accID')
 mgiResults = db.sql('''select m._Marker_key, a.accID
 	from MRK_Marker m, ACC_Accession a
 	where m._Marker_key = a._Object_key
-		and a._MGIType_key = 2
-		and a.preferred = 1
-		and a._LogicalDB_key = 1
-		and a.private = 0''', 'auto')
+	and a._MGIType_key = 2
+	and a.preferred = 1
+	and a._LogicalDB_key = 1
+	and a.private = 0''', 'auto')
 
 mgiIDs = buildCache(mgiResults, '_Marker_key', 'accID')
 
@@ -251,27 +262,25 @@ for row in humanResults:
 	markerKey = row['_Marker_key']
 	organismKey = row['_Organism_key']
 
-	results.append ( (lookup(diseaseTerms, termKey),
+	results.append ((lookup(diseaseTerms, termKey),
 		lookup(homoloGeneIDs, markerKey),
 		lookup(taxonIDs, organismKey),
 		termKey, 
 		markerKey,
-		organismKey) )
+		organismKey))
 
 #
 # get the disease associations for mouse markers.  These annotations are
 # pulled up from genotype to allele to marker, wherever there is a valid path
 # from the marker to the genotype.  We exclude paths involving:
 
-cmd = '''select distinct va._Object_key as _Marker_key,
-		va._Term_key
+cmd = '''select distinct va._Object_key as _Marker_key, va._Term_key
 	from VOC_Annot va
 	where va._AnnotType_key = %d
-		and va._Qualifier_key != %d''' % (
-	DO_MARKER_ANNOT_TYPE, NOT_QUALIFIER)
+	and va._Qualifier_key != %d
+	''' % (DO_MARKER_ANNOT_TYPE, NOT_QUALIFIER)
 
 rows = db.sql(cmd, 'auto')
-
 
 # remember -- each item in 'results' consists of:
 # (disease name, HomoloGene ID, Taxon ID, term key, marker key, organism key)
@@ -296,29 +305,40 @@ for row in rows:
 
 results.sort(customSort)
 
-# Output fields:
 # 1) DO Disease ID
 # 2) DO Disease Name
-# 3) HomoloGene ID (for the homology class of the marker, if one)
-# 4) Common Organism Name
-# 5) NCBI Taxon ID (for the organism)
-# 6) Symbol (for the marker)
-# 7) EntrezGene ID
-# 8) Mouse MGI ID (mouse markers only)
-#
-# Sorted by: 2, 3, 5 (above)
+# 3) OMIM IDs (piped-delimited)
+# 4) HomoloGene ID (for the homology class of the marker, if one)
+# 5) Common Organism Name
+# 6) NCBI Taxon ID (for the organism)
+# 7) Symbol (for the marker)
+# 8) EntrezGene ID
+# 9) Mouse MGI ID (mouse markers only)
 
 for (disease, hgID, taxonID, termKey, markerKey, organismKey) in results:
+
 	diseaseID = lookup(diseaseIDs, termKey)
 	organism = lookup(commonNames, organismKey)
 	symbol = lookup(symbols, markerKey)
 	egID = lookup(entrezGeneIDs, markerKey)
 	mgiID = lookup(mgiIDs, markerKey)
+
         if markerKey in excludedMarkerList:
 	    continue
-	for item in [ diseaseID, disease, hgID, organism, taxonID, symbol, egID, mgiID ]:
-			fp.write (maskNulls(item) + TAB)
-	fp.write(CRT)
+
+	fp.write(mgi_utils.prvalue(diseaseID) + TAB)
+	fp.write(mgi_utils.prvalue(disease) + TAB)
+
+	if termKey in omimIDs:
+		fp.write('|'.join(omimIDs[termKey]))
+	fp.write(TAB)
+	
+	fp.write(mgi_utils.prvalue(hgID) + TAB)
+	fp.write(mgi_utils.prvalue(organism) + TAB)
+	fp.write(mgi_utils.prvalue(taxonID) + TAB)
+	fp.write(mgi_utils.prvalue(symbol) + TAB)
+	fp.write(mgi_utils.prvalue(egID) + TAB)
+	fp.write(mgi_utils.prvalue(mgiID) + CRT)
 
 db.useOneConnection(0)
 reportlib.finish_nonps(fp)

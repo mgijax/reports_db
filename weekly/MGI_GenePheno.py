@@ -25,20 +25,14 @@
 #	field 7: MGI Marker Accession ID (comma-delimited)
 #	field 8: MGI Genotype Accession ID (comma-delimited)
 #
-#	MGI_Gene_Disease
-#	field 8: OMIM ID(s) (comma-delimited)
-#	where OMIM annotations do not include NOT
-#
 #	MGI_Gene_DiseaseDO
-#	field 8: DO  ID(s) (comma-delimited)
+#	field 7: DO ID(s) (comma-delimited)
+#	field 8: OMIM ID(s) (comma-delimited)
 #	where DO annotations do not include NOT
 #
-#	MGI_Gene_NotDisease
-#	field 9: OMIM ID(s) (comma-delimited)
-#	where OMIM annotations includes NOT
-#
 #	MGI_Gene_NotDiseaseDO
-#	field 9: DO ID(s) (comma-delimited)
+#	field 7 DO ID(s) (comma-delimited)
+#	field 8: OMIM ID(s) (comma-delimited)
 #	where DO annotations includes NOT
 #
 # Usage:
@@ -251,90 +245,65 @@ for r in results:
     mpGenotype[key].append(value)
 
 #
-# OMIM annotations that do not have "NOT" qualifier
+# DO annotations that do not have "NOT" qualifier
 #
-results = db.sql('''select distinct m._Object_key, a.accID
-           from mp m, VOC_Annot va, ACC_Accession a
+results = db.sql('''select distinct m._Object_key, a.accID, omim.accid as omimID
+           from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession omim
            where m._Object_key = va._Object_key 
-           and va._AnnotType_key in (1005) 
+           and va._AnnotType_key in (1020) 
 	   and va._Qualifier_key = 1614158
 	   and va._Term_key = a._Object_key
-	   and a._LogicalDB_key = 15
+	   and a._LogicalDB_key = 191
 	   and a.preferred = 1
+           and a._Object_key = omim._Object_key
+           and omim._LogicalDB_key  = 15
 	   ''', 'auto')
+mpDO1 = {}
 mpOMIM1 = {}
 for r in results:
     key = r['_Object_key']
     value = r['accID']
+    if key not in mpDO1:
+	mpDO1[key] = [] 
+    if value not in mpDO1[key]:
+    	mpDO1[key].append(value)
+    value = r['omimID']
     if not mpOMIM1.has_key(key):
 	mpOMIM1[key] = []
     mpOMIM1[key].append(value)
 
 #
-# OMIM annotations that have "NOT" qualifier
+# DO annotations that have "NOT" qualifier
 #
-results = db.sql('''select distinct m._Object_key, a.accID
-           from mp m, VOC_Annot va, ACC_Accession a
+results = db.sql('''select distinct m._Object_key, a.accID, omim.accid as omimID
+           from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession omim
            where m._Object_key = va._Object_key 
-           and va._AnnotType_key in (1005) 
+           and va._AnnotType_key in (1020) 
 	   and va._Qualifier_key = 1614157
 	   and va._Term_key = a._Object_key
-	   and a._LogicalDB_key = 15
+	   and a._LogicalDB_key = 191
 	   and a.preferred = 1
+           and a._Object_key = omim._Object_key
+           and omim._LogicalDB_key  = 15
 	   ''', 'auto')
+mpDO2 = {}
 mpOMIM2 = {}
 for r in results:
     key = r['_Object_key']
     value = r['accID']
+    if key not in mpDO2:
+	mpDO2[key] = []
+    if value not in mpDO2[key]:
+    	mpDO2[key].append(value)
+    value = r['omimID']
     if not mpOMIM2.has_key(key):
 	mpOMIM2[key] = []
     mpOMIM2[key].append(value)
 
 #
-# DO annotations that do not have "NOT" qualifier
-#
-results = db.sql('''select distinct m._Object_key, a.accID
-           from mp m, VOC_Annot va, ACC_Accession a
-           where m._Object_key = va._Object_key 
-           and va._AnnotType_key in (1020) 
-	   and va._Qualifier_key = 1614158
-	   and va._Term_key = a._Object_key
-	   and a._LogicalDB_key = 191
-	   and a.preferred = 1
-	   ''', 'auto')
-mpDO1 = {}
-for r in results:
-    key = r['_Object_key']
-    value = r['accID']
-    if not mpDO1.has_key(key):
-	mpDO1[key] = []
-    mpDO1[key].append(value)
-
-#
-# DO annotations that have "NOT" qualifier
-#
-results = db.sql('''select distinct m._Object_key, a.accID
-           from mp m, VOC_Annot va, ACC_Accession a
-           where m._Object_key = va._Object_key 
-           and va._AnnotType_key in (1020) 
-	   and va._Qualifier_key = 1614157
-	   and va._Term_key = a._Object_key
-	   and a._LogicalDB_key = 191
-	   and a.preferred = 1
-	   ''', 'auto')
-mpDO2 = {}
-for r in results:
-    key = r['_Object_key']
-    value = r['accID']
-    if not mpDO2.has_key(key):
-	mpDO2[key] = []
-    mpDO2[key].append(value)
-
-#
 # process results
 #
-results = db.sql('select distinct _Object_key, _Term_key ' + \
-	'from mp order by _Object_key, _Term_key', 'auto')
+results = db.sql('select distinct _Object_key, _Term_key from mp order by _Object_key, _Term_key', 'auto')
 
 for r in results:
 
@@ -353,6 +322,35 @@ for r in results:
        continue
 
     fp1.write(mpDisplay[genotype] + TAB)
+
+    fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
+
+    if mpAlleleIDs.has_key(genotype):
+        fp1.write(string.join(mpAlleleIDs[genotype], '|'))
+
+#
+# process results
+#
+results = db.sql('select distinct _Object_key, _Term_key from mp order by _Object_key, _Term_key', 'auto')
+
+for r in results:
+
+    genotype = r['_Object_key']
+    term = r['_Term_key']
+    refKey = `genotype` + `term`
+
+    # we only want to list the Genotypes that have Allele Pairs
+    if not mpDisplay.has_key(genotype):
+       continue
+
+    if not mpStrain.has_key(genotype):
+       continue
+
+    if not mpAlleles.has_key(genotype):
+       continue
+
+    fp1.write(mpDisplay[genotype] + TAB)
+
     fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
 
     if mpAlleleIDs.has_key(genotype):
@@ -361,8 +359,10 @@ for r in results:
 
     fp1.write(mpStrain[genotype] + TAB)
     fp1.write(mpID[term] + TAB)
+
     if mpRef.has_key(refKey):
         fp1.write(string.join(mpRef[refKey], ','))
+
     fp1.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
     fp1.write(TAB + string.join(mpGenotype[genotype], ',') + CRT)
 
@@ -382,7 +382,10 @@ for r in results:
         if mpRef.has_key(refKey):
             fp2.write(string.join(mpRef[refKey], ','))
         fp2.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-        fp2.write(string.join(mpDO1[genotype], ',') + CRT)
+        fp2.write(string.join(mpDO1[genotype], ',') + TAB)
+	if mpOMIM1.has_key(genotype):
+        	fp2.write(string.join(mpOMIM1[genotype], ','))
+	fp2.write(CRT)
 
     #
     # DO report 2
@@ -400,7 +403,10 @@ for r in results:
         if mpRef.has_key(refKey):
             fp3.write(string.join(mpRef[refKey], ','))
         fp3.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-        fp3.write(string.join(mpDO2[genotype], ',') + CRT)
+        fp3.write(string.join(mpDO2[genotype], ',') + TAB)
+	if mpOMIM2.has_key(genotype):
+        	fp3.write(string.join(mpOMIM2[genotype], ','))
+	fp3.write(CRT)
 
 reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file
