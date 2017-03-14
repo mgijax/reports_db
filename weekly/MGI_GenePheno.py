@@ -22,17 +22,17 @@
 #	field 4: Genetic Background
 #	field 5: Mammalian Phenotype ID
 #	field 6: PubMed ID
-#	field 7: MGI Marker Accession ID (comma-delimited)
-#	field 8: MGI Genotype Accession ID (comma-delimited)
+#	field 7: MGI Marker Accession ID (pipe-delimited)
+#	field 8: MGI Genotype Accession ID (pipe-delimited)
 #
 #	MGI_Gene_DiseaseDO
-#	field 7: DO ID(s) (comma-delimited)
-#	field 8: OMIM ID(s) (comma-delimited)
+#	field 7: DO ID(s) (pipe-delimited)
+#	field 8: OMIM ID(s) (pipe-delimited)
 #	where DO annotations do not include NOT
 #
 #	MGI_Gene_NotDiseaseDO
-#	field 7 DO ID(s) (comma-delimited)
-#	field 8: OMIM ID(s) (comma-delimited)
+#	field 7 DO ID(s) (pipe-delimited)
+#	field 8: OMIM ID(s) (pipe-delimited)
 #	where DO annotations includes NOT
 #
 # Usage:
@@ -361,10 +361,10 @@ for r in results:
     fp1.write(mpID[term] + TAB)
 
     if mpRef.has_key(refKey):
-        fp1.write(string.join(mpRef[refKey], ','))
+        fp1.write(string.join(mpRef[refKey], '|'))
 
-    fp1.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-    fp1.write(TAB + string.join(mpGenotype[genotype], ',') + CRT)
+    fp1.write(TAB + string.join(mpMarker[genotype], '|') + TAB)
+    fp1.write(TAB + string.join(mpGenotype[genotype], '|') + CRT)
 
     #
     # DO report 1
@@ -380,11 +380,11 @@ for r in results:
         fp2.write(mpStrain[genotype] + TAB)
         fp2.write(mpID[term] + TAB)
         if mpRef.has_key(refKey):
-            fp2.write(string.join(mpRef[refKey], ','))
-        fp2.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-        fp2.write(string.join(mpDO1[genotype], ',') + TAB)
+            fp2.write(string.join(mpRef[refKey], '|'))
+        fp2.write(TAB + string.join(mpMarker[genotype], '|') + TAB)
+        fp2.write(string.join(mpDO1[genotype], '|') + TAB)
 	if mpOMIM1.has_key(genotype):
-        	fp2.write(string.join(mpOMIM1[genotype], ','))
+        	fp2.write(string.join(mpOMIM1[genotype], '|'))
 	fp2.write(CRT)
 
     #
@@ -401,11 +401,11 @@ for r in results:
         fp3.write(mpStrain[genotype] + TAB)
         fp3.write(mpID[term] + TAB)
         if mpRef.has_key(refKey):
-            fp3.write(string.join(mpRef[refKey], ','))
-        fp3.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-        fp3.write(string.join(mpDO2[genotype], ',') + TAB)
+            fp3.write(string.join(mpRef[refKey], '|'))
+        fp3.write(TAB + string.join(mpMarker[genotype], '|') + TAB)
+        fp3.write(string.join(mpDO2[genotype], '|') + TAB)
 	if mpOMIM2.has_key(genotype):
-        	fp3.write(string.join(mpOMIM2[genotype], ','))
+        	fp3.write(string.join(mpOMIM2[genotype], '|'))
 	fp3.write(CRT)
 
 reportlib.finish_nonps(fp1)	# non-postscript file
