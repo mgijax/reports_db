@@ -547,29 +547,13 @@ D></TABLE>
     <TR><TD><TABLE>
         <TR><TD><B>10. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_Disease.rpt">MGI_Geno_Disease.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>11. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
-        <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>DO ID (comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_DiseaseDO.rpt">MGI_Geno_DiseaseDO.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>12. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>OMIM ID (comma-delimited)</TD></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_NotDisease.rpt">MGI_Geno_NotDisease.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>13. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>11. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>DO ID (comma-delimited)</TD></TABLE>
         </TD></TR>
@@ -577,15 +561,7 @@ D></TABLE>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>14. Associations of Mouse Genes with OMIM Diseases</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>OMIM Disease ID</TD><TD>OMIM Disease Name</TD><TD>HomoloGene ID</TD><TD>Common Organism Name</TD><TD>NCBI Taxon ID</TD><TD>Symbol</TD><TD>EntrezGene ID</TD><TD>Mouse MGI ID</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_OMIM.rpt">MGI_OMIM.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>15. Associations of Mouse Genes with DO Diseases</B></TD></TR>
+        <TR><TD><B>12. Associations of Mouse Genes with DO Diseases</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>DO Disease ID</TD><TD>DO Disease Name</TD><TD>HomoloGene ID</TD><TD>Common Organism Name</TD><TD>NCBI Taxon ID</TD><TD>Symbol</TD><TD>EntrezGene ID</TD><TD>Mouse MGI ID</TD></TR></TABLE>
         </TD></TR>
@@ -593,7 +569,7 @@ D></TABLE>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>16. IMSR/KOMP Counts</B></TD></TR>
+        <TR><TD><B>13. IMSR/KOMP Counts</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>Total number of IMSR Strains</TD><TD>Total number of Alleles</TD></TABLE>
         </TD></TR>

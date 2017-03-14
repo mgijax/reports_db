@@ -93,10 +93,8 @@ PAGE = reportlib.PAGE
 #
 
 fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-fp2 = reportlib.init('MGI_Geno_Disease', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-fp3 = reportlib.init('MGI_Geno_NotDisease', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-fp4 = reportlib.init('MGI_Geno_DiseaseDO', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-fp5 = reportlib.init('MGI_Geno_NotDiseaseDO', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2 = reportlib.init('MGI_Geno_DiseaseDO', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp3 = reportlib.init('MGI_Geno_NotDiseaseDO', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
 # select all MP annotations
@@ -369,10 +367,10 @@ for r in results:
     fp1.write(TAB + string.join(mpGenotype[genotype], ',') + CRT)
 
     #
-    # OMIM report 1
+    # DO report 1
     #
 
-    if mpOMIM1.has_key(genotype):
+    if mpDO1.has_key(genotype):
 
         fp2.write(mpDisplay[genotype] + TAB)
         fp2.write(string.join(mpAlleles[genotype], '|') + TAB)
@@ -384,13 +382,13 @@ for r in results:
         if mpRef.has_key(refKey):
             fp2.write(string.join(mpRef[refKey], ','))
         fp2.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-        fp2.write(string.join(mpOMIM1[genotype], ',') + CRT)
+        fp2.write(string.join(mpDO1[genotype], ',') + CRT)
 
     #
-    # OMIM report 2
+    # DO report 2
     #
 
-    if mpOMIM2.has_key(genotype):
+    if mpDO2.has_key(genotype):
 
         fp3.write(mpDisplay[genotype] + TAB)
         fp3.write(string.join(mpAlleles[genotype], '|') + TAB)
@@ -402,47 +400,9 @@ for r in results:
         if mpRef.has_key(refKey):
             fp3.write(string.join(mpRef[refKey], ','))
         fp3.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-        fp3.write(string.join(mpOMIM2[genotype], ',') + CRT)
-
-    #
-    # DO report 1
-    #
-
-    if mpDO1.has_key(genotype):
-
-        fp4.write(mpDisplay[genotype] + TAB)
-        fp4.write(string.join(mpAlleles[genotype], '|') + TAB)
-        if mpAlleleIDs.has_key(genotype):
-            fp4.write(string.join(mpAlleleIDs[genotype], '|'))
-        fp4.write(TAB)
-        fp4.write(mpStrain[genotype] + TAB)
-        fp4.write(mpID[term] + TAB)
-        if mpRef.has_key(refKey):
-            fp4.write(string.join(mpRef[refKey], ','))
-        fp4.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-        fp4.write(string.join(mpDO1[genotype], ',') + CRT)
-
-    #
-    # DO report 2
-    #
-
-    if mpDO2.has_key(genotype):
-
-        fp5.write(mpDisplay[genotype] + TAB)
-        fp5.write(string.join(mpAlleles[genotype], '|') + TAB)
-        if mpAlleleIDs.has_key(genotype):
-            fp5.write(string.join(mpAlleleIDs[genotype], '|'))
-        fp5.write(TAB)
-        fp5.write(mpStrain[genotype] + TAB)
-        fp5.write(mpID[term] + TAB)
-        if mpRef.has_key(refKey):
-            fp5.write(string.join(mpRef[refKey], ','))
-        fp5.write(TAB + string.join(mpMarker[genotype], ',') + TAB)
-        fp5.write(string.join(mpDO2[genotype], ',') + CRT)
+        fp3.write(string.join(mpDO2[genotype], ',') + CRT)
 
 reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file
 reportlib.finish_nonps(fp3)	# non-postscript file
-reportlib.finish_nonps(fp4)	# non-postscript file
-reportlib.finish_nonps(fp5)	# non-postscript file
 
