@@ -1511,7 +1511,7 @@ def references():
            to_char(e.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
 	   into temporary table omimreferences 
 	   from VOC_Annot a, VOC_Evidence e 
-	   where a._AnnotType_key in (1006,1022)
+	   where a._AnnotType_key in (1022)
 	   and a._Annot_key = e._Annot_key
 	   ''', None)
 
@@ -1673,7 +1673,6 @@ def references():
 def omim():
 
     #
-    # Human Marker/OMIM annotations (1006)
     # Human Marker/DO annotations (1022)
     #
     # marker_omim.bcp
@@ -1686,7 +1685,7 @@ def omim():
                to_char(a.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
                to_char(a.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
 	from VOC_Annot a, VOC_Evidence e 
-	where a._AnnotType_key in (1006,1022)
+	where a._AnnotType_key in (1022)
 	and a._Annot_key = e._Annot_key
 	''', 'auto')
 

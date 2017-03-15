@@ -64,7 +64,7 @@ for r in results:
 results = db.sql('''select distinct a.accID omimID, ma.accID, ag._Marker_key
         from GXD_AlleleGenotype ag, VOC_Annot va, ACC_Accession a, ACC_Accession ma
         where ag._Genotype_key = va._Object_key
-        and va._AnnotType_key = 1005
+        and va._AnnotType_key = 1020
         and va._Term_key = a._Object_key
         and a._LogicalDB_key = 15
         and a.preferred = 1
