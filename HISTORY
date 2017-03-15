@@ -4,6 +4,8 @@ STAFF: lec
 TR12540/DO (Disease Ontology)
 weekly/MGI_DO.py
 weekly/MGI_GenePheno.py
+weekly/MGI_iphone_app.py
+mgimarkerfeed_reports.py
 
 TAG: reports_db-6-0-8-4
 DATE: 03/09/2017

@@ -35,9 +35,9 @@
 #
 #	10: MP ID: (MP:xxxx||MP:xxxx||...)
 #
-#	11: OMIM ID: (xxxx||xxxx||...)
+#	11: DO ID: (xxxx||xxxx||...)
 #
-#	12: OMIM ID: (xxxx||xxxx||...)
+#	12: DO ID: (xxxx||xxxx||...)
 #
 #####
 #TR11732 Changes
@@ -58,10 +58,10 @@
 #       22: URL prefix (by GO id)
 #       23: # of MP annotations
 #       25: URL prefix (by MP id)
-#       26: # of OMIM annotations (via genotype annotations)
-#       28: URL prefix (by OMIM id)
-#       29: # of OMIM annotations (via human disease via mouse ortholog)
-#       31: URL prefix (by OMIM id)
+#       26: # of DO annotations (via genotype annotations)
+#       28: URL prefix (by DO id)
+#       29: # of DO annotations (via human disease via mouse ortholog)
+#       31: URL prefix (by DO id)
 #       32: # of Nomenclature Events (via marker history)
 #       33: Nomenclature sequence number and event:  
 #       34: URL prefix (by marker)
@@ -71,8 +71,8 @@
 #       18 - GO IDs (molecular function group)
 #       21 - GO IDs (biological process group)
 #       24 - MP IDs
-#       27 - OMIM IDs
-#       30 - OMIM IDs
+#       27 - DO IDs
+#       30 - DO IDs
 ##################################
 # iphone-mp
 #
@@ -107,11 +107,11 @@
 ###################################
 # iphone-omim
 #
-#	1: OMIM ID
-#	2: OMIM Definition
+#	1: DO ID
+#	2: DO Definition
 #	3: URL prefix (by omim id: omim page)
 #
-#	for (_annottype_key = 1005)
+#	for (_annottype_key = 1020)
 #	4: # of References
 #	5: MGI Ref ID (MGI:xxx|J:xxx||MGI:xxx|J:xxx||...)
 #	6: URL prefix (by reference (J:))
@@ -120,7 +120,7 @@
 #	8: MGI Genotype ID (MGI:xxx|MGI:xxx|...)
 #	9: URL prefix (by genotype)
 #
-#	10: # of Markers (_AnnotType_key = 1016)
+#	10: # of Markers (_AnnotType_key = 1023)
 #	11: MGI Marker ID (MGI:xxx|MGI:xxx|...)
 #	12: URL prefix (by marker)
 #
@@ -128,7 +128,7 @@
 #	14: MGI Allele ID (MGI:xxx|MGI:xxx|...)
 #	15: URL prefix (by allele)
 #
-#	for (_annottype_key = 1006)
+#	for (_annottype_key = 1022)
 #	16: # of References
 #	17: MGI Ref ID (MGI:xxx|J:xxx||MGI:xxx|J:xxx||...)
 #	18: URL prefix (by reference (J:))
@@ -199,7 +199,7 @@ CRT = reportlib.CRT
 # constants
 
 MP_MARKER_ANNOT_TYPE = 1015
-OMIM_MARKER_ANNOT_TYPE = 1016
+DO_MARKER_ANNOT_TYPE = 1023
 
 NOT_QUALIFIER = 1614157
 NORMAL_QUALIFIER = 2181424
@@ -395,7 +395,7 @@ def iphone_genes():
         phenoannots[key].append(value)
 
     #
-    # OMIM annotations rolled up to markers (now using OMIM/Marker annotations
+    # DO annotations rolled up to markers (now using DO/Marker annotations
     # derived by the rollupload)
     #
     results = db.sql('''
@@ -407,7 +407,7 @@ def iphone_genes():
 	    and a._mgitype_key = 13
 	    and a.preferred = 1
 	    and aa._Qualifier_key != %d
-            ''' % (OMIM_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
+            ''' % (DO_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
     omimgenotype = {}
     for r in results:
         key = r['_marker_key']
@@ -418,7 +418,7 @@ def iphone_genes():
         omimgenotype[key].append(value)
 
     #
-    # OMIM human disease (_annottype_key = 1006)
+    # DO human disease (_annottype_key = 1022)
     #
     db.sql('''select c.clusterID, cm.*, m._Organism_key
         into temporary table mouse
@@ -448,7 +448,7 @@ def iphone_genes():
             where m._marker_key = hm._marker_key
             and hm.clusterID = hh.clusterID
             and hh._Marker_key = aa._object_key
-            and aa._annottype_key = 1006
+            and aa._annottype_key = 1022
             and aa._term_key = a._object_key
             and a._mgitype_key = 13
             and a.preferred = 1''', 'auto')
@@ -547,7 +547,7 @@ def iphone_genes():
         else:
             fp.write('0' +TAB)
 
-    #	OMIM ID: (xxxx|xxxx|...)
+    #	DO ID: (xxxx|xxxx|...)
         if omimgenotype.has_key(key):
             i=0
 	    for n in omimgenotype[key]:
@@ -560,7 +560,7 @@ def iphone_genes():
         else:
             fp.write('0' + TAB)
     
-    #	OMIM ID: (xxxx|xxxx|...)
+    #	DO ID: (xxxx|xxxx|...)
         if omimhuman.has_key(key):
             i=0
 	    for n in omimhuman[key]:
@@ -766,14 +766,14 @@ def iphone_mp():
 #
 # iphone_omim
 #
-# OMIM terms -> genotype, genes, alleles
+# DO terms -> genotype, genes, alleles
 #
 def iphone_omim():
 
     fp, reportWithDate, currentReport = init_report('iphone_app_snapshot_omim')
 
     #
-    # OMIM terms
+    # DO terms
     #
     db.sql('''
             select t._term_key, t.term, a.accid
@@ -789,13 +789,13 @@ def iphone_omim():
     db.sql('create index omim_idx on omim(_term_key)', None)
 
     #
-    # OMIM/Genotype/References
+    # DO/Genotype/References
     #
     results = db.sql('''
             select distinct m._term_key, r.mgiid
             from omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1005
+	    and aa._annottype_key = 1020
 	    and aa._annot_key = e._annot_key
 	    and e._refs_key = r._refs_key
             ''', 'auto')
@@ -808,13 +808,13 @@ def iphone_omim():
         refs1[key].append(value)
 
     #
-    # OMIM/Genotype by Genotype
+    # DO/Genotype by Genotype
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
             from omim m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1005
+	    and aa._annottype_key = 1020
 	    and aa._object_key = a._object_key
 	    and a._mgitype_key = 12
 	    and a._logicaldb_key = 1
@@ -831,7 +831,7 @@ def iphone_omim():
         genoannots1[key].append(value)
 
     #
-    # OMIM/Marker pairs (now updated to use ones pre-computed by rollupload)
+    # DO/Marker pairs (now updated to use ones pre-computed by rollupload)
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
@@ -844,7 +844,7 @@ def iphone_omim():
 	    and a.prefixpart = 'MGI:'
 	    and a.preferred = 1
 	    and aa._Qualifier_key != %d
-            ''' % (OMIM_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
+            ''' % (DO_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
     markerannots1 = {}
     for r in results:
         key = r['_term_key']
@@ -855,13 +855,13 @@ def iphone_omim():
         markerannots1[key].append(value)
 
     #
-    # OMIM/Genotype by Allele
+    # DO/Genotype by Allele
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
             from omim m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1005
+	    and aa._annottype_key = 1020
 	    and aa._object_key = g._genotype_key
 	    and g._allele_key = a._object_key
 	    and a._mgitype_key = 11
@@ -879,13 +879,13 @@ def iphone_omim():
         alleleannots1[key].append(value)
 
     #
-    # OMIM/Human Marker/References
+    # DO/Human Marker/References
     #
     results = db.sql('''
             select distinct m._term_key, r.mgiid
             from omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1006
+	    and aa._annottype_key = 1022
 	    and aa._annot_key = e._annot_key
 	    and e._refs_key = r._refs_key
             ''', 'auto')
@@ -898,13 +898,13 @@ def iphone_omim():
         refs2[key].append(value)
 
     #
-    # OMIM/Human Marker by Marker
+    # DO/Human Marker by Marker
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
             from omim m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1006
+	    and aa._annottype_key = 1022
 	    and aa._object_key = a._object_key
 	    and a._mgitype_key = 2
 	    and a._logicaldb_key = 55
@@ -931,7 +931,7 @@ def iphone_omim():
 	fp.write(r['accid'] + TAB)
 	fp.write(r['term'] + TAB)
 
-    #   OMIM (_annottype_key = 1006)
+    #   DO (_annottype_key = 1022)
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
         if refs1.has_key(key):
             i=0
@@ -945,28 +945,28 @@ def iphone_omim():
         else:
             fp.write('0' + TAB)
 
-    #   OMIM (_annottype_key = 1006)
+    #   DO (_annottype_key = 1022)
     #	MGI Genotype ID (MGI:xxx|MGI:xxx|...)
         if genoannots1.has_key(key):
 	    fp.write(string.join(genoannots1[key], '|') + TAB)
         else:
             fp.write('0' + TAB)
 
-    #   OMIM (_annottype_key = 1006)
+    #   DO (_annottype_key = 1022)
     #	MGI Marker ID (MGI:xxx|MGI:xxx|...)
         if markerannots1.has_key(key):
 	    fp.write(string.join(markerannots1[key], '|') + TAB)
         else:
             fp.write('0' +TAB)
 
-    #   OMIM (_annottype_key = 1006)
+    #   DO (_annottype_key = 1022)
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
         if alleleannots1.has_key(key):
 	    fp.write(string.join(alleleannots1[key], '|') + TAB)
         else:
             fp.write('0' + TAB)
 
-    #   OMIM (_annottype_key = 1006)
+    #   DO (_annottype_key = 1022)
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
         if refs2.has_key(key):
             i=0
@@ -980,7 +980,7 @@ def iphone_omim():
         else:
             fp.write('0' + TAB)
 
-    #   OMIM (_annottype_key = 1006)
+    #   DO (_annottype_key = 1022)
     #	EntrezGene ID (xxx|xxx|...)
         if markerannots2.has_key(key):
 	    fp.write(string.join(markerannots2[key], '|'))
