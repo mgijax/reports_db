@@ -176,6 +176,7 @@ termResults = db.sql('''select t._Term_key, t.term, a.accID, omim.accid as omimI
 	and a._MGIType_key = 13
 	and a.preferred = 1
 	and a._LogicalDB_key = 191
+	and a.preferred = 1
 	and a._Object_key = omim._Object_key
 	and omim._LogicalDB_key  = 15
 	''', 'auto')
