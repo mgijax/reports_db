@@ -19,6 +19,7 @@ rm -rf ${LOG}
 touch ${LOG}
 
 echo `date`: Start MGI marker feed reports | tee -a ${LOG}
+rm -rf ${REPORTOUTPUTDIR}/mgimarkerfeed/* >>& ${LOG}
 
 echo `date`: MarkerFeed.py | tee -a ${LOG}
 mgiMarkerFeed.py >>& ${LOG}
