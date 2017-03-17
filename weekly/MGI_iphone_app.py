@@ -109,7 +109,7 @@
 #
 #	1: DO ID
 #	2: DO Definition
-#	3: URL prefix (by omim id: omim page)
+#	3: URL prefix (by diseaes ontololgy id: omim page)
 #
 #	for (_annottype_key = 1020)
 #	4: # of References
@@ -135,7 +135,7 @@
 #
 #	19: # of Human Gene Annotations
 #	20: Human EntrezGene ID (xxx|xxx|...)
-#	21: URL prefix (by omim id: human disease page)
+#	21: URL prefix (by disease ontology id: human disease page)
 #
 ######
 #TR11732 Changes
@@ -408,14 +408,14 @@ def iphone_genes():
 	    and a.preferred = 1
 	    and aa._Qualifier_key != %d
             ''' % (DO_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
-    omimgenotype = {}
+    dogenotype = {}
     for r in results:
         key = r['_marker_key']
         value = r
     
-        if not omimgenotype.has_key(key):
-	    omimgenotype[key] = []
-        omimgenotype[key].append(value)
+        if not dogenotype.has_key(key):
+	    dogenotype[key] = []
+        dogenotype[key].append(value)
 
     #
     # DO human disease (_annottype_key = 1022)
@@ -452,14 +452,14 @@ def iphone_genes():
             and aa._term_key = a._object_key
             and a._mgitype_key = 13
             and a.preferred = 1''', 'auto')
-    omimhuman = {}
+    dohuman = {}
     for r in results:
         key = r['_marker_key']
         value = r
     
-        if not omimhuman.has_key(key):
-	    omimhuman[key] = []
-        omimhuman[key].append(value)
+        if not dohuman.has_key(key):
+	    dohuman[key] = []
+        dohuman[key].append(value)
 
     #
     # report
@@ -548,9 +548,9 @@ def iphone_genes():
             fp.write('0' +TAB)
 
     #	DO ID: (xxxx|xxxx|...)
-        if omimgenotype.has_key(key):
+        if dogenotype.has_key(key):
             i=0
-	    for n in omimgenotype[key]:
+	    for n in dogenotype[key]:
                 if i>0:
                    fp.write('|'+str(n['accid']))
                 else:
@@ -561,9 +561,9 @@ def iphone_genes():
             fp.write('0' + TAB)
     
     #	DO ID: (xxxx|xxxx|...)
-        if omimhuman.has_key(key):
+        if dohuman.has_key(key):
             i=0
-	    for n in omimhuman[key]:
+	    for n in dohuman[key]:
                 if i>0:
                    fp.write('|'+str(n['accid']))
                 else:
@@ -764,11 +764,11 @@ def iphone_mp():
     os.symlink(reportWithDate + '.rpt', currentReport)
 
 #
-# iphone_omim
+# iphone_do
 #
 # DO terms -> genotype, genes, alleles
 #
-def iphone_omim():
+def iphone_do():
 
     fp, reportWithDate, currentReport = init_report('iphone_app_snapshot_omim')
 
@@ -777,23 +777,23 @@ def iphone_omim():
     #
     db.sql('''
             select t._term_key, t.term, a.accid
-	    into temporary table omim
+	    into temporary table diseaseontology
             from VOC_Term t, ACC_Accession a
-            where t._Vocab_key = 44
+            where t._Vocab_key = 125
 	    and t._term_key = a._object_key
 	    and a._mgitype_key = 13
 	    and a.preferred = 1
 	    order by a.accid
             ''', None)
 
-    db.sql('create index omim_idx on omim(_term_key)', None)
+    db.sql('create index do_idx on diseaseontology(_term_key)', None)
 
     #
     # DO/Genotype/References
     #
     results = db.sql('''
             select distinct m._term_key, r.mgiid
-            from omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
+            from diseaseontology m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1020
 	    and aa._annot_key = e._annot_key
@@ -812,7 +812,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from omim m, VOC_Annot aa, ACC_Accession a
+            from diseaseontology m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1020
 	    and aa._object_key = a._object_key
@@ -835,7 +835,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from omim m, VOC_Annot aa, ACC_Accession a
+            from diseaseontology m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = %d
 	    and aa._object_key = a._object_key
@@ -859,7 +859,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from omim m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
+            from diseaseontology m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1020
 	    and aa._object_key = g._genotype_key
@@ -883,7 +883,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, r.mgiid
-            from omim m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
+            from diseaseontology m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1022
 	    and aa._annot_key = e._annot_key
@@ -902,7 +902,7 @@ def iphone_omim():
     #
     results = db.sql('''
             select distinct m._term_key, a.accid
-            from omim m, VOC_Annot aa, ACC_Accession a
+            from diseaseontology m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
 	    and aa._annottype_key = 1022
 	    and aa._object_key = a._object_key
@@ -922,7 +922,7 @@ def iphone_omim():
     #
     # report
     #
-    results = db.sql('select * from omim', 'auto')
+    results = db.sql('select * from diseaseontology', 'auto')
     
     for r in results:
     
@@ -999,5 +999,5 @@ def iphone_omim():
 
 iphone_genes()
 iphone_mp()
-iphone_omim()
+iphone_do()
 
