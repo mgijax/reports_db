@@ -61,8 +61,9 @@
 #	44. allele_reference.bcp
 #	45. strain_reference.bcp
 #	46. marker_reference.bcp
-#	47. marker_omim.bcp
+#	47. marker_do.bcp
 #	48: mgi_relationship/mgi_relationship_category/mgi_relationship_property
+#	49: accession_do.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
@@ -534,6 +535,36 @@ def vocabs():
             fp.write(TAB)
 
 	    fp.write(str(r['cdate']) + TAB + \
+		     str(r['mdate']) + CRT)
+    fp.close()
+
+    #
+    # select data fields for accession_do.bcp
+    #
+
+    fp = open(OUTPUTDIR + 'accession_do.bcp', 'w')
+
+    results = db.sql('''
+	    select distinct a2.accID, l.name as LogicalDB, a1._Object_key, a1.preferred, 
+                to_char(a2.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
+                to_char(a2.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
+            from ACC_Accession a1, VOC_Term t, ACC_Accession a2, ACC_LogicalDB l
+            where t._Vocab_key = 125
+            and t._Term_key = a1._Object_key
+            and a1._LogicalDB_key = 191
+            and a1.preferred = 1
+            and a1._Object_key = a2._Object_key
+            and a2._LogicalDB_key = 15
+	    and a2._LogicalDB_key = l._LogicalDB_key
+            order by a1._Object_key
+	    ''', 'auto')
+
+    for r in results:
+	    fp.write(r['accID'] + TAB + \
+		     r['LogicalDB'] + TAB + \
+		     `r['_Object_key']` + TAB + \
+		     `r['preferred']` + TAB + \
+		     str(r['cdate']) + TAB + \
 		     str(r['mdate']) + CRT)
     fp.close()
 
@@ -1670,15 +1701,15 @@ def references():
 		     `r['_Refs_key']` + CRT)
     fp.close()
 
-def omim():
+def humando():
 
     #
     # Human Marker/DO annotations (1022)
     #
-    # marker_omim.bcp
+    # marker_do.bcp
     #
 
-    fp = open(OUTPUTDIR + 'marker_omim.bcp', 'w')
+    fp = open(OUTPUTDIR + 'marker_do.bcp', 'w')
 
     results = db.sql('''
 	select a._Term_key, a._Object_key, e._Refs_key, 
@@ -1813,7 +1844,7 @@ markers()
 strains()
 genotypes()
 references()
-omim()
+humando()
 mgi_relationship()
 db.useOneConnection(0)
 
