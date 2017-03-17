@@ -229,39 +229,51 @@ def init_report(reportName):
 
     reportWithDate = '%s-%s' % (reportName, currentDate)
     currentReport = '%s-current.rpt' % (reportName)
+
     #
     # addons to support TR 11725 start here
     #
+
     oldReportLink='%s-old.rpt' % (reportName)
     tempDir='%s/iphone-temp' % (reportDir)
     currentReportFile='%s/%s-current_file' % (tempDir,reportName)
     currentReportName=""
     currentDir=os.getcwd()
+
     if os.path.isdir('%s' % (tempDir) ):
        os.system('rm -rf %s' % (tempDir))
+
     if os.path.isfile('%s/%s' % (reportDir, currentReport)):
+
        #create a temp directory to temporary store current report info 
        os.system('mkdir %s' % (tempDir))
        os.system('readlink %s/%s > %s'% (reportDir,currentReport,currentReportFile))
+
        if os.path.isfile('%s' % (currentReportFile)):
+
           f = open(currentReportFile)
           lines = f.readlines()     
           f.close()
+
           for report_name in lines:
               report_name= report_name.strip()
+
               if report_name:
                  os.system('cp -p %s/%s %s/' % (reportDir,report_name,tempDir))
                  currentReportName='%s' % (report_name)
-       #Remove old report symbolic link if exists
+
+       # Remove old report symbolic link if exists
        if os.path.isfile('%s/%s' % (reportDir,oldReportLink)):
           os.remove('%s/%s' % (reportDir, oldReportLink))
+
        # remove current report link if it exists
        if os.path.isfile('%s/%s' % (reportDir, currentReport)):
           os.remove('%s/%s' % (reportDir, currentReport))
+
     # move existing reports to the archive
     os.system('mv -f %s/%s*.rpt %s' % (reportDir, reportName, archiveDir))
     
-    #restore old report - and create the "old" symbolic link to point to previous week report 
+    # restore old report - and create the "old" symbolic link to point to previous week report 
     if os.path.isfile('%s/%s' % (tempDir,currentReportName)):
        os.system('mv %s/%s %s'%(tempDir,currentReportName,reportDir))     
        os.chdir(reportDir)
@@ -301,6 +313,7 @@ def iphone_genes():
 	    and a.preferred = 1
 	    ''', None)
     db.sql('create index marker_idx on markers(_marker_key)', None)
+
     #
     # refs
     #
@@ -469,10 +482,12 @@ def iphone_genes():
     for r in results:
     
         key = r['_marker_key']
+
     #	MGI Marker ID
     #	Marker key
     #	Symbol
     #	Name
+
         fp.write(r['accid'] + TAB)
         fp.write(str(r['_marker_key']) + TAB)
         fp.write(r['symbol'] + TAB)
@@ -496,6 +511,7 @@ def iphone_genes():
 	    fp.write(string.join(alleles[key], '|') + TAB)
         else:
             fp.write('0' + TAB)
+
     #	GO ID (C group): (GO:xxxx|GO:xxxx|...)
         if goCannots.has_key(key):
             i=0
@@ -508,6 +524,7 @@ def iphone_genes():
 	    fp.write(TAB)
         else:
             fp.write('0' + TAB)
+
     #	GO ID (F group): (GO:xxxx|GO:xxxx|...)
         if goFannots.has_key(key):
             i=0
@@ -573,6 +590,7 @@ def iphone_genes():
         else:
             fp.write('0')
         fp.write(CRT)
+
     reportlib.finish_nonps(fp)
     
     # re-create a symbolic link between the new file and the current file
@@ -728,6 +746,7 @@ def iphone_mp():
         else:
             fp.write('0')
 	fp.write(TAB)
+
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
         if refs.has_key(key):
             i=0
@@ -740,21 +759,25 @@ def iphone_mp():
             fp.write(TAB)
         else:
             fp.write('0' +TAB)
+
     #	MGI Genotype ID (MGI:xxx|MGI:xxx|...)
         if genoannots.has_key(key):
 	    fp.write(string.join(genoannots[key], '|') + TAB)
         else:
             fp.write('0' +TAB)
+
     #	MGI Marker ID (MGI:xxx|MGI:xxx|...)
         if markerannots.has_key(key):
 	    fp.write(string.join(markerannots[key], '|') + TAB)
         else:
             fp.write('0' +TAB)
+
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
         if alleleannots.has_key(key):
 	    fp.write(string.join(alleleannots[key], '|'))
         else:
             fp.write('0')
+
         fp.write(CRT)
 
     reportlib.finish_nonps(fp)
