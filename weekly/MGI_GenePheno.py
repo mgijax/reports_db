@@ -328,35 +328,6 @@ for r in results:
     if mpAlleleIDs.has_key(genotype):
         fp1.write(string.join(mpAlleleIDs[genotype], '|'))
 
-#
-# process results
-#
-results = db.sql('select distinct _Object_key, _Term_key from mp order by _Object_key, _Term_key', 'auto')
-
-for r in results:
-
-    genotype = r['_Object_key']
-    term = r['_Term_key']
-    refKey = `genotype` + `term`
-
-    # we only want to list the Genotypes that have Allele Pairs
-    if not mpDisplay.has_key(genotype):
-       continue
-
-    if not mpStrain.has_key(genotype):
-       continue
-
-    if not mpAlleles.has_key(genotype):
-       continue
-
-    fp1.write(mpDisplay[genotype] + TAB)
-
-    fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
-
-    if mpAlleleIDs.has_key(genotype):
-        fp1.write(string.join(mpAlleleIDs[genotype], '|'))
-    fp1.write(TAB)
-
     fp1.write(mpStrain[genotype] + TAB)
     fp1.write(mpID[term] + TAB)
 

@@ -539,7 +539,7 @@ D></TABLE>
     <TR><TD><TABLE>
         <TR><TD><B>9. Genotypes and Mammalian Phenotype Annotations for Marker Type Genes excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>MGI Genotype Accession ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID (pipe-delimited)<TD>MGI Marker Accession ID (pipe-delimited)</TD><TD>MGI Genotype Accession ID (pipe-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_GenePheno.rpt">MGI_GenePheno.rpt</A></TD></TR>
     </TABLE></TD></TR>
@@ -547,7 +547,7 @@ D></TABLE>
     <TR><TD><TABLE>
         <TR><TD><B>10. Genotypes with both Phenotype and Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>DO ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID (pipe-delimited)<TD>MGI Marker Accession ID (pipe-delimited)</TD><TD>DO ID (pipe-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_DiseaseDO.rpt">MGI_Geno_DiseaseDO.rpt</A></TD></TR>
     </TABLE></TD></TR>
@@ -555,7 +555,7 @@ D></TABLE>
     <TR><TD><TABLE>
         <TR><TD><B>11. Genotypes with both Phenotype and Negated Disease Annotations for Marker Type Genes, excluding conditional mutations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID<TD>MGI Marker Accession ID (comma-delimited)</TD><TD>DO ID (comma-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Allelic Composition</TD><TD>Allele Symbol(s)</TD><TD>Allele ID(s)</TD><TD>Genetic Background</TD><TD>Mammalian Phenotype ID</TD><TD>PubMed ID (pipe-delimited)<TD>MGI Marker Accession ID (pipe-delimited)</TD><TD>DO ID (pipe-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Geno_NotDiseaseDO.rpt">MGI_Geno_NotDiseaseDO.rpt</A></TD></TR>
     </TABLE></TD></TR>
