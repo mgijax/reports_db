@@ -94,6 +94,19 @@ results = db.sql('''select t._Term_key, t.term, a.accID, omim.accid as omimID
 	and a.preferred = 1
 	and a._Object_key = omim._Object_key
 	and omim._LogicalDB_key  = 15
+	union
+	select t._Term_key, t.term, a.accID, null
+	from VOC_Term t, ACC_Accession a
+	where t._Vocab_key = 125
+	and t._Term_key = a._Object_key
+	and a._MGIType_key = 13
+	and a.preferred = 1
+	and a._LogicalDB_key = 191
+	and a.preferred = 1
+	and not exists (select 1 from ACC_Accession omim
+		where a._Object_key = omim._Object_key
+		and omim._LogicalDB_key  = 15
+		)
 	''', 'auto')
 
 diseaseLookup = {}
@@ -106,9 +119,10 @@ for r in results:
     	diseaseLookup[key] = value
 
     value = r['omimID']
-    if key not in omimLookup:
-    	omimLookup[key] = []
-    omimLookup[key].append(value)
+    if value != None:
+        if key not in omimLookup:
+    	    omimLookup[key] = []
+        omimLookup[key].append(value)
 
 #
 # cache the HomoloGene ID by Marker
@@ -159,7 +173,10 @@ for r in results:
 
     fp.write(diseaseLookup[r['_Term_key']][1] + TAB)
     fp.write(diseaseLookup[r['_Term_key']][0] + TAB)
-    fp.write('|'.join(omimLookup[r['_Term_key']]) + TAB)
+
+    if r['_Term_key'] in omimLookup:
+        fp.write('|'.join(omimLookup[r['_Term_key']]))
+    fp.write(TAB)
 
     if r['_Object_key'] in homologeneLookup:
         fp.write('|'.join(homologeneLookup[r['_Object_key']]))
