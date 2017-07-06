@@ -26,6 +26,9 @@
 #
 # History:
 #
+# lec	07/06/2017
+#	- TR12615/exclude obsolete MP terms
+#
 # sc	11/14/2016
 #	- TR12404 Use Hybrid Homology, report  Homologene cluster ID and HGNC y/n
 #
@@ -91,6 +94,7 @@ for r in results:
     if r['_Marker_key'] in hgncMouseList:
 	print 'mouse in multi HGNC clusters: %s' % r['_Marker_key']
     hgncMouseList.append(r['_Marker_key'])
+
 # create dictionary of HG mouse keys -> HG ID
 hgMouseDict = {}
 results = db.sql('''select mcm._Marker_Key, mc.clusterID
@@ -105,6 +109,7 @@ for r in results:
     if key in hgMouseDict:
 	print 'mouse in multi HG clusters: %s %s %s' % (key, id, hgMouseDict[key])
     hgMouseDict[key] = id
+
 #
 # Get mouse to human orthologous marker pair's symbols and keys
 #
@@ -134,7 +139,6 @@ db.sql('create index human_idx1 on human(_Cluster_key)', None)
 db.sql('''
 	select distinct hm._Marker_key as mouseKey, 
 			m1.symbol as mouseSym, 
-			/*hm.clusterID,*/
 	                hh._Marker_key as humanKey, 
 			m2.symbol as humanSym 
 	into temporary table homology 
@@ -179,12 +183,12 @@ hlocus = createDict(results, '_Object_key', 'accID')
 
 #
 # Get the MP Header Terms for the mouse markers
-# only select primary ids
+# only select primary ids and non-obsolete ids
 #
 
 results = db.sql('''
 	select distinct h.mouseKey, a.accID 
-        from homology h, GXD_AlleleGenotype g, VOC_AnnotHeader v, ACC_Accession a 
+        from homology h, GXD_AlleleGenotype g, VOC_AnnotHeader v, ACC_Accession a, VOC_Term tt
         where h.mouseKey = g._Marker_key 
         and g._Genotype_key = v._Object_key 
         and v._AnnotType_key = 1002 
@@ -193,18 +197,23 @@ results = db.sql('''
         and a._MGIType_key = 13 
         and a.preferred = 1 
         and a._LogicalDB_key = 34 
+	and v._Term_key = tt._Term_key
+	and tt.isObsolete = 0
 	''', 'auto')
 mpheno = createDict(results, 'mouseKey', 'accID')
 
 results = db.sql('select * from homology order by humanSym, mouseSym', 'auto')
 
 for r in results:
+
     hasHGNC = 'no'
     clusterID = None
 
     mouseKey = r['mouseKey']
+
     if mouseKey in  hgncMouseList:
         hasHGNC = 'yes'
+
     if mouseKey in hgMouseDict:
         clusterID = hgMouseDict[mouseKey]
 
@@ -214,10 +223,12 @@ for r in results:
         fp.write(hlocus[r['humanKey']] + TAB)
     else:
         fp.write(TAB)
+
     if clusterID == None:
 	fp.write(TAB)
     else:
 	fp.write(clusterID + TAB)
+
     fp.write(hasHGNC +  TAB)
     fp.write(r['mouseSym'] + TAB)
 
@@ -228,6 +239,7 @@ for r in results:
         fp.write(mpheno[mouseKey] + TAB)
     else:
         fp.write(TAB)
+
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)
