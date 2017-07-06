@@ -27,6 +27,9 @@
 #
 # History:
 #
+# lec	07/06/2017
+#	- TR12593/exclude obsolete MP terms
+#
 # lnh 07/14/2016
 #     - TR12373 -  print gene ID or gene symbol for all allele types including Transgenes
 #
@@ -158,13 +161,15 @@ for r in results:
 
 results = db.sql('''
 	select distinct s._Allele_key, a.accID 
-	from alleles s, GXD_AlleleGenotype ga, VOC_AnnotHeader na, ACC_Accession a 
+	from alleles s, GXD_AlleleGenotype ga, VOC_AnnotHeader na, ACC_Accession a, VOC_Term tt
 	where s._Allele_key = ga._Allele_key 
 	and ga._Genotype_key = na._Object_key 
 	and na._AnnotType_key = 1002 
 	and na._Term_key = a._Object_key 
 	and a._MGIType_key = 13 
 	and a.preferred = 1
+	and na._Term_key = tt._Term_key
+	and tt.isObsolete = 0
 	''', 'auto')
 
 mpIDs = {}
@@ -226,9 +231,8 @@ for r in results:
 		fp.write(pubIDs[r['_Allele_key']])
 	fp.write(reportlib.TAB)
 
-	#TR12373 -  print gene ID or gene symbol for all allele types including Transgenes
-	fp.write(mmgiIDs[r['_Marker_key']] + reportlib.TAB + \
-		r['marker'] + reportlib.TAB)
+	fp.write(mmgiIDs[r['_Marker_key']] + reportlib.TAB)
+	fp.write(r['marker'] + reportlib.TAB)
 
 	if refIDs.has_key(r['_Marker_key']):
 		fp.write(refIDs[r['_Marker_key']])
