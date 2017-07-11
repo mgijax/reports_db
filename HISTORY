@@ -1,7 +1,31 @@
+TAG: reports_db-6-0-10-7
+DATE: 07/06/2017
+STAFF: lec
+CHANGES: 
+TR12615/exclude obsolete MP terms HMD_HumanPhenotype.py
+TR12593/exclude obsolete MP terms MGI_PhenotypicAllele.py
+
 TAG: reports_db-6-0-10-3
 DATE: 06/14/2017
 STAFF: sc
 CHANGES: index.shtml - add HGNC Association? column header to HMD_HumanPhenotype.rpt
+
+TAG: reports_db-6-0-10-6
+DATE: 06/13/2017
+STAFF: sc
+CHANGES: TR12613 - MGI_GenePheno.rpt - add missing TAB btwn 3rd and 4th column.
+
+TAG: reports_db-6-0-10-5
+DATE: 06/13/2017
+STAFF: sc
+CHANGES: index.shtml addede HGNC Assoc? column header for HMD_HumanPhenotype.rpt
+
+TAG: reports_db-6-0-10-4
+TAG: reports_db-6-0-10-3
+DATE: 06/05/2017
+STAFF: lec 
+weekly/MGI_DO.py
+remove complicated sorting/replace with simple sorting
 
 TAG: reports_db-6-0-10-2
 TAG: reports_db-6-0-10-1
