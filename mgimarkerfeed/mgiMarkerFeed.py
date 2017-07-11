@@ -1564,19 +1564,21 @@ def references():
     db.sql('create index references_idx1 on refs(_Refs_key)', None)
 
     results = db.sql('''
-	    select r._Refs_key, b.refType, b.authors,
+	    select r._Refs_key, t.term, b.authors,
 	    b.title, b.journal, b.vol, b.issue, b.pgs, b.year, 
 	    b.isReviewArticle, 
 	    k.book_au, k.book_title, k.publisher, k.place, k.series_ed, 
             to_char(b.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
             to_char(b.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
-	    from refs r, BIB_Refs b LEFT OUTER JOIN BIB_Books k on (b._Refs_key = k._Refs_key)
+	    from refs r, BIB_Refs b LEFT OUTER JOIN BIB_Books k on (b._Refs_key = k._Refs_key),
+	    	VOC_Term t
 	    where r._Refs_key = b._Refs_key 
+	    and b._ReferenceType_key = t._Term_key
 	    ''', 'auto')
 
     for r in results:
 	    fp.write(`r['_Refs_key']` + TAB + \
-	             r['refType'] + TAB + \
+	             r['term'] + TAB + \
 		     mgi_utils.prvalue(r['authors']) + TAB + \
 		     mgi_utils.prvalue(r['title']) + TAB + \
 		     mgi_utils.prvalue(r['journal']) + TAB + \
