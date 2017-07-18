@@ -1,3 +1,10 @@
+TAG: reports_db-6-0-10-8
+DATE: 07/18/2017
+STAFF: dbm
+CHANGES: 
+1) rpt_release_wrapper.csh: removed
+2) ncbilinkout/copy_rpt_wrapper.csh; removed
+
 TAG: reports_db-6-0-10-7
 DATE: 07/06/2017
 STAFF: lec
