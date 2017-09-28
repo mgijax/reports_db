@@ -1386,6 +1386,9 @@ def genotypes():
           where s._Strain_key = p._Strain_key 
 	  and g._Genotype_key = p._Genotype_key 
           and p._Qualifier_key = t._Term_key
+	  and exists (select 1 from MGI_Note n
+	  	where g._Genotype_key = n._Object_key 
+	  	and n._NoteType_key = 1016)
 	  ''', 'auto')
     
     for r in results:
