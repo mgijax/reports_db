@@ -1,3 +1,10 @@
+TAG: reports_db-6-0-10-?
+DATE: 07/11/2017
+STAFF: lec
+CHANGES: 
+TR12250/Lit Triage
+1) mgimarkerfeed/new reference type
+
 TAG: reports_db-6-0-10-8
 DATE: 07/18/2017
 STAFF: dbm
@@ -11,6 +18,11 @@ STAFF: lec
 CHANGES: 
 TR12615/exclude obsolete MP terms HMD_HumanPhenotype.py
 TR12593/exclude obsolete MP terms MGI_PhenotypicAllele.py
+
+TAG: reports_db-6-0-10-3
+DATE: 06/14/2017
+STAFF: sc
+CHANGES: index.shtml - add HGNC Association? column header to HMD_HumanPhenotype.rpt
 
 TAG: reports_db-6-0-10-6
 DATE: 06/13/2017
