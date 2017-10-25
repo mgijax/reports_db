@@ -37,6 +37,9 @@
 #
 # History:
 #
+# lec	10/25/2017
+#	- TR12664/noctua-model-id
+#
 # lec	07/14/2016
 #	- TR12349/12345/GO_Noctua/GPAD added
 #
@@ -398,7 +401,7 @@ def doSetup():
 	    and t.term not in (
     		'evidence', 'anatomy', 'cell type', 'gene product', 'modification', 'target', 
     		'external ref', 'text', 'dual-taxon ID',
-    		'lego-model-id', 'contributor', 'individual', 'go_qualifier'
+    		'noctua-model-id', 'contributor', 'individual', 'go_qualifier'
 		)
 	    order by t.term, p.value
             ''', 'auto')
