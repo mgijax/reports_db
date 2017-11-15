@@ -70,8 +70,12 @@ for r in results:
     annotQual = 'N'
     if r['annotQual'] != None:
 	annotQual = 'Y'
-    alleleComp = string.strip(r['alleleComp'])
-    fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (r['genotypeID'], TAB, r['gender'], TAB, r['mpID'], TAB, r['mpTerm'], TAB, alleleComp, TAB, r['bgStrain'], TAB, annotQual, CRT)) 
+
+    alleleComp = string.replace(string.strip(r['alleleComp']), '\n', ',')
+    
+    print '"%s"' % alleleComp
+    
+    fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (r['genotypeID'], TAB, r['gender'], TAB, r['mpID'], TAB, r['mpTerm'], TAB, alleleComp, TAB, string.strip(r['bgStrain']), TAB, annotQual, CRT)) 
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
