@@ -629,14 +629,12 @@ def iphone_mp():
         select m._term_key, x.note
         from mp m, VOC_Text x
         where m._term_key = x._term_key
-	order by m._term_key, x.sequencenum
+	order by m._term_key
             ''', 'auto')
     notes = {}
     for r in results:
         key = r['_term_key']
 	value = r['note']
-	if notes.has_key(key):
-            value = notes[key] + r['note']
         notes[key] = value
 
     #

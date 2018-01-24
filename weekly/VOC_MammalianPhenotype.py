@@ -31,21 +31,17 @@ TAB = reportlib.TAB
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 results = db.sql('''
-	select t._Term_key, t.note, t.sequenceNum 
+	select t._Term_key, t.note
 	from VOC_Text t, VOC_Term m 
 	where m._Vocab_key = 5 
 	and m._Term_key = t._Term_key 
-	order by t._Term_key, t.sequenceNum
+	order by t._Term_key
 	''', 'auto')
 mpnotes = {}
 for r in results:
     key = r['_Term_key']
     value = r['note']
-
-    if not mpnotes.has_key(key):
-	mpnotes[key] = []
-
-    mpnotes[key].append(value)
+    mpnotes[key] = value
 
 results = db.sql('''
 	select a.accID, t._Term_key, t.term from VOC_Term t, ACC_Accession a 
@@ -63,7 +59,7 @@ for r in results:
     fp.write(r['accID'] + TAB + r['term'] + TAB)
 
     if mpnotes.has_key(key):
-	fp.write(string.join(mpnotes[key],''))
+	fp.write(mpnotes[key])
 
     fp.write(CRT)
 
