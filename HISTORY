@@ -1,3 +1,13 @@
+TAG: reports_db-6-0-12-?
+DATE: 01/23/2018
+STAFF: lec
+CHANGES:
+TR12662/GMC/removing obsolete note/sequenceNum
+weekly/MGI_iphone_app.py
+weekly/VOC_MammalianPhenotype.py
+weekly/MGI_Recombinase_Full.py
+mgimarkerfeed/mgiMarkerFeed.py
+
 TAG: reports_db-6-0-11-4
 TAG: reports_db-6-0-11-3
 DATE: 11/01/2017
