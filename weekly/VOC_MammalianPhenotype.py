@@ -31,11 +31,10 @@ TAB = reportlib.TAB
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 results = db.sql('''
-	select t._Term_key, t.note
-	from VOC_Text t, VOC_Term m 
+	select m._Term_key, m.note
+	from VOC_Term m 
 	where m._Vocab_key = 5 
-	and m._Term_key = t._Term_key 
-	order by t._Term_key
+	order by m._Term_key
 	''', 'auto')
 mpnotes = {}
 for r in results:

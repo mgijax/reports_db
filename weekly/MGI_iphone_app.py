@@ -610,7 +610,7 @@ def iphone_mp():
     # MP terms
     #
     db.sql('''
-            select t._term_key, t.term, a.accid
+            select t._term_key, t.term, t.note, a.accid
 	    into temporary table mp
             from VOC_Term t, ACC_Accession a
             where t._Vocab_key = 5
@@ -621,21 +621,6 @@ def iphone_mp():
             ''', None)
 
     db.sql('create index mp_idx on mp(_term_key)', None)
-
-    #
-    # definitions
-    #
-    results = db.sql('''    
-        select m._term_key, x.note
-        from mp m, VOC_Text x
-        where m._term_key = x._term_key
-	order by m._term_key
-            ''', 'auto')
-    notes = {}
-    for r in results:
-        key = r['_term_key']
-	value = r['note']
-        notes[key] = value
 
     #
     # Mammalian Phenotype/References
@@ -739,10 +724,10 @@ def iphone_mp():
 	fp.write(r['accid'] + TAB)
 	fp.write(r['term'] + TAB)
 
-	if notes.has_key(key):
-	    fp.write(notes[key])
-        else:
+	if r['note'] == None:
             fp.write('0')
+        else:
+	    fp.write(r['note'])
 	fp.write(TAB)
 
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)

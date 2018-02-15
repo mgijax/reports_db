@@ -281,12 +281,11 @@ for r in results:
 #
 
 results = db.sql('''
-	select a.accID, t.term as symbol, s.note as name
-	from ACC_Accession a, VOC_Term t, VOC_Text s
+	select a.accID, t.term as symbol, t.note as name
+	from ACC_Accession a, VOC_Term t
 	where t._Vocab_key = 112
 	and t._term_key = a._Object_key 
 	and a._LogicalDB_key = 183
-	and t._Term_key = s._Term_key
    	''', 'auto')
 
 for r in results:

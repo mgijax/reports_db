@@ -487,20 +487,6 @@ def vocabs():
     
     fp = open(OUTPUTDIR + 'mp_term.bcp', 'w')
     
-    results = db.sql('''
-	  select x._Term_key, rtrim(x.note) as note
-          from VOC_Term t, VOC_Text x 
-	  where t._Vocab_key = 5 
-	  and t._Term_key = x._Term_key 
-	  order by x._Term_key
-	  ''', 'auto')
-
-    notes = {}
-    for r in results:
-	key = r['_Term_key']
-	value = r['note']
-	notes[key] = value
-
     #
     # vocabulary terms
     # MP (5) 
@@ -509,7 +495,7 @@ def vocabs():
     #
 
     results = db.sql('''
-	  select a.accID, t.term, t._Term_key, v.name, 
+	  select a.accID, t.term, t._Term_key, t.note, v.name, 
                 to_char(t.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
                 to_char(t.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
           from VOC_Vocab v, VOC_Term t, ACC_Accession a 
@@ -526,13 +512,9 @@ def vocabs():
 	    fp.write(`key` + TAB + \
 		     r['accID'] + TAB + \
 	             r['term'] + TAB + \
-		     r['name'] + TAB)
-
-            if notes.has_key(key):
-		fp.write(notes[key])
-            fp.write(TAB)
-
-	    fp.write(str(r['cdate']) + TAB + \
+		     r['name'] + TAB + \
+		     mgi_utils.prvalue(r['note']) + TAB + \
+	             str(r['cdate']) + TAB + \
 		     str(r['mdate']) + CRT)
     fp.close()
 
