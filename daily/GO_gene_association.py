@@ -37,6 +37,9 @@
 #
 # History:
 #
+# lec	02/21/2018
+#	- TR12768/if assigned_by = 'UniProtKB' or 'RGD', then set to 'MGI'
+#
 # lec	10/25/2017
 #	- TR12664/noctua-model-id
 #
@@ -179,8 +182,14 @@ db.setTrace()
 
 MGIPREFIX = 'MGI'
 SPECIES = 'taxon:10090'
-UNIPROTKB = 'uniprotload'
-assignedByList = ['RGD', 'GOC', 'GO_Central', 'GO_Noctua']
+
+#
+# if in list 1, then use 'UniProt'
+# if in list 2, then use itself
+# else it will use MGIPREFIX
+#
+assignedByList1 = ['uniprotload']
+assignedByList2 = ['GOC', 'GO_Central', 'GO_Noctua']
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -735,19 +744,19 @@ def doGAFFinish():
         reportRow = reportRow + str(r['mDate']) + TAB
 
 	# column 15; assigned by
-        if r['assignedBy'] == UNIPROTKB:
-            reportRow = reportRow + 'UniProtKB' + TAB
 
 	# remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
-	elif r['assignedBy'].find('GOA_') >= 0:
+	if r['assignedBy'].find('GOA_') >= 0:
             assignedBy = r['assignedBy'].replace('GOA_', '')
             reportRow = reportRow + assignedBy + TAB
 
-	# check list
-        elif r['assignedBy'] in assignedByList:
+        elif r['assignedBy'] in assignedByList1:
+            reportRow = reportRow + 'UniProt' + TAB
+
+        elif r['assignedBy'] in assignedByList2:
             reportRow = reportRow + r['assignedBy'] + TAB
 
-	# else use default
+	# else use default (MGIPREFIX)
         else:
             reportRow = reportRow + MGIPREFIX + TAB
 
@@ -894,19 +903,19 @@ def addGPADReportRow(reportRow, r):
         reportRow = reportRow + str(r['mDate']) + TAB
 
 	#   10. Assigned by
-        if r['assignedBy'] == UNIPROTKB:
-            reportRow = reportRow + 'UniProtKB' + TAB
 
 	# remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
-	elif r['assignedBy'].find('GOA_') >= 0:
+	if r['assignedBy'].find('GOA_') >= 0:
             assignedBy = r['assignedBy'].replace('GOA_', '')
             reportRow = reportRow + assignedBy + TAB
 
-	# check list
-        elif r['assignedBy'] in assignedByList:
+        elif r['assignedBy'] in assignedByList1:
+            reportRow = reportRow + 'UniProt' + TAB
+
+        elif r['assignedBy'] in assignedByList2:
             reportRow = reportRow + r['assignedBy'] + TAB
 
-	# else use default
+	# else use default (MGIPREFIX)
         else:
             reportRow = reportRow + MGIPREFIX + TAB
 
