@@ -683,6 +683,9 @@ def doGAFFinish():
         if r['_Term_key'] not in dag:
 	    continue
 
+        if dag[r['_Term_key']] not in dagQualifier:
+            continue
+
 	objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
 
 	# columns 1-5
