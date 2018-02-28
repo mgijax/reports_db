@@ -8,6 +8,11 @@ weekly/VOC_MammalianPhenotype.py
 weekly/MGI_Recombinase_Full.py
 mgimarkerfeed/mgiMarkerFeed.py
 
+TAG: reports_db-6-0-11-6
+DATE: 02/28/2018
+STAFF: lec
+CHANGES: TR12785//GO_gene_association.py/skip if DAG = 0 (obsolete)
+
 TAG: reports_db-6-0-11-5
 DATE: 02/21/2018
 STAFF: lec
