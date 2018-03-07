@@ -8,6 +8,12 @@ weekly/VOC_MammalianPhenotype.py
 weekly/MGI_Recombinase_Full.py
 mgimarkerfeed/mgiMarkerFeed.py
 
+TAG: reports_db-6-0-11-7
+DATE: 03/06/2018
+STAFF: dbm
+CHANGES: TR12805
+1) weekly/ES_CellLine.py: Added strain MGI ID
+
 TAG: reports_db-6-0-11-6
 DATE: 02/28/2018
 STAFF: lec
