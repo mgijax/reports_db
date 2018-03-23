@@ -34,6 +34,7 @@ results = db.sql('''
 	select m._Term_key, m.note
 	from VOC_Term m 
 	where m._Vocab_key = 5 
+	and m.note is not null
 	order by m._Term_key
 	''', 'auto')
 mpnotes = {}
