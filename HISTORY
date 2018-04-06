@@ -1,3 +1,9 @@
+TAG: reports_db-6-0-12-3
+DATE: 04/06/2018
+STAFF: lec
+CHANGES:
+TR12834/daily/GO_gene_association.py
+
 TAG: reports_db-6-0-12-2
 TAG: reports_db-6-0-12-1
 DATE: 03/07/2018, 03/23/2018

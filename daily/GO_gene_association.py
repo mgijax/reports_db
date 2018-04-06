@@ -218,11 +218,12 @@ proteins = {}
 # gpad lookups
 #
 # translate dag to qualifier (col 3)
-dagQualifier = {'C':'part_of', 'P':'involved_in', 'F':'enables'}
+dagQualifier = {'C':'part_of', 'P':'acts_upstream_of_or_within', 'F':'enables'}
 taxonLookup = {}
 ecoLookupByEco = {}
 ecoLookupByEvidence = {}
 evidenceLookup = {}
+gpadCol3Lookup = {}
 gpadCol11Lookup = {}
 gpadCol12Lookup = {}
 
@@ -236,6 +237,7 @@ def doSetup():
     global evidenceLookup
     global taxonLookup
     global ecoLookupByEco, ecoLookupByEvidence
+    global gpadCol3Lookup
     global gpadCol11Lookup
     global gpadCol12Lookup
     global goRefDict
@@ -395,7 +397,27 @@ def doSetup():
     #print taxonLookup 
 
     #
-    # gpadCol11 : noctua (_CreatedBy_key = 1559)
+    # gpadCol3 : go_qualifier
+    #
+    results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
+            from gomarker2 a,
+                 VOC_Evidence_Property p,  
+                 VOC_Term t
+	    where a._AnnotEvidence_key = p._AnnotEvidence_key
+	    and p._PropertyTerm_key = t._Term_key
+	    and t.term in ('go_qualifier')
+	    order by t.term, p.value
+            ''', 'auto')
+    for r in results:
+        key = r['_AnnotEvidence_key']
+        value = r['value']
+        if key not in gpadCol3Lookup:
+    	    gpadCol3Lookup[key] = []
+        gpadCol3Lookup[key].append(value)
+    #print gpadCol3Lookup
+
+    #
+    # gpadCol11 : (MGI_User.login like NOCTUA_%)
     #	exclude older terms (sequenceNum 1-9, 90,91,92, 93)
     #
     # note that noctua-generated properties will *always* have one stanza
@@ -403,8 +425,10 @@ def doSetup():
     results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
             from gomarker2 a,
                  VOC_Evidence_Property p,  
-                 VOC_Term t
-	    where a._CreatedBy_key = 1559
+                 VOC_Term t,
+		 MGI_User u
+	    where a._CreatedBy_key = u._User_key
+	    and u.login like 'NOCTUA_%'
 	    and a._AnnotEvidence_key = p._AnnotEvidence_key
 	    and p._PropertyTerm_key = t._Term_key
 	    and t.term not in (
@@ -424,14 +448,16 @@ def doSetup():
     #print gpadCol11Lookup
 
     #
-    # gpadCol12 : noctua (_CreatedBy_key = 1559) 
+    # gpadCol12 : (MGI_User.login like NOCTUA_%)
     # exclude : occurs_in, part_of, go_qualifier, evidence
     #
     results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
             from gomarker2 a,
                  VOC_Evidence_Property p,  
-                 VOC_Term t
-	    where a._CreatedBy_key = 1559
+                 VOC_Term t,
+		 MGI_User u
+	    where a._CreatedBy_key = u._User_key
+	    and u.login like 'NOCTUA_%'
             and a._AnnotEvidence_key = p._AnnotEvidence_key
 	    and p._PropertyTerm_key = t._Term_key
 	    and t.term not in ('occurs_in', 'part_of', 'go_qualifier', 'evidence')
@@ -810,7 +836,7 @@ def doGPADFinish():
     #   9. Date                     YYYYMMDD
     #   10. Assigned by
     #   11. Annotation Extension    (optional) same as GAF/col 16
-    #   12. Annotation Properties   (optional) properties if creator = 'GO_Noctua' (1559)
+    #   12. Annotation Properties   (optional) properties if creator like 'NOCTUA_%'
 
     #
     # process results
@@ -864,9 +890,14 @@ def addGPADReportRow(reportRow, r):
 	key = r['_AnnotEvidence_key']
 
 	#   3. Qualifier
-	#   always add new C/P/F qualifier
-	#   if any additional qualifiers (contributes_to, colocalizes_with, etc.) exists, attach them too
-	qualifier = dagQualifier[dag[r['_Term_key']]]
+        #   if qualifier in Annotation (gpadCol3Lookup/go_qualifier), use it
+	#   else, add default C/P/F qualifier
+	#   always attach any MGI Qualifer
+	qualifier = ''
+	if key in gpadCol3Lookup:
+	    qualifier = '|'.join(gpadCol3Lookup[key])
+        else:
+            qualifier = dagQualifier[dag[r['_Term_key']]]
 	if r['qualifier'] != None:
 	    qualifier = qualifier + '|' + r['qualifier'].strip()
         reportRow = reportRow + qualifier + TAB
@@ -907,8 +938,13 @@ def addGPADReportRow(reportRow, r):
 
 	#   10. Assigned by
 
+	# remove "NOCTUA_"; for example:  "NOCTUA_MGI" ==> "MGI"
+	if r['assignedBy'].find('NOCTUA_') >= 0:
+            assignedBy = r['assignedBy'].replace('NOCTUA_', '')
+            reportRow = reportRow + assignedBy + TAB
+
 	# remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
-	if r['assignedBy'].find('GOA_') >= 0:
+	elif r['assignedBy'].find('GOA_') >= 0:
             assignedBy = r['assignedBy'].replace('GOA_', '')
             reportRow = reportRow + assignedBy + TAB
 
@@ -1015,7 +1051,7 @@ fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n'
 fp.write('!\n')
 fp.write('!	1.  DB                       MGI or PR\n')
 fp.write('!	2.  DB Object ID             MGI:xxxx or xxxxx\n')
-fp.write('!	3.  Qualifier                enables, involved_in, part_of\n')
+fp.write('!	3.  Qualifier                enables, causally_upstream_of_or_within, part_of\n')
 fp.write('!	4.  GO ID                    GO:xxxx\n')
 fp.write('!	5.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
 fp.write('!	6.  Evidence Code            ECO:xxxx\n')
