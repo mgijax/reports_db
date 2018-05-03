@@ -111,7 +111,7 @@ fp.write('UniProt IDs\t')
 fp.write('TrEMBL IDs\t')
 fp.write('Ensembl protein IDs\t')
 fp.write('RefSeq protein IDs\t')
-fp.write('UniGene IDs\n')
+fp.write('UniGene IDs\t')
 fp.write('Feature Type\n')
 
 # deleted sequences
