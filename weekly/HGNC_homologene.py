@@ -34,8 +34,6 @@ TAB = reportlib.TAB
 noneDisplay = 'null' + TAB
 sequenceType = 19
 mgiMarkerType = 2
-vega = 85
-vegaprovider = 'VEGA Gene Model'
 ncbi = 59
 ncbiprovider = 'NCBI Gene Model'
 ensembl = 60
@@ -64,14 +62,14 @@ def getCoords(logicalDBkey, provider):
 
     tempCoords = {}
 
-    # we're assuming that markers may have a VEGA, NCBI and/or Ensembl coordinate
+    # we're assuming that markers may have a NCBI and/or Ensembl coordinate
     # OR a UniSTS coordinate but not both
     #
-    # VEGA, NCBI, Ensembl
+    # NCBI, Ensembl
     # contains accID, chromosome, strand, startC, endC
     #
 
-    if logicalDBkey in [vega, ncbi, ensembl]:
+    if logicalDBkey in [ncbi, ensembl]:
         results = db.sql('''
 		select m._Marker_key, a.accID, 
                        c.chromosome, c.strand, 
@@ -197,11 +195,6 @@ fp.write('Ensembl Gene start' + TAB)
 fp.write('Ensembl Gene end' + TAB)
 fp.write('Ensembl Gene strand' + TAB)
 
-fp.write('VEGA Gene ID' + TAB)
-fp.write('VEGA Gene chromosome' + TAB)
-fp.write('VEGA Gene start' + TAB)
-fp.write('VEGA Gene end' + TAB)
-fp.write('VEGA Gene strand' + TAB)
 fp.write('CCDS IDs' + TAB)
 fp.write('HGNC ID' + TAB)
 fp.write('HomoloGene ID' + CRT)
@@ -224,11 +217,9 @@ db.sql('create index idx1 on markers(_Marker_key)', None)
 
 # get coordinates
 
-vegaCoords = {}
 ncbiCoords = {}
 ensemblCoords = {}
 
-vegaCoords = getCoords(vega, vegaprovider)
 ncbiCoords = getCoords(ncbi, ncbiprovider)
 ensemblCoords = getCoords(ensembl, ensemblprovider)
 
@@ -266,18 +257,6 @@ for r in results:
 
     if ensemblCoords.has_key(key):
         c = ensemblCoords[key]
-        fp.write(c['accID'] + TAB)
-        fp.write(c['chromosome'] + TAB)
-        fp.write(str(c['startC']) + TAB)
-        fp.write(str(c['endC']) + TAB)
-        fp.write(c['strand'] + TAB)
-    else:
-        fp.write(5*noneDisplay)
-
-    # VEGA coordinate (15-19)
-
-    if vegaCoords.has_key(key):
-        c = vegaCoords[key]
         fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
         fp.write(str(c['startC']) + TAB)

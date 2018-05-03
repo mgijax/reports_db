@@ -25,20 +25,10 @@
 #  14. Ensembl gene end
 #  15. Ensembl gene strand
 #
-#  16. VEGA gene id
-#  17. VEGA gene chromosome
-#  18. VEGA gene start
-#  19. VEGA gene end
-#  20. VEGA gene strand
-#
 # Usage:
 #       MGI_gene_model_coord.py
 #
 # History:
-#
-# 07/26/2012 - jsb - built from now-defunct MGI_Coordinate.py by omitting
-#	columns to the right of the VEGA strand (part of the Coordinates for
-#	any Marker - C4AM - project)
 #
 '''
  
@@ -58,8 +48,6 @@ noneDisplay = 'null' + TAB
 repGenomicKey = 615419
 sequenceType = 19
 mgiMarkerType = 2
-vega = 85
-vegaprovider = 'VEGA Gene Model'
 ncbi = 59
 ncbiprovider = 'NCBI Gene Model'
 ensembl = 60
@@ -73,14 +61,14 @@ def getCoords(logicalDBkey, provider):
 
     tempCoords = {}
 
-    # we're assuming that markers may have a VEGA, NCBI and/or Ensembl coordinate
+    # we're assuming that markers may have a NCBI and/or Ensembl coordinate
     # OR a UniSTS coordinate but not both
     #
-    # VEGA, NCBI, Ensembl
+    # NCBI, Ensembl
     # contains accID, chromosome, strand, startC, endC
     #
 
-    if logicalDBkey in [vega, ncbi, ensembl]:
+    if logicalDBkey in [ncbi, ensembl]:
         results = db.sql('''
 		select m._Marker_key, a.accID, 
                        c.chromosome, c.strand, 
@@ -130,12 +118,6 @@ fp.write('13. Ensembl gene start' + TAB)
 fp.write('14. Ensembl gene end' + TAB)
 fp.write('15. Ensembl gene strand' + TAB)
 
-fp.write('16. VEGA gene id' + TAB)
-fp.write('17. VEGA gene chromosome' + TAB)
-fp.write('18. VEGA gene start' + TAB)
-fp.write('19. VEGA gene end' + TAB)
-fp.write('20. VEGA gene strand' + CRT)
-
 # all active markers
 
 db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, t.name as markerType
@@ -155,11 +137,9 @@ db.sql('create index idx1 on markers(_Marker_key)', None)
 
 # get coordinates
 
-vegaCoords = {}
 ncbiCoords = {}
 ensemblCoords = {}
 
-vegaCoords = getCoords(vega, vegaprovider)
 ncbiCoords = getCoords(ncbi, ncbiprovider)
 ensemblCoords = getCoords(ensembl, ensemblprovider)
 
@@ -183,8 +163,7 @@ for r in results:
     key = r['_Marker_key']
 
     # if no gene models, skip this marker
-    if not (ncbiCoords.has_key(key) or ensemblCoords.has_key(key) or \
-	vegaCoords.has_key(key)):
+    if not (ncbiCoords.has_key(key) or ensemblCoords.has_key(key):
 	    continue
     
     # 1-4
@@ -212,18 +191,6 @@ for r in results:
 
     if ensemblCoords.has_key(key):
         c = ensemblCoords[key]
-        fp.write(c['accID'] + TAB)
-        fp.write(c['chromosome'] + TAB)
-        fp.write(str(c['startC']) + TAB)
-        fp.write(str(c['endC']) + TAB)
-        fp.write(c['strand'] + TAB)
-    else:
-        fp.write(5*noneDisplay)
-
-    # VEGA coordinate (16-20)
-
-    if vegaCoords.has_key(key):
-        c = vegaCoords[key]
         fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
         fp.write(str(c['startC']) + TAB)

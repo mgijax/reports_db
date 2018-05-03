@@ -30,7 +30,7 @@
 #       - TR11035/postgres cleanup; added feature type, coordinates & biotype
 #
 # sc    03/12/2010
-#       - TR9774 Add Ensembl and VEGA transcripts
+#       - TR9774 Add Ensembl transcripts
 #
 # dbm	09/24/2008
 #	- removed marker type restriction that was only looking for "genes"

@@ -73,7 +73,7 @@
 #	or not they have representative protein sequence (leave col 2
 #	blank if not). To do this: first get everything that has a
 #	representative protein seq; then add in everything else that
-#	has a VEGA, Ensembl, or NCBI gene model. Output formatting:
+#	has a Ensembl, or NCBI gene model. Output formatting:
 #	change "MGI:12345" to "MGI:MGI:12345"; and change "SP:" and
 #	"TR:" to "UniProtKB:".
 #
@@ -186,7 +186,7 @@ for r in results:
 #
 # all mouse genes
 # include: markers of type 'gene'
-# include: marker with 'genomic' representative sequence from Ensembl, NCBI, or VEGA gene model
+# include: marker with 'genomic' representative sequence from Ensembl, NCBI gene model
 # excludd: feature type in 'protein coding gene'
 # excludd: feature type in '%RNA gene'
 # exclude: markers in transcriptDict or proteinDict list
@@ -206,7 +206,7 @@ db.sql('''
     and a.preferred = 1
     and mm._Marker_key = mc._Marker_key
     and mc._Qualifier_key = 615419
-    and mc._LogicalDB_key in (59,60,85)
+    and mc._LogicalDB_key in (59,60)
     and mm._Marker_key not in (select _Marker_key from transcripts)
     and mm._Marker_key not in (select _Marker_key from proteins)
     and mm._Marker_key = tdc._Object_key
@@ -224,7 +224,7 @@ db.sql('''
 # else use transcript
 #
 # if the sequence accession id for the given marker is not of interest, then skip
-# of interest list:  13,41,9,27,131,132,133,134
+# of interest list:  13,41,9,27,134
 #
 
 results = db.sql('select * from allgenes', 'auto')
@@ -281,8 +281,6 @@ for r in results:
         seqID = 'EMBL:' + seqID
     elif logicalDB in [27]:
         seqID = 'RefSeq:' + seqID
-    elif logicalDB in [131,132]:
-        seqID = 'VEGA:' + seqID
     elif logicalDB in [133, 134]:
         seqID = 'ENSEMBL:' + seqID
     else:

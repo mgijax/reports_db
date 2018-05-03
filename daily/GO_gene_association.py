@@ -613,7 +613,6 @@ def doProtein():
     #    13 = SwissProt
     #    41 = TrEMBL
     #    27 = RefSeq (XP, NP)
-    #    132 = VEGA Protein
     #    134 = Ensembl Protein
     #
     # example of counts:
@@ -655,10 +654,6 @@ def doProtein():
         elif logicalDB in [27] and qualifier == 615421:
 	    #print 'np/xp: ', str(symbol), str(seqID)
             proteins[key] = 'RefSeq:' + seqID
-
-        # Vega
-        elif logicalDB in [132]:
-            proteins[key] = 'VEGA:' + r['seqID']
 
         # Ensembl
         elif logicalDB in [134]:

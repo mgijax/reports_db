@@ -19,14 +19,13 @@
 #	10: Strand
 #	11: GenBank ID
 #	12: RefSeq transcript ID 
-#	13: VEGA transcript ID
-#	14: Ensembl transcript ID
-#	15: UniProt ID
-#	16: TrEMBL ID
-#	17: VEGA protein ID
-#	18: Ensembl protein ID
-#	19: RefSeq protein ID
-#	20: UniGene ID
+#	13: Ensembl transcript ID
+#	14: UniProt ID
+#	15: TrEMBL ID
+#	16: Ensembl protein ID
+#	17: RefSeq protein ID
+#	18: UniGene ID
+#	19: MCV Term
 #
 # Notes:
 #
@@ -46,7 +45,7 @@
 #	- TR11035/postgres cleanup/merge
 #
 # sc	03/12/2010
-#	- TR9774 Add Ensembl and VEGA transcripts
+#	- TR9774 Add Ensembl transcripts
 #
 # lec	10/10/2006
 #	- only include Markers that have at least one sequence.
@@ -107,11 +106,9 @@ fp.write('Genome Coordinate End\t')
 fp.write('Strand\t')
 fp.write('GenBank IDs\t')
 fp.write('RefSeq transcript IDs\t')
-fp.write('VEGA transcript IDs\t')
 fp.write('Ensembl transcript IDs\t')
 fp.write('UniProt IDs\t')
 fp.write('TrEMBL IDs\t')
-fp.write('VEGA protein IDs\t')
 fp.write('Ensembl protein IDs\t')
 fp.write('RefSeq protein IDs\t')
 fp.write('UniGene IDs\n')
@@ -135,7 +132,6 @@ db.sql('create index deletedIDS_idx2 on deletedIDs(_LogicalDB_key)', None)
 #
 #	9	GenBank
 #	27	RefSeq transcript (not "xp_" or "np_")
-#	131	VEGA transcript
 #	133	Ensembl transcript
 #
 
@@ -154,7 +150,7 @@ db.sql('''
 	and m._Marker_Status_key = s._Marker_Status_key 
 	and m._Marker_Type_key = t._Marker_Type_key 
 	and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key 
-	and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27, 131, 133) and a.prefixPart not in ('XP_', 'NP_'))
+	and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27, 133) and a.prefixPart not in ('XP_', 'NP_'))
 	''', None)
 db.sql('create index markers_idx1 on markers(_Marker_key)', None)
 db.sql('create index markers_idx2 on markers(symbol)', None)
@@ -313,40 +309,6 @@ for r in results:
         ensprot[key] = []
     ensprot[key].append(value)
 
-# VEGA transcript IDs
-results = db.sql('''
-      select distinct m._Marker_key, a.accID 
-      from markers m, ACC_Accession a 
-      where m._Marker_key = a._Object_key 
-      and a._MGIType_key = 2 
-      and a._LogicalDB_key = 131 
-      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
-      ''', 'auto')
-vegatrans = {}
-for r in results:
-    key = r['_Marker_key']
-    value = r['accID']
-    if not vegatrans.has_key(key):
-        vegatrans[key] = []
-    vegatrans[key].append(value)
-
-# VEGA protein IDs
-results = db.sql('''
-      select distinct m._Marker_key, a.accID 
-      from markers m, ACC_Accession a 
-      where m._Marker_key = a._Object_key 
-      and a._MGIType_key = 2 
-      and a._LogicalDB_key = 132 
-      and not exists (select 1 from deletedIDs d where a.accID = d.accID and a._LogicalDB_key = d._LogicalDB_key)
-      ''', 'auto')
-vegaprot = {}
-for r in results:
-    key = r['_Marker_key']
-    value = r['accID']
-    if not vegaprot.has_key(key):
-        vegaprot[key] = []
-    vegaprot[key].append(value)
-
 # UniProt ids
 results = db.sql('''
       select distinct m._Marker_key, a.accID 
@@ -443,46 +405,36 @@ for r in results:
 		fp.write(string.join(rstrans[key], '|'))
 	fp.write(TAB)
 
-#	13: VEGA transcript ID
-	if vegatrans.has_key(key):
-		fp.write(string.join(vegatrans[key], '|'))
-	fp.write(TAB)
-
-#	14: Ensembl transcript ID
+#	13: Ensembl transcript ID
         if enstrans.has_key(key):
                 fp.write(string.join(enstrans[key], '|'))
 	fp.write(TAB)
 
-#	15: UniProt ID
+#	14: UniProt ID
         if uniprotID.has_key(key):
                 fp.write(string.join(uniprotID[key], '|'))
 	fp.write(TAB)
 
-#	16: TrEMBL ID
+#	15: TrEMBL ID
         if tremblID.has_key(key):
                 fp.write(string.join(tremblID[key], '|'))
 	fp.write(TAB)
 
-#	17: VEGA protein ID
-	if vegaprot.has_key(key):
-		fp.write(string.join(vegaprot[key], '|'))
-	fp.write(TAB)
-
-#	18: Ensembl protein ID
+#	16: Ensembl protein ID
         if ensprot.has_key(key):
                 fp.write(string.join(ensprot[key], '|'))
 	fp.write(TAB)
 
-#	19: RefSeq protein ID
+#	17: RefSeq protein ID
 	if rsprot.has_key(key):
 		fp.write(string.join(rsprot[key], '|'))
         fp.write(TAB)
-#	20: UniGene ID
+#	18: UniGene ID
         if ugID.has_key(key):
                 fp.write(string.join(ugID[key], '|'))
         fp.write(TAB)
 
-#	21: MCV Term
+#	19: MCV Term
 	if mcvTerms.has_key(key):
 		fp.write(string.join(mcvTerms[key], '|'))
 	fp.write(CRT)

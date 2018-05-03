@@ -25,7 +25,7 @@
 #
 #   DB_Object_Type = 'gene', DB = 'MGI', DB_Object_ID = 'MGI:xxxx'
 #   DB_Object_Type = 'protein', DB = 'PR', DB_Object_ID = 'xxxx', Parent_Object_ID = 'MGI:MGI:xxxx', DB_Xref = 'UniProtDB:xxx'
-#   DB_Object_Type = 'transcript', DB = 'EMBL', 'RefSeq', 'ENSEMBL', 'VEGA', Parent_Object_ID = 'MGI:MGI:xxxx'
+#   DB_Object_Type = 'transcript', DB = 'EMBL', 'RefSeq', 'ENSEMBL', 'Parent_Object_ID = 'MGI:MGI:xxxx'
 #
 # History:
 #
@@ -73,7 +73,7 @@ fp.write('!  DB_Xref(s)             optional  0 or greater  -             if DB_
 fp.write('!  Properties             optional  0 or greater  -             blank\n\n')
 fp.write('!  DB_Object_Type = "gene", DB = "MGI", DB_Object_ID = "MGI:xxxx"\n')
 fp.write('!  DB_Object_Type = "protein", DB = "PR", DB_Object_ID = "xxxx", Parent_Object_ID = "MGI:MGI:xxxx", DB_Xref = "UniProtDB:xxx"\n')
-fp.write('!  DB_Object_Type = "transcript", DB = "EMBL", "RefSeq", "ENSEMBL", "VEGA", Parent_Object_ID = "MGI:MGI:xxxx"\n')
+fp.write('!  DB_Object_Type = "transcript", DB = "EMBL", "RefSeq", "ENSEMBL", Parent_Object_ID = "MGI:MGI:xxxx"\n')
 fp.write('!\n')
 
 #
@@ -324,7 +324,7 @@ for r in results:
 # RNAs that are associated with at most 1 marker
 #
 
-for ldbsearch in (9, 27, 131, 133):
+for ldbsearch in (9, 27, 133):
 
     results = db.sql('''
 	    WITH rna AS
@@ -358,8 +358,6 @@ for ldbsearch in (9, 27, 131, 133):
 		    ldbName = 'RefSeq'
 	    elif ldb == 133:
 		    ldbName = 'ENSEMBL'
-	    elif ldb == 131:
-		    ldbName = 'VEGA'
     
 	    fp.write(ldbName + TAB)
 	    fp.write(r['rnaID'] + TAB)

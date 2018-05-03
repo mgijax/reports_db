@@ -106,11 +106,6 @@
         <TD>Ensembl Gene Start</TD>
         <TD>Ensembl Gene End</TD>
         <TD>Ensembl Gene Strand</TD>
-        <TD>VEGA Gene ID</TD>
-        <TD>VEGA Gene Chromosome</TD>
-        <TD>VEGA Gene Start</TD>
-        <TD>VEGA Gene End</TD>
-        <TD>VEGA Gene Strand</TD>
         </TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Gene_Model_Coord.rpt">MGI_Gene_Model_Coord.rpt</A> (GRCm38)</TD></TR>
@@ -143,7 +138,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>4. MGI Marker associations to Sequence (GenBank, RefSeq,VEGA, Ensembl) information (tab-delimited)</B></TD></TR>
+        <TR><TD><B>4. MGI Marker associations to Sequence (GenBank, RefSeq,Ensembl) information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR>
 	<TD>MGI Marker Accession ID</TD>
@@ -158,11 +153,9 @@
 	<TD>Strand</TD>
         <TD>GenBank Accession IDs <BR>(pipe-delimited)</TD>
 	<TD>RefSeq Transcript ID <BR>(if any)</TD>
-	<TD>VEGA Transcript ID <BR>(if any)</TD>
 	<TD>Ensembl Transcript ID <BR>(if any)</TD>
 	<TD>UniProt ID <BR>(if any)</TD>
 	<TD>TrEMBL ID <BR>(if any)</TD>
-	<TD>VEGA protein ID <BR>(if any)</TD>
 	<TD>Ensembl protein ID <BR>(if any)</TD>
 	<TD>RefSeq protein ID <BR>(if any)</TD>
         <TD>Unigene ID <BR>(if any)</TD>
@@ -213,17 +206,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>9. MGI Marker associations to VEGA sequence information (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
-        <TD>VEGA Accession ID</TD><TD>VEGA Transcript ID<BR>(space-delimited, if any)</TD><TD>VEGA Protein ID<BR>(space-delimited, if any)</TD><TD>Feature Types (|-delimited)</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Strand</TD><TD>BioTypes<BR>(|-delimited)</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_VEGA.rpt">MRK_VEGA.rpt</A></TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>10. MGI Marker associations to Ensembl sequence information (tab-delimited)</B></TD></TR>
+        <TR><TD><B>9. MGI Marker associations to Ensembl sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>cM Position</TD><TD>Chromosome</TD>
         <TD>Ensembl Accession ID</TD><TD>Ensembl Transcript ID<BR>(space-delimited, if any)</TD><TD>Ensembl Protein ID<BR>(space-delimited, if any)</TD><TD>Feature Types (|-delimited)</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Strand</TD><TD>BioTypes<BR>(|-delimited)</TD></TR></TABLE>
@@ -233,7 +216,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>11. MGI Marker associations to VEGA, Ensembl or NCBI gene models where a gene vs. pseudogene discrepancy exists(tab-delimited)</B></TD></TR>
+        <TR><TD><B>10. MGI Marker associations to Ensembl or NCBI gene models where a gene vs. pseudogene discrepancy exists(tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Marker Symbol</TD><TD>Provider Source</TD><TD>Gene ID</TD><TD>Biotype</TD><TD>MGI Representative Gene Model</TD></TABLE>
         </TD></TR>
@@ -241,7 +224,7 @@
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE><B>12. Primer Sequences</B></TD></TR>
+    <TR><TD><TABLE><B>11. Primer Sequences</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Marker Symbol</TD><TD>Marker Name</TD><TD>Primer Marker Name</TD><TD>MGI Marker Accession ID</TD><TD>MGI Primer Pair ID</TD><TD>Primer 1 Sequence</TD><TD>Primer 2 Sequence</TD><TD>Amplimer Size</TD><TD>Chromosome</TD><TD>Map Position</TD></TR></TABLE>
         </TD></TR>
@@ -250,7 +233,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>13. InterPro Domains (tab-delimited)</B></TD></TR>
+        <TR><TD><B>12. InterPro Domains (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>InterPro ID</TD><TD>Domain Marker Name</TD><TD>MGI Marker Accession ID</TD><TD>Marker Symbol</TD></TR></TABLE>
         </TD></TR>
@@ -310,7 +293,7 @@
 
 	<TR><TD><B>3. Mouse Genes with HomoloGene, HGNC and CCDS IDs</B></TD></TR>
 	<TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>NCBI Gene ID</TD><TD>NCBI Gene Chromosome</TD><TD>NCBI Gene start</TD><TD>NCBI Gene end</TD><TD>NCBI Gene strand</TD><TD>Ensembl Gene ID</TD><TD>Ensembl Gene chromosome</TD><TD>Ensembl Gene start</TD><TD>Ensembl Gene end</TD><TD>Ensembl Gene strand</TD><TD>VEGA Gene ID</TD><TD>VEGA Gene chromosome</TD><TD>VEGA Gene start</TD><TD>VEGA Gene end</TD><TD>VEGA Gene strand</TD><TD>CCDS IDs (comma delimited)</TD><TD>HGNC ID</TD><TD>HomoloGene ID</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>NCBI Gene ID</TD><TD>NCBI Gene Chromosome</TD><TD>NCBI Gene start</TD><TD>NCBI Gene end</TD><TD>NCBI Gene strand</TD><TD>Ensembl Gene ID</TD><TD>Ensembl Gene chromosome</TD><TD>Ensembl Gene start</TD><TD>Ensembl Gene end</TD><TD>Ensembl Gene strand</TD><TD><TD>CCDS IDs (comma delimited)</TD><TD>HGNC ID</TD><TD>HomoloGene ID</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HGNC_homologene.rpt">HGNC_homologene.rpt</A></TD></TR>
     </TABLE></TD></TR>
