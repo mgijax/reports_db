@@ -116,7 +116,7 @@ fp.write('11. Ensembl gene id' + TAB)
 fp.write('12. Ensembl gene chromosome' + TAB)
 fp.write('13. Ensembl gene start' + TAB)
 fp.write('14. Ensembl gene end' + TAB)
-fp.write('15. Ensembl gene strand' + TAB)
+fp.write('15. Ensembl gene strand' + CRT)
 
 # all active markers
 
@@ -163,7 +163,7 @@ for r in results:
     key = r['_Marker_key']
 
     # if no gene models, skip this marker
-    if not (ncbiCoords.has_key(key) or ensemblCoords.has_key(key):
+    if not (ncbiCoords.has_key(key) or ensemblCoords.has_key(key)):
 	    continue
     
     # 1-4
