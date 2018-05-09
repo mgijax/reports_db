@@ -4,6 +4,12 @@ STAFF: lec
 CHANGES: TR12734/GenFevah/Mouse Genome Project
 remove VEGA reports
 
+TAG: reports_db-6-0-12-4
+DATE: 05/09/2018
+STAFF: sc
+CHANGES:
+TR12867/weekly/MP_EMAPA.py
+
 TAG: reports_db-6-0-12-3
 DATE: 04/06/2018
 STAFF: lec
