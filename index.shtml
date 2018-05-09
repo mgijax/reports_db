@@ -430,7 +430,15 @@ D></TABLE>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>5. MGI Microarray Annotation Files (tab-delimited)</B></TD></TR>
+        <TR><TD><B>5. Mouse Developmental Anatomy-Mammalian Phenotype Mappings</B></TD></TR>
+        <TR><TD>
+	<TABLE BORDER CELLPADDING=2><TR><TD>MP ID</TD><TD>MP Term</TD><TD>EMAPA ID</TD><TD>EMAPA Term</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MP_EMAPA.rpt">MP_EMAPA.rpt</A>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>6. MGI Microarray Annotation Files (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Probeset ID</TD><TD>Sequence ID</TD><TD>MGI ID</TD><TD>Gene Symbol</TD><TD>Gene Name</TD><TD>Chromosome</TD><TD>Start Coordinate</TD><TD>End Coordinate</TD><TD>Strand</TD></TR></TABLE>
         </TD></TR>
