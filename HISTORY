@@ -1,3 +1,10 @@
+TAG: reports_db-6-0-12-6
+DATE: 05/10/2018
+STAFF: sc
+CHANGES:
+backed out these changes: TR12867/weekly/MP_EMAPA.py
+report and index entry is in TR directory
+
 TAG: reports_db-6-0-12-5
 TAG: reports_db-6-0-12-4
 DATE: 05/09/2018
