@@ -1,3 +1,9 @@
+TAG: reports_db-6-0-12-7
+DATE: 05/11/2018
+STAFF: lec
+CHANGES: TR12834/GO/Noctua
+GO_gene_association.py
+
 TAG: reports_db-6-0-12-6
 DATE: 05/10/2018
 STAFF: sc
