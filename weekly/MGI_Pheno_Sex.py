@@ -40,8 +40,14 @@ CRT = reportlib.CRT
 
 db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-results = db.sql('''select a._Object_key as _Genotype_key, a2.accid as genotypeID, a._Term_key, t1.term as mpTerm,  p.value as gender, a1.accid as mpID, t2.term as annotQual, s.strain as bgStrain, nc.note as alleleComp
-    from VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, VOC_Term t1, VOC_Term t2, ACC_Accession a1, ACC_Accession a2, GXD_Genotype g, PRB_Strain s,  MGI_Note n, MGI_NoteChunk nc
+db.sql('''select a._Object_key as _Genotype_key, 
+	a2.accid as genotypeID, a._Term_key, t1.term as mpTerm,  
+	p.value as gender, a1.accid as mpID, t2.term as annotQual, 
+	s.strain as bgStrain, nc.note as alleleComp, e._Refs_key
+    into temporary table noRef
+    from VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, VOC_Term t1, 
+	VOC_Term t2, ACC_Accession a1, ACC_Accession a2, GXD_Genotype g, 
+	PRB_Strain s,  MGI_Note n, MGI_NoteChunk nc
     where a._AnnotType_key = 1002 -- MP
     and a._Annot_key = e._Annot_key
     and e._AnnotEvidence_key = p._AnnotEvidence_key
@@ -61,11 +67,15 @@ results = db.sql('''select a._Object_key as _Genotype_key, a2.accid as genotypeI
     and a._Object_key = g._Genotype_key
     and g._Strain_key = s._Strain_key -- background strain
     and g._Genotype_key = n._Object_key
-    and n._NOtetype_key = 1016
+    and n._Notetype_key = 1016
     and n._Note_key = nc._Note_key
-    order by a._Object_key''', 'auto')
+    order by a._Object_key''', None)
+db.sql('''create index idx1 on noRef(_Refs_key)''', None)
+results = db.sql('''select nr.*, c.mgiID, c.pubmedID
+        from noRef nr, BIB_Citation_Cache c
+	where nr._Refs_key = c._Refs_key''', 'auto')
 
-fp.write('Genotype ID%sSex%sMP ID%sMP Term%sAllelic Composition%sBackground Strain%sSex-specific Normal Y/N%s' % (TAB, TAB, TAB, TAB, TAB, TAB, CRT))
+fp.write('Genotype ID%sSex%sMP ID%sMP Term%sAllelic Composition%sBackground Strain%sSex-specific Normal Y/N%sCitation (PubMed/MGI)%s' % (TAB, TAB, TAB, TAB, TAB, TAB, TAB, CRT))
 for r in results:
     annotQual = 'N'
     if r['annotQual'] != None:
@@ -73,9 +83,11 @@ for r in results:
 
     alleleComp = string.replace(string.strip(r['alleleComp']), '\n', ',')
     
-    print '"%s"' % alleleComp
-    
-    fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (r['genotypeID'], TAB, r['gender'], TAB, r['mpID'], TAB, r['mpTerm'], TAB, alleleComp, TAB, string.strip(r['bgStrain']), TAB, annotQual, CRT)) 
+    #print '"%s"' % alleleComp
+    refID = r['pubmedID']
+    if refID == None:
+	refID = r['mgiID']
+    fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (r['genotypeID'], TAB, r['gender'], TAB, r['mpID'], TAB, r['mpTerm'], TAB, alleleComp, TAB, string.strip(r['bgStrain']), TAB, annotQual, TAB, refID, CRT)) 
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)

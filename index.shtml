@@ -579,7 +579,7 @@ D></TABLE>
     <TR><TD><TABLE>
         <TR><TD><B>14.Genotypes with Sex-specific Phenotypes </B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Genotype ID</TD><TD>Sex</TD><TD>MP ID</TD><TD>MP Term</TD><TD>Allelic Composition</TD><TD>Background Strain</TD><TD>Sex-specific Normal Y/N</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Genotype ID</TD><TD>Sex</TD><TD>MP ID</TD><TD>MP Term</TD><TD>Allelic Composition</TD><TD>Background Strain</TD><TD>Sex-specific Normal Y/N</TD><TD>Citation (MGI ID if no PubMed ID)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Pheno_Sex.rpt">MGI_Pheno_Sex.rpt</A></TD></TR>
     </TABLE></TD></TR>

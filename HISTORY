@@ -1,3 +1,10 @@
+TAG: reports_db-6-0-12-7
+DATE: 05/15/2018
+STAFF: sc
+CHANGES: TR12811
+Add reference column to pub Pheno report 
+    14.Genotypes with Sex-specific Phenotypes
+
 TAG: reports_db-6-0-12-6
 DATE: 05/10/2018
 STAFF: sc
