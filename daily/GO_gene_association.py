@@ -434,7 +434,7 @@ def doSetup():
 	    and t.term not in (
     		'evidence', 'anatomy', 'cell type', 'gene product', 'modification', 'target', 
     		'external ref', 'text', 'dual-taxon ID',
-    		'noctua-model-id', 'contributor', 'individual', 'go_qualifier'
+    		'noctua-model-id', 'contributor', 'individual', 'go_qualifier', 'model-state'
 		)
 	    order by t.term, p.value
             ''', 'auto')
