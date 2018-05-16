@@ -44,7 +44,7 @@
 #	- TR12664/noctua-model-id
 #
 # lec	07/14/2016
-#	- TR12349/12345/GO_Noctua/GPAD added
+#	- TR12349/12345/Noctua/GPAD added
 #
 # kstone 09/14/2015
 #	- TR12070 Refactored col16 and col17 logic into 'go_annot_extensions' and 'go_isoforms' modules
@@ -189,7 +189,7 @@ SPECIES = 'taxon:10090'
 # else it will use MGIPREFIX
 #
 assignedByList1 = ['uniprotload']
-assignedByList2 = ['GOC', 'GO_Central', 'GO_Noctua']
+assignedByList2 = ['GOC', 'GO_Central']
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -959,7 +959,6 @@ def addGPADReportRow(reportRow, r):
             reportRow = reportRow + MGIPREFIX + TAB
 
 	#   11. Annotation Extension
-	#   if GO_Nocuta, then use gpadCol11Lookup else use gafCol16Lookup
 	properties = ''
 	if key in gpadCol11Lookup:
             properties = ','.join(gpadCol11Lookup[key])
