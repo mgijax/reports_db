@@ -94,7 +94,7 @@ results = db.sql('''
 		 from SEQ_Marker_Cache s, MRK_Marker m, ACC_Accession a, 
 			MRK_MCV_Cache mcv, VOC_Term v
 		 where s._BiotypeConflict_key = 5420767
-		 and s._LogicalDB_key in (59, 60, 85)
+		 and s._LogicalDB_key in (59, 60)
 		 and s._Marker_key = m._Marker_key
 		 and s._Marker_key = a._Object_key
 		 and a._MGIType_key = 2
