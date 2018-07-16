@@ -305,6 +305,8 @@ for seqKey in gtCoordDictBySeqKey:
 	column7 = cValues[0]
 
 	# get the sequence tag ID and the sequence ID 
+	if seqKey not in seqTagIdsDictBySeqKey:
+	    continue
 	seqTagID = seqTagIdsDictBySeqKey[seqKey]
 	sValues = seqIdDictBySeqKey[seqKey]
 	seqID = sValues[0]
