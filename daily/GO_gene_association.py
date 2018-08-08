@@ -890,17 +890,27 @@ def addGPADReportRow(reportRow, r):
 	key = r['_AnnotEvidence_key']
 
 	#   3. Qualifier
-        #   if qualifier in Annotation (gpadCol3Lookup/go_qualifier), use it
-	#   else, add default C/P/F qualifier
-	#   always attach any MGI Qualifer
-	qualifier = ''
-	if key in gpadCol3Lookup:
-	    qualifier = '|'.join(gpadCol3Lookup[key])
+
+	# use gadCol3 or DAG
+        if key in gpadCol3Lookup:
+            default_relation_for_aspect = '|'.join(gpadCol3Lookup[key])
+	else:
+	    default_relation_for_aspect = dagQualifier[dag[r['_Term_key']]]
+
+	# qualifier from MGD annotations
+        if r['qualifier'] != None:
+	    qualifier = r['qualifier'].strip()
+	else:
+	    qualifier = ''
+
+        if qualifier == '':
+            gap_qualifier = default_relation_for_aspect
+        elif qualifier == 'NOT':
+            gap_qualifier = qualifier + '|' + default_relation_for_aspect
         else:
-            qualifier = dagQualifier[dag[r['_Term_key']]]
-	if r['qualifier'] != None:
-	    qualifier = qualifier + '|' + r['qualifier'].strip()
-        reportRow = reportRow + qualifier + TAB
+	    gap_qualifier = qualifier
+
+        reportRow = reportRow + gap_qualifier + TAB
 
 	#   4. GO ID
         reportRow = reportRow + r['termID'] + TAB
