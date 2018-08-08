@@ -326,16 +326,17 @@ for r in results:
     fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
 
     if mpAlleleIDs.has_key(genotype):
-        fp1.write(string.join(mpAlleleIDs[genotype], '|') + TAB)
+        fp1.write(string.join(mpAlleleIDs[genotype], '|'))
+    fp1.write(TAB)
 
     fp1.write(mpStrain[genotype] + TAB)
     fp1.write(mpID[term] + TAB)
 
     if mpRef.has_key(refKey):
         fp1.write(string.join(mpRef[refKey], '|'))
-
-    fp1.write(TAB + string.join(mpMarker[genotype], '|') + TAB)
-    fp1.write(TAB + string.join(mpGenotype[genotype], '|') + CRT)
+    fp1.write(TAB)
+    fp1.write(string.join(mpMarker[genotype], '|') + TAB)
+    fp1.write(string.join(mpGenotype[genotype], '|') + CRT)
 
     #
     # DO report 1

@@ -1,3 +1,8 @@
+TAG: reports_db-6-0-12-11
+DATE: 05/16/2018
+STAFF: sc
+CHANGES: bug fix MGI_GenePheno.py, If no MP ID, missing TAB. Extra tab after markers
+
 TAG: reports_db-6-0-12-10
 DATE: 05/16/2018
 STAFF: sc
