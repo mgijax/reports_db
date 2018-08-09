@@ -1,3 +1,8 @@
+TAG: reports_db-6-0-12-13
+DATE: 08/09/2018
+STAFF: dbm
+CHANGES: set file permissions in the Install script
+
 TAG: reports_db-6-0-12-12
 DATE: 08/08/2018
 STAFF: sc
