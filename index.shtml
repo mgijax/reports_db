@@ -476,7 +476,8 @@ D></TABLE>
 	<TD>Marker RefSeq ID</TD>
         <TD>Marker Ensembl ID</TD>
 	<TD>High-level Mammalian Phenotype ID (comma-delimited)</TD>
-	<TD>Synonyms (|-delimited)</TD></TABLE>
+	<TD>Synonyms (|-delimited)</TD>
+	<TD>Marker Name</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_PhenotypicAllele.rpt">MGI_PhenotypicAllele.rpt</A></TD></TR>
     </TABLE></TD></TR>
