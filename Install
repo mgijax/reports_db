@@ -16,6 +16,13 @@ cp ${PUBRPTS}/index.shtml ${FTPREPORTDIR}/index.shtml
 cp -r ${PUBRPTS}/includes ${FTPREPORTDIR}/includes
 
 #
+# permissions
+#
+
+chmod 664 Configuration.* HISTORY *.shtml
+chmod 775 *.csh */*.py */*.sql Install
+
+#
 # directories
 #
 

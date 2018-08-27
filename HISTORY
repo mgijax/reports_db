@@ -4,6 +4,22 @@ STAFF: lec
 CHANGES: TR12734/GenFevah/Mouse Genome Project
 remove VEGA reports
 
+TAG: reports_db-6-0-12-14
+DATE: 08/10/2018
+STAFF: sc
+CHANGES: TR12909
+Add marker name field to MGI_PhenotypicAllele.rpt
+
+TAG: reports_db-6-0-12-13
+DATE: 08/09/2018
+STAFF: dbm
+CHANGES: set file permissions in the Install script
+
+TAG: reports_db-6-0-12-12
+DATE: 08/08/2018
+STAFF: sc
+CHANGES: bug fix MGI_GenePheno.py, If no MP ID, missing TAB. Extra tab after markers
+
 TAG: reports_db-6-0-12-11
 DATE: 08/07/2018
 STAFF: lec

@@ -21,11 +21,15 @@
 #		Ensembl ID
 #		MP IDs of MP annotations
 #		Synonyms
+#		Marker Name
 #
 # Usage:
 #       MGI_PhenotypicAllele.py
 #
 # History:
+#
+# sc	08/10/2018
+#	- TR12909 - add marker name as last column of report
 #
 # lec	07/06/2017
 #	- TR12593/exclude obsolete MP terms
@@ -70,7 +74,7 @@ fp.write('#For details of nomenclature rules, see http://www.informatics.jax.org
 # exclude QTLs
 
 db.sql('''
-       select a._Allele_key, a._Marker_key, a.symbol, a.name, t2.term as alleleType, m.symbol as marker, a._Allele_Type_key 
+       select a._Allele_key, a._Marker_key, a.symbol, a.name, t2.term as alleleType, m.symbol as marker, m.name as markerName, a._Allele_Type_key 
        into temporary table alleles 
        from ALL_Allele a, VOC_Term t1, VOC_Term t2, MRK_Marker m 
        where a._Allele_Status_key = t1._Term_key 
@@ -248,6 +252,8 @@ for r in results:
 
 	if synonym.has_key(r['_Allele_key']):
 		fp.write(string.join(synonym[r['_Allele_key']], '|'))
+        fp.write(reportlib.TAB)
+	fp.write(r['markerName'])
 	fp.write(reportlib.CRT)
 
 reportlib.finish_nonps(fp)
