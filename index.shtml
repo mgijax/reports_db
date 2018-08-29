@@ -399,21 +399,7 @@ D></TABLE>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>3. Mouse Anatomy in OBO Format</B></TD></TR>
-        <TR><TD>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="adult_mouse_anatomy.obo">adult_mouse_anatomy.obo</A>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>4. Mouse-Human Anatomy Mappings</B></TD></TR>
-        <TR><TD>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="ma2ncit.obo">ma2ncit.obo</A>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>5. MGI Microarray Annotation Files (tab-delimited)</B></TD></TR>
+        <TR><TD><B>3. MGI Microarray Annotation Files (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Probeset ID</TD><TD>Sequence ID</TD><TD>MGI ID</TD><TD>Gene Symbol</TD><TD>Gene Name</TD><TD>Chromosome</TD><TD>Start Coordinate</TD><TD>End Coordinate</TD><TD>Strand</TD></TR></TABLE>
         </TD></TR>
@@ -421,6 +407,29 @@ D></TABLE>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="Affy_430_2.0_mgi.rpt">Affy_430_2.0_mgi.rpt</A> (Affymetrix GeneChip Mouse Genome 430 2.0 Array)</TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="Affy_U74_mgi.rpt">Affy_U74_mgi.rpt</A> (Affymetrix GeneChip Mouse Genome U74A-B-C_2)</TD></TR>
     </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>4. Mouse Anatomy in OBO Format</B></TD></TR>
+        <TR><TD>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="adult_mouse_anatomy.obo">adult_mouse_anatomy.obo</A>
+    </TABLE></TD></TR>
+
+    <TR><TD><TABLE>
+        <TR><TD><B>5. Mouse-Human Anatomy Mappings</B></TD></TR>
+        <TR><TD>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="ma2ncit.obo">ma2ncit.obo</A>
+    </TABLE></TD></TR>
+
+    <TD><TABLE>
+        <TR><TD><B>6. Mammalian Phenotype (MP)-Mouse Developmental Anatomy (EMAPA) Mappings</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MP ID</TD><TD>MP Term</TD><TD>EMAPA ID</TD><TD>EMAPA Term</TD></TR></TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MP_EMAPA.rpt">MP_EMAPA.rpt</A>
+    </TABLE></TD></TR>
+
 
 </TABLE><BR>
 
