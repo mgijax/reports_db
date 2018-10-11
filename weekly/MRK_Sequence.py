@@ -138,15 +138,13 @@ db.sql('create index deletedIDS_idx2 on deletedIDs(_LogicalDB_key)', None)
 db.sql('''
 	select m._Marker_key, m.symbol, m.name, m.chromosome, 
 	mlc.genomicChromosome,
-	o.cmoffset, upper(substring(s.status, 1, 1)) as markerStatus, t.name as markerType
+	m.cmoffset, upper(substring(s.status, 1, 1)) as markerStatus, t.name as markerType
 	into temporary table markers 
-	from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t,
+	from MRK_Marker m, MRK_Status s, MRK_Types t,
 		MRK_Location_Cache mlc
 	where m._Organism_key = 1 
 	and m._Marker_Status_key = 1 
-	and m._Marker_key = o._Marker_key 
 	and m._Marker_key = mlc._Marker_key 
-	and o.source = 0 
 	and m._Marker_Status_key = s._Marker_Status_key 
 	and m._Marker_Type_key = t._Marker_Type_key 
 	and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key 

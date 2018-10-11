@@ -6,7 +6,6 @@
 #       Create several tab-delimited (bcp) files for BioDataMart feed
 #	TR12427/Disase Ontology (DO)
 #	TR 2794
-#	TR 3137 - add MRK_Offset
 #	TR 3345 - add Strain info; incorporate marker offset into marker.bcp
 #	TR 5565 - JaxStrain additions
 #	TR 10460 - add mutant cell line accession ids
@@ -636,14 +635,12 @@ def markers():
 
     results = db.sql('''
 	    select k._Marker_key, k._Organism_key, m._Marker_Type_key, s.status, 
-	    m.symbol, m.name, m.chromosome, m.cytogeneticOffset, o.cmoffset, 
+	    m.symbol, m.name, m.chromosome, m.cytogeneticOffset, m.cmoffset, 
             to_char(m.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
             to_char(m.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
-	    from markers k, MRK_Marker m, MRK_Status s, MRK_Offset o 
+	    from markers k, MRK_Marker m, MRK_Status s
 	    where k._Marker_key = m._Marker_key 
 	    and m._Marker_Status_key = s._Marker_Status_key 
-	    and k._Marker_key = o._Marker_key 
-	    and o.source = 0 
 	    union 
             select m._Marker_key, m._Organism_key, m._Marker_Type_key, s.status, 
 	    m.symbol, m.name, m.chromosome, m.cytogeneticOffset,  null, 

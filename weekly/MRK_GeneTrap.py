@@ -48,15 +48,13 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 db.sql('''
 	select m._Marker_key, m.symbol, m.name, m.chromosome, 
-        o.cmoffset, 
+        m.cmoffset, 
 	upper(substring(s.status, 1, 1)) as markerStatus, 
 	t.name as markerType 
         into temporary table markers 
-        from MRK_Marker m, MRK_Offset o, MRK_Status s, MRK_Types t 
+        from MRK_Marker m, MRK_Status s, MRK_Types t 
         where m._Organism_key = 1 
         and m._Marker_Status_key = 1 
-        and m._Marker_key = o._Marker_key 
-        and o.source = 0 
         and m._Marker_Status_key = s._Marker_Status_key 
         and m._Marker_Type_key = t._Marker_Type_key 
 	and exists (select 1 from ALL_Allele a 
