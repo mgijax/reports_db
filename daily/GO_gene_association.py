@@ -37,6 +37,9 @@
 #
 # History:
 #
+# lec	01/22/2019
+#	- TR13010/addGPADReportRow/add special processing if inferredFrom=InterPro
+#
 # lec	02/21/2018
 #	- TR12768/if assigned_by = 'UniProtKB' or 'RGD', then set to 'MGI'
 #
@@ -889,7 +892,9 @@ def addGPADReportRow(reportRow, r):
 	# use gadCol3 or DAG
         if key in gpadCol3Lookup:
             default_relation_for_aspect = '|'.join(gpadCol3Lookup[key])
-	else:
+	elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
+	    default_relation_for_aspect = 'involved_in'
+        else:
 	    default_relation_for_aspect = dagQualifier[dag[r['_Term_key']]]
 
 	# qualifier from MGD annotations
