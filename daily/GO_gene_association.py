@@ -37,6 +37,9 @@
 #
 # History:
 #
+# lec	03/04/2019
+#	- TR13049/use same assignedBy logic for both GAF and GPAD files
+#
 # lec	01/22/2019
 #	- TR13010/addGPADReportRow/add special processing if inferredFrom=InterPro
 #
@@ -773,7 +776,12 @@ def doGAFFinish():
 	# column 15; assigned by
 
 	# remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
-	if r['assignedBy'].find('GOA_') >= 0:
+	# remove "NOCTUA_"; for example:  "NOCTUA_MGI" ==> "MGI"
+	if r['assignedBy'].find('NOCTUA_') >= 0:
+            assignedBy = r['assignedBy'].replace('NOCTUA_', '')
+            reportRow = reportRow + assignedBy + TAB
+
+	elif r['assignedBy'].find('GOA_') >= 0:
             assignedBy = r['assignedBy'].replace('GOA_', '')
             reportRow = reportRow + assignedBy + TAB
 
