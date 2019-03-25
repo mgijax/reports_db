@@ -1,7 +1,7 @@
 TAG: reports_db-6-0-13-5
-DATE: 03/05/2019
-STAFF: lec
-CHANGES: TR13049/GO_gene_association.py/use same assignedBy logic for both GAF and GPAD
+DATE: 03/25/2019
+STAFF: sc
+CHANGES: TR13040 - index.shtml - fix link to gff3 file, remove link to spec.
 
 TAG: reports_db-6-0-13-4
 DATE: 01/22/2019
