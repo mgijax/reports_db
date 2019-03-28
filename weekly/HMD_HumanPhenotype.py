@@ -26,6 +26,9 @@
 #
 # History:
 #
+# lec	03/26/2019
+#	- TR13037/use rollup rules (_annottype_key = 1015) instead of (_annottype_key = 1002)
+#
 # lec	07/06/2017
 #	- TR12615/exclude obsolete MP terms
 #
@@ -182,23 +185,23 @@ results = db.sql('''
 hlocus = createDict(results, '_Object_key', 'accID')
 
 #
-# Get the MP Header Terms for the mouse markers
+# Get the MP Header Terms for the mouse markers using 1015/MP->Marker (derivied) annotations
+# find the SetMember/ancestor of MP/descendent
+#
 # only select primary ids and non-obsolete ids
 #
-
 results = db.sql('''
 	select distinct h.mouseKey, a.accID 
-        from homology h, GXD_AlleleGenotype g, VOC_AnnotHeader v, ACC_Accession a, VOC_Term tt
-        where h.mouseKey = g._Marker_key 
-        and g._Genotype_key = v._Object_key 
-        and v._AnnotType_key = 1002 
-	and v.isNormal = 0
-        and a._Object_key = v._Term_key 
-        and a._MGIType_key = 13 
-        and a.preferred = 1 
-        and a._LogicalDB_key = 34 
-	and v._Term_key = tt._Term_key
-	and tt.isObsolete = 0
+        from homology h, VOC_Annot v, MGI_SetMember sm, DAG_Closure dc, ACC_Accession a
+	where h.mouseKey = v._Object_key
+        and v._AnnotType_key = 1015
+        and v._Term_key = dc._DescendentObject_key
+        and dc._AncestorObject_key = sm._Object_key
+        and sm._Set_key = 1051
+        and sm._Object_key = a._Object_key
+        and a._MGIType_key = 13
+        and a.preferred = 1
+        and a._LogicalDB_key = 34
 	''', 'auto')
 mpheno = createDict(results, 'mouseKey', 'accID')
 
