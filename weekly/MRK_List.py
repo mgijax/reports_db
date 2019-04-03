@@ -73,17 +73,15 @@ db.sql('''
     mlc.genomicChromosome,
     t.name as markertype,
         case
-        when o.cmoffset >= 0 then to_char(o.cmOffset, \'999.99\')
-        when o.cmoffset = -999.0 then '       N/A'
-        when o.cmoffset = -1.0 then '  syntenic'
+        when m.cmoffset >= 0 then to_char(m.cmOffset, \'999.99\')
+        when m.cmoffset = -999.0 then '       N/A'
+        when m.cmoffset = -1.0 then '  syntenic'
         end as cmposition
     into temporary table markers
-    from MRK_Marker m, MRK_Status s, MRK_Types t, MRK_Offset o,
+    from MRK_Marker m, MRK_Status s, MRK_Types t,
     	MRK_Location_Cache mlc
     where m._organism_key = 1
-    and m._marker_key = o._marker_key
     and m._marker_key = mlc._marker_key
-    and o.source = 0
     and m._marker_type_key = t._marker_type_key
     and m._marker_status_key = s._marker_status_key
     ''', None)

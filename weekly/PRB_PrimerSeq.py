@@ -43,7 +43,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 db.sql('''
 	select p._Probe_key, p.name as pname, p.primer1sequence, p.primer2sequence, p.productSize, pm._Marker_key, 
-               m.symbol, m.name as mname, m.chromosome 
+               m.symbol, m.name as mname, m.chromosome, m.cmoffset
         into temporary table primers 
         from PRB_Probe p, PRB_Marker pm, MRK_Marker m 
         where p._SegmentType_key = 63473 
@@ -54,8 +54,8 @@ db.sql('create index idx1 on primers(_Probe_key)', None)
 db.sql('create index idx2 on primers(_Marker_key)', None)
 
 results = db.sql('''
-       select p.*, a1.accID as probeID, a2.accID as markerID, o.cmoffset 
-       from primers p, ACC_Accession a1, ACC_Accession a2, MRK_Offset o 
+       select p.*, a1.accID as probeID, a2.accID as markerID
+       from primers p, ACC_Accession a1, ACC_Accession a2
        where p._Probe_key = a1._Object_key 
 	     and a1._MGIType_key = 3 
              and a1._LogicalDB_key = 1 
@@ -66,8 +66,6 @@ results = db.sql('''
              and a2._LogicalDB_key = 1 
              and a2.prefixPart = 'MGI:' 
              and a2.preferred = 1 
-             and p._Marker_key = o._Marker_key 
-             and o.source = 0 
        order by p.symbol
        ''', 'auto')
 

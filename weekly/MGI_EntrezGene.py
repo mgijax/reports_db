@@ -61,25 +61,21 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 db.sql('''
   select m._Marker_key, m.symbol, m.name, m._Marker_key as _Current_key, 
-  	o.cmoffset, m.chromosome, t.name as markerType, 1 as isPrimary, 
+  	m.cmoffset, m.chromosome, t.name as markerType, 1 as isPrimary, 
   	upper(substring(s.status, 1, 1)) as markerStatus
   into temporary table markers 
-  from MRK_Marker m, MRK_Offset o, MRK_Types t, MRK_Status s 
+  from MRK_Marker m, MRK_Types t, MRK_Status s 
   where m._Organism_key = 1 
   and m._Marker_Status_key = 1
-  and m._Marker_key = o._Marker_key 
-  and o.source = 0 
   and m._Marker_Type_key = t._Marker_Type_key 
   and m._Marker_Status_key = s._Marker_Status_key 
   union 
   select m._Marker_key, m.symbol, m.name, c._Current_key, 
-  o.cmoffset, m.chromosome, t.name as markerType, 0 as isPrimary, 
+  m.cmoffset, m.chromosome, t.name as markerType, 0 as isPrimary, 
   upper(substring(s.status, 1, 1)) as markerStatus 
-  from MRK_Marker m, MRK_Offset o, MRK_Current c, MRK_Types t, MRK_Status s 
+  from MRK_Marker m, MRK_Current c, MRK_Types t, MRK_Status s 
   where m._Organism_key = 1 
   and m._Marker_Status_key = 2 
-  and m._Marker_key = o._Marker_key 
-  and o.source = 0 
   and m._Marker_key = c._Marker_key 
   and m._Marker_Type_key = t._Marker_Type_key 
   and m._Marker_Status_key = s._Marker_Status_key 

@@ -134,23 +134,20 @@ db.sql('''
 	     m.symbol, 
 	     m.name, 
 	     m.chromosome, 
-	     o.cmoffset, 
+	     m.cmoffset, 
 	     a2.accID as ensembl,
 	     mlc.genomicChromosome
       into temporary table markers
-      from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Offset o,
-      	    MRK_Location_Cache mlc
+      from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Location_Cache mlc
       where a1._Object_key = a2._Object_key and 
             a1._Object_key = m._Marker_key and 
-            m._Marker_key = o._Marker_key and 
             a1._LogicalDB_key = 1 and 
             a1._MGIType_key = 2 and 
             a1.prefixPart = 'MGI:' and 
             a1.preferred = 1 and 
             a2._LogicalDB_key = 60 and 
             a2._MGIType_key = 2 and 
-	    m._Marker_key = mlc._Marker_key and
-            o.source = 0 
+	    m._Marker_key = mlc._Marker_key
 	''', None)
 db.sql('create index markers_idx1 on markers(_Marker_key)', None)
 
