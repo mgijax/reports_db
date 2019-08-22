@@ -876,8 +876,10 @@ def doGPADFinish():
         if isoformsProtein.has_key(objectKey):
 	    for i in isoformsProtein[objectKey]:
 		try:
-	        	prefixPart, numericPart = i.split(':')
-                	reportRow = prefixPart + TAB + numericPart + TAB
+			tokens = i.split(':')
+			prefixPart = tokens[0]
+			numericPart = tokens[1]
+                	reportRow = tokens[0] + TAB + tokens[1] + TAB
 	        	reportRow = addGPADReportRow(reportRow, r)
 		except:
             		reportRow = MGIPREFIX + TAB + str(r['markerID']) + TAB
