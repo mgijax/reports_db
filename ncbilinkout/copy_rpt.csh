@@ -20,6 +20,10 @@
 #
 #
 # History:
+#
+# sc	- 09/13/19 - TR13082
+#    	updated to add PMC ftp of PubMed linkout files
+#
 # lnh   - 07/14/2016
 #       TR12036 
 
@@ -47,6 +51,17 @@ mput protein-mgd.xml
 mput providerinfo.xml
 mput pubmed-mgd-1.xml
 mput nucleotide-mgd-*.xml
+mput pubmed-mgd.uid
+quit
+END
+
+echo `date`: Send data to E_PMC LinkOut host | tee -a ${LOG}
+cd ${REPORTOUTPUTDIR}
+ftp -in ${E_PMC_HOST} <<END | tee -a ${LOG}
+user ${E_PMC_USER} ${E_PMC_PASSWORD}
+cd ol9dybmp
+mput pmc_providerinfo.xml
+mput pubmed-mgd-1.xml
 mput pubmed-mgd.uid
 quit
 END

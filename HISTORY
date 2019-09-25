@@ -1,3 +1,9 @@
+TAG: reports_db-6-0-14-4
+DATE: 09/25/2019
+STAFF: sc
+TR13082 - provide NCBI linkout files to E PMC, includes
+  adding PMC providerinfo.xml
+
 TAG: reports_db-6-0-14-3
 DATE: 08/22/2019
 STAFF: lec 

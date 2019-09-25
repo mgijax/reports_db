@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<providers>
+<provider>
+ <id>2002</id>
+ <resourceName>Mouse Genome Informatics (MGI)</resourceName>
+ <description>Mouse Genome Informatics</description>
+ <email>mgi-help@jax.org</email>
+</provider>
+</providers>

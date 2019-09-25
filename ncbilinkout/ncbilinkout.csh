@@ -44,6 +44,8 @@ foreach i (*.py)
     $i >>& ${LOG}
 end
 
+# for ncbi
 cp providerinfo.xml ${REPORTOUTPUTDIR}
-
+# for E PMC
+cp pmc_providerinfo.xml ${REPORTOUTPUTDIR}
 echo `date`: End NCBI LinkOut | tee -a ${LOG}
