@@ -1,3 +1,9 @@
+TAG: reports_db-6-0-14-5
+DATE: 10/02/2019
+STAFF: sc
+TR13082 - change description for pmc_providerinfo.xml (note:NCBI/PubMed does 
+    not use the description field.)
+
 TAG: reports_db-6-0-14-4
 DATE: 09/25/2019
 STAFF: sc
