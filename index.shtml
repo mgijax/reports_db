@@ -436,9 +436,10 @@ D></TABLE>
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Alleles and Phenotypes</B></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>1. Mammalian Phenotype Vocabulary in OBO v1.2, tab-delimited and OWL Formats</B></TD></TR>
+        <TR><TD><B>1. Mammalian Phenotype Vocabulary in OBO v1.2, tab-delimited, JSON and OWL Formats</B></TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MPheno_OBO.ontology">MPheno_OBO.ontology</A></TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_MammalianPhenotype.rpt">VOC_MammalianPhenotype.rpt</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="mp.owl">mp.json</A></TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="mp.owl">mp.owl</A></TD></TR>
     </TABLE></TD></TR>
 

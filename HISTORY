@@ -1,3 +1,11 @@
+TAG: reports_db-6-0-15-1
+DATE: 03/03/2020
+STAFF: sc
+TR13229, 
+1) update Configuration.default MPFILES add mp.json
+2) index.shtml - update pheno #1 description and add link
+    to mp.json
+
 TAG: reports_db-6-0-14-5
 DATE: 10/02/2019
 STAFF: sc
