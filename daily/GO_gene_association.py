@@ -213,6 +213,7 @@ goRefDict = {}
 #
 # see doGAFCol16() : list of column 16 object/evidence/printable format
 gafCol16Lookup = {}
+gpadCol16Lookup = {}
 
 # see doIsoform() : isoformsProtein = {}
 forPROC = {}
@@ -244,7 +245,6 @@ def doSetup():
     global taxonLookup
     global ecoLookupByEco, ecoLookupByEvidence
     global gpadCol3Lookup
-    global gpadCol11Lookup
     global gpadCol12Lookup
     global goRefDict
 
@@ -262,6 +262,7 @@ def doSetup():
     #   and m.symbol = 'Adipoq'
     #   and m.symbol = 'Birc3'
     #	and m.symbol = 'Hk1'
+    #	and m.symbol = 'Echdc3'
     #
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
     	    e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
@@ -286,6 +287,7 @@ def doSetup():
         and ta.preferred = 1 
         and m._Marker_Type_key = mt._Marker_Type_key 
         and a._Qualifier_key = q._Term_key 
+    	and m.symbol = 'Echdc3'
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -423,37 +425,6 @@ def doSetup():
     #print gpadCol3Lookup
 
     #
-    # gpadCol11 : (MGI_User.login like NOCTUA_%)
-    #	exclude older terms (sequenceNum 1-9, 90,91,92, 93)
-    #
-    # note that noctua-generated properties will *always* have one stanza
-    #
-    results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
-            from gomarker2 a,
-                 VOC_Evidence_Property p,  
-                 VOC_Term t,
-		 MGI_User u
-	    where a._CreatedBy_key = u._User_key
-	    and u.login like 'NOCTUA_%'
-	    and a._AnnotEvidence_key = p._AnnotEvidence_key
-	    and p._PropertyTerm_key = t._Term_key
-	    and t.term not in (
-    		'evidence', 'anatomy', 'cell type', 'gene product', 'modification', 'target', 
-    		'external ref', 'text', 'dual-taxon ID',
-    		'noctua-model-id', 'contributor', 'individual', 'go_qualifier', 'model-state'
-		)
-	    order by t.term, p.value
-            ''', 'auto')
-    for r in results:
-        key = r['_AnnotEvidence_key']
-	value = r['value'].replace('MGI:', 'MGI:MGI:')
-        value = r['term'] + '(' + value + ')'
-        if key not in gpadCol11Lookup:
-    	    gpadCol11Lookup[key] = []
-        gpadCol11Lookup[key].append(value)
-    #print gpadCol11Lookup
-
-    #
     # gpadCol12 : (MGI_User.login like NOCTUA_%)
     # exclude : occurs_in, part_of, go_qualifier, evidence
     #
@@ -558,6 +529,77 @@ def doGAFCol16():
     #print gafCol16Lookup
 
 ## end doGAFCol16()
+
+#
+# begin doGPADCol11()
+#
+def doGPADCol11():
+
+    global gpadCol11Lookup
+
+    #
+    # list of object/evidence/stanza that are GO-properties
+    #
+    # objectKey = marker key:annotation/evidence key (must match objectKey in doGAFFinish())
+    #
+    # including properties that use go-sanctioned-property list
+    # and we also include mgi-property ('cell type', 'anatomy', 'target')
+    #
+    # include: _Vocab_key = 82
+    # include: go-sanctioned-properties (use _Term_key > 6481780 or sequenceNum > 9)
+    # include: mgi-properties
+    # exclude: annotations where evidence = ISO (3251466)
+    #
+
+    # Query the valid _term_keys for properties and evidence codes
+    extensionProcessor = go_annot_extensions.Processor()
+    sanctionedPropertyKeys = extensionProcessor.querySanctionedGPADPropertyTermKeys()
+    sanctionedEvidenceTermKeys = extensionProcessor.querySanctionedEvidenceTermKeys()
+
+    propertyKeyClause = ",".join([str(k) for k in sanctionedPropertyKeys])
+    evidenceKeyClause = ",".join([str(k) for k in sanctionedEvidenceTermKeys])
+
+    cmd = '''
+    select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
+            from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
+            where r._EvidenceTerm_key in (%s)
+            and r._AnnotEvidence_key = p._AnnotEvidence_key
+            and p._PropertyTerm_key = t._Term_key
+            and p._PropertyTerm_key in (%s)
+            order by r.symbol, 
+		r._Object_key, 
+		r._AnnotEvidence_key, 
+		p.stanza, 
+		p.sequenceNum, 
+		property
+    ''' % (evidenceKeyClause, propertyKeyClause)
+
+    results = db.sql(cmd, 'auto')
+
+    for r in results:
+	objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
+	value = r['value'].replace('MGI:', 'MGI:MGI:')
+
+        # process out the comments, etc
+        value = extensionProcessor.processValue(value)
+
+	if not gpadCol11Lookup.has_key(objectKey):
+		gpadCol11Lookup[objectKey] = []
+    		stanza = 0
+
+	if stanza == 0:
+		sep = ''
+	elif r['stanza'] != stanza:
+		sep = '|'
+	else:
+		sep = ','
+
+	gpadCol11Lookup[objectKey].append(sep + r['property'] + '(' + value + ')')
+	stanza = r['stanza']
+
+    #print gpadCol11Lookup
+
+## end doGPADCol11()
 
 #
 # begin doIsoform()
@@ -984,8 +1026,8 @@ def addGPADReportRow(reportRow, r):
 
 	#   11. Annotation Extension
 	properties = ''
-	if key in gpadCol11Lookup:
-            properties = ','.join(gpadCol11Lookup[key])
+	if gpadCol11Lookup.has_key(objectKey):
+	    properties = ''.join(gpadCol11Lookup[objectKey])
 	elif gafCol16Lookup.has_key(objectKey):
 	    properties = ''.join(gafCol16Lookup[objectKey])
         reportRow = reportRow + properties + TAB
@@ -1011,6 +1053,7 @@ db.useOneConnection(1)
 # querying the database/setting up lookups
 doSetup()
 doGAFCol16()
+doGPADCol11()
 doIsoform()
 
 #
