@@ -287,7 +287,6 @@ def doSetup():
         and ta.preferred = 1 
         and m._Marker_Type_key = mt._Marker_Type_key 
         and a._Qualifier_key = q._Term_key 
-    	and m.symbol = 'Echdc3'
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
