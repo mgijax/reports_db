@@ -22,7 +22,7 @@ echo `date`: Start MGI marker feed reports | tee -a ${LOG}
 rm -rf ${REPORTOUTPUTDIR}/mgimarkerfeed/* >>& ${LOG}
 
 echo `date`: MarkerFeed.py | tee -a ${LOG}
-mgiMarkerFeed.py >>& ${LOG}
+${PYTHON} mgiMarkerFeed.py >>& ${LOG}
 
 echo `date`: Create tar file | tee -a ${LOG}
 cd ${REPORTOUTPUTDIR}/mgimarkerfeed
