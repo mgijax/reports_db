@@ -9,6 +9,10 @@
 #
 # Example: runone_postgres_report.csh weekly_postgres/HOM_MouseHumanSequence.py
 #
+# History:
+#
+# sc:    03/21/20 python 3 upgrade
+#
 # lnh: 12/2014
 
 cd `dirname $0` && source ./Configuration
@@ -52,7 +56,7 @@ echo `date`: Start public postgres report | tee -a ${LOG}
 #
 cd ${DIRNAME}
 echo `date`: $1 | tee -a ${LOG}
-${RPTNAME} >>& ${LOG}
+${PYTHON} ${RPTNAME} >>& ${LOG}
 
 echo `date`: End public postgres report | tee -a ${LOG}
 
