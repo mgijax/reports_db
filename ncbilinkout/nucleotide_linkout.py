@@ -1,20 +1,20 @@
-#!/usr/local/bin/python
-
 '''
 #
 # Report:
-#	TR 8776 - NCBI LinkOut of Nucleotide -> Marker associations
-#	This contains only GenBank (_LogicalDB_key = 9) sequences
+#       TR 8776 - NCBI LinkOut of Nucleotide -> Marker associations
+#       This contains only GenBank (_LogicalDB_key = 9) sequences
 #
 # Usage:
 #       Nucleotide_LinkOut.py
 #
-# sc	01/15/2015
-#	- TR11846 - update marker URL
+# sc    03/21/20 python 3 upgrade
 #
-# lec	09/30/2008
-#	- generation of NCBI LinkOut file (nucleotide-mgd.xml)
-#	- copied from MRK_Sequence.py
+# sc    01/15/2015
+#       - TR11846 - update marker URL
+#
+# lec   09/30/2008
+#       - generation of NCBI LinkOut file (nucleotide-mgd.xml)
+#       - copied from MRK_Sequence.py
 #
 '''
 
@@ -51,12 +51,12 @@ db.sql('create index deletedIDs_idx2 on deletedIDs(_LogicalDB_key)', None)
 # all official mouse markers that have at least one Sequence ID
 
 db.sql('select m._Marker_key, m.symbol ' + \
-	'into temporary table markers ' + \
-	'from MRK_Marker m ' + \
-	'where m._Organism_key = 1 ' + \
-	'and m._Marker_Status_key = 1 ' + \
-	'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
-	'and a._MGIType_key = 2 and a._LogicalDB_key in (9))', None)
+        'into temporary table markers ' + \
+        'from MRK_Marker m ' + \
+        'where m._Organism_key = 1 ' + \
+        'and m._Marker_Status_key = 1 ' + \
+        'and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key ' + \
+        'and a._MGIType_key = 2 and a._LogicalDB_key in (9))', None)
 db.sql('create index markers_idx1 on markers(_Marker_key)', None)
 db.sql('create index markers_idx2 on markers(symbol)', None)
 
@@ -88,8 +88,8 @@ gbID = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not gbID.has_key(key):
-	gbID[key] = []
+    if key not in gbID:
+        gbID[key] = []
     gbID[key].append(value)
 
 # process
@@ -101,8 +101,8 @@ count = 1
 for r in results:
     key = r['_Marker_key']
 
-    if not gbID.has_key(key):
-	    continue
+    if key not in gbID:
+            continue
 
     # create a new file
 
@@ -122,12 +122,12 @@ for r in results:
     fpLinkOut.write(2* TAB + '<Database>Nucleotide</Database>' + CRT)
     fpLinkOut.write(2* TAB + '<ObjectList>' + CRT)
 
-    if gbID.has_key(key):
-	for i in gbID[key]:
-	    fpLinkOut.write(3 * TAB + '<Query>' + i + '[pacc]</Query>' + CRT)
+    if key in gbID:
+        for i in gbID[key]:
+            fpLinkOut.write(3 * TAB + '<Query>' + i + '[pacc]</Query>' + CRT)
 
-    newSymbol = string.replace(r['symbol'], '<', '&lt;')
-    newSymbol = string.replace(newSymbol, '>', '&gt;')
+    newSymbol = str.replace(r['symbol'], '<', '&lt;')
+    newSymbol = str.replace(newSymbol, '>', '&gt;')
 
     fpLinkOut.write(2* TAB + '</ObjectList>' + CRT)
     fpLinkOut.write(TAB + '</ObjectSelector>' + CRT)
@@ -145,7 +145,7 @@ for r in results:
     if count == maxfileCounter:
         fpLinkOut.write('</LinkSet>' + CRT)
         reportlib.finish_nonps(fpLinkOut)
-	count = 1
+        count = 1
         fileCounter = fileCounter + 1
 
 fpLinkOut.write('</LinkSet>' + CRT)
