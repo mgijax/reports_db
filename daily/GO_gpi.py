@@ -1,12 +1,10 @@
-#!/usr/local/bin/python
-
 '''
 #
 # GO_gpi.py
 #
 # Report:
 #       see: wiki/mediawiki/index.php/sw:GOload 
-#	contains link to GO/GPI format
+#       contains link to GO/GPI format
 #
 # Output format:
 #
@@ -29,8 +27,11 @@
 #
 # History:
 #
-# 06/27/2016	lec
-#	- TR12349/12345/GPAD/GPI
+# sc    03/21/20 python 3 upgrade, retabbed and removed python statement at top
+#           testing deferred until the goload is updated
+#
+# 06/27/2016    lec
+#       - TR12349/12345/GPAD/GPI
 #
 '''
 
@@ -91,30 +92,30 @@ isoformByMarker = {}
 markerByIsoform = {}
 
 results = db.sql('''
-	select a1.accID as markerID, a2.accID as prID
-	from VOC_Annot v, ACC_Accession a1, ACC_Accession a2
-	where v._AnnotType_key = 1019
-	and v._Object_key = a1._Object_key
-	and a1._MGIType_key = 2
-	and a1._LogicalDB_key = 1
-	and a1.prefixPart = 'MGI:'
-	and a1.preferred = 1
-	and v._Term_key = a2._Object_key
-	and a2._MGIType_key = 13
-   	''', 'auto')
+        select a1.accID as markerID, a2.accID as prID
+        from VOC_Annot v, ACC_Accession a1, ACC_Accession a2
+        where v._AnnotType_key = 1019
+        and v._Object_key = a1._Object_key
+        and a1._MGIType_key = 2
+        and a1._LogicalDB_key = 1
+        and a1.prefixPart = 'MGI:'
+        and a1.preferred = 1
+        and v._Term_key = a2._Object_key
+        and a2._MGIType_key = 13
+        ''', 'auto')
 
 for r in results:
 
-   	byMarker = r['markerID']
-	byIsoform = r['prID']
+        byMarker = r['markerID']
+        byIsoform = r['prID']
 
-	if byMarker not in isoformByMarker:
-		isoformByMarker[byMarker] = []
-	isoformByMarker[byMarker].append(byIsoform)
+        if byMarker not in isoformByMarker:
+                isoformByMarker[byMarker] = []
+        isoformByMarker[byMarker].append(byIsoform)
 
-	if byIsoform not in markerByIsoform:
-		markerByIsoform[byIsoform] = []
-	markerByIsoform[byIsoform].append(byMarker)
+        if byIsoform not in markerByIsoform:
+                markerByIsoform[byIsoform] = []
+        markerByIsoform[byIsoform].append(byMarker)
 
 #
 # markers:synonyms
@@ -123,26 +124,26 @@ for r in results:
 markerSynonyms = {}
 
 results = db.sql('''
-	select a.accID as accID, s.synonym
-	from ACC_Accession a, MRK_Marker m, MGI_Synonym s
-	where a._MGIType_key = 2
-	and a._LogicalDB_key = 1
-	and a.prefixPart = 'MGI:'
-	and a.preferred = 1
-	and a._Object_key = m._Marker_key
-	and m._Marker_Type_key = 1
-	and m._Marker_Status_key = 1
-	and m._Organism_key = 1
-	and m._Marker_key = s._Object_key
-	and s._MGIType_key = 2
-	and s._SynonymType_key = 1004
-   	''', 'auto')
+        select a.accID as accID, s.synonym
+        from ACC_Accession a, MRK_Marker m, MGI_Synonym s
+        where a._MGIType_key = 2
+        and a._LogicalDB_key = 1
+        and a.prefixPart = 'MGI:'
+        and a.preferred = 1
+        and a._Object_key = m._Marker_key
+        and m._Marker_Type_key = 1
+        and m._Marker_Status_key = 1
+        and m._Organism_key = 1
+        and m._Marker_key = s._Object_key
+        and s._MGIType_key = 2
+        and s._SynonymType_key = 1004
+        ''', 'auto')
 for r in results:
-	key = r['accID']
-	value = r['synonym']
-	if key not in markerSynonyms:
-		markerSynonyms[key] = []
-	markerSynonyms[key].append(value)
+        key = r['accID']
+        value = r['synonym']
+        if key not in markerSynonyms:
+                markerSynonyms[key] = []
+        markerSynonyms[key].append(value)
 
 #
 # markerUniProtKB primary
@@ -152,7 +153,7 @@ for r in results:
 # field 1 = UniProtKB 
 # field 2 = xxxxx
 # find marker _object_key where accID = 'xxxxx'
-#	and _logicaldb_key in (13, 14) and _mgitype_key = 2
+#       and _logicaldb_key in (13, 14) and _mgitype_key = 2
 # add UniProtDB:xxxx to gpi field 8
 #
 
@@ -162,7 +163,7 @@ for line in gpiFile.readlines():
         if line[0] == '!':
             continue
         tokens = line[:-1].split('\t')
-	uniprotGPI.append(tokens[1])
+        uniprotGPI.append(tokens[1])
 gpiFile.close()
 
 markerUniProtKB = {}
@@ -177,53 +178,53 @@ results = db.sql('''
         and a._LogicalDB_key = 1 
         and a.preferred = 1 
         order by sm._LogicalDB_key
-	''', 'auto')
+        ''', 'auto')
 for r in results:
-	key = r['markerID']
-	value = r['uniprotID']
-	if value in uniprotGPI:
-	    if key not in markerUniProtKB:
-		    markerUniProtKB[key] = []
-	    markerUniProtKB[key].append('UniProtKB:' + value)
+        key = r['markerID']
+        value = r['uniprotID']
+        if value in uniprotGPI:
+            if key not in markerUniProtKB:
+                    markerUniProtKB[key] = []
+            markerUniProtKB[key].append('UniProtKB:' + value)
 
 #
 # markers:terms
 #
 
 results = db.sql('''
-	select a.accID as accID, m.symbol, m.name
-	from ACC_Accession a, MRK_Marker m
-	where a._MGIType_key = 2
-	and a._LogicalDB_key = 1
-	and a.prefixPart = 'MGI:'
-	and a.preferred = 1
-	and a._Object_key = m._Marker_key
-	and m._Marker_Type_key = 1
-	and m._Marker_Status_key = 1
-	and m._Organism_key = 1
-   	''', 'auto')
+        select a.accID as accID, m.symbol, m.name
+        from ACC_Accession a, MRK_Marker m
+        where a._MGIType_key = 2
+        and a._LogicalDB_key = 1
+        and a.prefixPart = 'MGI:'
+        and a.preferred = 1
+        and a._Object_key = m._Marker_key
+        and m._Marker_Type_key = 1
+        and m._Marker_Status_key = 1
+        and m._Organism_key = 1
+        ''', 'auto')
 
 for r in results:
-	marker = r['accID']
+        marker = r['accID']
 
-	fp.write(DB_PREFIX + TAB)
-	fp.write(r['accID'] + TAB)
-	fp.write(r['symbol'] + TAB)
-	fp.write(r['name'] + TAB)
+        fp.write(DB_PREFIX + TAB)
+        fp.write(r['accID'] + TAB)
+        fp.write(r['symbol'] + TAB)
+        fp.write(r['name'] + TAB)
 
-	if marker in markerSynonyms:
-		fp.write("|".join(markerSynonyms[marker]))
-	fp.write(TAB)
+        if marker in markerSynonyms:
+                fp.write("|".join(markerSynonyms[marker]))
+        fp.write(TAB)
 
-	fp.write(DBTYPE_MARKER + TAB)
-	fp.write(SPECIES + TAB)
-	fp.write(TAB)
+        fp.write(DBTYPE_MARKER + TAB)
+        fp.write(SPECIES + TAB)
+        fp.write(TAB)
 
-	if marker in markerUniProtKB:
-		fp.write("|".join(markerUniProtKB[marker]))
-	fp.write(TAB)
+        if marker in markerUniProtKB:
+                fp.write("|".join(markerUniProtKB[marker]))
+        fp.write(TAB)
 
-	fp.write(CRT)
+        fp.write(CRT)
 
 #
 # end markers
@@ -240,19 +241,19 @@ for r in results:
 isoformSynonyms = {}
 
 results = db.sql('''
-	select a.accID, s.synonym
-	from ACC_Accession a, VOC_Term t, MGI_Synonym s
-	where t._Vocab_key = 112
-	and t._term_key = a._Object_key and a._LogicalDB_key = 183
-	and a._LogicalDB_key = 183
-	and t._Term_key = s._Object_key and s._MGIType_key = 13
-   	''', 'auto')
+        select a.accID, s.synonym
+        from ACC_Accession a, VOC_Term t, MGI_Synonym s
+        where t._Vocab_key = 112
+        and t._term_key = a._Object_key and a._LogicalDB_key = 183
+        and a._LogicalDB_key = 183
+        and t._Term_key = s._Object_key and s._MGIType_key = 13
+        ''', 'auto')
 for r in results:
-	key = r['accID']
-	value = r['synonym']
-	if key not in isoformSynonyms:
-		isoformSynonyms[key] = []
-	isoformSynonyms[key].append(value)
+        key = r['accID']
+        value = r['synonym']
+        if key not in isoformSynonyms:
+                isoformSynonyms[key] = []
+        isoformSynonyms[key].append(value)
 
 #
 # isoforms:uniprot ids
@@ -261,60 +262,60 @@ for r in results:
 isoformUniProt = {}
 
 results = db.sql('''
-	select a1.accID as prID, p.value
-	from VOC_Annot v, ACC_Accession a1, VOC_Evidence ve, VOC_Evidence_Property p
-	where v._AnnotType_key = 1019
-	and v._Term_key = a1._Object_key
-	and a1._MGIType_key = 13
-	and v._Annot_key = ve._Annot_key
-	and ve._AnnotEvidence_key = p._AnnotEvidence_key
-   	''', 'auto')
+        select a1.accID as prID, p.value
+        from VOC_Annot v, ACC_Accession a1, VOC_Evidence ve, VOC_Evidence_Property p
+        where v._AnnotType_key = 1019
+        and v._Term_key = a1._Object_key
+        and a1._MGIType_key = 13
+        and v._Annot_key = ve._Annot_key
+        and ve._AnnotEvidence_key = p._AnnotEvidence_key
+        ''', 'auto')
 for r in results:
-	key = r['prID']
-	value = r['value']
-	if key not in isoformUniProt:
-		isoformUniProt[key] = []
-	isoformUniProt[key].append(value)
+        key = r['prID']
+        value = r['value']
+        if key not in isoformUniProt:
+                isoformUniProt[key] = []
+        isoformUniProt[key].append(value)
 
 #
 # isoforms:terms
 #
 
 results = db.sql('''
-	select a.accID, t.term as symbol, t.note as name
-	from ACC_Accession a, VOC_Term t
-	where t._Vocab_key = 112
-	and t._term_key = a._Object_key 
-	and a._LogicalDB_key = 183
-   	''', 'auto')
+        select a.accID, t.term as symbol, t.note as name
+        from ACC_Accession a, VOC_Term t
+        where t._Vocab_key = 112
+        and t._term_key = a._Object_key 
+        and a._LogicalDB_key = 183
+        ''', 'auto')
 
 for r in results:
-	prefixPart, accID = r['accID'].split(':')
-	isoform = r['accID']
+        prefixPart, accID = r['accID'].split(':')
+        isoform = r['accID']
 
-	fp.write(prefixPart + TAB)
-	fp.write(accID + TAB)
-	fp.write(r['symbol'] + TAB)
-	fp.write(r['name'] + TAB)
+        fp.write(prefixPart + TAB)
+        fp.write(accID + TAB)
+        fp.write(r['symbol'] + TAB)
+        fp.write(r['name'] + TAB)
 
-	if isoform in isoformSynonyms:
-		fp.write("|".join(isoformSynonyms[isoform]))
-	fp.write(TAB)
+        if isoform in isoformSynonyms:
+                fp.write("|".join(isoformSynonyms[isoform]))
+        fp.write(TAB)
 
-	fp.write(DBTYPE_ISOFORM + TAB)
-	fp.write(SPECIES + TAB)
+        fp.write(DBTYPE_ISOFORM + TAB)
+        fp.write(SPECIES + TAB)
 
-	# Parent_Object_ID/MGI id
-	if isoform in markerByIsoform:
-		fp.write('MGI:' + markerByIsoform[isoform][0])
-	fp.write(TAB)
+        # Parent_Object_ID/MGI id
+        if isoform in markerByIsoform:
+                fp.write('MGI:' + markerByIsoform[isoform][0])
+        fp.write(TAB)
 
-	# DB_Xref/UniProtKB id
-	if isoform in isoformUniProt:
-		fp.write(isoformUniProt[isoform][0])
-	fp.write(TAB)
+        # DB_Xref/UniProtKB id
+        if isoform in isoformUniProt:
+                fp.write(isoformUniProt[isoform][0])
+        fp.write(TAB)
 
-	fp.write(CRT)
+        fp.write(CRT)
 
 #
 # end isoforms
@@ -327,48 +328,48 @@ for r in results:
 for ldbsearch in (9, 27, 133):
 
     results = db.sql('''
-	    WITH rna AS
-	    (
-	    select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key
-        	    from SEQ_Marker_Cache sm, ACC_Accession a
-        	    where sm._SequenceType_key = 316346
-        	    and sm._Marker_Type_key = 1 
-        	    and sm._Organism_key = 1 
-		    and sm._LogicalDB_key = %s
-		    and sm._Sequence_key = a._Object_key
-		    and a._MGIType_key = 19
-	            and a.prefixPart not in ('XR_', 'XM_')
-	        )
-	    select rna.rnaID, a.accID as markerID, rna._LogicalDB_key
-	    from rna, ACC_Accession a
-	    where rnaID in (select rnaID from rna group by rnaID having count(*) = 1)
+            WITH rna AS
+            (
+            select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key
+                    from SEQ_Marker_Cache sm, ACC_Accession a
+                    where sm._SequenceType_key = 316346
+                    and sm._Marker_Type_key = 1 
+                    and sm._Organism_key = 1 
+                    and sm._LogicalDB_key = %s
+                    and sm._Sequence_key = a._Object_key
+                    and a._MGIType_key = 19
+                    and a.prefixPart not in ('XR_', 'XM_')
+                )
+            select rna.rnaID, a.accID as markerID, rna._LogicalDB_key
+            from rna, ACC_Accession a
+            where rnaID in (select rnaID from rna group by rnaID having count(*) = 1)
             and rna._Marker_key = a._Object_key
             and a._MGIType_key = 2
             and a._LogicalDB_key = 1
             and a.preferred = 1
-	    order by rna._LogicalDB_key
-   	    ''' % (ldbsearch), 'auto')
+            order by rna._LogicalDB_key
+            ''' % (ldbsearch), 'auto')
 
     for r in results:
     
-	    ldb = r['_LogicalDB_key']
-	    if ldb == 9:
-		    ldbName = 'EMBL'
-	    elif ldb == 27:
-		    ldbName = 'RefSeq'
-	    elif ldb == 133:
-		    ldbName = 'ENSEMBL'
+            ldb = r['_LogicalDB_key']
+            if ldb == 9:
+                    ldbName = 'EMBL'
+            elif ldb == 27:
+                    ldbName = 'RefSeq'
+            elif ldb == 133:
+                    ldbName = 'ENSEMBL'
     
-	    fp.write(ldbName + TAB)
-	    fp.write(r['rnaID'] + TAB)
-	    fp.write(r['rnaID'] + TAB)
-	    fp.write(TAB)
-	    fp.write(TAB)
-	    fp.write(DBTYPE_RNA + TAB)
-	    fp.write(SPECIES + TAB)
-	    fp.write('MGI:' + r['markerID'] + TAB)
-	    fp.write(TAB)
-	    fp.write(CRT)
+            fp.write(ldbName + TAB)
+            fp.write(r['rnaID'] + TAB)
+            fp.write(r['rnaID'] + TAB)
+            fp.write(TAB)
+            fp.write(TAB)
+            fp.write(DBTYPE_RNA + TAB)
+            fp.write(SPECIES + TAB)
+            fp.write('MGI:' + r['markerID'] + TAB)
+            fp.write(TAB)
+            fp.write(CRT)
 
 # end RNAs
 
