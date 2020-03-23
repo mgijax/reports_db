@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 # ALL_CellLine_GeneTrap.py
@@ -117,7 +116,7 @@ def createImsrEsDict():
                                                 facilityMap.setdefault(id, []).append(provider)
         
         # unique and sort the provider list
-        for id, facilities in facilityMap.items():
+        for id, facilities in list(facilityMap.items()):
                 facilityMap[id] = list(set(facilities))
                 facilityMap[id].sort()
 
@@ -149,7 +148,7 @@ def createImsrStrainDict():
                                                 facilityMap.setdefault(id, []).append(provider)
         
         # unique and sort the provider list
-        for id, facilities in facilityMap.items():
+        for id, facilities in list(facilityMap.items()):
                 facilityMap[id] = list(set(facilities))
                 facilityMap[id].sort()
         
@@ -182,22 +181,22 @@ fp.write('tag' + CRT)
 # gene trap alleles
 #
 db.sql('''
-	select a._Allele_key, 
-	       a._Marker_key,
-	       a.symbol, 
-	       a.name,
-	       t1.term as alleleType,
-	       ac.accID as alleleID
-	into temporary table genetrap
-	from ALL_Allele a, VOC_Term t1, ACC_Accession ac
-	where a._Allele_Status_key in (847114, 3983021)
-	and a._Allele_Type_key = t1._Term_key
-	and a._Allele_Type_key = 847121
+        select a._Allele_key, 
+               a._Marker_key,
+               a.symbol, 
+               a.name,
+               t1.term as alleleType,
+               ac.accID as alleleID
+        into temporary table genetrap
+        from ALL_Allele a, VOC_Term t1, ACC_Accession ac
+        where a._Allele_Status_key in (847114, 3983021)
+        and a._Allele_Type_key = t1._Term_key
+        and a._Allele_Type_key = 847121
         and a._Allele_key = ac._Object_key
         and ac._LogicalDB_key = 1 
         and ac._MGIType_key = 11 
         and ac.preferred = 1
-	''', None)
+        ''', None)
 db.sql('create index genetrap_idx1 on genetrap(_Allele_key)', None)
 db.sql('create index genetrap_idx2 on genetrap(alleleID)', None)
 
@@ -205,15 +204,15 @@ db.sql('create index genetrap_idx2 on genetrap(alleleID)', None)
 # gene trap/markers
 #
 db.sql('''
-	select a._Allele_key, m.symbol as markersymbol, ma.accID as markerID
-	into temporary table markers
-	from genetrap a, MRK_Marker m, ACC_Accession ma
-	where a._Marker_key = m._Marker_key
+        select a._Allele_key, m.symbol as markersymbol, ma.accID as markerID
+        into temporary table markers
+        from genetrap a, MRK_Marker m, ACC_Accession ma
+        where a._Marker_key = m._Marker_key
         and m._Marker_key = ma._Object_key
         and ma._LogicalDB_key = 1
         and ma._MGIType_key = 2
         and ma.preferred = 1
-	''', 'auto')
+        ''', 'auto')
 db.sql('create index markers_idx1 on markers(_Allele_key)', None)
 db.sql('create index markers_idx2 on markers(markerID)', None)
 
@@ -221,39 +220,39 @@ db.sql('create index markers_idx2 on markers(markerID)', None)
 # gene trap sequences
 #
 db.sql('''
-	select g._Allele_key, s.accID, ss.version, t.term as tag
-	into temporary table sequences 
-	from genetrap g, 
-	     SEQ_Summary_View s, 
-	     SEQ_Sequence ss, 
-	     SEQ_GeneTrap sg, 
-	     SEQ_Allele_Assoc sa, 
-	     VOC_Term t
-	where g._Allele_key = sa._Allele_key
-	and sa._Sequence_key = s._Object_key
-	and s._LogicalDB_key = 9  
-	and s._MGIType_key = 19
-	and s._Object_key = ss._Sequence_key 
-	and s._Object_key = sg._Sequence_key 
-	and sg._TagMethod_key = t._Term_key 
-	''', None)
+        select g._Allele_key, s.accID, ss.version, t.term as tag
+        into temporary table sequences 
+        from genetrap g, 
+             SEQ_Summary_View s, 
+             SEQ_Sequence ss, 
+             SEQ_GeneTrap sg, 
+             SEQ_Allele_Assoc sa, 
+             VOC_Term t
+        where g._Allele_key = sa._Allele_key
+        and sa._Sequence_key = s._Object_key
+        and s._LogicalDB_key = 9  
+        and s._MGIType_key = 19
+        and s._Object_key = ss._Sequence_key 
+        and s._Object_key = sg._Sequence_key 
+        and sg._TagMethod_key = t._Term_key 
+        ''', None)
 db.sql('create index sequences_idx1 on sequences (_Allele_key)', None)
 
 #
 # cell line info
 #
 db.sql('''
-	select g._Allele_key, 
-	       cv.cellLine as mclID,
-	       cv.cellLineStrain as parentCellLineStrain,
-	       cv.creator as mclCreator,
-	       cv.vector, 
-	       cv.parentCellLine, 
-	       cv.derivationName as mclLibrary
-	into temporary table celllines
-	from genetrap g, ALL_Allele_CellLine_View cv
-	where g._Allele_key = cv._Allele_key and cv.isMutant = 1  
-	''', None)
+        select g._Allele_key, 
+               cv.cellLine as mclID,
+               cv.cellLineStrain as parentCellLineStrain,
+               cv.creator as mclCreator,
+               cv.vector, 
+               cv.parentCellLine, 
+               cv.derivationName as mclLibrary
+        into temporary table celllines
+        from genetrap g, ALL_Allele_CellLine_View cv
+        where g._Allele_key = cv._Allele_key and cv.isMutant = 1  
+        ''', None)
 db.sql('create index celllines_idx1 on celllines (_Allele_key)', None)
 
 # get imsr allele & marker ID => providers for ES Cells, and for Mice
@@ -264,49 +263,49 @@ strain = createImsrStrainDict()
 # ready to print
 #
 results = db.sql('''
-	select 
-	    g._Allele_key, 
-	    g.symbol, 
-	    g.name,
-	    g.alleleType,
-	    g.alleleID,
-	    m.markerID, 
-	    m.markersymbol,
-	    s.accID, 
-	    s.version, 
-	    s.tag, 
-	    cv.mclID,
-	    cv.parentCellLineStrain,
-	    cv.mclCreator,
-	    cv.vector, 
-	    cv.parentCellLine, 
-	    cv.mclLibrary
-	from genetrap g 
-		LEFT OUTER JOIN markers m on (g._Allele_key = m._Allele_key),
-	     sequences s, celllines cv
-	where g._Allele_key = s._Allele_key
-	      and g._Allele_key = cv._Allele_key
-	    ''', 'auto')
+        select 
+            g._Allele_key, 
+            g.symbol, 
+            g.name,
+            g.alleleType,
+            g.alleleID,
+            m.markerID, 
+            m.markersymbol,
+            s.accID, 
+            s.version, 
+            s.tag, 
+            cv.mclID,
+            cv.parentCellLineStrain,
+            cv.mclCreator,
+            cv.vector, 
+            cv.parentCellLine, 
+            cv.mclLibrary
+        from genetrap g 
+                LEFT OUTER JOIN markers m on (g._Allele_key = m._Allele_key),
+             sequences s, celllines cv
+        where g._Allele_key = s._Allele_key
+              and g._Allele_key = cv._Allele_key
+            ''', 'auto')
 
 for row in results:
-	esProviders = set()
-	strainProviders = set()
-	
-	if row['alleleID'] in es:
-		esProviders = esProviders.union(set(es[row['alleleID']]))
+        esProviders = set()
+        strainProviders = set()
+        
+        if row['alleleID'] in es:
+                esProviders = esProviders.union(set(es[row['alleleID']]))
 
-	if row['markerID'] in es:
-		esProviders = esProviders.union(set(es[row['markerID']]))
+        if row['markerID'] in es:
+                esProviders = esProviders.union(set(es[row['markerID']]))
 
-	if row['alleleID'] in strain:
-		strainProviders = strainProviders.union(set(strain[row['alleleID']]))
+        if row['alleleID'] in strain:
+                strainProviders = strainProviders.union(set(strain[row['alleleID']]))
 
-	if row['markerID'] in strain:
-		strainProviders = strainProviders.union(set(strain[row['markerID']]))
-		
-	esString =  ", ".join(esProviders)
-	strString =  ", ".join(strainProviders)
-	
+        if row['markerID'] in strain:
+                strainProviders = strainProviders.union(set(strain[row['markerID']]))
+                
+        esString =  ", ".join(esProviders)
+        strString =  ", ".join(strainProviders)
+        
         fp.write(row['mclID'] + TAB)  
         fp.write(row['vector'] + TAB)
         fp.write(row['mclCreator'] + TAB)       

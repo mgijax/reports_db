@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -53,32 +52,31 @@ sequence = ''
 
 for r in results:
 
-	if prevMarker != r['mgiID']:
-		if len(sequence) > 0:
-			fp.write(mgi_utils.prvalue(sequence) + reportlib.CRT)
-		sequence = ''
+        if prevMarker != r['mgiID']:
+                if len(sequence) > 0:
+                        fp.write(mgi_utils.prvalue(sequence) + reportlib.CRT)
+                sequence = ''
 
-		if r['cmoffset'] == -1.0:
-			cmoffset = 'syntenic'
-		elif r['cmoffset'] == -999.0:
-			cmoffset = 'N/A'
-		else:
-			cmoffset = str(r['cmoffset'])
+                if r['cmoffset'] == -1.0:
+                        cmoffset = 'syntenic'
+                elif r['cmoffset'] == -999.0:
+                        cmoffset = 'N/A'
+                else:
+                        cmoffset = str(r['cmoffset'])
 
-		fp.write(mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
-	        	 mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
-			 mgi_utils.prvalue(string.upper(r['status'][0])) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
-	                 mgi_utils.prvalue(cmoffset) + reportlib.TAB + \
-	                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
+                fp.write(mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
+                         mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
+                         mgi_utils.prvalue(str.upper(r['status'][0])) + reportlib.TAB + \
+                         mgi_utils.prvalue(r['name']) + reportlib.TAB + \
+                         mgi_utils.prvalue(cmoffset) + reportlib.TAB + \
+                         mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
 
-		prevMarker = r['mgiID']
+                prevMarker = r['mgiID']
 
-	if len(sequence) > 0:
-		sequence = sequence + ' '
+        if len(sequence) > 0:
+                sequence = sequence + ' '
 
         sequence = sequence + r['accID']
 
 fp.write(sequence + reportlib.CRT)	# Don't forget to write out the last one
 reportlib.finish_nonps(fp)
-

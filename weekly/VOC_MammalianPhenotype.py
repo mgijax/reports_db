@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -31,12 +30,12 @@ TAB = reportlib.TAB
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 results = db.sql('''
-	select m._Term_key, m.note
-	from VOC_Term m 
-	where m._Vocab_key = 5 
-	and m.note is not null
-	order by m._Term_key
-	''', 'auto')
+        select m._Term_key, m.note
+        from VOC_Term m 
+        where m._Vocab_key = 5 
+        and m.note is not null
+        order by m._Term_key
+        ''', 'auto')
 mpnotes = {}
 for r in results:
     key = r['_Term_key']
@@ -44,13 +43,13 @@ for r in results:
     mpnotes[key] = value
 
 results = db.sql('''
-	select a.accID, t._Term_key, t.term from VOC_Term t, ACC_Accession a 
-	where t._Vocab_key = 5 
-	and t._Term_key = a._Object_key 
-	and a._MGIType_key = 13 
-	and a.preferred = 1 
-	order by a.accID
-	''', 'auto')
+        select a.accID, t._Term_key, t.term from VOC_Term t, ACC_Accession a 
+        where t._Vocab_key = 5 
+        and t._Term_key = a._Object_key 
+        and a._MGIType_key = 13 
+        and a.preferred = 1 
+        order by a.accID
+        ''', 'auto')
 
 for r in results:
 
@@ -58,10 +57,9 @@ for r in results:
 
     fp.write(r['accID'] + TAB + r['term'] + TAB)
 
-    if mpnotes.has_key(key):
-	fp.write(mpnotes[key])
+    if key in mpnotes:
+        fp.write(mpnotes[key])
 
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
-

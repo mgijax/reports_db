@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -42,14 +41,14 @@ TAB = reportlib.TAB
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 db.sql('''
-	select p._Probe_key, p.name as pname, p.primer1sequence, p.primer2sequence, p.productSize, pm._Marker_key, 
+        select p._Probe_key, p.name as pname, p.primer1sequence, p.primer2sequence, p.productSize, pm._Marker_key, 
                m.symbol, m.name as mname, m.chromosome, m.cmoffset
         into temporary table primers 
         from PRB_Probe p, PRB_Marker pm, MRK_Marker m 
         where p._SegmentType_key = 63473 
         and p._Probe_key = pm._Probe_key 
         and pm._Marker_key = m._Marker_key
-	''', None)
+        ''', None)
 db.sql('create index idx1 on primers(_Probe_key)', None)
 db.sql('create index idx2 on primers(_Marker_key)', None)
 
@@ -57,12 +56,12 @@ results = db.sql('''
        select p.*, a1.accID as probeID, a2.accID as markerID
        from primers p, ACC_Accession a1, ACC_Accession a2
        where p._Probe_key = a1._Object_key 
-	     and a1._MGIType_key = 3 
+             and a1._MGIType_key = 3 
              and a1._LogicalDB_key = 1 
              and a1.prefixPart = 'MGI:' 
              and a1.preferred = 1 
              and p._Marker_key = a2._Object_key 
-	     and a2._MGIType_key = 2 
+             and a2._MGIType_key = 2 
              and a2._LogicalDB_key = 1 
              and a2.prefixPart = 'MGI:' 
              and a2.preferred = 1 
@@ -77,14 +76,14 @@ for r in results:
     prodSize = r['productSize']
 
     fp.write(r['symbol'] + TAB +
-	mname + TAB +
-	pname + TAB +
+        mname + TAB +
+        pname + TAB +
         r['markerID'] + TAB + 
-	r['probeID'] + TAB +
+        r['probeID'] + TAB +
         mgi_utils.prvalue(p1seq) + TAB + 
-	mgi_utils.prvalue(p2seq) + TAB + 
-	mgi_utils.prvalue(prodSize) + TAB +
+        mgi_utils.prvalue(p2seq) + TAB + 
+        mgi_utils.prvalue(prodSize) + TAB +
         r['chromosome'] + TAB + 
-	str(r['cmoffset']) + CRT)
+        str(r['cmoffset']) + CRT)
 
 reportlib.finish_nonps(fp)

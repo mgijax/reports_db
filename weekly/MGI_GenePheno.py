@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -95,13 +94,13 @@ fp3 = reportlib.init('MGI_Geno_NotDiseaseDO', outputdir = os.environ['REPORTOUTP
 #
 
 db.sql('''select distinct a._Object_key, a._Term_key, e._Refs_key 
-	into temporary table mp 
-	from VOC_Annot a, VOC_Evidence e, VOC_Term t 
-	where a._AnnotType_key = 1002 
-	and a._Qualifier_key = t._Term_key 
-	and t.term is null 
-	and a._Annot_key = e._Annot_key
-	''', None)
+        into temporary table mp 
+        from VOC_Annot a, VOC_Evidence e, VOC_Term t 
+        where a._AnnotType_key = 1002 
+        and a._Qualifier_key = t._Term_key 
+        and t.term is null 
+        and a._Annot_key = e._Annot_key
+        ''', None)
 db.sql('create index idx1 on mp(_Object_key)', None)
 db.sql('create index idx2 on mp(_Term_key)', None)
 db.sql('create index idx3 on mp(_Refs_key)', None)
@@ -110,11 +109,11 @@ db.sql('create index idx3 on mp(_Refs_key)', None)
 # resolve MP ids
 #
 results = db.sql('''select distinct m._Term_key, a.accID 
-	from mp m, ACC_Accession a 
-	where m._Term_key = a._Object_key 
-	and a._MGIType_key = 13 
-	and a.preferred = 1
-	''', 'auto')
+        from mp m, ACC_Accession a 
+        where m._Term_key = a._Object_key 
+        and a._MGIType_key = 13 
+        and a.preferred = 1
+        ''', 'auto')
 mpID = {}
 for r in results:
     key = r['_Term_key']
@@ -125,16 +124,16 @@ for r in results:
 # resolve References
 #
 results = db.sql('''select distinct m._Object_key, m._Term_key, a.accID 
-	from mp m, ACC_Accession a 
-	where m._Refs_key = a._Object_key 
-	and a._LogicalDB_key = 29
-	''', 'auto')
+        from mp m, ACC_Accession a 
+        where m._Refs_key = a._Object_key 
+        and a._LogicalDB_key = 29
+        ''', 'auto')
 mpRef = {}
 for r in results:
-    key = `r['_Object_key']` + `r['_Term_key']`
+    key = repr(r['_Object_key']) + repr(r['_Term_key'])
     value = r['accID']
-    if not mpRef.has_key(key):
-	mpRef[key] = []
+    if key not in mpRef:
+        mpRef[key] = []
     mpRef[key].append(value)
 
 #
@@ -142,11 +141,11 @@ for r in results:
 # only include conditional = 0 (i.e. exclude conditional)
 #
 results = db.sql('''select distinct m._Object_key, s.strain 
-	from mp m, GXD_Genotype g, PRB_Strain s 
-	where m._Object_key = g._Genotype_key 
-	and g.isConditional = 0 
-	and g._Strain_key = s._Strain_key
-	''', 'auto')
+        from mp m, GXD_Genotype g, PRB_Strain s 
+        where m._Object_key = g._Genotype_key 
+        and g.isConditional = 0 
+        and g._Strain_key = s._Strain_key
+        ''', 'auto')
 mpStrain = {}
 for r in results:
     key = r['_Object_key']
@@ -157,15 +156,15 @@ for r in results:
 # resolve Allele Combination display
 #
 results = db.sql('''select distinct m._Object_key, nc.note 
-	from mp m, MGI_Note n, MGI_NoteChunk nc 
-	where m._Object_key = n._Object_key 
-	and n._NoteType_key = 1016 
-	and n._Note_key = nc._Note_key
-	''', 'auto')
+        from mp m, MGI_Note n, MGI_NoteChunk nc 
+        where m._Object_key = n._Object_key 
+        and n._NoteType_key = 1016 
+        and n._Note_key = nc._Note_key
+        ''', 'auto')
 mpDisplay = {}
 for r in results:
     key = r['_Object_key']
-    value = string.replace(string.strip(r['note']), '\n', ',')
+    value = str.replace(str.strip(r['note']), '\n', ',')
     mpDisplay[key] = value
 
 #
@@ -174,20 +173,20 @@ for r in results:
 # only include single allele pairs
 #
 results = db.sql('''select distinct m._Object_key, a.symbol, aa.accID, a.isWildType
-	from mp m, GXD_AlleleGenotype ag, ALL_Allele a, MRK_Marker mm, ACC_Accession aa
-	where m._Object_key = ag._Genotype_key 
-	and ag._Allele_key = a._Allele_key 
-	and ag._Marker_key = mm._Marker_key 
-	and mm._Marker_Type_key in (1,10)
-	and ag._Allele_key = aa._Object_key
-	and aa._MGIType_key = 11
-	and aa._LogicalDB_key = 1
-	and aa.prefixPart = 'MGI:'
-	and aa.preferred = 1
+        from mp m, GXD_AlleleGenotype ag, ALL_Allele a, MRK_Marker mm, ACC_Accession aa
+        where m._Object_key = ag._Genotype_key 
+        and ag._Allele_key = a._Allele_key 
+        and ag._Marker_key = mm._Marker_key 
+        and mm._Marker_Type_key in (1,10)
+        and ag._Allele_key = aa._Object_key
+        and aa._MGIType_key = 11
+        and aa._LogicalDB_key = 1
+        and aa.prefixPart = 'MGI:'
+        and aa.preferred = 1
         and not exists (select 1 from GXD_AllelePair a2
-	        where ag._Genotype_key = a2._Genotype_key
-		and a2.sequenceNum > 1)
-	''', 'auto')
+                where ag._Genotype_key = a2._Genotype_key
+                and a2.sequenceNum > 1)
+        ''', 'auto')
 mpAlleles = {}
 mpAlleleIDs = {}
 for r in results:
@@ -195,53 +194,53 @@ for r in results:
     value = r['symbol']
     value2 = r['accID']
 
-    if not mpAlleles.has_key(key):
-	mpAlleles[key] = []
+    if key not in mpAlleles:
+        mpAlleles[key] = []
     mpAlleles[key].append(value)
 
     if r['isWildType'] == 0:
-        if not mpAlleleIDs.has_key(key):
-	    mpAlleleIDs[key] = []
+        if key not in mpAlleleIDs:
+            mpAlleleIDs[key] = []
         mpAlleleIDs[key].append(value2)
 
 #
 # resolve Marker ID
 #
 results = db.sql('''select distinct m._Object_key, a.accID
-	from mp m, GXD_AlleleGenotype g, ACC_Accession a
-	where m._Object_key = g._Genotype_key
-	and g._Marker_key = a._Object_key
-	and a._MGIType_key = 2
-	and a._LogicalDB_key = 1
-	and a.prefixPart = 'MGI:'
-	and a.preferred = 1
-	''', 'auto')
+        from mp m, GXD_AlleleGenotype g, ACC_Accession a
+        where m._Object_key = g._Genotype_key
+        and g._Marker_key = a._Object_key
+        and a._MGIType_key = 2
+        and a._LogicalDB_key = 1
+        and a.prefixPart = 'MGI:'
+        and a.preferred = 1
+        ''', 'auto')
 mpMarker = {}
 for r in results:
     key = r['_Object_key']
     value = r['accID']
-    if not mpMarker.has_key(key):
-	mpMarker[key] = []
+    if key not in mpMarker:
+        mpMarker[key] = []
     mpMarker[key].append(value)
 
 #
 # resolve Genotype ID
 #
 results = db.sql('''select distinct m._Object_key, a.accID
-	from mp m, GXD_AlleleGenotype g, ACC_Accession a
-	where m._Object_key = g._Genotype_key
-	and g._Genotype_key = a._Object_key
-	and a._MGIType_key = 12
-	and a._LogicalDB_key = 1
-	and a.prefixPart = 'MGI:'
-	and a.preferred = 1
-	''', 'auto')
+        from mp m, GXD_AlleleGenotype g, ACC_Accession a
+        where m._Object_key = g._Genotype_key
+        and g._Genotype_key = a._Object_key
+        and a._MGIType_key = 12
+        and a._LogicalDB_key = 1
+        and a.prefixPart = 'MGI:'
+        and a.preferred = 1
+        ''', 'auto')
 mpGenotype= {}
 for r in results:
     key = r['_Object_key']
     value = r['accID']
-    if not mpGenotype.has_key(key):
-	mpGenotype[key] = []
+    if key not in mpGenotype:
+        mpGenotype[key] = []
     mpGenotype[key].append(value)
 
 #
@@ -251,25 +250,25 @@ results = db.sql('''select distinct m._Object_key, a.accID, doids.accid as doids
            from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession doids
            where m._Object_key = va._Object_key 
            and va._AnnotType_key in (1020) 
-	   and va._Qualifier_key = 1614158
-	   and va._Term_key = a._Object_key
-	   and a._LogicalDB_key = 191
-	   and a.preferred = 1
+           and va._Qualifier_key = 1614158
+           and va._Term_key = a._Object_key
+           and a._LogicalDB_key = 191
+           and a.preferred = 1
            and a._Object_key = doids._Object_key
            and doids._LogicalDB_key  = 15
-	   ''', 'auto')
+           ''', 'auto')
 mpDO1 = {}
 mpOMIM1 = {}
 for r in results:
     key = r['_Object_key']
     value = r['accID']
     if key not in mpDO1:
-	mpDO1[key] = [] 
+        mpDO1[key] = [] 
     if value not in mpDO1[key]:
-    	mpDO1[key].append(value)
+        mpDO1[key].append(value)
     value = r['doidsID']
-    if not mpOMIM1.has_key(key):
-	mpOMIM1[key] = []
+    if key not in mpOMIM1:
+        mpOMIM1[key] = []
     mpOMIM1[key].append(value)
 
 #
@@ -279,25 +278,25 @@ results = db.sql('''select distinct m._Object_key, a.accID, doids.accid as doids
            from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession doids
            where m._Object_key = va._Object_key 
            and va._AnnotType_key in (1020) 
-	   and va._Qualifier_key = 1614157
-	   and va._Term_key = a._Object_key
-	   and a._LogicalDB_key = 191
-	   and a.preferred = 1
+           and va._Qualifier_key = 1614157
+           and va._Term_key = a._Object_key
+           and a._LogicalDB_key = 191
+           and a.preferred = 1
            and a._Object_key = doids._Object_key
            and doids._LogicalDB_key  = 15
-	   ''', 'auto')
+           ''', 'auto')
 mpDO2 = {}
 mpOMIM2 = {}
 for r in results:
     key = r['_Object_key']
     value = r['accID']
     if key not in mpDO2:
-	mpDO2[key] = []
+        mpDO2[key] = []
     if value not in mpDO2[key]:
-    	mpDO2[key].append(value)
+        mpDO2[key].append(value)
     value = r['doidsID']
-    if not mpOMIM2.has_key(key):
-	mpOMIM2[key] = []
+    if key not in mpOMIM2:
+        mpOMIM2[key] = []
     mpOMIM2[key].append(value)
 
 #
@@ -309,78 +308,77 @@ for r in results:
 
     genotype = r['_Object_key']
     term = r['_Term_key']
-    refKey = `genotype` + `term`
+    refKey = repr(genotype) + repr(term)
 
     # we only want to list the Genotypes that have Allele Pairs
-    if not mpDisplay.has_key(genotype):
+    if genotype not in mpDisplay:
        continue
 
-    if not mpStrain.has_key(genotype):
+    if genotype not in mpStrain:
        continue
 
-    if not mpAlleles.has_key(genotype):
+    if genotype not in mpAlleles:
        continue
 
     fp1.write(mpDisplay[genotype] + TAB)
 
-    fp1.write(string.join(mpAlleles[genotype], '|') + TAB)
+    fp1.write('|'.join(mpAlleles[genotype]) + TAB)
 
-    if mpAlleleIDs.has_key(genotype):
-        fp1.write(string.join(mpAlleleIDs[genotype], '|'))
+    if genotype in mpAlleleIDs:
+        fp1.write('|'.join(mpAlleleIDs[genotype]))
     fp1.write(TAB)
 
     fp1.write(mpStrain[genotype] + TAB)
     fp1.write(mpID[term] + TAB)
 
-    if mpRef.has_key(refKey):
-        fp1.write(string.join(mpRef[refKey], '|'))
+    if refKey in mpRef:
+        fp1.write('|'.join(mpRef[refKey]))
     fp1.write(TAB)
-    fp1.write(string.join(mpMarker[genotype], '|') + TAB)
-    fp1.write(string.join(mpGenotype[genotype], '|') + CRT)
+    fp1.write('|'.join(mpMarker[genotype]) + TAB)
+    fp1.write('|'.join(mpGenotype[genotype]) + CRT)
 
     #
     # DO report 1
     #
 
-    if mpDO1.has_key(genotype):
+    if genotype in mpDO1:
 
         fp2.write(mpDisplay[genotype] + TAB)
-        fp2.write(string.join(mpAlleles[genotype], '|') + TAB)
-        if mpAlleleIDs.has_key(genotype):
-            fp2.write(string.join(mpAlleleIDs[genotype], '|'))
+        fp2.write('|'.join(mpAlleles[genotype]) + TAB)
+        if genotype in mpAlleleIDs:
+            fp2.write('|'.join(mpAlleleIDs[genotype]))
         fp2.write(TAB)
         fp2.write(mpStrain[genotype] + TAB)
         fp2.write(mpID[term] + TAB)
-        if mpRef.has_key(refKey):
-            fp2.write(string.join(mpRef[refKey], '|'))
-        fp2.write(TAB + string.join(mpMarker[genotype], '|') + TAB)
-        fp2.write(string.join(mpDO1[genotype], '|') + TAB)
-	if mpOMIM1.has_key(genotype):
-        	fp2.write(string.join(mpOMIM1[genotype], '|'))
-	fp2.write(CRT)
+        if refKey in mpRef:
+            fp2.write('|'.join(mpRef[refKey]))
+        fp2.write(TAB + '|'.join(mpMarker[genotype]) + TAB)
+        fp2.write('|'.join(mpDO1[genotype]) + TAB)
+        if genotype in mpOMIM1:
+                fp2.write('|'.join(mpOMIM1[genotype]))
+        fp2.write(CRT)
 
     #
     # DO report 2
     #
 
-    if mpDO2.has_key(genotype):
+    if genotype in mpDO2:
 
         fp3.write(mpDisplay[genotype] + TAB)
-        fp3.write(string.join(mpAlleles[genotype], '|') + TAB)
-        if mpAlleleIDs.has_key(genotype):
-            fp3.write(string.join(mpAlleleIDs[genotype], '|'))
+        fp3.write('|'.join(mpAlleles[genotype]) + TAB)
+        if genotype in mpAlleleIDs:
+            fp3.write('|'.join(mpAlleleIDs[genotype]))
         fp3.write(TAB)
         fp3.write(mpStrain[genotype] + TAB)
         fp3.write(mpID[term] + TAB)
-        if mpRef.has_key(refKey):
-            fp3.write(string.join(mpRef[refKey], '|'))
-        fp3.write(TAB + string.join(mpMarker[genotype], '|') + TAB)
-        fp3.write(string.join(mpDO2[genotype], '|') + TAB)
-	if mpOMIM2.has_key(genotype):
-        	fp3.write(string.join(mpOMIM2[genotype], '|'))
-	fp3.write(CRT)
+        if refKey in mpRef:
+            fp3.write('|'.join(mpRef[refKey]))
+        fp3.write(TAB + '|'.join(mpMarker[genotype]) + TAB)
+        fp3.write('|'.join(mpDO2[genotype]) + TAB)
+        if genotype in mpOMIM2:
+                fp3.write('|'.join(mpOMIM2[genotype]))
+        fp3.write(CRT)
 
 reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file
 reportlib.finish_nonps(fp3)	# non-postscript file
-

@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -301,17 +300,17 @@ def iphone_genes():
     #	and m._marker_type_key = 1
     #
     db.sql('''
-	    select m._marker_key, m.symbol, m.name, m.chromosome, a.accid, a.numericPart
-	    into temporary table markers
-	    from MRK_Marker m, ACC_Accession a
-	    where m._organism_key = 1
-	    and m._marker_status_key = 1
-	    and m._marker_key = a._object_key
-	    and a._mgitype_key = 2
-	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'MGI:'
-	    and a.preferred = 1
-	    ''', None)
+            select m._marker_key, m.symbol, m.name, m.chromosome, a.accid, a.numericPart
+            into temporary table markers
+            from MRK_Marker m, ACC_Accession a
+            where m._organism_key = 1
+            and m._marker_status_key = 1
+            and m._marker_key = a._object_key
+            and a._mgitype_key = 2
+            and a._logicaldb_key = 1
+            and a.prefixpart = 'MGI:'
+            and a.preferred = 1
+            ''', None)
     db.sql('create index marker_idx on markers(_marker_key)', None)
 
     #
@@ -326,7 +325,7 @@ def iphone_genes():
     for r in results:
         key = r['_marker_key']
         value = r
-        if not refs.has_key(key):
+        if key not in refs:
             refs[key] = []
         refs[key].append(value)
 
@@ -337,18 +336,18 @@ def iphone_genes():
             select distinct m._marker_key, a.accid
             from markers m, ALL_Allele aa, ACC_Accession a
             where m._marker_key = aa._marker_key
-	    and aa._allele_key = a._object_key
-	    and a._mgitype_key = 11
-	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'MGI:'
-	    and a.preferred = 1
+            and aa._allele_key = a._object_key
+            and a._mgitype_key = 11
+            and a._logicaldb_key = 1
+            and a.prefixpart = 'MGI:'
+            and a.preferred = 1
             ''', 'auto')
     alleles = {}
     for r in results:
         key = r['_marker_key']
         value = r['accid']
-        if not alleles.has_key(key):
-	    alleles[key] = []
+        if key not in alleles:
+            alleles[key] = []
         alleles[key].append(value)
 
     #
@@ -358,13 +357,13 @@ def iphone_genes():
             select distinct m._marker_key, a.accid,d.dag
             from markers m, VOC_Annot aa, ACC_Accession a,VOC_term t, DAG_Node_View d
             where m._marker_key = aa._object_key
-	    and aa._annottype_key = 1000
-	    and aa._term_key = a._object_key
-	    and a._mgitype_key = 13
-	    and a.preferred = 1
-	    and aa._Term_key = t._Term_key
-	    and t._Term_key = d._Object_key 
-	    and t._Vocab_key = d._Vocab_key 
+            and aa._annottype_key = 1000
+            and aa._term_key = a._object_key
+            and a._mgitype_key = 13
+            and a.preferred = 1
+            and aa._Term_key = t._Term_key
+            and t._Term_key = d._Object_key 
+            and t._Vocab_key = d._Vocab_key 
             ''', 'auto')
     goCannots = {}
     goFannots = {}
@@ -374,14 +373,14 @@ def iphone_genes():
         value = r
     
         if r['dag'] == 'Cellular Component':
-	    goannots = goCannots
+            goannots = goCannots
         elif r['dag'] == 'Molecular Function':
-	    goannots = goFannots
+            goannots = goFannots
         elif r['dag'] == 'Biological Process':
-	    goannots = goPannots
+            goannots = goPannots
 
-        if not goannots.has_key(key):
-	    goannots[key] = []
+        if key not in goannots:
+            goannots[key] = []
         goannots[key].append(value)
 
     #
@@ -392,19 +391,19 @@ def iphone_genes():
             select distinct m._marker_key, a.accid
             from markers m, VOC_Annot aa, ACC_Accession a
             where m._marker_key = aa._object_key
-	    and aa._annottype_key = %d
-	    and aa._term_key = a._object_key
-	    and a._mgitype_key = 13
-	    and a.preferred = 1
-	    and aa._Qualifier_key != %d
+            and aa._annottype_key = %d
+            and aa._term_key = a._object_key
+            and a._mgitype_key = 13
+            and a.preferred = 1
+            and aa._Qualifier_key != %d
             ''' % (MP_MARKER_ANNOT_TYPE, NORMAL_QUALIFIER), 'auto')
     phenoannots = {}
     for r in results:
         key = r['_marker_key']
         value = r
     
-        if not phenoannots.has_key(key):
-	    phenoannots[key] = []
+        if key not in phenoannots:
+            phenoannots[key] = []
         phenoannots[key].append(value)
 
     #
@@ -412,22 +411,22 @@ def iphone_genes():
     # derived by the rollupload)
     #
     results = db.sql('''
-	    select distinct m._marker_key, a.accid
-	    from markers m, VOC_Annot aa, ACC_Accession a
-	    where m._marker_key = aa._object_key
-	    and aa._annottype_key = %d
-	    and aa._term_key = a._object_key
-	    and a._mgitype_key = 13
-	    and a.preferred = 1
-	    and aa._Qualifier_key != %d
+            select distinct m._marker_key, a.accid
+            from markers m, VOC_Annot aa, ACC_Accession a
+            where m._marker_key = aa._object_key
+            and aa._annottype_key = %d
+            and aa._term_key = a._object_key
+            and a._mgitype_key = 13
+            and a.preferred = 1
+            and aa._Qualifier_key != %d
             ''' % (DO_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
     dogenotype = {}
     for r in results:
         key = r['_marker_key']
         value = r
     
-        if not dogenotype.has_key(key):
-	    dogenotype[key] = []
+        if key not in dogenotype:
+            dogenotype[key] = []
         dogenotype[key].append(value)
 
     #
@@ -457,7 +456,7 @@ def iphone_genes():
 
     results = db.sql('''select distinct m._marker_key, a.accid
             from markers m, mouse hm, human hh,
-	    VOC_Annot aa, ACC_Accession a
+            VOC_Annot aa, ACC_Accession a
             where m._marker_key = hm._marker_key
             and hm.clusterID = hh.clusterID
             and hh._Marker_key = aa._object_key
@@ -470,8 +469,8 @@ def iphone_genes():
         key = r['_marker_key']
         value = r
     
-        if not dohuman.has_key(key):
-	    dohuman[key] = []
+        if key not in dohuman:
+            dohuman[key] = []
         dohuman[key].append(value)
 
     #
@@ -494,11 +493,11 @@ def iphone_genes():
         fp.write(r['name'] + TAB)
     
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
-        if refs.has_key(key):
+        if key in refs:
             i=0
-	    for n in refs[key]:
+            for n in refs[key]:
                 if i>0:
-	           fp.write('|'+str(n['mgiid']))
+                   fp.write('|'+str(n['mgiid']))
                 else:
                    fp.write(str(n['mgiid']))
                    i=1;
@@ -507,86 +506,86 @@ def iphone_genes():
             fp.write('0' + TAB)
     
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
-        if alleles.has_key(key):
-	    fp.write(string.join(alleles[key], '|') + TAB)
+        if key in alleles:
+            fp.write('|'.join(alleles[key]) + TAB)
         else:
             fp.write('0' + TAB)
 
     #	GO ID (C group): (GO:xxxx|GO:xxxx|...)
-        if goCannots.has_key(key):
+        if key in goCannots:
             i=0
-	    for n in goCannots[key]:
+            for n in goCannots[key]:
                 if i>0:
-	           fp.write('|'+str(n['accid']))
+                   fp.write('|'+str(n['accid']))
                 else:
-	           fp.write(str(n['accid']))
+                   fp.write(str(n['accid']))
                    i=1
-	    fp.write(TAB)
+            fp.write(TAB)
         else:
             fp.write('0' + TAB)
 
     #	GO ID (F group): (GO:xxxx|GO:xxxx|...)
-        if goFannots.has_key(key):
+        if key in goFannots:
             i=0
-	    for n in goFannots[key]:
+            for n in goFannots[key]:
                 if i>0:
                    fp.write('|'+str(n['accid']))
                 else:
                    fp.write(str(n['accid']))
                    i=1
-	    fp.write(TAB)
+            fp.write(TAB)
         else:
             fp.write('0' +TAB)
     
     #	GO ID (P group): (GO:xxxx|GO:xxxx|...)
-        if goPannots.has_key(key):
+        if key in goPannots:
             i=0
-	    for n in goPannots[key]:
+            for n in goPannots[key]:
                 if i>0:
                    fp.write('|'+str(n['accid']))
                 else:
                    fp.write(str(n['accid']))
                    i=1
-	    fp.write(TAB)
+            fp.write(TAB)
         else:
             fp.write('0' +TAB)
     
     #	MP ID: (MP:xxxx|MP:xxxx|...)
-        if phenoannots.has_key(key):
+        if key in phenoannots:
             i=0
-	    for n in phenoannots[key]:
+            for n in phenoannots[key]:
                 if i>0:
                    fp.write('|'+str(n['accid']))
                 else:
                    fp.write(str(n['accid']))
                    i=1
-	    fp.write(TAB)
+            fp.write(TAB)
         else:
             fp.write('0' +TAB)
 
     #	DO ID: (xxxx|xxxx|...)
-        if dogenotype.has_key(key):
+        if key in dogenotype:
             i=0
-	    for n in dogenotype[key]:
+            for n in dogenotype[key]:
                 if i>0:
                    fp.write('|'+str(n['accid']))
                 else:
                    fp.write(str(n['accid']))
                    i=1
-	    fp.write(TAB)
+            fp.write(TAB)
         else:
             fp.write('0' + TAB)
     
     #	DO ID: (xxxx|xxxx|...)
-        if dohuman.has_key(key):
+        if key in dohuman:
             i=0
-	    for n in dohuman[key]:
+            for n in dohuman[key]:
                 if i>0:
                    fp.write('|'+str(n['accid']))
                 else:
                    fp.write(str(n['accid']))
                    i=1
-	    #fp.write(TAB)
+            #fp.write(TAB)
         else:
             fp.write('0')
         fp.write(CRT)
@@ -611,13 +610,13 @@ def iphone_mp():
     #
     db.sql('''
             select t._term_key, t.term, t.note, a.accid
-	    into temporary table mp
+            into temporary table mp
             from VOC_Term t, ACC_Accession a
             where t._Vocab_key = 5
-	    and t._term_key = a._object_key
-	    and a._mgitype_key = 13
-	    and a.preferred = 1
-	    order by a.accid
+            and t._term_key = a._object_key
+            and a._mgitype_key = 13
+            and a.preferred = 1
+            order by a.accid
             ''', None)
 
     db.sql('create index mp_idx on mp(_term_key)', None)
@@ -629,16 +628,16 @@ def iphone_mp():
             select distinct m._term_key, r.mgiid
             from mp m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1002
-	    and aa._annot_key = e._annot_key
-	    and e._refs_key = r._refs_key
+            and aa._annottype_key = 1002
+            and aa._annot_key = e._annot_key
+            and e._refs_key = r._refs_key
             ''', 'auto')
     refs = {}
     for r in results:
         key = r['_term_key']
         value = r
-        if not refs.has_key(key):
-	    refs[key] = []
+        if key not in refs:
+            refs[key] = []
         refs[key].append(value)
 
     #
@@ -648,20 +647,20 @@ def iphone_mp():
             select distinct m._term_key, a.accid
             from mp m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1002
-	    and aa._object_key = a._object_key
-	    and a._mgitype_key = 12
-	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'MGI:'
-	    and a.preferred = 1
+            and aa._annottype_key = 1002
+            and aa._object_key = a._object_key
+            and a._mgitype_key = 12
+            and a._logicaldb_key = 1
+            and a.prefixpart = 'MGI:'
+            and a.preferred = 1
             ''', 'auto')
     genoannots = {}
     for r in results:
         key = r['_term_key']
         value = r['accid']
     
-        if not genoannots.has_key(key):
-	    genoannots[key] = []
+        if key not in genoannots:
+            genoannots[key] = []
         genoannots[key].append(value)
 
     #
@@ -672,21 +671,21 @@ def iphone_mp():
             select distinct m._term_key, a.accid
             from mp m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = %d
-	    and aa._object_key = a._object_key
-	    and a._mgitype_key = 2
-	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'MGI:'
-	    and a.preferred = 1
-	    and aa._Qualifier_key != %d
+            and aa._annottype_key = %d
+            and aa._object_key = a._object_key
+            and a._mgitype_key = 2
+            and a._logicaldb_key = 1
+            and a.prefixpart = 'MGI:'
+            and a.preferred = 1
+            and aa._Qualifier_key != %d
             ''' % (MP_MARKER_ANNOT_TYPE, NORMAL_QUALIFIER), 'auto')
     markerannots = {}
     for r in results:
         key = r['_term_key']
         value = r['accid']
     
-        if not markerannots.has_key(key):
-	    markerannots[key] = []
+        if key not in markerannots:
+            markerannots[key] = []
         markerannots[key].append(value)
 
     #
@@ -696,20 +695,20 @@ def iphone_mp():
             select distinct m._term_key, a.accid
             from mp m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1002
-	    and aa._object_key = g._genotype_key
-	    and g._allele_key = a._object_key
-	    and a._mgitype_key = 11
-	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'MGI:'
-	    and a.preferred = 1
+            and aa._annottype_key = 1002
+            and aa._object_key = g._genotype_key
+            and g._allele_key = a._object_key
+            and a._mgitype_key = 11
+            and a._logicaldb_key = 1
+            and a.prefixpart = 'MGI:'
+            and a.preferred = 1
             ''', 'auto')
     alleleannots = {}
     for r in results:
         key = r['_term_key']
         value = r['accid']
-        if not alleleannots.has_key(key):
-	    alleleannots[key] = []
+        if key not in alleleannots:
+            alleleannots[key] = []
         alleleannots[key].append(value)
 
     #
@@ -721,19 +720,19 @@ def iphone_mp():
     
         key = r['_term_key']
 
-	fp.write(r['accid'] + TAB)
-	fp.write(r['term'] + TAB)
+        fp.write(r['accid'] + TAB)
+        fp.write(r['term'] + TAB)
 
-	if r['note'] == None:
+        if r['note'] == None:
             fp.write('0')
         else:
-	    fp.write(r['note'])
-	fp.write(TAB)
+            fp.write(r['note'])
+        fp.write(TAB)
 
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
-        if refs.has_key(key):
+        if key in refs:
             i=0
-	    for n in refs[key]:
+            for n in refs[key]:
                 if i>0:
                    fp.write('|'+str(n['mgiid']))
                 else:
@@ -744,20 +743,20 @@ def iphone_mp():
             fp.write('0' +TAB)
 
     #	MGI Genotype ID (MGI:xxx|MGI:xxx|...)
-        if genoannots.has_key(key):
-	    fp.write(string.join(genoannots[key], '|') + TAB)
+        if key in genoannots:
+            fp.write( '|'.join(genoannots[key]) + TAB)
         else:
             fp.write('0' +TAB)
 
     #	MGI Marker ID (MGI:xxx|MGI:xxx|...)
-        if markerannots.has_key(key):
-	    fp.write(string.join(markerannots[key], '|') + TAB)
+        if key in markerannots:
+            fp.write('|'.join(markerannots[key]) + TAB)
         else:
             fp.write('0' +TAB)
 
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
-        if alleleannots.has_key(key):
-	    fp.write(string.join(alleleannots[key], '|'))
+        if key in alleleannots:
+            fp.write('|'.join(alleleannots[key]))
         else:
             fp.write('0')
 
@@ -783,13 +782,13 @@ def iphone_do():
     #
     db.sql('''
             select t._term_key, t.term, a.accid
-	    into temporary table diseaseontology
+            into temporary table diseaseontology
             from VOC_Term t, ACC_Accession a
             where t._Vocab_key = 125
-	    and t._term_key = a._object_key
-	    and a._mgitype_key = 13
-	    and a.preferred = 1
-	    order by a.accid
+            and t._term_key = a._object_key
+            and a._mgitype_key = 13
+            and a.preferred = 1
+            order by a.accid
             ''', None)
 
     db.sql('create index do_idx on diseaseontology(_term_key)', None)
@@ -801,16 +800,16 @@ def iphone_do():
             select distinct m._term_key, r.mgiid
             from diseaseontology m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1020
-	    and aa._annot_key = e._annot_key
-	    and e._refs_key = r._refs_key
+            and aa._annottype_key = 1020
+            and aa._annot_key = e._annot_key
+            and e._refs_key = r._refs_key
             ''', 'auto')
     refs1 = {}
     for r in results:
         key = r['_term_key']
         value = r
-        if not refs1.has_key(key):
-	    refs1[key] = []
+        if key not in refs1:
+            refs1[key] = []
         refs1[key].append(value)
 
     #
@@ -820,20 +819,20 @@ def iphone_do():
             select distinct m._term_key, a.accid
             from diseaseontology m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1020
-	    and aa._object_key = a._object_key
-	    and a._mgitype_key = 12
-	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'MGI:'
-	    and a.preferred = 1
+            and aa._annottype_key = 1020
+            and aa._object_key = a._object_key
+            and a._mgitype_key = 12
+            and a._logicaldb_key = 1
+            and a.prefixpart = 'MGI:'
+            and a.preferred = 1
             ''', 'auto')
     genoannots1 = {}
     for r in results:
         key = r['_term_key']
         value = r['accid']
     
-        if not genoannots1.has_key(key):
-	    genoannots1[key] = []
+        if key not in genoannots1:
+            genoannots1[key] = []
         genoannots1[key].append(value)
 
     #
@@ -843,21 +842,21 @@ def iphone_do():
             select distinct m._term_key, a.accid
             from diseaseontology m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = %d
-	    and aa._object_key = a._object_key
-	    and a._mgitype_key = 2
-	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'MGI:'
-	    and a.preferred = 1
-	    and aa._Qualifier_key != %d
+            and aa._annottype_key = %d
+            and aa._object_key = a._object_key
+            and a._mgitype_key = 2
+            and a._logicaldb_key = 1
+            and a.prefixpart = 'MGI:'
+            and a.preferred = 1
+            and aa._Qualifier_key != %d
             ''' % (DO_MARKER_ANNOT_TYPE, NOT_QUALIFIER), 'auto')
     markerannots1 = {}
     for r in results:
         key = r['_term_key']
         value = r['accid']
     
-        if not markerannots1.has_key(key):
-	    markerannots1[key] = []
+        if key not in markerannots1:
+            markerannots1[key] = []
         markerannots1[key].append(value)
 
     #
@@ -867,21 +866,21 @@ def iphone_do():
             select distinct m._term_key, a.accid
             from diseaseontology m, VOC_Annot aa, GXD_AlleleGenotype g, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1020
-	    and aa._object_key = g._genotype_key
-	    and g._allele_key = a._object_key
-	    and a._mgitype_key = 11
-	    and a._logicaldb_key = 1
-	    and a.prefixpart = 'MGI:'
-	    and a.preferred = 1
+            and aa._annottype_key = 1020
+            and aa._object_key = g._genotype_key
+            and g._allele_key = a._object_key
+            and a._mgitype_key = 11
+            and a._logicaldb_key = 1
+            and a.prefixpart = 'MGI:'
+            and a.preferred = 1
             ''', 'auto')
     alleleannots1 = {}
     for r in results:
         key = r['_term_key']
         value = r['accid']
     
-        if not alleleannots1.has_key(key):
-	    alleleannots1[key] = []
+        if key not in alleleannots1:
+            alleleannots1[key] = []
         alleleannots1[key].append(value)
 
     #
@@ -891,16 +890,16 @@ def iphone_do():
             select distinct m._term_key, r.mgiid
             from diseaseontology m, VOC_Annot aa, VOC_Evidence e, BIB_Citation_Cache r
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1022
-	    and aa._annot_key = e._annot_key
-	    and e._refs_key = r._refs_key
+            and aa._annottype_key = 1022
+            and aa._annot_key = e._annot_key
+            and e._refs_key = r._refs_key
             ''', 'auto')
     refs2 = {}
     for r in results:
         key = r['_term_key']
         value = r
-        if not refs2.has_key(key):
-	    refs2[key] = []
+        if key not in refs2:
+            refs2[key] = []
         refs2[key].append(value)
 
     #
@@ -910,19 +909,19 @@ def iphone_do():
             select distinct m._term_key, a.accid
             from diseaseontology m, VOC_Annot aa, ACC_Accession a
             where m._term_key = aa._term_key
-	    and aa._annottype_key = 1022
-	    and aa._object_key = a._object_key
-	    and a._mgitype_key = 2
-	    and a._logicaldb_key = 55
-	    and a.preferred = 1
+            and aa._annottype_key = 1022
+            and aa._object_key = a._object_key
+            and a._mgitype_key = 2
+            and a._logicaldb_key = 55
+            and a.preferred = 1
             ''', 'auto')
     markerannots2 = {}
     for r in results:
         key = r['_term_key']
         value = r['accid']
     
-        if not markerannots2.has_key(key):
-	    markerannots2[key] = []
+        if key not in markerannots2:
+            markerannots2[key] = []
         markerannots2[key].append(value)
 
     #
@@ -934,14 +933,14 @@ def iphone_do():
     
         key = r['_term_key']
 
-	fp.write(r['accid'] + TAB)
-	fp.write(r['term'] + TAB)
+        fp.write(r['accid'] + TAB)
+        fp.write(r['term'] + TAB)
 
     #   DO (_annottype_key = 1022)
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
-        if refs1.has_key(key):
+        if key in refs1:
             i=0
-	    for n in refs1[key]:
+            for n in refs1[key]:
                 if i>0:
                    fp.write('|'+str(n['mgiid']))
                 else:
@@ -953,30 +952,30 @@ def iphone_do():
 
     #   DO (_annottype_key = 1022)
     #	MGI Genotype ID (MGI:xxx|MGI:xxx|...)
-        if genoannots1.has_key(key):
-	    fp.write(string.join(genoannots1[key], '|') + TAB)
+        if key in genoannots1:
+            fp.write('|'.join(genoannots1[key]) + TAB)
         else:
             fp.write('0' + TAB)
 
     #   DO (_annottype_key = 1022)
     #	MGI Marker ID (MGI:xxx|MGI:xxx|...)
-        if markerannots1.has_key(key):
-	    fp.write(string.join(markerannots1[key], '|') + TAB)
+        if key in markerannots1:
+            fp.write('|'.join(markerannots1[key]) + TAB)
         else:
             fp.write('0' +TAB)
 
     #   DO (_annottype_key = 1022)
     #	MGI Allele ID (MGI:xxx|MGI:xxx|...)
-        if alleleannots1.has_key(key):
-	    fp.write(string.join(alleleannots1[key], '|') + TAB)
+        if key in alleleannots1:
+            fp.write('|'.join(alleleannots1[key]) + TAB)
         else:
             fp.write('0' + TAB)
 
     #   DO (_annottype_key = 1022)
     #	MGI Ref ID (MGI:xxx|MGI:xxx|...)
-        if refs2.has_key(key):
+        if key in refs2:
             i=0
-	    for n in refs2[key]:
+            for n in refs2[key]:
                 if i>0:
                    fp.write('|'+str(n['mgiid']))
                 else:
@@ -988,8 +987,8 @@ def iphone_do():
 
     #   DO (_annottype_key = 1022)
     #	EntrezGene ID (xxx|xxx|...)
-        if markerannots2.has_key(key):
-	    fp.write(string.join(markerannots2[key], '|'))
+        if key in markerannots2:
+            fp.write('|'.join(markerannots2[key]))
         else:
             fp.write('0')
         fp.write(CRT)
@@ -1006,4 +1005,3 @@ def iphone_do():
 iphone_genes()
 iphone_mp()
 iphone_do()
-

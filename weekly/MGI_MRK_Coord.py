@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -49,16 +48,16 @@ def getFeatureTypeCache():
     # get the feature type for each marker
 
     results = db.sql ('''select distinct _Marker_key, directTerms
-    	from MRK_MCV_Cache''', 'auto')
+        from MRK_MCV_Cache''', 'auto')
 
     features = {}		# features[key] = [ type 1, ..., type n ]
 
     for row in results:
-	    key = row['_Marker_key']
-	    if not features.has_key(key):
-		    features[key] = [ row['directTerms'] ]
-	    else:
-		    features[key].append (row['directTerms'])
+            key = row['_Marker_key']
+            if key not in features:
+                    features[key] = [ row['directTerms'] ]
+            else:
+                    features[key].append (row['directTerms'])
     return features
 
 def getProviderCache():
@@ -69,75 +68,75 @@ def getProviderCache():
     # and mlc.strand = scc.strand
 
     results = db.sql ('''select mlc._Marker_key, mcc.name
-	from MRK_Location_Cache mlc,
-		SEQ_Marker_Cache smc,
-		SEQ_Coord_Cache scc,
-		MAP_Coordinate mc,
-		MAP_Coord_Collection mcc
-	where mlc._Organism_key = 1
-		and mlc._Marker_key = smc._Marker_key
-		and smc._Qualifier_key = 615419
-		and smc._Sequence_key = scc._Sequence_key
-		and mlc.startCoordinate = scc.startCoordinate
-		and mlc.endCoordinate = scc.endCoordinate
-		and mlc.provider = mcc.abbreviation
-		and scc._Map_key = mc._Map_key
-		and mc._Collection_key = mcc._Collection_key''', 'auto')
+        from MRK_Location_Cache mlc,
+                SEQ_Marker_Cache smc,
+                SEQ_Coord_Cache scc,
+                MAP_Coordinate mc,
+                MAP_Coord_Collection mcc
+        where mlc._Organism_key = 1
+                and mlc._Marker_key = smc._Marker_key
+                and smc._Qualifier_key = 615419
+                and smc._Sequence_key = scc._Sequence_key
+                and mlc.startCoordinate = scc.startCoordinate
+                and mlc.endCoordinate = scc.endCoordinate
+                and mlc.provider = mcc.abbreviation
+                and scc._Map_key = mc._Map_key
+                and mc._Collection_key = mcc._Collection_key''', 'auto')
 
     providers = {}	# providers[marker key] = provider name
 
     for row in results:
-	    providers[row['_Marker_key']] = row['name']
+            providers[row['_Marker_key']] = row['name']
 
     # then coordinates directly attached to markers
     # and mlc.strand = mcf.strand
 
     results = db.sql ('''select mlc._Marker_key, mcc.name
-    	from MRK_Location_Cache mlc,
-		MAP_Coord_Feature mcf,
-		MAP_Coordinate mc,
-		MAP_Coord_Collection mcc
-	where mlc._Organism_key = 1
-		and mlc.startCoordinate = mcf.startCoordinate
-		and mlc.endCoordinate = mcf.endCoordinate
-		and mlc._Marker_key = mcf._Object_key
-		and mcf._MGIType_key = 2
-		and mlc.provider = mcc.abbreviation
-		and mcf._Map_key = mc._Map_key
-		and mc._Collection_key = mcc._Collection_key''', 'auto')
+        from MRK_Location_Cache mlc,
+                MAP_Coord_Feature mcf,
+                MAP_Coordinate mc,
+                MAP_Coord_Collection mcc
+        where mlc._Organism_key = 1
+                and mlc.startCoordinate = mcf.startCoordinate
+                and mlc.endCoordinate = mcf.endCoordinate
+                and mlc._Marker_key = mcf._Object_key
+                and mcf._MGIType_key = 2
+                and mlc.provider = mcc.abbreviation
+                and mcf._Map_key = mc._Map_key
+                and mc._Collection_key = mcc._Collection_key''', 'auto')
 
     for row in results:
-	    providers[row['_Marker_key']] = row['name']
+            providers[row['_Marker_key']] = row['name']
     return providers
 
 def getCoordinates():
     # get the coordinates for each marker
 
     results = db.sql ('''select mlc._Marker_key,
-    		mt.name as markerType,
-		mm.symbol,
-		mm.name,
-		mlc.chromosome,
-		mlc.genomicChromosome,
-		mlc.startCoordinate::int as startCoordinate,
-		mlc.endCoordinate::int as endCoordinate,
-		mlc.strand,
-		mlc.provider as displayName,
-		aa.accID
-	from MRK_Location_Cache mlc,
-		MRK_Marker mm,
-		MRK_Types mt,
-		ACC_Accession aa
-	where mlc._Marker_key = mm._Marker_key
-		and mm._Marker_Type_key = mt._Marker_Type_key
-		and mlc._Marker_key = aa._Object_key
-		and aa._MGIType_key = 2
-		and aa.private = 0
-		and aa.preferred = 1
-		and aa._LogicalDB_key = 1
-		and aa.prefixPart = 'MGI:'
-		and mlc._Organism_key = 1
-		and mlc.startCoordinate is not null''', 'auto')
+                mt.name as markerType,
+                mm.symbol,
+                mm.name,
+                mlc.chromosome,
+                mlc.genomicChromosome,
+                mlc.startCoordinate::int as startCoordinate,
+                mlc.endCoordinate::int as endCoordinate,
+                mlc.strand,
+                mlc.provider as displayName,
+                aa.accID
+        from MRK_Location_Cache mlc,
+                MRK_Marker mm,
+                MRK_Types mt,
+                ACC_Accession aa
+        where mlc._Marker_key = mm._Marker_key
+                and mm._Marker_Type_key = mt._Marker_Type_key
+                and mlc._Marker_key = aa._Object_key
+                and aa._MGIType_key = 2
+                and aa.private = 0
+                and aa.preferred = 1
+                and aa._LogicalDB_key = 1
+                and aa.prefixPart = 'MGI:'
+                and mlc._Organism_key = 1
+                and mlc.startCoordinate is not null''', 'auto')
 
     return results
 
@@ -168,28 +167,28 @@ providers = getProviderCache()
 featureTypes = getFeatureTypeCache()
 
 results = db.sql ('''select distinct version
-	from MRK_Location_Cache
-	where _Organism_key = 1 and version is not null''', 'auto')
+        from MRK_Location_Cache
+        where _Organism_key = 1 and version is not null''', 'auto')
 
 if results:
-	genomeBuild = results[0]['version']
+        genomeBuild = results[0]['version']
 else:
-	genomeBuild = 'Unknown'
+        genomeBuild = 'Unknown'
 
 # walk through the markers to build our output file
 
 for r in coords:
     key = r['_Marker_key']
 
-    if featureTypes.has_key(key):
-	    featureType = ';'.join(featureTypes[key])
+    if key in featureTypes:
+            featureType = ';'.join(featureTypes[key])
     else:
-	    featureType = noneDisplay
+            featureType = noneDisplay
 
-    if providers.has_key(key):
-	    provider = providers[key]
+    if key in providers:
+            provider = providers[key]
     else:
-	    provider = noneDisplay
+            provider = noneDisplay
 
     fp.write(r['accID'] + TAB)
     fp.write(r['markerType'] + TAB)
@@ -200,9 +199,9 @@ for r in coords:
     # prefer to display genomic chromosome (associated with coordinates) 
     # rather than genetic chromosome (associated with cM / cytoband)
     if r['genomicChromosome']:
-	fp.write(r['genomicChromosome'] + TAB)
+        fp.write(r['genomicChromosome'] + TAB)
     else:
-	fp.write(r['chromosome'] + TAB)
+        fp.write(r['chromosome'] + TAB)
 
     fp.write(str(r['startCoordinate']) + TAB)
     fp.write(str(r['endCoordinate']) + TAB)

@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -61,8 +60,8 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 db.sql('''
   select m._Marker_key, m.symbol, m.name, m._Marker_key as _Current_key, 
-  	m.cmoffset, m.chromosome, t.name as markerType, 1 as isPrimary, 
-  	upper(substring(s.status, 1, 1)) as markerStatus
+        m.cmoffset, m.chromosome, t.name as markerType, 1 as isPrimary, 
+        upper(substring(s.status, 1, 1)) as markerStatus
   into temporary table markers 
   from MRK_Marker m, MRK_Types t, MRK_Status s 
   where m._Organism_key = 1 
@@ -72,7 +71,7 @@ db.sql('''
   union 
   select m._Marker_key, m.symbol, m.name, c._Current_key, 
   m.cmoffset, m.chromosome, t.name as markerType, 0 as isPrimary, 
-  upper(substring(s.status, 1, 1)) as markerStatus 
+  upper(substring(s.status, 1, 1)) as markerStatus
   from MRK_Marker m, MRK_Current c, MRK_Types t, MRK_Status s 
   where m._Organism_key = 1 
   and m._Marker_Status_key = 2 
@@ -85,14 +84,14 @@ db.sql('create index idx_key on markers(_Marker_key)', None)
 # MGI ids
 
 results = db.sql('''
-	select m._Current_key, a.accID 
-	from markers m, ACC_Accession a 
-  	where m._Current_key = a._Object_key 
-  	and a._MGIType_key = 2 
-  	and a.prefixPart = 'MGI:' 
-  	and a._LogicalDB_key = 1 
-  	and a.preferred = 1 
-	''', 'auto')
+        select m._Current_key, a.accID 
+        from markers m, ACC_Accession a 
+        where m._Current_key = a._Object_key 
+        and a._MGIType_key = 2 
+        and a.prefixPart = 'MGI:' 
+        and a._LogicalDB_key = 1 
+        and a.preferred = 1 
+        ''', 'auto')
 mgiID = {}
 for r in results:
     key = r['_Current_key']
@@ -101,13 +100,13 @@ for r in results:
 
 # Get EntrezGene ID for Primary Markers
 results = db.sql('''
-	select m._Marker_key, a.accID 
-	from markers m, ACC_Accession a 
-	where m.isPrimary = 1 
-	and m._Marker_key = a._Object_key 
+        select m._Marker_key, a.accID 
+        from markers m, ACC_Accession a 
+        where m.isPrimary = 1 
+        and m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
-	and a._LogicalDB_key = 55 
-	''', 'auto')
+        and a._LogicalDB_key = 55 
+        ''', 'auto')
 egID = {}
 for r in results:
     key = r['_Marker_key']
@@ -116,63 +115,63 @@ for r in results:
 
 # Get Secondary MGI Ids for Primary Marker
 results = db.sql('''
-	select m._Marker_key, a.accID 
-	from markers m, ACC_Accession a 
-	where m.isPrimary = 1 
-	and m._Marker_key = a._Object_key 
+        select m._Marker_key, a.accID 
+        from markers m, ACC_Accession a 
+        where m.isPrimary = 1 
+        and m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
-	and a.prefixPart = 'MGI:' 
+        and a.prefixPart = 'MGI:' 
         and a._LogicalDB_key = 1 
-	and a.preferred = 0
-	''', 'auto')
+        and a.preferred = 0
+        ''', 'auto')
 otherAccId = {}
 for r in results:
-	if not otherAccId.has_key(r['_Marker_key']):
-		otherAccId[r['_Marker_key']] = []
-	otherAccId[r['_Marker_key']].append(r['accID'])
+        if r['_Marker_key'] not in otherAccId:
+                otherAccId[r['_Marker_key']] = []
+        otherAccId[r['_Marker_key']].append(r['accID'])
 
 # Get Synonyms for Primary Marker
 results = db.sql('''
-	select m._Marker_key, s.synonym 
-	from markers m, MGI_Synonym s, MGI_SynonymType st 
-	where m.isPrimary = 1 
-	and m._Marker_key = s._Object_key 
-	and s._MGIType_key = 2 
-	and s._SynonymType_key = st._SynonymType_key 
-	and st.synonymType = 'exact'
-	''', 'auto')
+        select m._Marker_key, s.synonym 
+        from markers m, MGI_Synonym s, MGI_SynonymType st 
+        where m.isPrimary = 1 
+        and m._Marker_key = s._Object_key 
+        and s._MGIType_key = 2 
+        and s._SynonymType_key = st._SynonymType_key 
+        and st.synonymType = 'exact'
+        ''', 'auto')
 synonym = {}
 for r in results:
-	key = r['_Marker_key']
-	value = r['synonym']
-	if not synonym.has_key(key):
-		synonym[key] = []
-	synonym[key].append(value)
+        key = r['_Marker_key']
+        value = r['synonym']
+        if key not in synonym:
+                synonym[key] = []
+        synonym[key].append(value)
 
 # Get BioType for Primary Marker
 results = db.sql('''
-	select distinct m._Marker_key, s.rawbiotype 
-	from markers m, SEQ_Marker_Cache s 
-	where m.isPrimary = 1 
-	and m._Marker_key = s._Marker_key 
-	and s.rawbiotype is not null
-	''', 'auto')
+        select distinct m._Marker_key, s.rawbiotype 
+        from markers m, SEQ_Marker_Cache s 
+        where m.isPrimary = 1 
+        and m._Marker_key = s._Marker_key 
+        and s.rawbiotype is not null
+        ''', 'auto')
 bioTypes = {}
 for r in results:
-	key = r['_Marker_key']
-	value = r['rawbiotype']
-	if not bioTypes.has_key(key):
-		bioTypes[key] = []
-	bioTypes[key].append(value)
+        key = r['_Marker_key']
+        value = r['rawbiotype']
+        if key not in bioTypes:
+                bioTypes[key] = []
+        bioTypes[key].append(value)
 
 # Get Feature Type for Primary Marker
 results = db.sql('''
-	select m._Marker_key, s.term, s._MCVTerm_key
-	from markers m, MRK_MCV_Cache s 
-	where m.isPrimary = 1 
-	and m._Marker_key = s._Marker_key 
-	and s.qualifier = 'D'
-	''', 'auto')
+        select m._Marker_key, s.term, s._MCVTerm_key
+        from markers m, MRK_MCV_Cache s 
+        where m.isPrimary = 1 
+        and m._Marker_key = s._Marker_key 
+        and s.qualifier = 'D'
+        ''', 'auto')
 
 # {markerKey:[list of feature types]
 featureTypes = {}
@@ -180,13 +179,13 @@ featureTypes = {}
 featureTypeByKey = {}
 
 for r in results:
-	markerKey = r['_Marker_key']
-	value = r['term']
-	termKey = r['_MCVTerm_key']
-	if not featureTypes.has_key(markerKey):
-		featureTypes[markerKey] = []
-	featureTypes[markerKey].append(value)
-	if not featureTypeByKey.has_key(markerKey):
+        markerKey = r['_Marker_key']
+        value = r['term']
+        termKey = r['_MCVTerm_key']
+        if markerKey not in featureTypes:
+                featureTypes[markerKey] = []
+        featureTypes[markerKey].append(value)
+        if markerKey not in featureTypeByKey:
                 featureTypeByKey[markerKey] = []
         featureTypeByKey[markerKey].append(termKey)
 
@@ -197,18 +196,18 @@ for r in results:
 results = db.sql('''	
     select m._marker_key,
            c.strand, 
-	   c.startCoordinate::int as startC,
-	   c.endCoordinate::int as endC,
-	   c.genomicChromosome
+           c.startCoordinate::int as startC,
+           c.endCoordinate::int as endC,
+           c.genomicChromosome
     from markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
-	''', 'auto')
+        ''', 'auto')
 coords = {}
 for r in results:
     key = r['_marker_key']
     value = r
-    if not coords.has_key(key):
-	coords[key] = []
+    if key not in coords:
+        coords[key] = []
     coords[key].append(value)
 
 #
@@ -217,91 +216,91 @@ for r in results:
 results = db.sql('select * from markers order by _Current_key, isPrimary desc', 'auto')
 for r in results:
 
-	# column 1: mgi id
-	# column 2: symbol
-	# column 3: status
-	# column 4: name
-	# column 5: cmoffset
-	# column 6: chromosome
-	# column 7: marker type
+        # column 1: mgi id
+        # column 2: symbol
+        # column 3: status
+        # column 4: name
+        # column 5: cmoffset
+        # column 6: chromosome
+        # column 7: marker type
 
-        if not mgiID.has_key(r['_Current_key']):
-	   continue
+        if r['_Current_key'] not in mgiID:
+           continue
 
-	key = r['_Marker_key']
+        key = r['_Marker_key']
 
-	# if the marker's feature type is not
-	# 'mutation defined region', key=11928467 write out to the report
-	# default feature type
-	fTypes = ''
-	if featureTypes.has_key(key):
-	    mcvKeyList = featureTypeByKey[key]
-	    if 11928467 in mcvKeyList:
-		continue
-	    else:
-		fTypes = (string.join(featureTypes[key],'|'))
+        # if the marker's feature type is not
+        # 'mutation defined region', key=11928467 write out to the report
+        # default feature type
+        fTypes = ''
+        if key in featureTypes:
+            mcvKeyList = featureTypeByKey[key]
+            if 11928467 in mcvKeyList:
+                continue
+            else:
+                fTypes = ('|'.join(featureTypes[key])
 
-	chromosome = None
+        chromosome = None
 
-	if coords.has_key(r['_Marker_key']):
-		# genomic chromosome, if marker has coordinates
-		chromosome = coords[r['_Marker_key']][0]['genomicChromosome']
+        if r['_Marker_key'] in coords:
+                # genomic chromosome, if marker has coordinates
+                chromosome = coords[r['_Marker_key']][0]['genomicChromosome']
 
-	if not chromosome:
-		# genetic chromosome, if marker has no coordinates
-		chromosome = r['chromosome']
+        if not chromosome:
+                # genetic chromosome, if marker has no coordinates
+                chromosome = r['chromosome']
 
-	fp.write(mgiID[r['_Current_key']] + TAB + \
-	 	r['symbol'] + TAB + \
-		r['markerStatus'] + TAB + \
-	 	r['name'] + TAB + \
-	 	str(r['cmoffset']) + TAB + \
-	 	chromosome + TAB + \
-		r['markerType'] + TAB)
+        fp.write(mgiID[r['_Current_key']] + TAB + \
+                r['symbol'] + TAB + \
+                r['markerStatus'] + TAB + \
+                r['name'] + TAB + \
+                str(r['cmoffset']) + TAB + \
+                chromosome + TAB + \
+                r['markerType'] + TAB)
 
-	if r['isPrimary']:
+        if r['isPrimary']:
 
-		# column 8: other accession ids
-		if otherAccId.has_key(r['_Marker_key']):	
-			fp.write(string.join(otherAccId[r['_Marker_key']], '|'))
-		fp.write(TAB)
+                # column 8: other accession ids
+                if r['_Marker_key'] in otherAccId:	
+                        fp.write('|'.join(otherAccId[r['_Marker_key']]))
+                fp.write(TAB)
 
-		# column 9: entrezgene ids
-		if egID.has_key(r['_Marker_key']):	
-			fp.write(egID[r['_Marker_key']])
-		fp.write(TAB)
+                # column 9: entrezgene ids
+                if r['_Marker_key'] in egID:	
+                        fp.write(egID[r['_Marker_key']])
+                fp.write(TAB)
 
-		# column 10: synonyms
-		if synonym.has_key(r['_Marker_key']):	
-			fp.write(string.join(synonym[r['_Marker_key']], '|'))
-		fp.write(TAB)
+                # column 10: synonyms
+                if r['_Marker_key'] in synonym:	
+                        fp.write('|'.join(synonym[r['_Marker_key']]))
+                fp.write(TAB)
 
-		# column 11: feature types
-		fp.write(fTypes + TAB)
+                # column 11: feature types
+                fp.write(fTypes + TAB)
 
-		# column 12-13-14
-                if coords.has_key(r['_Marker_key']):
+                # column 12-13-14
+                if r['_Marker_key'] in coords:
                     fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['startC']) + TAB)
                     fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['endC']) + TAB)
                     fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['strand']) + TAB)
                 else:
                     fp.write(TAB + TAB + TAB)
 
-		# column 15: biotypes
-		if bioTypes.has_key(r['_Marker_key']):	
-			fp.write(string.join(bioTypes[r['_Marker_key']], '|'))
-		fp.write(CRT)
+                # column 15: biotypes
+                if r['_Marker_key'] in bioTypes:	
+                        fp.write('|'.join(bioTypes[r['_Marker_key']]))
+                fp.write(CRT)
 
-	else:
-		# column 8-15 null
-		fp.write(TAB)
-		fp.write(TAB)
-		fp.write(TAB)
-		fp.write(TAB)
-		fp.write(TAB)
-		fp.write(TAB)
-		fp.write(TAB)
-		fp.write(CRT)
+        else:
+                # column 8-15 null
+                fp.write(TAB)
+                fp.write(TAB)
+                fp.write(TAB)
+                fp.write(TAB)
+                fp.write(TAB)
+                fp.write(TAB)
+                fp.write(TAB)
+                fp.write(CRT)
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)

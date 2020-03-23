@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -79,7 +78,7 @@ db.sql('''
         end as cmposition
     into temporary table markers
     from MRK_Marker m, MRK_Status s, MRK_Types t,
-    	MRK_Location_Cache mlc
+        MRK_Location_Cache mlc
     where m._organism_key = 1
     and m._marker_key = mlc._marker_key
     and m._marker_type_key = t._marker_type_key
@@ -94,28 +93,28 @@ db.sql('create index markers_idx2 on markers(symbol)', None)
 results = db.sql('''	
     select m._marker_key,
            c.strand, 
-	   c.startCoordinate::int as startC,
-	   c.endCoordinate::int as endC
+           c.startCoordinate::int as startC,
+           c.endCoordinate::int as endC
     from markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
-	''', 'auto')
+        ''', 'auto')
 coords = {}
 for r in results:
     key = r['_marker_key']
     value = r
-    if not coords.has_key(key):
-	coords[key] = []
+    if key not in coords:
+        coords[key] = []
     coords[key].append(value)
 
 #
 # feature types
 #
 results = db.sql('''
-	select m._marker_key, s.term, s._MCVTerm_key
+        select m._marker_key, s.term, s._MCVTerm_key
         from markers m, MRK_MCV_Cache s 
         where m._marker_key = s._marker_key 
         and s.qualifier = 'D'
-	''', 'auto')
+        ''', 'auto')
 # {markerKey:[list of feature types]
 featureTypes = {}
 # {markerKey:[list of feature type keys]
@@ -123,11 +122,11 @@ featureTypeByKey = {}
 for r in results:
         markerKey = r['_marker_key']
         value = r['term']
-	termKey = r['_MCVTerm_key']
-        if not featureTypes.has_key(markerKey):
+        termKey = r['_MCVTerm_key']
+        if markerKey not in featureTypes:
                 featureTypes[markerKey] = []
         featureTypes[markerKey].append(value)
-	if not featureTypeByKey.has_key(markerKey):
+        if markerKey not in featureTypeByKey:
                 featureTypeByKey[markerKey] = []
         featureTypeByKey[markerKey].append(termKey)
 #
@@ -140,13 +139,13 @@ results = db.sql('''
     and s._mgitype_key = 2
     and s._synonymtype_key = st._synonymtype_key
     and st.synonymtype = 'exact'
-	''', 'auto')
+        ''', 'auto')
 synonyms = {}
 for r in results:
     key = r['_marker_key']
     value = r['synonym']
-    if not synonyms.has_key(key):
-	synonyms[key] = []
+    if key not in synonyms:
+        synonyms[key] = []
     synonyms[key].append(value)
 
 #
@@ -155,14 +154,14 @@ for r in results:
 
 query1 = '''
     select a.accid, 
-	   m._marker_key, 
-	   m.chromosome, 
-	   m.genomicChromosome,
-	   m.cmposition, 
-	   m.symbol, 
-	   m.markerstatus, 
-	   m.name, 
-	   m.markertype
+           m._marker_key, 
+           m.chromosome, 
+           m.genomicChromosome,
+           m.cmposition, 
+           m.symbol, 
+           m.markerstatus, 
+           m.name, 
+           m.markertype
     from markers m, ACC_Accession a
     where m._marker_status_key in (1, 3)
     and m._marker_key = a._object_key
@@ -176,7 +175,7 @@ query2 = '''
     select 'NULL', 
            m._marker_key, 
            m.chromosome, 
-	   m.genomicChromosome,
+           m.genomicChromosome,
            m.cmposition, 
            m.symbol, 
            m.markerstatus, 
@@ -198,28 +197,28 @@ for r in results:
 
     # default feature type
     fTypes = ''
-    if featureTypes.has_key(key):
-	mcvKeyList = featureTypeByKey[key]
-	if 11928467 in mcvKeyList:
-	    continue
-	else:
-	    fTypes = (string.join(featureTypes[key],'|'))
+    if key in featureTypes:
+        mcvKeyList = featureTypeByKey[key]
+        if 11928467 in mcvKeyList:
+            continue
+        else:
+            fTypes = ('|'.join(featureTypes[key]))
 
     fp1.write(mgi_utils.prvalue(r['accid']) + TAB)
 
     if r['genomicChromosome']:
-    	fp1.write(r['genomicChromosome'] + TAB)
+        fp1.write(r['genomicChromosome'] + TAB)
     else:
-    	fp1.write(r['chromosome'] + TAB)
+        fp1.write(r['chromosome'] + TAB)
 
     fp1.write(r['cmposition'] + TAB)
 
-    if coords.has_key(key):
-	fp1.write(mgi_utils.prvalue(coords[key][0]['startC']) + TAB)
-	fp1.write(mgi_utils.prvalue(coords[key][0]['endC']) + TAB)
-	fp1.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
+    if key in coords:
+        fp1.write(mgi_utils.prvalue(coords[key][0]['startC']) + TAB)
+        fp1.write(mgi_utils.prvalue(coords[key][0]['endC']) + TAB)
+        fp1.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
     else:
-	fp1.write(TAB + TAB + TAB)
+        fp1.write(TAB + TAB + TAB)
 
     fp1.write(r['symbol'] + TAB)
     fp1.write(r['markerstatus'] + TAB)
@@ -228,8 +227,8 @@ for r in results:
 
     fp1.write(fTypes + TAB)
 
-    if synonyms.has_key(key):
-	fp1.write(string.join(synonyms[key],'|'))
+    if key in synonyms:
+        fp1.write('|'.join(synonyms[key]))
     fp1.write(CRT)
 
 #
@@ -245,43 +244,42 @@ for r in results:
 
     # default ft for withdrawn markers
     fTypes = ''
-    if featureTypes.has_key(key):
+    if key in featureTypes:
         mcvKeyList = featureTypeByKey[key]
         if 11928467 in mcvKeyList:
             continue
         else:
-            fTypes = (string.join(featureTypes[key],'|'))
+            fTypes = ('|'.join(featureTypes[key]))
 
     fp2.write(mgi_utils.prvalue(r['accid']) + TAB)
 
     if r['genomicChromosome']:
-    	fp2.write(r['genomicChromosome'] + TAB)
+        fp2.write(r['genomicChromosome'] + TAB)
     else:
-    	fp2.write(r['chromosome'] + TAB)
+        fp2.write(r['chromosome'] + TAB)
 
     fp2.write(r['cmposition'] + TAB)
 
-    if coords.has_key(key):
-	fp2.write(mgi_utils.prvalue(coords[key][0]['startC']) + TAB)
-	fp2.write(mgi_utils.prvalue(coords[key][0]['endC']) + TAB)
-	fp2.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
+    if key in coords:
+        fp2.write(mgi_utils.prvalue(coords[key][0]['startC']) + TAB)
+        fp2.write(mgi_utils.prvalue(coords[key][0]['endC']) + TAB)
+        fp2.write(mgi_utils.prvalue(coords[key][0]['strand']) + TAB)
     else:
-	fp2.write(TAB + TAB + TAB)
+        fp2.write(TAB + TAB + TAB)
 
     fp2.write(r['symbol'] + TAB)
     fp2.write(r['markerstatus'] + TAB)
     fp2.write(r['name'] + TAB)
     fp2.write(r['markertype'] + TAB)
 
-    if featureTypes.has_key(key):
-	fp2.write(fTypes)
+    if key in featureTypes:
+        fp2.write(fTypes)
     fp2.write(TAB)
 
-    if synonyms.has_key(key):
-	fp2.write(string.join(synonyms[key],'|'))
+    if key in synonyms:
+        fp2.write('|'.join(synonyms[key]))
     fp2.write(CRT)
 
 reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file
 db.useOneConnection(0)
-

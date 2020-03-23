@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -51,13 +50,13 @@ inFile = open('/data/downloads/www.findmice.org/report/kompCounts.txt', 'rU')
 #
 imsrSet = {}
 for line in inFile.readlines():
-	tokens = line[:-1].split('\t')
-	if tokens[1] == 'MRK:UN':
-		imsrSet[tokens[0]] = []
-		imsrSet[tokens[0]].append(tokens[2])
+        tokens = line[:-1].split('\t')
+        if tokens[1] == 'MRK:UN':
+                imsrSet[tokens[0]] = []
+                imsrSet[tokens[0]].append(tokens[2])
 
 results = db.sql('''
-	select m._Marker_key, m.symbol, ma.accID, count(al._Allele_key) as mcount
+        select m._Marker_key, m.symbol, ma.accID, count(al._Allele_key) as mcount
         from MRK_Marker m, ALL_Allele al, ACC_Accession ma
         where al._Allele_Status_key in (847114, 3983021)
         and al.isWildType = 0
@@ -68,18 +67,17 @@ results = db.sql('''
         and ma.prefixPart = 'MGI:'
         and ma.preferred = 1
         group by m._Marker_key, m.symbol, ma.accID
-	''', 'auto')
+        ''', 'auto')
 for r in results:
 
-	acount = 0
-	if r['accID'] in imsrSet:
-		acount = imsrSet[r['accID']][0]
+        acount = 0
+        if r['accID'] in imsrSet:
+                acount = imsrSet[r['accID']][0]
 
-	fp.write(r['symbol'] + TAB)
-	fp.write(r['accID'] + TAB)
-	fp.write(str(acount) + TAB)
-	fp.write(str(r['mcount']) + CRT)
+        fp.write(r['symbol'] + TAB)
+        fp.write(r['accID'] + TAB)
+        fp.write(str(acount) + TAB)
+        fp.write(str(r['mcount']) + CRT)
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
-
