@@ -1,114 +1,112 @@
+
 '''
 #
 # GO_gene_association.py
 #
 # Generates:
 #       
-#       gene_association.mgi (GAF)
-#       gene_association_pro (GAF)
-#       mgi.gpa
+#	gene_association.mgi (GAF)
+#	gene_association_pro (GAF)
+#	mgi.gpa
 #
 #
 # gpad col vs gaf col
 #
-# DB                    1       1
-# DB_Object_ID          2       2/17 (isoforms)
-# Qualifier             3       4
-# GO ID                 4       5
-# DB:Reference(s)       5       6
-# Evidence code         6       7
-# With (or) From        7       8
-# Interacting taxon ID  8       13
-# Date                  9       14
-# Assigned_by           10      15
-# Annotation Extension  11      16
-# Annotation Properties 12
+# DB			1	1
+# DB_Object_ID		2	2/17 (isoforms)
+# Qualifier		3	4
+# GO ID			4	5
+# DB:Reference(s)	5	6
+# Evidence code		6	7
+# With (or) From	7	8
+# Interacting taxon ID	8	13
+# Date			9	14
+# Assigned_by		10	15
+# Annotation Extension	11	16
+# Annotation Properties	12
 # 
 # IMPORTANT THINGS TO KNOW:
 #
 #    gaf/col11 (annotation extension) and gpad/col16 should be equal.
 #    except :  ISO annotations are excluded from gaf/col11 (blank)
 #    see "lib_py_report/go_annot_extensions.py" for the list of
-#       excluded Properties and excluded Evidence
+#	excluded Properties and excluded Evidence
 #
 #    gpad/col16 : will *never* contains > 1 stanza, and will always use the "," delimiter
 #
 # History:
 #
-# sc    03/21/20 python 3 upgrade, retabbed and removed python statement at top
-#           testing deferred until the goload is updated
+# lec	03/04/2019
+#	- TR13049/use same assignedBy logic for both GAF and GPAD files
 #
-# lec   03/04/2019
-#       - TR13049/use same assignedBy logic for both GAF and GPAD files
+# lec	01/22/2019
+#	- TR13010/addGPADReportRow/add special processing if inferredFrom=InterPro
 #
-# lec   01/22/2019
-#       - TR13010/addGPADReportRow/add special processing if inferredFrom=InterPro
+# lec	02/21/2018
+#	- TR12768/if assigned_by = 'UniProtKB' or 'RGD', then set to 'MGI'
 #
-# lec   02/21/2018
-#       - TR12768/if assigned_by = 'UniProtKB' or 'RGD', then set to 'MGI'
+# lec	10/25/2017
+#	- TR12664/noctua-model-id
 #
-# lec   10/25/2017
-#       - TR12664/noctua-model-id
-#
-# lec   07/14/2016
-#       - TR12349/12345/Noctua/GPAD added
+# lec	07/14/2016
+#	- TR12349/12345/Noctua/GPAD added
 #
 # kstone 09/14/2015
-#       - TR12070 Refactored col16 and col17 logic into 'go_annot_extensions' and 'go_isoforms' modules
-#               Removed extra protein values for col17. Use only isoform 'gene product' GO properties now
+#	- TR12070 Refactored col16 and col17 logic into 'go_annot_extensions' and 'go_isoforms' modules
+#		Removed extra protein values for col17. Use only isoform 'gene product' GO properties now
 #
-# lec   04/22/2015
-#       - TR11932/added "GO_" (for GO_Central) to set proper assignedBy value
+# lec	04/22/2015
+#	- TR11932/added "GO_" (for GO_Central) to set proper assignedBy value
 #
-# sc    11/06/2014
-#       - TR11772/Modification of GAF file references
+# sc	11/06/2014
+#	- TR11772/Modification of GAF file references
 #
 # lec   10/24/2014
 #       - TR11750/postres complient
 #
-# lec   07/02/2014
-#       - TR11693/only include official/interum markers
+# lec	07/02/2014
+#	- TR11693/only include official/interum markers
 #
-# lec   07/01/2014
-#       - TR11710/doGAFCol16
+# lec	07/01/2014
+#	- TR11710/doGAFCol16
 #
-# lec   01/13/2014
-#       - TR11570/fix GO qualifier; use VOC_Term
+# lec	01/13/2014
+#	- TR11570/fix GO qualifier; use VOC_Term
 #
-# lec   01/02/2014
-#       - TR11518/add "new" doGAFCol16()
-#       - all mgi-properties shoudl now be coverted to go-properties
+# lec	01/02/2014
+#	- TR11518/add "new" doGAFCol16()
+#	- all mgi-properties shoudl now be coverted to go-properties
 #
-# lec   08/27/2013
-#       - TR11459/GOANNOT_RELATIONSHIP/fix
+# lec	08/27/2013
+#	- TR11459/GOANNOT_RELATIONSHIP/fix
 #
-# lec   05/28/2013
-#       - TR11060/add all UniProtKB: and PR:
+# lec	05/28/2013
+#	- TR11060/add all UniProtKB: and PR:
 #
-# lec   01/15/2013
-#       - TR11112/use GOANNOTRELATIONSHIP to generate column 16
+# lec	01/15/2013
+#	- TR11112/use GOANNOTRELATIONSHIP to generate column 16
 #
-# lec   05/08/2012
-#       - TR11060/add secondary file/subset/
-#         only contains annotations where column 17 (gene product) has UniProtKB:xxxx-??
-#         gene_association_pro.mgi
+# lec	05/08/2012
+#	- TR11060/add secondary file/subset/
+#	  only contains annotations where column 17 (gene product) has UniProtKB:xxxx-??
+#	  gene_association_pro.mgi
 #
-# lec   03/13/2012
-# lec   03/08/2012
-#       pubMed = {} was being called/selected twice
-#       pubMed = change query to 'distinct'
+# lec	03/13/2012
+# lec	03/08/2012
+#	pubMed = {} was being called/selected twice
+#	pubMed = change query to 'distinct'
 #
-# lec   06/20/2011
+# lec	06/20/2011
 #   - TR10044/MGI_Notes --> VOC_Evidence_Property
-#       this affects col16LookupByEvidence, isoformsProtein, column 12, 16, 17
+#	this affects col16LookupByEvidence, isoformsProtein, column 12, 16, 17
 #
-# lec   03/30/2011
+# lec	03/30/2011
 #   - TR10652/change 'NCBI:' to 'RefSeq:'
 #
-# lec   03/21/2011
+# lec	03/21/2011
 #   - TR9962/add 'RefGenome' to column 15
 #
-# lec   03/15/2011
+# lec	03/15/2011
 #   - TR10633/allow PRO ids (PR:) in column 17
 #
 # lec
@@ -120,18 +118,18 @@
 #   - check logicalDB for proteins and proteinsGene hash
 #     and fix prefix name for Vega, Ensembl
 #
-# lec   06/10/2010
+# lec	06/10/2010
 #   - cleanup up cell ontology, isoform protein and protein hashes
 #   - added TR9901/date history (see below)
 #
-# lec   06/03/2010
+# lec	06/03/2010
 #   - TAB not being written in between column 15/column 16
 #   - column 16/17: replace MRK_Marker with go/marker temp table
 #
-# lec   04/29/2010
+# lec	04/29/2010
 #   - TR9777/"swissload" login name changed to "uniprotload"
 #
-# lec   03/02/2010
+# lec	03/02/2010
 #   - TR10035; added RGD check for column 15
 #
 # mhall 02/02/2010
@@ -214,7 +212,6 @@ goRefDict = {}
 #
 # see doGAFCol16() : list of column 16 object/evidence/printable format
 gafCol16Lookup = {}
-gpadCol16Lookup = {}
 
 # see doIsoform() : isoformsProtein = {}
 forPROC = {}
@@ -246,6 +243,7 @@ def doSetup():
     global taxonLookup
     global ecoLookupByEco, ecoLookupByEvidence
     global gpadCol3Lookup
+    global gpadCol11Lookup
     global gpadCol12Lookup
     global goRefDict
 
@@ -262,8 +260,7 @@ def doSetup():
     #   and m.symbol = 'Mbd2'
     #   and m.symbol = 'Adipoq'
     #   and m.symbol = 'Birc3'
-    #   and m.symbol = 'Hk1'
-    #   and m.symbol = 'Echdc3'
+    #	and m.symbol = 'Hk1'
     #
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
@@ -425,8 +422,42 @@ def doSetup():
     #print gpadCol3Lookup
 
     #
+    # gpadCol11 : (MGI_User.login like NOCTUA_%)
+    #	exclude older terms (sequenceNum 1-9, 90,91,92, 93)
+    #
+    # note that noctua-generated properties will *always* have one stanza
+    #
+    results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
+            from gomarker2 a,
+                 VOC_Evidence_Property p,  
+                 VOC_Term t,
+                 MGI_User u
+            where a._CreatedBy_key = u._User_key
+            and u.login like 'NOCTUA_%'
+            and a._AnnotEvidence_key = p._AnnotEvidence_key
+            and p._PropertyTerm_key = t._Term_key
+            and t.term not in (
+                'evidence', 'anatomy', 'cell type', 'gene product', 'modification', 'target', 
+                'external ref', 'text', 'dual-taxon ID',
+                'noctua-model-id', 'contributor', 'individual', 'go_qualifier', 'model-state'
+                )
+            order by t.term, p.value
+            ''', 'auto')
+    for r in results:
+        key = r['_AnnotEvidence_key']
+        value = r['value'].replace('MGI:', 'MGI:MGI:')
+        value = r['term'] + '(' + value + ')'
+        if key not in gpadCol11Lookup:
+            gpadCol11Lookup[key] = []
+        gpadCol11Lookup[key].append(value)
+    #print gpadCol11Lookup
+
+    #
     # gpadCol12 : (MGI_User.login like NOCTUA_%)
     # exclude : occurs_in, part_of, go_qualifier, evidence
+    #
+    # TR13272
+    # and (u.login like 'NOCTUA_%' or (u.orcid is not null and p._propertyterm_key = 18583062))
     #
     results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
             from gomarker2 a,
@@ -529,77 +560,6 @@ def doGAFCol16():
     #print gafCol16Lookup
 
 ## end doGAFCol16()
-
-#
-# begin doGPADCol11()
-#
-def doGPADCol11():
-
-    global gpadCol11Lookup
-
-    #
-    # list of object/evidence/stanza that are GO-properties
-    #
-    # objectKey = marker key:annotation/evidence key (must match objectKey in doGAFFinish())
-    #
-    # including properties that use go-sanctioned-property list
-    # and we also include mgi-property ('cell type', 'anatomy', 'target')
-    #
-    # include: _Vocab_key = 82
-    # include: go-sanctioned-properties (use _Term_key > 6481780 or sequenceNum > 9)
-    # include: mgi-properties
-    # exclude: annotations where evidence = ISO (3251466)
-    #
-
-    # Query the valid _term_keys for properties and evidence codes
-    extensionProcessor = go_annot_extensions.Processor()
-    sanctionedPropertyKeys = extensionProcessor.querySanctionedGPADPropertyTermKeys()
-    sanctionedEvidenceTermKeys = extensionProcessor.querySanctionedEvidenceTermKeys()
-
-    propertyKeyClause = ",".join([str(k) for k in sanctionedPropertyKeys])
-    evidenceKeyClause = ",".join([str(k) for k in sanctionedEvidenceTermKeys])
-
-    cmd = '''
-    select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
-            from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
-            where r._EvidenceTerm_key in (%s)
-            and r._AnnotEvidence_key = p._AnnotEvidence_key
-            and p._PropertyTerm_key = t._Term_key
-            and p._PropertyTerm_key in (%s)
-            order by r.symbol, 
-                r._Object_key, 
-                r._AnnotEvidence_key, 
-                p.stanza, 
-                p.sequenceNum, 
-                property
-    ''' % (evidenceKeyClause, propertyKeyClause)
-
-    results = db.sql(cmd, 'auto')
-
-    for r in results:
-        objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
-        value = r['value'].replace('MGI:', 'MGI:MGI:')
-
-        # process out the comments, etc
-        value = extensionProcessor.processValue(value)
-
-        if objectKey not in gpadCol11Lookup:
-                gpadCol11Lookup[objectKey] = []
-                stanza = 0
-
-        if stanza == 0:
-                sep = ''
-        elif r['stanza'] != stanza:
-                sep = '|'
-        else:
-                sep = ','
-
-        gpadCol11Lookup[objectKey].append(sep + r['property'] + '(' + value + ')')
-        stanza = r['stanza']
-
-    #print gpadCol11Lookup
-
-## end doGPADCol11()
 
 #
 # begin doIsoform()
@@ -793,15 +753,14 @@ def doGAFFinish():
 
         # column 11
         if r['_Object_key'] in syns:
-            syn_string = '|'.join(syns[r['_Object_key']])
-            reportRow = reportRow + syn_string + TAB
+            reportRow = reportRow + '|'.join(syns[r['_Object_key']]) + TAB
         else:
             reportRow = reportRow + TAB
 
         # column 12
         # if marker is associated with an isoform (via go/annotation)
         # or marker is associated with a protein (via marker/sequence cache)
-        #       print 'protein' 
+        # 	print 'protein' 
         # else, print marker type (ex. 'gene')
 
         if objectKey in isoformsProtein or r['_Object_key'] in proteins:
@@ -906,11 +865,11 @@ def doGPADFinish():
         #   2. DB Object ID
         #
         # if an Isoform (gene_product) exists, then create the annotation using:
-        #       col 1 =  isoformsProtein prefix (PR, RefSeq, UniProtDB, EMBL)
-        #       col 2 =  accession id  of isoformProtein object (Q92WPO-1)
+        # 	col 1 =  isoformsProtein prefix (PR, RefSeq, UniProtDB, EMBL)
+        # 	col 2 =  accession id  of isoformProtein object (Q92WPO-1)
         # else create the annotation using:
-        #       col 1 =  MGI
-        #       col 2 =  MGI:xxx
+        # 	col 1 =  MGI
+        # 	col 2 =  MGI:xxx
         #
 
         objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
@@ -1026,8 +985,8 @@ def addGPADReportRow(reportRow, r):
 
         #   11. Annotation Extension
         properties = ''
-        if objectKey in gpadCol11Lookup:
-            properties = ''.join(gpadCol11Lookup[objectKey])
+        if key in gpadCol11Lookup:
+            properties = ','.join(gpadCol11Lookup[key])
         elif objectKey in gafCol16Lookup:
             properties = ''.join(gafCol16Lookup[objectKey])
         reportRow = reportRow + properties + TAB
@@ -1053,7 +1012,6 @@ db.useOneConnection(1)
 # querying the database/setting up lookups
 doSetup()
 doGAFCol16()
-doGPADCol11()
 doIsoform()
 
 #
@@ -1069,23 +1027,23 @@ fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
-fp.write('!     1.  DB                       MGI\n')
-fp.write('!     2.  DB Object ID             MGI:xxxx\n')
-fp.write('!     3.  DB Object Symbol\n')
-fp.write('!     4.  Qualifier\n')
-fp.write('!     5.  GO ID                    GO:xxxx\n')
-fp.write('!     6.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
-fp.write('!     7.  Evidence Code            3-digit (not ECO:xxxx)\n')
-fp.write('!     8.  With (or)From            optional\n')
-fp.write('!     9.  Aspect (GO DAG Abbreviation (F, P, C))\n')
-fp.write('!     10. DB Object Name           optional\n')
-fp.write('!     11. DB Object Synonym(s)     optional\n')
-fp.write('!     12. DB Object Type\n')
-fp.write('!     13. Taxon                    taxon:10090\n')
-fp.write('!     14. Date                     YYYYMMDD\n')
-fp.write('!     15. Assigned By\n')
-fp.write('!     16. Annotation Extension     same as GPAD/col 11\n')
-fp.write('!     17. Gene Product Form ID     Isorform\n')
+fp.write('!	1.  DB                       MGI\n')
+fp.write('!	2.  DB Object ID             MGI:xxxx\n')
+fp.write('!	3.  DB Object Symbol\n')
+fp.write('!	4.  Qualifier\n')
+fp.write('!	5.  GO ID                    GO:xxxx\n')
+fp.write('!	6.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
+fp.write('!	7.  Evidence Code            3-digit (not ECO:xxxx)\n')
+fp.write('!	8.  With (or)From            optional\n')
+fp.write('!	9.  Aspect (GO DAG Abbreviation (F, P, C))\n')
+fp.write('!	10. DB Object Name           optional\n')
+fp.write('!	11. DB Object Synonym(s)     optional\n')
+fp.write('!	12. DB Object Type\n')
+fp.write('!	13. Taxon                    taxon:10090\n')
+fp.write('!	14. Date                     YYYYMMDD\n')
+fp.write('!	15. Assigned By\n')
+fp.write('!	16. Annotation Extension     same as GPAD/col 11\n')
+fp.write('!	17. Gene Product Form ID     Isorform\n')
 fp.write('!\n')
 
 doProtein()
@@ -1115,18 +1073,18 @@ fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
-fp.write('!     1.  DB                       MGI or PR\n')
-fp.write('!     2.  DB Object ID             MGI:xxxx or xxxxx\n')
-fp.write('!     3.  Qualifier                enables, causally_upstream_of_or_within, part_of\n')
-fp.write('!     4.  GO ID                    GO:xxxx\n')
-fp.write('!     5.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
-fp.write('!     6.  Evidence Code            ECO:xxxx\n')
-fp.write('!     7.  With (or)From            optional\n')
-fp.write('!     8.  Interacting taxon ID     optional\n')
-fp.write('!     9.  Date                     YYYYMMDD\n')
-fp.write('!     10. Assigned By\n')
-fp.write('!     11. Annotation Extension     optional same as GAF/col 16\n')
-fp.write('!     12. Annotation Properties    optional\n')
+fp.write('!	1.  DB                       MGI or PR\n')
+fp.write('!	2.  DB Object ID             MGI:xxxx or xxxxx\n')
+fp.write('!	3.  Qualifier                enables, causally_upstream_of_or_within, part_of\n')
+fp.write('!	4.  GO ID                    GO:xxxx\n')
+fp.write('!	5.  DB:Reference(s)          MGI:MGI:xxxx|PMID:xxxx\n')
+fp.write('!	6.  Evidence Code            ECO:xxxx\n')
+fp.write('!	7.  With (or)From            optional\n')
+fp.write('!	8.  Interacting taxon ID     optional\n')
+fp.write('!	9.  Date                     YYYYMMDD\n')
+fp.write('!	10. Assigned By\n')
+fp.write('!	11. Annotation Extension     optional same as GAF/col 16\n')
+fp.write('!	12. Annotation Properties    optional\n')
 fp.write('!\n')
 
 doGPADFinish()
@@ -1143,4 +1101,3 @@ except:
 reportlib.finish_nonps(fp)
 
 db.useOneConnection(0)
-

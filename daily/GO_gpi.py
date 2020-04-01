@@ -1,3 +1,4 @@
+
 '''
 #
 # GO_gpi.py
@@ -26,9 +27,6 @@
 #   DB_Object_Type = 'transcript', DB = 'EMBL', 'RefSeq', 'ENSEMBL', 'Parent_Object_ID = 'MGI:MGI:xxxx'
 #
 # History:
-#
-# sc    03/21/20 python 3 upgrade, retabbed and removed python statement at top
-#           testing deferred until the goload is updated
 #
 # 06/27/2016    lec
 #       - TR12349/12345/GPAD/GPI
@@ -158,7 +156,7 @@ for r in results:
 #
 
 uniprotGPI = []
-gpiFile = gzip.open(os.environ['DATADOWNLOADS'] + '/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz', 'r')
+gpiFile = gzip.open(os.environ['DATADOWNLOADS'] + '/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz', 'rt')
 for line in gpiFile.readlines():
         if line[0] == '!':
             continue
@@ -375,4 +373,3 @@ for ldbsearch in (9, 27, 133):
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
-
