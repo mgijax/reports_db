@@ -288,6 +288,7 @@ results = db.sql('''
         where t._Vocab_key = 112
         and t._term_key = a._Object_key 
         and a._LogicalDB_key = 183
+        order by a.accID, symbol
         ''', 'auto')
 
 for r in results:
@@ -348,7 +349,7 @@ for ldbsearch in (9, 27, 133):
             and a._MGIType_key = 2
             and a._LogicalDB_key = 1
             and a.preferred = 1
-            order by rna._LogicalDB_key
+            order by rna._LogicalDB_key, rnaID
             ''' % (ldbsearch), 'auto')
 
     for r in results:
