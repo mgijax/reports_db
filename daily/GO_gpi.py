@@ -203,6 +203,7 @@ results = db.sql('''
         and m._Marker_Type_key = 1
         and m._Marker_Status_key = 1
         and m._Organism_key = 1
+        order by m.symbol
         ''', 'auto')
 
 for r in results:
