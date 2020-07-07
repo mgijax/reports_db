@@ -60,6 +60,11 @@ setenv NCBILINKOUT_USER		mgd
 setenv NCBILINKOUT_PASSWORD	keUPdTuD
 setenv NCBILINKOUT_COUNT	10000
 
+# E PMC FTP settings
+setenv E_PMC_HOST       "labslink.ebi.ac.uk"
+setenv E_PMC_USER       "elinks"
+setenv E_PMC_PASSWORD   "8VhrURVH"
+
 # Setting for Gene trap scripts
 # master file of all gene trap best single hits on the current genome version
 setenv MASTER_GFF_FILE		${DATADOWNLOADS}/ftp.ncbi.nih.gov/gtblatpipeline/output/best_blat_hits_single_Gbrowse.master.gff

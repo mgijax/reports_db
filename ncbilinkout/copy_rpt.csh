@@ -1,9 +1,9 @@
 #!/bin/csh -f
 
 #
-# Script to copy NCBI LinkOut files to NCBI FTP site
+# Script to copy NCBI and Europe PMC LinkOut files to NCBI FTP site
 #
-# Usage: copy_rpt_2ncbi.csh
+# Usage: copy_rpt.csh
 #
 # Runs Monday morning with the public swap
 #
@@ -18,6 +18,7 @@
 #        Username: mgd
 #        Password: keUPdTuD
 #
+# Europe PMC host, etc
 #
 # History:
 #
