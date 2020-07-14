@@ -1,4 +1,3 @@
-'''
 #
 # Report:
 #       Create several tab-delimited (bcp) files for BioDataMart feed
@@ -162,7 +161,6 @@
 # lec   08/14/2001
 #       - created
 #
-'''
  
 import sys
 import os

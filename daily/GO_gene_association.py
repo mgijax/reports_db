@@ -468,7 +468,7 @@ def doSetup():
                  VOC_Term t,
                  MGI_User u
             where a._CreatedBy_key = u._User_key
-            and u.login like 'NOCTUA_%'
+            and (u.login like 'NOCTUA_%' or (u.orcid is not null and p._propertyterm_key = 18583062))
             and a._AnnotEvidence_key = p._AnnotEvidence_key
             and p._PropertyTerm_key = t._Term_key
             and t.term not in ('occurs_in', 'part_of', 'go_qualifier', 'evidence')
