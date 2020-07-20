@@ -16,13 +16,16 @@
 # 4. DB_Object_Synonyms                         ::= [Label] ('|' Label)*
 # 5. DB_Object_Type                             ::= OBO_ID
 # 6. DB_Object_Taxon                            ::= NCBITaxon:[Taxon_ID]
-# NEW 7. Encoded_By                                 ::= [ID] ('|' ID)*
+# 7. Encoded_By                                 ::= [ID] ('|' ID)* : NEW
 # 8. Parent_Protein                             ::= [ID] ('|' ID)*
-# NEW 9. Protein_Containing_Complex_Members         ::= [ID] ('|' ID)*
+# 9. Protein_Containing_Complex_Members         : not populated at this time
 # 10. DB_Xrefs                                  ::= [ID] ('|' ID)*
-# 11. Gene_Product_Properties  
+# 11. Gene_Product_Properties                   : not populated at this time
 #
 # History:
+#
+# lec   04/01/2020 python 3 upgrade
+#       - TR13272/GPI 2.0
 #
 # lec   04/01/2020 python 3 upgrade
 #
@@ -179,8 +182,8 @@ for r in results:
 
 #
 # markers:terms
+# marker with feature type
 #
-
 
 results = db.sql('''
         select a.accID as accID, m.symbol, m.name, t.term
@@ -210,7 +213,7 @@ for r in results:
                 fp.write("|".join(markerSynonyms[marker]))
         fp.write(TAB)
 
-
+        # 5. DB_Object_Type                             ::= OBO_ID
         if r['term'] == 'gene':
                 fp.write('SO:0000704' + TAB)
         elif r['term'] == 'gene segment':
@@ -224,7 +227,7 @@ for r in results:
         elif r['term'] == 'heritable phenotypic marker':
                 fp.write('SO:0001645' + TAB)
         else:
-                fp.write('unknown' + TAB)
+                fp.write('col 5 bad' + TAB)
 
         fp.write(SPECIES + TAB)
         fp.write(TAB)
@@ -238,6 +241,10 @@ for r in results:
         fp.write(TAB)
 
         fp.write(CRT)
+
+#
+# marker without feature type; use marker type
+#
 
 results = db.sql('''
 	select a.accID as accID, m.symbol, m.name, m._Marker_Type_key
