@@ -186,7 +186,7 @@ for r in results:
 #
 
 results = db.sql('''
-        select a.accID as accID, m.symbol, m.name, t.term
+        select a.accID as accID, m.symbol, m.name, m._Marker_Type_key, t.term
         from ACC_Accession a, MRK_Marker m, VOC_Annot v, VOC_Term t
         where a._MGIType_key = 2
         and a._LogicalDB_key = 1
@@ -194,11 +194,11 @@ results = db.sql('''
         and a.preferred = 1
         and a._Object_key = m._Marker_key
         and m._Marker_Status_key = 1
+        and m._Marker_Type_key in (1,7,10)
         and m._Organism_key = 1
         and m._Marker_key = v._Object_key
         and v._AnnotType_key = 1011
         and v._Term_key = t._Term_key
-        and t.term in ('gene', 'gene segment', 'protein coding gene', 'non-coding RNA gene', 'pseudogene', 'heritable phenotypic marker')
         order by m.symbol
         ''', 'auto')
 
@@ -213,21 +213,43 @@ for r in results:
                 fp.write("|".join(markerSynonyms[marker]))
         fp.write(TAB)
 
-        # 5. DB_Object_Type                             ::= OBO_ID
-        if r['term'] == 'gene':
+        # 5. DB_Object_Type
+        if r['_Marker_Type_key'] == 1 and r['term'] == 'unclassified gene':
                 fp.write('SO:0000704' + TAB)
-        elif r['term'] == 'gene segment':
-                fp.write('SO:3000000' + TAB)
-        elif r['term'] == 'protein coding gene':
-                fp.write('SO:0001217' + TAB)
-        elif r['term'] == 'non-coding RNA gene':
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'protein coding gene':
+                fp.write('SO:0001271' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'non-coding RNA gene':
                 fp.write('SO:0001263' + TAB)
-        elif r['term'] == 'pseudogene':
-                fp.write('SO:0000336' + TAB)
-        elif r['term'] == 'heritable phenotypic marker':
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'heritable phenotypic marker':
                 fp.write('SO:0001645' + TAB)
+        elif r['_Marker_Type_key'] == 1 and \
+                        (r['term'] == 'lncRNA gene' \
+                        or r['term'] == 'antisense lncRNA gene' \
+                        or r['term'] == 'lincRNA gene' \
+                        or r['term'] == 'sense intronic lncRNA gene' \
+                        or r['term'] == 'sense overlapping lncRNA gene' \
+                        or r['term'] == 'bidirectional promoter lncRNA gene' \
+                        or r['term'] == 'rRNA gene' \
+                        or r['term'] == 'tRNA gene' \
+                        or r['term'] == 'snRNA gene' \
+                        or r['term'] == 'snoRNA gene' \
+                        or r['term'] == 'miRNA gene' \
+                        or r['term'] == 'scRNA gene' \
+                        or r['term'] == 'SRP RNA gene' \
+                        or r['term'] == 'RNase P RNA gene' \
+                        or r['term'] == 'RNase MRP RNA gene' \
+                        or r['term'] == 'telomerase RNA gene' \
+                        or r['term'] == 'unclassified non-coding RNA gene' \
+                        or r['term'] == 'ribozyme gene'):
+                fp.write('SO:0001263' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'gene segment':
+                fp.write('SO:3000000' + TAB)
+        elif r['_Marker_Type_key'] == 7:
+                fp.write('SO:0000336' + TAB)
+        elif r['_Marker_Type_key'] == 10:
+                fp.write('SO:0001411' + TAB)
         else:
-                fp.write('col 5 bad' + TAB)
+                fp.write('col 5 bad with feature type =  ' + r['term'] + TAB)
 
         fp.write(SPECIES + TAB)
         fp.write(TAB)
@@ -254,8 +276,8 @@ results = db.sql('''
 	and a.prefixPart = 'MGI:'
 	and a.preferred = 1
 	and a._Object_key = m._Marker_key
-	and m._Marker_Type_key in (2, 10)
 	and m._Marker_Status_key = 1
+        and m._Marker_Type_key in (1,7,10)
 	and m._Organism_key = 1
         and not exists (select v.* from VOC_Annot v
                 where m._Marker_key = v._Object_key
@@ -275,10 +297,12 @@ for r in results:
 		fp.write("|".join(markerSynonyms[marker]))
 	fp.write(TAB)
 
-	if r['_Marker_Type_key'] == '1':
-                fp.write('SO:0000704' + TAB)
-	else:
+	if r['_Marker_Type_key'] == 7:
+                fp.write('SO:0000336' + TAB)
+	elif r['_Marker_Type_key'] == 10:
                 fp.write('SO:0001411' + TAB)
+	else:
+                fp.write('col 5 bad no feature type/marker type =  ' + str(r['_Marker_Type_key']) + TAB)
 
 	fp.write(SPECIES + TAB)
 	fp.write(TAB)
@@ -373,11 +397,7 @@ for r in results:
         fp.write(TAB)
 
         # 8. Parent_Protein                             ::= [ID] ('|' ID)*
-        try:
-                parent, y = isoform.split('-')
-        except:
-                parent = isoform
-        fp.write(parent + TAB)
+        fp.write(TAB)
 
         # 9. Protein_Containing_Complex_Members         ::= [ID] ('|' ID)*
         fp.write(TAB)
