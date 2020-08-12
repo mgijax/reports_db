@@ -45,7 +45,7 @@ import db
 
 db.setTrace()
 
-SPECIES = 'taxon:10090'
+SPECIES = 'NCBITaxon:10090'
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
@@ -217,7 +217,7 @@ for r in results:
         if r['_Marker_Type_key'] == 1 and r['term'] == 'unclassified gene':
                 fp.write('SO:0000704' + TAB)
         elif r['_Marker_Type_key'] == 1 and r['term'] == 'protein coding gene':
-                fp.write('SO:0001271' + TAB)
+                fp.write('SO:0001217' + TAB)
         elif r['_Marker_Type_key'] == 1 and r['term'] == 'non-coding RNA gene':
                 fp.write('SO:0001263' + TAB)
         elif r['_Marker_Type_key'] == 1 and r['term'] == 'heritable phenotypic marker':
@@ -410,7 +410,15 @@ for r in results:
         # 11. Gene_Product_Properties  
         fp.write(CRT)
 
-#
+# attach PR/protein_complex generated from proisoformload 
+#try:
+gpi2FileName = os.environ['DATALOADSOUTPUT'] + '/pro/proisoformload/output/gpi2.txt'
+gpi2File = open(gpi2FileName, 'r')
+for line in gpi2File.readlines():
+        fp.write(line + '\n')
+#except:
+#        exit(1, 'Could not open file %s\n' % gpi2FileName)
+
 # end isoforms
 #
 
