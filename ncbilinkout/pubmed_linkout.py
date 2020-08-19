@@ -47,7 +47,7 @@ fpLinkOut = reportlib.init(fileName, fileExt = '.xml', outputdir = os.environ['R
 
 count = 1
 
-fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "LinkOut.dtd"\n[' + CRT)
+fpLinkOut.write('<!DOCTYPE LinkSet PUBLIC "-//NLM//DTD LinkOut //EN" "https://www.ncbi.nlm.nih.gov/projects/linkout/doc/LinkOut.dtd"\n[' + CRT)
 fpLinkOut.write('<!ENTITY icon "' + os.environ['NCBILINKOUT_ICON'] + '">' + CRT)
 fpLinkOut.write('<!ENTITY base "' + os.environ['NCBILINKOUT_BASE_REF'] + '">' + CRT)
 fpLinkOut.write(']>' + CRT + '<LinkSet>' + CRT)
