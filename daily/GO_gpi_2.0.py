@@ -415,7 +415,7 @@ for r in results:
 gpi2FileName = os.environ['DATALOADSOUTPUT'] + '/pro/proisoformload/output/gpi2.txt'
 gpi2File = open(gpi2FileName, 'r')
 for line in gpi2File.readlines():
-        fp.write(line + '\n')
+        fp.write(line)
 #except:
 #        exit(1, 'Could not open file %s\n' % gpi2FileName)
 
