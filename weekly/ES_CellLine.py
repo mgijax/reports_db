@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -37,7 +36,7 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # Get the cell lines and strains
 #
 results = db.sql('''
-		select ac.cellLine, p.strain, a.accID
+                select ac.cellLine, p.strain, a.accID
                 from ALL_CellLine ac, PRB_Strain p, ACC_Accession a
                 where ac.isMutant = 0 
                       and ac.cellLine not in ('Not Applicable','Not Specified','Other (see notes)') 
@@ -47,13 +46,13 @@ results = db.sql('''
                       and a._LogicalDB_key = 1
                       and a.preferred = 1
                 order by ac.cellLine
-		''', 'auto')
+                ''', 'auto')
 
 # Create the report
 #
 for r in results:
-	fp.write(r['cellLine'] + reportlib.TAB + \
-	       	 r['strain'] + reportlib.TAB + \
-	       	 r['accID'] + reportlib.CRT)
+        fp.write(r['cellLine'] + reportlib.TAB + \
+                 r['strain'] + reportlib.TAB + \
+                 r['accID'] + reportlib.CRT)
 
 reportlib.finish_nonps(fp)

@@ -1,5 +1,3 @@
-#!/usr/local/bin/python
-
 '''
 #
 # Report:
@@ -9,6 +7,8 @@
 #       Protein_LinkOut.py
 #
 # History:
+#
+# sc    03/21/20 python 3 upgrade
 #
 # lec   09/30/2008
 #       - generation of NCBI LinkOut file (protein-mgi.xml)

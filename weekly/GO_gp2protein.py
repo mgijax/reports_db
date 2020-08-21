@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -237,34 +236,34 @@ for r in results:
     isfp1 = 0
 
     # fp1 (protein)
-    if uniprotkbDict.has_key(markerKey): 
-	if tdcTerm == 'protein coding gene':
-	    l = uniprotkbDict[markerKey]
-	    seqID = l[0]
-	    logicalDB = l[1]
-	    isfp1 = 1
-	else:
-	    print 'RNA w/uniprot seq assoc: %s' % accID
-    elif proteinDict.has_key(markerKey):
-	if tdcTerm == 'protein coding gene':
-	    l = proteinDict[markerKey]
-	    seqID = l[0]
-	    logicalDB = l[1]
-	    isfp1 = 1
-	else:
-	    print 'RNA w/rep protein seq assoc: %s' % accID
+    if markerKey in uniprotkbDict: 
+        if tdcTerm == 'protein coding gene':
+            l = uniprotkbDict[markerKey]
+            seqID = l[0]
+            logicalDB = l[1]
+            isfp1 = 1
+        else:
+            print(('RNA w/uniprot seq assoc: %s' % accID))
+    elif markerKey in proteinDict:
+        if tdcTerm == 'protein coding gene':
+            l = proteinDict[markerKey]
+            seqID = l[0]
+            logicalDB = l[1]
+            isfp1 = 1
+        else:
+            print(('RNA w/rep protein seq assoc: %s' % accID))
 
     # fp2 (rna)
-    elif transcriptDict.has_key(markerKey):
-	l = transcriptDict[markerKey]
-	seqID = l[0]
+    elif markerKey in transcriptDict:
+        l = transcriptDict[markerKey]
+        seqID = l[0]
         logicalDB = l[1]
 
     # if there is no protein or transcript 
     # 	AND the gene is *not* featureType = RNA
     # then skip it
     elif featureType == 'protein coding gene':
-	continue
+        continue
 
     # else...there is no protein or transcript AND the gene *is* featureType = RNA
     # so we keep it
@@ -284,7 +283,7 @@ for r in results:
     elif logicalDB in [133, 134]:
         seqID = 'ENSEMBL:' + seqID
     else:
-	seqID = ''
+        seqID = ''
 
     if isfp1:
         fp1.write(accID + TAB + seqID + CRT)
@@ -304,4 +303,3 @@ reportlib.finish_nonps(fp2)
 reportlib.finish_nonps(fp3)
 
 db.useOneConnection(1)
-

@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -70,7 +69,7 @@ def getCoords(logicalDBkey, provider):
 
     if logicalDBkey in [ncbi, ensembl]:
         results = db.sql('''
-		select m._Marker_key, a.accID, 
+                select m._Marker_key, a.accID, 
                        c.chromosome, c.strand, 
                        c.startCoordinate::int as startC,
                        c.endCoordinate::int as endC 
@@ -80,15 +79,15 @@ def getCoords(logicalDBkey, provider):
                     and mc._Sequence_key = a._Object_key 
                     and a._MGIType_key = %d
                     and a._LogicalDB_key = %d 
-		 ''' % (sequenceType, logicalDBkey) , 'auto')
+                 ''' % (sequenceType, logicalDBkey) , 'auto')
 
         for r in results:
             key = r['_Marker_key']
             value = r
             tempCoords[key] = value
     else:
-	raise 'BadValueError', 'Unknown logicalDBkey in getCoords: %s' % \
-		logicalDBkey
+        raise ValueError('Unknown logicalDBkey in getCoords: %s' % \
+                logicalDBkey)
  
     return tempCoords
     
@@ -131,7 +130,7 @@ db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name, t.name
         and a._LogicalDB_key = 1 
         and a.preferred = 1 
         and m._Marker_Type_key = t._Marker_Type_key
-	''', None)
+        ''', None)
 
 db.sql('create index idx1 on markers(_Marker_key)', None)
 
@@ -147,13 +146,13 @@ ensemblCoords = getCoords(ensembl, ensemblprovider)
 # a different build number)
 
 results = db.sql ('''select distinct version
-	from MRK_Location_Cache
-	where version is not null
-	and _Organism_key = 1''', 'auto')
+        from MRK_Location_Cache
+        where version is not null
+        and _Organism_key = 1''', 'auto')
 if results:
-	genomeBuild = results[0]['version']
+        genomeBuild = results[0]['version']
 else:
-	genomeBuild = 'Unknown'
+        genomeBuild = 'Unknown'
 
 # process results
 
@@ -163,8 +162,8 @@ for r in results:
     key = r['_Marker_key']
 
     # if no gene models, skip this marker
-    if not (ncbiCoords.has_key(key) or ensemblCoords.has_key(key)):
-	    continue
+    if not (key in ncbiCoords or key in ensemblCoords):
+            continue
     
     # 1-4
     fp.write(r['accID'] + TAB)
@@ -177,7 +176,7 @@ for r in results:
 
     # NCBI coordinate (6-10)
 
-    if ncbiCoords.has_key(key):
+    if key in ncbiCoords:
         c = ncbiCoords[key]
         fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
@@ -189,7 +188,7 @@ for r in results:
 
     # Ensembl coordinate (11-15)
 
-    if ensemblCoords.has_key(key):
+    if key in ensemblCoords:
         c = ensemblCoords[key]
         fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)

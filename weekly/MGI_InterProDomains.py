@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -59,7 +58,7 @@ markers = {}
 for r in results:
     key = r['_Term_key']
     value = r
-    if not markers.has_key(key):
+    if key not in markers:
         markers[key] = []
     markers[key].append(r)
 
@@ -67,29 +66,28 @@ for r in results:
 # interpro domain
 #
 results = db.sql('''
-	select a.accID, t.term, t._Term_key
-	from VOC_Vocab v, VOC_Term t, ACC_Accession a 
-	where v.name = 'InterPro Domains' 
-	and v._Vocab_key = t._Vocab_key 
-	and t._Term_key = a._Object_key 
-	and a._MGIType_key = 13
-	order by t.sequenceNum
-	''', 'auto')
+        select a.accID, t.term, t._Term_key
+        from VOC_Vocab v, VOC_Term t, ACC_Accession a 
+        where v.name = 'InterPro Domains' 
+        and v._Vocab_key = t._Vocab_key 
+        and t._Term_key = a._Object_key 
+        and a._MGIType_key = 13
+        order by t.sequenceNum
+        ''', 'auto')
 
 for r in results:
 
-	key = r['_Term_key']
+        key = r['_Term_key']
 
-	if markers.has_key(key):
+        if key in markers:
             for k in markers[key]:
-	        fp.write(r['accID'] + TAB)
-	        fp.write(r['term'] + TAB)
-	        fp.write(k['accID'] + TAB)
-	        fp.write(k['symbol'] + CRT)
-	else:
-	    fp.write(r['accID'] + TAB)
-	    fp.write(r['term'] + TAB)
-	    fp.write(TAB + CRT)
+                fp.write(r['accID'] + TAB)
+                fp.write(r['term'] + TAB)
+                fp.write(k['accID'] + TAB)
+                fp.write(k['symbol'] + CRT)
+        else:
+            fp.write(r['accID'] + TAB)
+            fp.write(r['term'] + TAB)
+            fp.write(TAB + CRT)
 
 reportlib.finish_nonps(fp)
-

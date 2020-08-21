@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #Report:
@@ -63,12 +62,12 @@ collection = 'dbGSS Gene Trap'
 #rnaMethods = "5'' RACE, 3'' RACE"
 
 #temp = ''
-#tokens = string.split(rnaMethods, ',')
+#tokens = str.split(rnaMethods, ',')
 #for i in range(len(tokens) - 1):
 #    # concatenate all but the last token
-#    temp = temp + "'" + string.strip(tokens[i]) + "', "
+#    temp = temp + "'" + str.strip(tokens[i]) + "', "
 ## add last token, sans ','
-#temp = temp + "'" + string.strip(tokens[-1]) + "'"
+#temp = temp + "'" + str.strip(tokens[-1]) + "'"
 #rnaMethods = temp
 
 #
@@ -106,48 +105,48 @@ IKMC_CREATORS = 'CMHD', 'ESDB', 'EUCOMM', 'TIGM'
 
 db.useOneConnection(1)
 
-print 'Loading lookups ...'
+print('Loading lookups ...')
 sys.stdout.flush()
 # get dbGSSGeneTrap Collection sequence coordinates
 db.sql('''
-	SELECT mcf.startCoordinate::int as startCoordinate, 
-    	       mcf.endCoordinate::int as endCoordinate, 
-    	       mcf.strand, mcf._Object_key as _Sequence_key, chr.chromosome 
-    	INTO TEMPORARY TABLE coords 
-    	FROM MAP_Coord_Collection mcc, MAP_Coordinate mc, 
-    	     MAP_Coord_Feature mcf, MRK_Chromosome chr 
-    	WHERE mcc.name = '%s' 
-    	AND mcc._Collection_key = mc._Collection_key 
-    	AND mc._Map_key = mcf._Map_key 
-    	AND mc._Object_key = chr._Chromosome_key
-	''' % (collection), None)
+        SELECT mcf.startCoordinate::int as startCoordinate, 
+               mcf.endCoordinate::int as endCoordinate, 
+               mcf.strand, mcf._Object_key as _Sequence_key, chr.chromosome 
+        INTO TEMPORARY TABLE coords 
+        FROM MAP_Coord_Collection mcc, MAP_Coordinate mc, 
+             MAP_Coord_Feature mcf, MRK_Chromosome chr 
+        WHERE mcc.name = '%s' 
+        AND mcc._Collection_key = mc._Collection_key 
+        AND mc._Map_key = mcf._Map_key 
+        AND mc._Object_key = chr._Chromosome_key
+        ''' % (collection), None)
 
 db.sql('CREATE INDEX coords_idx1 on coords(_Sequence_key)', None)
 
 # reduce to just DNA
 db.sql('''
-	SELECT c.* 
-    	INTO TEMPORARY TABLE dnaCoords 
-    	FROM coords c, SEQ_GeneTrap s, VOC_Term v 
-    	WHERE c._Sequence_key = s._Sequence_key 
-    	AND s._TagMethod_key = v._Term_key 
-	and v._Term_key not in (3983000, 3983001)''', None) 
-	#5' RACE
+        SELECT c.* 
+        INTO TEMPORARY TABLE dnaCoords 
+        FROM coords c, SEQ_GeneTrap s, VOC_Term v 
+        WHERE c._Sequence_key = s._Sequence_key 
+        AND s._TagMethod_key = v._Term_key 
+        and v._Term_key not in (3983000, 3983001)''', None) 
+        #5' RACE
         #3' RACE
-    	#AND v.term not in (%s)
-	#''' % rnaMethods, None)
+        #AND v.term not in (%s)
+        #''' % rnaMethods, None)
 db.sql('CREATE INDEX dnaCoords_idx1 on dnaCoords(_Sequence_key)', None)
 
 # get seqID
 db.sql('''
-	SELECT c.*, a.accID as seqId 
-    	INTO TEMPORARY TABLE dcSeqs 
-    	FROM dnaCoords c, ACC_Accession a 
-    	WHERE c._Sequence_key = a._Object_key 
-    	AND a._MGIType_key = 19 
-    	AND a._LogicalDB_key = 9 
-    	AND a.preferred = 1 
-	''', None)
+        SELECT c.*, a.accID as seqId 
+        INTO TEMPORARY TABLE dcSeqs 
+        FROM dnaCoords c, ACC_Accession a 
+        WHERE c._Sequence_key = a._Object_key 
+        AND a._MGIType_key = 19 
+        AND a._LogicalDB_key = 9 
+        AND a.preferred = 1 
+        ''', None)
 
 db.sql('CREATE INDEX dcSeqs_idx1 on dcSeqs(_Sequence_key)', None)
 
@@ -157,20 +156,20 @@ results = db.sql('SELECT * from dcSeqs', 'auto')
 for r in results:
     seqKey = r['_Sequence_key']
     coordList = [ r['startCoordinate'], r['endCoordinate'], \
-	r['strand'], r['chromosome'] ]
+        r['strand'], r['chromosome'] ]
     gtCoordDictBySeqKey[seqKey] = coordList
     seqIdDictBySeqKey[seqKey] = r['seqId']
 
 # get dbGSS sequence tag IDs
 results = db.sql('''
-	SELECT c._Sequence_key, a.accId as seqTagId 
-    	FROM dcSeqs c, ACC_Accession a 
-    	WHERE a._MGIType_key = 19 
-    	AND a._LogicalDB_key != 9 
-    	AND a.preferred = 1 
-    	AND a._Object_key = c._Sequence_key 
-    	ORDER BY c._Sequence_key
-	''' , 'auto')
+        SELECT c._Sequence_key, a.accId as seqTagId 
+        FROM dcSeqs c, ACC_Accession a 
+        WHERE a._MGIType_key = 19 
+        AND a._LogicalDB_key != 9 
+        AND a.preferred = 1 
+        AND a._Object_key = c._Sequence_key 
+        ORDER BY c._Sequence_key
+        ''' , 'auto')
 
 # load seqTagIdsDictBySeqKey, there is 1 seqTagId per sequence
 for r in results:
@@ -180,19 +179,19 @@ for r in results:
 
 # get MGI ID of the allele associated with the sequence
 db.sql('''
-	SELECT c._Sequence_key, sa._Allele_key, a.accID as mgiID 
-    	INTO TEMPORARY TABLE mgiIDs 
-    	FROM dnaCoords c, SEQ_Allele_Assoc sa, ALL_Allele aa, 
-    		ACC_Accession a 
-    	WHERE c._Sequence_key = sa._Sequence_key 
-    	AND sa._Allele_key = aa._Allele_key 
-    	AND aa.isMixed = 0 
-    	AND sa._Allele_key = a._Object_key 
-    	AND a._MGIType_key = 11 
-    	AND a._LogicalDB_key = 1 
-    	AND a.preferred = 1 
-    	AND a.prefixPart = 'MGI:'
-	''', None)
+        SELECT c._Sequence_key, sa._Allele_key, a.accID as mgiID 
+        INTO TEMPORARY TABLE mgiIDs 
+        FROM dnaCoords c, SEQ_Allele_Assoc sa, ALL_Allele aa, 
+                ACC_Accession a 
+        WHERE c._Sequence_key = sa._Sequence_key 
+        AND sa._Allele_key = aa._Allele_key 
+        AND aa.isMixed = 0 
+        AND sa._Allele_key = a._Object_key 
+        AND a._MGIType_key = 11 
+        AND a._LogicalDB_key = 1 
+        AND a.preferred = 1 
+        AND a.prefixPart = 'MGI:'
+        ''', None)
 
 db.sql('CREATE INDEX mgiIDs_idx1 on mgiIDs(_Allele_key)', None)
 
@@ -207,15 +206,15 @@ for r in results:
 
 # get allele creator
 results = db.sql('''
-	SELECT c.*, t.term as creator 
-    	FROM mgiIDs c, ALL_Allele_CellLine aca, ALL_CellLine ac, 
-    	ALL_CellLine_Derivation acd, VOC_Term t 
-    	WHERE c._Allele_key = aca._Allele_key 
-    	AND aca._MutantCellLine_key =  ac._CellLine_key 
-    	AND ac._Derivation_key = acd._Derivation_key 
-    	AND acd._Creator_key = t._Term_key 
-    	AND t.term in ('CMHD', 'ESDB', 'EUCOMM', 'TIGM')
-	''',  'auto')
+        SELECT c.*, t.term as creator 
+        FROM mgiIDs c, ALL_Allele_CellLine aca, ALL_CellLine ac, 
+        ALL_CellLine_Derivation acd, VOC_Term t 
+        WHERE c._Allele_key = aca._Allele_key 
+        AND aca._MutantCellLine_key =  ac._CellLine_key 
+        AND ac._Derivation_key = acd._Derivation_key 
+        AND acd._Creator_key = t._Term_key 
+        AND t.term in ('CMHD', 'ESDB', 'EUCOMM', 'TIGM')
+        ''',  'auto')
 
 # load alleleIdAndCreatorDictByAlleleKey
 for r in results:
@@ -251,34 +250,33 @@ seqType = 'DNA'
 fp = reportlib.init(sys.argv[0], fileExt = '.gff', outputdir = \
    os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-print 'Writing gff file ...'
+print('Writing gff file ...')
 sys.stdout.flush()
 
 for seqKey in gtCoordDictBySeqKey:
-    if alleleKeyDictBySeqKey.has_key(seqKey):
-	coordList = gtCoordDictBySeqKey[seqKey]
-	column1 = coordList[3]
-	column4 = str(coordList[0])
-	column5 = str(coordList[1])
-	column7 = coordList[2]
-	alleleKey = alleleKeyDictBySeqKey[seqKey]
-	seqTagID = seqTagIdsDictBySeqKey[seqKey]
-	seqID = seqIdDictBySeqKey[seqKey]
+    if seqKey in alleleKeyDictBySeqKey:
+        coordList = gtCoordDictBySeqKey[seqKey]
+        column1 = coordList[3]
+        column4 = str(coordList[0])
+        column5 = str(coordList[1])
+        column7 = coordList[2]
+        alleleKey = alleleKeyDictBySeqKey[seqKey]
+        seqTagID = seqTagIdsDictBySeqKey[seqKey]
+        seqID = seqIdDictBySeqKey[seqKey]
 
-	if alleleIdAndCreatorDictByAlleleKey.has_key(alleleKey):	
-	    alleleList = alleleIdAndCreatorDictByAlleleKey[alleleKey]
-	    mgiID = alleleList[0]
-	    creator = alleleList[1]
-	    fp.write(column1 + TAB)
-	    fp.write(column2 + TAB)
-	    fp.write(column3 + TAB)
-	    fp.write(column4 + TAB)
-	    fp.write(column5 + TAB)
-	    fp.write(column6 + TAB)
-	    fp.write(column7 + TAB)
-	    fp.write(column8 + TAB)
-	    fp.write(column9 % (creator, seqTagID, seqID, mgiID, seqType) + CRT)
+        if alleleKey in alleleIdAndCreatorDictByAlleleKey:	
+            alleleList = alleleIdAndCreatorDictByAlleleKey[alleleKey]
+            mgiID = alleleList[0]
+            creator = alleleList[1]
+            fp.write(column1 + TAB)
+            fp.write(column2 + TAB)
+            fp.write(column3 + TAB)
+            fp.write(column4 + TAB)
+            fp.write(column5 + TAB)
+            fp.write(column6 + TAB)
+            fp.write(column7 + TAB)
+            fp.write(column8 + TAB)
+            fp.write(column9 % (creator, seqTagID, seqID, mgiID, seqType) + CRT)
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
-

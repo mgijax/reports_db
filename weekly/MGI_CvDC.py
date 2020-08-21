@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -89,20 +88,20 @@ fp.write('# 10. MP IDs and terms ' + CRT)
 fp.write('# 11. JAX Strain Registry ID' + 2*CRT)
 
 db.sql('''
-	select distinct a._Allele_key, a._Marker_key, a.symbol, a.name, aa.accID, t.term as alleletype
-	into temporary table allele
-	from ALL_Allele a, ACC_Accession aa, VOC_Term t, MGI_Reference_Assoc r
-	where a._Allele_Status_key in (847114)
-	and a._Allele_Type_key = t._Term_key
-	and a._Allele_key = aa._Object_key
-	and aa._MGIType_key = 11
-	and aa._LogicalDB_key = 1
-	and aa.prefixPart = 'MGI:'
-	and aa.preferred = 1
-	and a._Allele_key = r._Object_key
-	and r._MGIType_key = 11
-	and r._Refs_key in (176309, 186964)
-	''', None)
+        select distinct a._Allele_key, a._Marker_key, a.symbol, a.name, aa.accID, t.term as alleletype
+        into temporary table allele
+        from ALL_Allele a, ACC_Accession aa, VOC_Term t, MGI_Reference_Assoc r
+        where a._Allele_Status_key in (847114)
+        and a._Allele_Type_key = t._Term_key
+        and a._Allele_key = aa._Object_key
+        and aa._MGIType_key = 11
+        and aa._LogicalDB_key = 1
+        and aa.prefixPart = 'MGI:'
+        and aa.preferred = 1
+        and a._Allele_key = r._Object_key
+        and r._MGIType_key = 11
+        and r._Refs_key in (176309, 186964)
+        ''', None)
 db.sql('create index idx_allele on allele(_Allele_key)', None)
 
 #
@@ -110,38 +109,38 @@ db.sql('create index idx_allele on allele(_Allele_key)', None)
 #
 
 results = db.sql('''
-	select a._Allele_key, m.symbol, m.name, m.chromosome, aa.accID
-	from allele a, MRK_Marker m, ACC_Accession aa
-	where a._Marker_key = m._Marker_key
-	and m._Marker_key = aa._Object_key
-	and aa._MGIType_key = 2
-	and aa._LogicalDB_key = 1
-	and aa.prefixPart = 'MGI:'
-	and aa.preferred = 1
-	''', 'auto')
+        select a._Allele_key, m.symbol, m.name, m.chromosome, aa.accID
+        from allele a, MRK_Marker m, ACC_Accession aa
+        where a._Marker_key = m._Marker_key
+        and m._Marker_key = aa._Object_key
+        and aa._MGIType_key = 2
+        and aa._LogicalDB_key = 1
+        and aa.prefixPart = 'MGI:'
+        and aa.preferred = 1
+        ''', 'auto')
 
 markers = {}
 for r in results:
     key = r['_Allele_key']
     value = r
-    if not markers.has_key(key):
-	markers[key] = []
+    if key not in markers:
+        markers[key] = []
     markers[key].append(value)
 
 #
 # synonyms
 #
 results = db.sql('''
-	select a._Allele_key, s.synonym 
-    	from allele a, MGI_Synonym s
-    	where a._Allele_key = s._Object_key 
-    	and s._MGIType_key = 11
-	''', 'auto')
+        select a._Allele_key, s.synonym 
+        from allele a, MGI_Synonym s
+        where a._Allele_key = s._Object_key 
+        and s._MGIType_key = 11
+        ''', 'auto')
 syns = {}
 for r in results:
     key = r['_Allele_key']
     value = r['synonym']
-    if not syns.has_key(key):
+    if key not in syns:
         syns[key] = []
     syns[key].append(value)
 
@@ -155,17 +154,17 @@ results = db.sql('''
         where a._Allele_key = ga._Allele_key 
         and ga._Genotype_key = na._Object_key 
         and na._AnnotType_key = 1002 
-	and na._Term_key = t._Term_key
+        and na._Term_key = t._Term_key
         and na._Term_key = aa._Object_key 
         and aa._MGIType_key = 13 
         and aa.preferred = 1
-	order by aa.accID, t.term
+        order by aa.accID, t.term
         ''', 'auto')
 mpIDs = {}
 for r in results:
-	key = r['_Allele_key']
-	value = r
-        if not mpIDs.has_key(key):
+        key = r['_Allele_key']
+        value = r
+        if key not in mpIDs:
                 mpIDs[key] = []
         mpIDs[key].append(value)
 
@@ -179,7 +178,7 @@ results = db.sql('''
         from allele a, MGI_Note n, MGI_NoteChunk nc 
         where a._Allele_key = n._Object_key 
         and n._MGIType_key = 11 
-	and n._NoteType_key = 1020
+        and n._NoteType_key = 1020
         and n._Note_key = nc._Note_key 
         order by a._Allele_key, nc.sequenceNum
         ''', 'auto')
@@ -187,8 +186,8 @@ notes = {}
 for r in results:
     key = r['_Allele_key']
     value = r['note']
-    if notes.has_key(key):
-	notes[key] = notes[key] + value
+    if key in notes:
+        notes[key] = notes[key] + value
     else:
         notes[key] = value
 
@@ -196,18 +195,18 @@ for r in results:
 # jax strain registry id
 #
 results = db.sql('''
-	select a._Allele_key, aa.accID
-    	from allele a, PRB_Strain_Marker p, ACC_Accession aa
-    	where a._Allele_key = p._Allele_key
-	and p._Strain_key = aa._Object_key
-	and aa._MGIType_key = 10
-	and aa._LogicalDB_key = 22
-	''', 'auto')
+        select a._Allele_key, aa.accID
+        from allele a, PRB_Strain_Marker p, ACC_Accession aa
+        where a._Allele_key = p._Allele_key
+        and p._Strain_key = aa._Object_key
+        and aa._MGIType_key = 10
+        and aa._LogicalDB_key = 22
+        ''', 'auto')
 jaxID = {}
 for r in results:
     key = r['_Allele_key']
     value = r['accID']
-    if not jaxID.has_key(key):
+    if key not in jaxID:
         jaxID[key] = []
     jaxID[key].append(value)
 
@@ -228,8 +227,8 @@ for r in results:
 
 # 4. Allele Synonyms (command delimited)
 
-    if syns.has_key(key):
-	fp.write('|'.join(syns[key]))
+    if key in syns:
+        fp.write('|'.join(syns[key]))
     fp.write(TAB)
 
 # 5. Allele Type
@@ -239,14 +238,14 @@ for r in results:
 # 7. Gene MGI ID
 # 8. Gene Name
 # 9. Chromosome (number or UN)
-    if markers.has_key(key):
-	for m in markers[key]:
-	    fp.write(m['symbol'] + TAB)
-	    fp.write(m['accID'] + TAB)
-	    fp.write(m['name'] + TAB)
-	    fp.write(m['chromosome'] + TAB)
+    if key in markers:
+        for m in markers[key]:
+            fp.write(m['symbol'] + TAB)
+            fp.write(m['accID'] + TAB)
+            fp.write(m['name'] + TAB)
+            fp.write(m['chromosome'] + TAB)
     else:
-	fp.write(TAB + TAB + TAB + TAB)
+        fp.write(TAB + TAB + TAB + TAB)
 
     #
     # Summative Diagnosis
@@ -270,20 +269,19 @@ for r in results:
 #	    fp.write(fyler + '|')
 #    fp.write(TAB)
 
-    if mpIDs.has_key(key):
-	for m in mpIDs[key]:
-	    fp.write(m['accID'] + '|' + m['term'] + '||')
+    if key in mpIDs:
+        for m in mpIDs[key]:
+            fp.write(m['accID'] + '|' + m['term'] + '||')
     fp.write(TAB)
 
-    if jaxID.has_key(key):
-	fp.write('|'.join(jaxID[key]))
+    if key in jaxID:
+        fp.write('|'.join(jaxID[key]))
     fp.write(CRT)
 
-    if notes.has_key(key):
+    if key in notes:
         fphtml = reportlib.init(r['accID'], fileExt = '.html', outputdir = os.environ['CVDCDIR'], printHeading = None)
-	fphtml.write(notes[key] + CRT)
+        fphtml.write(notes[key] + CRT)
         reportlib.finish_nonps(fphtml)	# non-postscript file
 
 reportlib.finish_nonps(fp)	# non-postscript file
 db.useOneConnection(0)
-

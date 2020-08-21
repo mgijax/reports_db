@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -69,17 +68,17 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 # Transcript ID lookup by Genomic ID
 # transcribed from qualifier
 db.sql('''
-	select sa._Sequence_key_1 as transcriptKey, 
+        select sa._Sequence_key_1 as transcriptKey, 
         sa._Sequence_key_2 as genomicKey 
         into temporary table transGen 
         from SEQ_Sequence_Assoc sa 
         where sa._Qualifier_key = 5445464
-	''', None)  
+        ''', None)  
 db.sql('create index idx1 on transGen(transcriptKey)', None)
 db.sql('create index idx2 on transGen(genomicKey)', None)
 
 results = db.sql('''
-	select a1.accID as genomicID, a2.accID as transcriptID 
+        select a1.accID as genomicID, a2.accID as transcriptID 
         from transGen t, ACC_Accession a1, ACC_Accession a2 
         where t.genomicKey = a1._Object_key 
         and a1._MGIType_key = 19 
@@ -88,14 +87,14 @@ results = db.sql('''
         and a2._MGIType_key = 19 
         and a2.preferred = 1 
         order by a1.accID
-	''', 'auto')
+        ''', 'auto')
 
 genomicToTranscript = {}
 for r in results:
     #print 'r:%s' % r
     key = r['genomicID']
     value = r['transcriptID']
-    if not genomicToTranscript.has_key(key):
+    if key not in genomicToTranscript:
         genomicToTranscript[key] = []
     genomicToTranscript[key].append(value)
 
@@ -110,7 +109,7 @@ db.sql('''
     ''', None)
 
 results = db.sql('''
-	select a1.accID as genomicID, a2.accID as proteinID 
+        select a1.accID as genomicID, a2.accID as proteinID 
         from protGen t, ACC_Accession a1, ACC_Accession a2 
         where t.genomicKey = a1._Object_key 
         and a1._MGIType_key = 19 
@@ -119,24 +118,24 @@ results = db.sql('''
         and a2._MGIType_key = 19 
         and a2.preferred = 1 
         order by a1.accID
-	''', 'auto')
+        ''', 'auto')
 genomicToProtein = {}
 for r in results:
     key = r['genomicID']
     value = r['proteinID']
-    if not genomicToProtein.has_key(key):
+    if key not in genomicToProtein:
         genomicToProtein[key] = []
     genomicToProtein[key].append(value)
 
 db.sql('''
       select a1.accID as mgi, 
-	     m._Marker_key, 
-	     m.symbol, 
-	     m.name, 
-	     m.chromosome, 
-	     m.cmoffset, 
-	     a2.accID as ensembl,
-	     mlc.genomicChromosome
+             m._Marker_key, 
+             m.symbol, 
+             m.name, 
+             m.chromosome, 
+             m.cmoffset, 
+             a2.accID as ensembl,
+             mlc.genomicChromosome
       into temporary table markers
       from ACC_Accession a1, ACC_Accession a2, MRK_Marker m, MRK_Location_Cache mlc
       where a1._Object_key = a2._Object_key and 
@@ -147,24 +146,24 @@ db.sql('''
             a1.preferred = 1 and 
             a2._LogicalDB_key = 60 and 
             a2._MGIType_key = 2 and 
-	    m._Marker_key = mlc._Marker_key
-	''', None)
+            m._Marker_key = mlc._Marker_key
+        ''', None)
 db.sql('create index markers_idx1 on markers(_Marker_key)', None)
 
 #
 # feature types
 #
 results = db.sql('''
-	select m._marker_key, s.term 
+        select m._marker_key, s.term 
         from markers m, MRK_MCV_Cache s 
         where m._marker_key = s._marker_key 
         and s.qualifier = 'D'
-	''', 'auto')
+        ''', 'auto')
 featureTypes = {}
 for r in results:
         key = r['_marker_key']
         value = r['term']
-        if not featureTypes.has_key(key):
+        if key not in featureTypes:
                 featureTypes[key] = []
         featureTypes[key].append(value)
 
@@ -174,35 +173,35 @@ for r in results:
 results = db.sql('''	
     select m._marker_key,
            c.strand, 
-	   c.startCoordinate::int as startC,
-	   c.endCoordinate::int as endC
+           c.startCoordinate::int as startC,
+           c.endCoordinate::int as endC
     from markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
-	''', 'auto')
+        ''', 'auto')
 coords = {}
 for r in results:
     key = r['_marker_key']
     value = r
-    if not coords.has_key(key):
-	coords[key] = []
+    if key not in coords:
+        coords[key] = []
     coords[key].append(value)
 
 #
 # biotype
 #
 results = db.sql('''
-	select distinct m._Marker_key, s.rawbiotype 
-	from markers m, SEQ_Marker_Cache s 
-	where m._Marker_key = s._Marker_key 
-	and s.rawbiotype is not null
-	''', 'auto')
+        select distinct m._Marker_key, s.rawbiotype 
+        from markers m, SEQ_Marker_Cache s 
+        where m._Marker_key = s._Marker_key 
+        and s.rawbiotype is not null
+        ''', 'auto')
 bioTypes = {}
 for r in results:
-	key = r['_Marker_key']
-	value = r['rawbiotype']
-	if not bioTypes.has_key(key):
-		bioTypes[key] = []
-	bioTypes[key].append(value)
+        key = r['_Marker_key']
+        value = r['rawbiotype']
+        if key not in bioTypes:
+                bioTypes[key] = []
+        bioTypes[key].append(value)
 
 results = db.sql('select * from markers order by genomicChromosome, symbol', 'auto')
 
@@ -218,34 +217,34 @@ for r in results:
     # column 6: genomic id
 
     if r['genomicChromosome']:
-	    chromosome = r['genomicChromosome']
+            chromosome = r['genomicChromosome']
     else:
-	    chromosome = r['chromosome']
+            chromosome = r['chromosome']
 
     fp.write(r['mgi'] + TAB + 
-	    r['symbol'] + TAB + 
-	    r['name'] + TAB +
-	    str(r['cmoffset']) + TAB +
+            r['symbol'] + TAB + 
+            r['name'] + TAB +
+            str(r['cmoffset']) + TAB +
             chromosome + TAB + 
             genomicID + TAB)
 
     # column 7
-    if genomicToTranscript.has_key(genomicID):
-        fp.write(string.join(genomicToTranscript[genomicID], ' '))
+    if genomicID in genomicToTranscript:
+        fp.write(' '.join(genomicToTranscript[genomicID]))
     fp.write(TAB)
 
     # column 8
-    if genomicToProtein.has_key(genomicID):
-        fp.write(string.join(genomicToProtein[genomicID], ' '))
+    if genomicID in genomicToProtein:
+        fp.write(' '.join(genomicToProtein[genomicID]))
     fp.write(TAB)
 
     # column 9: feature types
-    if featureTypes.has_key(r['_Marker_key']):	
-        fp.write(string.join(featureTypes[r['_Marker_key']], '|'))
+    if r['_Marker_key'] in featureTypes:	
+        fp.write('|'.join(featureTypes[r['_Marker_key']]))
         fp.write(TAB)
 
     # column 10-11-12
-    if coords.has_key(key):
+    if key in coords:
         fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['startC']) + TAB)
         fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['endC']) + TAB)
         fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['strand']) + TAB)
@@ -253,8 +252,8 @@ for r in results:
         fp.write(TAB + TAB + TAB)
 
     # column 13: biotypes
-    if bioTypes.has_key(r['_Marker_key']):	
-        fp.write(string.join(bioTypes[r['_Marker_key']], '|'))
+    if r['_Marker_key'] in bioTypes:	
+        fp.write('|'.join(bioTypes[r['_Marker_key']]))
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)

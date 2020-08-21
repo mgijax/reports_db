@@ -27,7 +27,7 @@ echo `date`: Start weekly public reports | tee -a ${LOG}
 cd ${PUBWEEKLY}
 foreach i (*.py)
     echo `date`: $i | tee -a ${LOG}
-    $i >>& ${LOG}
+    ${PYTHON} $i >>& ${LOG}
 end
 
 #

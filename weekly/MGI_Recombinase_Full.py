@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -54,7 +53,7 @@ import sys
 import os
 import string
 import reportlib
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import db
 
 db.setTrace()
@@ -82,9 +81,9 @@ def createImsrAlleleToStrainDict():
         for row in reader:
                 allele_ids = row[0]
                 strain_name = row[2]
-		if allele_ids and strain_name:
-			for id in allele_ids.split(','):
-				strainNameMap.setdefault(id, []).append(strain_name)
+                if allele_ids and strain_name:
+                        for id in allele_ids.split(','):
+                                strainNameMap.setdefault(id, []).append(strain_name)
 
         return strainNameMap
 
@@ -155,37 +154,37 @@ def writeHTML(r, imsrHTML):
 
     key = r['_Allele_key']
     accID = r['accID']
-    driverNote = string.replace(r['driverNote'], '\n', '')
+    driverNote = str.replace(r['driverNote'], '\n', '')
 
     # superscript the symbol
 
-    symbol = string.replace(r['symbol'], '<', 'beginss')
-    symbol = string.replace(symbol, '>', 'endss')
-    symbol = string.replace(symbol, 'beginss', '<sup>')
-    symbol = string.replace(symbol, 'endss', '</sup>')
+    symbol = str.replace(r['symbol'], '<', 'beginss')
+    symbol = str.replace(symbol, '>', 'endss')
+    symbol = str.replace(symbol, 'beginss', '<sup>')
+    symbol = str.replace(symbol, 'endss', '</sup>')
 
     if r['name'] == r['markerName']:
-	name = r['name']
+        name = r['name']
     else:
-	name = r['markerName'] + '; ' + r['name']
+        name = r['markerName'] + '; ' + r['name']
  
     s = '<tr>' + \
         BEGTD + driverNote + ENDTD + \
-	BEGTD + reportlib.create_accession_anchor(r['accID']) + symbol + CLOSE_ANCHOR + ENDTD + \
+        BEGTD + reportlib.create_accession_anchor(r['accID']) + symbol + CLOSE_ANCHOR + ENDTD + \
         BEGTDWRAP + name + ENDTD
 
-    if expressedHTML.has_key(key):
-	s = s + BEGTD + '%s' % (string.join(expressedHTML[key], BREAK)) + ENDTD
+    if key in expressedHTML:
+        s = s + BEGTD + '%s' % (BREAK.join(expressedHTML[key])) + ENDTD
     else:
         s = s + BLANKFIELD
       
-    if notexpressedHTML.has_key(key):
-	s = s + BEGTD + '%s' % (string.join(notexpressedHTML[key], BREAK)) + ENDTD
+    if key in notexpressedHTML:
+        s = s + BEGTD + '%s' % (BREAK.join(notexpressedHTML[key])) + ENDTD
     else:
         s = s + BLANKFIELD
       
-    if imsrHTML.has_key(accID):
-	s = s + BEGTD + '%s' % (string.join(imsrHTML[accID], BREAK)) + ENDTD
+    if accID in imsrHTML:
+        s = s + BEGTD + '%s' % (BREAK.join(imsrHTML[accID])) + ENDTD
     else:
         s = s + BLANKFIELD
       
@@ -200,27 +199,27 @@ def writeTAB(r, imsrTAB):
 
     key = r['_Allele_key']
     accID = r['accID']
-    driverNote = string.replace(r['driverNote'], '\n', '')
+    driverNote = str.replace(r['driverNote'], '\n', '')
 
     if r['name'] == r['markerName']:
-	name = r['name']
+        name = r['name']
     else:
-	name = r['markerName'] + '; ' + r['name']
+        name = r['markerName'] + '; ' + r['name']
  
     fpTAB.write(driverNote + TAB + \
                 r['symbol'] + TAB + \
-		name + TAB)
+                name + TAB)
 
-    if expressedTAB.has_key(key):
-      fpTAB.write(string.join(expressedTAB[key], '|'))
+    if key in expressedTAB:
+      fpTAB.write('|'.join(expressedTAB[key]))
     fpTAB.write(TAB)
 
-    if notexpressedTAB.has_key(key):
-      fpTAB.write(string.join(notexpressedTAB[key], '|'))
+    if key in notexpressedTAB:
+      fpTAB.write('|'.join(notexpressedTAB[key]))
     fpTAB.write(TAB)
 
-    if imsrTAB.has_key(accID):
-        fpTAB.write(string.join(imsrTAB[accID], '|'))
+    if accID in imsrTAB:
+        fpTAB.write('|'.join(imsrTAB[accID]))
     fpTAB.write(TAB)
 
     fpTAB.write(r['accID'] + CRT)
@@ -247,7 +246,7 @@ printHeaderTAB()
 
 db.sql('''
        select distinct c._Allele_key, c.symbol, c.name, c.driverNote, 
-		c.accID, rtrim(m.name) as markerName
+                c.accID, rtrim(m.name) as markerName
        into temporary table cre
        from ALL_Cre_Cache c, ALL_Allele aa, MRK_Marker m
        where c._Allele_key = aa._Allele_key
@@ -274,12 +273,12 @@ for r in results:
     key = r['_Allele_key']
     value = r['cresystemlabel']
 
-    if not expressedTAB.has_key(key):
+    if key not in expressedTAB:
         expressedTAB[key] = []
     expressedTAB[key].append(value)
 
-    value = CRE_ANCHOR % (WI_URL, r['accID'], urllib.quote_plus(r['cresystemlabel'])) + r['cresystemlabel'] + CLOSE_ANCHOR
-    if not expressedHTML.has_key(key):
+    value = CRE_ANCHOR % (WI_URL, r['accID'], urllib.parse.quote_plus(r['cresystemlabel'])) + r['cresystemlabel'] + CLOSE_ANCHOR
+    if key not in expressedHTML:
         expressedHTML[key] = []
     expressedHTML[key].append(value)
 
@@ -292,8 +291,8 @@ results = db.sql('''
       where c._Allele_key = cc._Allele_key
       and cc.expressed = 0
       and not exists (select 1 from expressed e
-			where cc._Allele_key = e._Allele_key
-			and cc.cresystemlabel = e.cresystemlabel)
+                        where cc._Allele_key = e._Allele_key
+                        and cc.cresystemlabel = e.cresystemlabel)
       ''', 'auto')
 notexpressedTAB = {}
 notexpressedHTML = {}
@@ -301,12 +300,12 @@ for r in results:
     key = r['_Allele_key']
     value = r['cresystemlabel']
 
-    if not notexpressedTAB.has_key(key):
+    if key not in notexpressedTAB:
         notexpressedTAB[key] = []
     notexpressedTAB[key].append(value)
 
-    value = CRE_ANCHOR % (WI_URL, r['accID'], urllib.quote_plus(r['cresystemlabel'])) + r['cresystemlabel'] + CLOSE_ANCHOR
-    if not notexpressedHTML.has_key(key):
+    value = CRE_ANCHOR % (WI_URL, r['accID'], urllib.parse.quote_plus(r['cresystemlabel'])) + r['cresystemlabel'] + CLOSE_ANCHOR
+    if key not in notexpressedHTML:
         notexpressedHTML[key] = []
     notexpressedHTML[key].append(value)
 
@@ -333,13 +332,13 @@ for r in results:
 
         imsrTAB.setdefault(accID, []).append(strain)
 
-	value = string.replace(strain, '<', 'beginss')
-	value = string.replace(value, '>', 'endss')
-	value = string.replace(value, 'beginss', '<sup>')
-	value = string.replace(value, 'endss', '</sup>')
-	value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(strain), value, reportlib.close_accession_anchor())
+        value = str.replace(strain, '<', 'beginss')
+        value = str.replace(value, '>', 'endss')
+        value = str.replace(value, 'beginss', '<sup>')
+        value = str.replace(value, 'endss', '</sup>')
+        value = '%s%s%s' % (reportlib.create_imsrstrain_anchor(strain), value, reportlib.close_accession_anchor())
 
-	imsrHTML.setdefault(accID, []).append(value)
+        imsrHTML.setdefault(accID, []).append(value)
 
 #
 # process results

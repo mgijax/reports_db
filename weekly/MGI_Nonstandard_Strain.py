@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -51,31 +50,30 @@ fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], pri
 # Retrieve all Strains w/ Standard = true, Private = false
 
 db.sql('''
-	select s.strain, s.strainType, a.accID 
-	into temporary table strain 
-	from PRB_Strain_view s, ACC_Accession a 
-	where s.standard = 0
-	and s.private = 0 
-	and not (s.strain  like 'involves%' 
-	or s.strain like 'either:%' 
-	or s.strain like 'chimera involves:%' 
-	or s.strain like 'mixed%' 
-	or s.strain like 'various%')
-	and s.geneticbackground = 0
-	and s._Strain_key = a._Object_key 
-	and a._MGIType_key = 10 
-	and a.prefixPart = 'MGI:' 
-	and a.preferred = 1
-	and a.accID not in  ('MGI:5649511', 'MGI:4867032', 'MGI:5651265', 'MGI:5652408', 'MGI:5652861')
+        select s.strain, s.strainType, a.accID 
+        into temporary table strain 
+        from PRB_Strain_view s, ACC_Accession a 
+        where s.standard = 0
+        and s.private = 0 
+        and not (s.strain  like 'involves%' 
+        or s.strain like 'either:%' 
+        or s.strain like 'chimera involves:%' 
+        or s.strain like 'mixed%' 
+        or s.strain like 'various%')
+        and s.geneticbackground = 0
+        and s._Strain_key = a._Object_key 
+        and a._MGIType_key = 10 
+        and a.prefixPart = 'MGI:' 
+        and a.preferred = 1
+        and a.accID not in  ('MGI:5649511', 'MGI:4867032', 'MGI:5651265', 'MGI:5652408', 'MGI:5652861')
 
-	''', None)
+        ''', None)
 
 results = db.sql('select * from strain order by strain', 'auto')
 for r in results:
 
-	fp1.write(r['accID'] + reportlib.TAB)
-	fp1.write(r['strain'] + reportlib.TAB)
-	fp1.write(r['strainType'] + reportlib.CRT)
+        fp1.write(r['accID'] + reportlib.TAB)
+        fp1.write(r['strain'] + reportlib.TAB)
+        fp1.write(r['strainType'] + reportlib.CRT)
 
 reportlib.finish_nonps(fp1)
-

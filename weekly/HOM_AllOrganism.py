@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 """
 HOM_AllOrganism.py
 
@@ -71,28 +70,28 @@ def writeRecord (r):
     fp.write(r['taxonID'] + TAB)
     fp.write(r['symbol'] + TAB)
     fp.write(r['entrezgeneID'] + TAB)
-    if mgiID.has_key(markerKey):
+    if markerKey in mgiID:
         fp.write(mgiID[markerKey] + TAB)
     else:
         fp.write(TAB)
-    if hgncID.has_key(markerKey):
+    if markerKey in hgncID:
         fp.write(hgncID[markerKey] + TAB)
     else:
         fp.write(TAB)
-    if omimID.has_key(markerKey):
+    if markerKey in omimID:
         fp.write(omimID[markerKey] + TAB)
     else:
         fp.write(TAB)
-    if genLoc.has_key(markerKey):
+    if markerKey in genLoc:
         fp.write(genLoc[markerKey] + TAB)
     else:
         fp.write(TAB)
-    if genCoord.has_key(markerKey):
+    if markerKey in genCoord:
         fp.write(genCoord[markerKey] + TAB)
     else:
         fp.write(TAB)
     fp.write(r['name'] + TAB)
-    if synonym.has_key(markerKey):
+    if markerKey in synonym:
         fp.write(synonym[markerKey] + CRT)
     else:
         fp.write(CRT)
@@ -123,7 +122,7 @@ def writeHomologyClass (homology):
         # organism, pull out the list of results sets that need to be
         # written to the report.
         #
-        if homology.has_key(organismKey):
+        if organismKey in homology:
             homologyResults = homology[organismKey]
 
             #
@@ -300,8 +299,8 @@ for r in results:
 
 #
 # Build lookups for genetic location and genome coordinates for each marker key.
-# NOTE: The cmoffset is converted to a string with 2 digits to the right of the
-#       decimal point. The start/end coordinates are converted to string with
+# NOTE: The cmoffset is converted to a str.with 2 digits to the right of the
+#       decimal point. The start/end coordinates are converted to str.with
 #       no decimal positions.
 #
 # For example: cmoffset 12.349999999999999 becomes 12.35
@@ -334,7 +333,7 @@ results = db.sql('''
 for r in results:
     #
     # If there is a genomic chromosome, use it with the start/end coordinates
-    # and the strand to build the genomic coordinate string. This should only
+    # and the strand to build the genomic coordinate str. This should only
     # be applicable for mouse or human.
     #
     genomicChr = r['genomicChromosome']
@@ -349,7 +348,7 @@ for r in results:
             strand = ''
 
         #
-        # Add the genomic coordinate string to the lookup for the marker.
+        # Add the genomic coordinate str.to the lookup for the marker.
         #
         genCoord[r['_Marker_key']] = 'Chr' + genomicChr + ':' + \
                                      r['startCoordinate'].strip() + '-' + \
@@ -357,14 +356,14 @@ for r in results:
 
     #
     # Use the genetic chromosome with one of the cmoffsets (if available) to
-    # build the genetic location string.
+    # build the genetic location str.
     #
     geneticChr = r['chromosome']
     cmoffset = r['cmoffset']
     cytogeneticOffset = r['cytogeneticOffset']
 
     #
-    # If there is an cmoffset, use it to build the genetic location string.
+    # If there is an cmoffset, use it to build the genetic location str.
     #
     if cmoffset != None:
         cmoffset = cmoffset.strip()
@@ -377,7 +376,7 @@ for r in results:
 
     #
     # If there is a cytogenetic cmoffset, use it to build the genetic location
-    # string.
+    # str.
     #
     elif cytogeneticOffset != None:
         location = 'Chr' + geneticChr + ' ' + cytogeneticOffset
@@ -389,7 +388,7 @@ for r in results:
         location = 'Chr' + geneticChr
 
     #
-    # Add the genetic location string to the lookup for the marker.
+    # Add the genetic location str.to the lookup for the marker.
     #
     genLoc[r['_Marker_key']] = location
 
@@ -464,7 +463,7 @@ for r in results:
     # Otherwise, start a new list.
     #
     organismKey = r['_Organism_key']
-    if h.has_key(organismKey):
+    if organismKey in h:
         list = h[organismKey]
     else:
         list = []

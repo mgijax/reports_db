@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -45,23 +44,22 @@ fp1 = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], pri
 # Retrieve all Strains w/ Standard = true, Private = false
 
 db.sql('''
-	select s.strain, s.strainType, a.accID 
-	into temporary table strain 
-	from PRB_Strain_View s, ACC_Accession a 
-	where s.standard = 1 
-	and s.private = 0 
-	and s._Strain_key = a._Object_key 
-	and a._MGIType_key = 10 
-	and a.prefixPart = 'MGI:' 
-	and a.preferred = 1
-	''', None)
+        select s.strain, s.strainType, a.accID 
+        into temporary table strain 
+        from PRB_Strain_View s, ACC_Accession a 
+        where s.standard = 1 
+        and s.private = 0 
+        and s._Strain_key = a._Object_key 
+        and a._MGIType_key = 10 
+        and a.prefixPart = 'MGI:' 
+        and a.preferred = 1
+        ''', None)
 
 results = db.sql('select * from strain order by strain', 'auto')
 for r in results:
 
-	fp1.write(r['accID'] + reportlib.TAB)
-	fp1.write(r['strain'] + reportlib.TAB)
-	fp1.write(r['strainType'] + reportlib.CRT)
+        fp1.write(r['accID'] + reportlib.TAB)
+        fp1.write(r['strain'] + reportlib.TAB)
+        fp1.write(r['strainType'] + reportlib.CRT)
 
 reportlib.finish_nonps(fp1)
-

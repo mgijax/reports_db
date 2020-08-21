@@ -41,7 +41,7 @@ echo `date`: Start NCBI LinkOut | tee -a ${LOG}
 
 foreach i (*.py)
     echo `date`: $i | tee -a ${LOG}
-    $i >>& ${LOG}
+    ${PYTHON} $i >>& ${LOG}
 end
 
 # for ncbi

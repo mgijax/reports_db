@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -88,24 +87,24 @@ fp.write('#  column 6: MGI_Rep_Gene_Model: "Representative" if gene model sequen
 fp.write('#\n\n')
 
 results = db.sql('''
-		 select s._Marker_key, s._Qualifier_key, s.accID, s.rawbiotype, 
-			m.symbol, a.accID as mgiID, mcv.term as featureType,
-			v.term as provider
-		 from SEQ_Marker_Cache s, MRK_Marker m, ACC_Accession a, 
-			MRK_MCV_Cache mcv, VOC_Term v
-		 where s._BiotypeConflict_key = 5420767
-		 and s._LogicalDB_key in (59, 60)
-		 and s._Marker_key = m._Marker_key
-		 and s._Marker_key = a._Object_key
-		 and a._MGIType_key = 2
-		 and a.prefixPart = 'MGI:'
-		 and a._LogicalDB_key = 1
-		 and a.preferred = 1
-		 and s._Marker_key = mcv._Marker_key
-		 and mcv.qualifier = 'D'
-		 and s._SequenceProvider_key = v._Term_key
-		 order by a.accid
-		 ''', 'auto')
+                 select s._Marker_key, s._Qualifier_key, s.accID, s.rawbiotype, 
+                        m.symbol, a.accID as mgiID, mcv.term as featureType,
+                        v.term as provider
+                 from SEQ_Marker_Cache s, MRK_Marker m, ACC_Accession a, 
+                        MRK_MCV_Cache mcv, VOC_Term v
+                 where s._BiotypeConflict_key = 5420767
+                 and s._LogicalDB_key in (59, 60)
+                 and s._Marker_key = m._Marker_key
+                 and s._Marker_key = a._Object_key
+                 and a._MGIType_key = 2
+                 and a.prefixPart = 'MGI:'
+                 and a._LogicalDB_key = 1
+                 and a.preferred = 1
+                 and s._Marker_key = mcv._Marker_key
+                 and mcv.qualifier = 'D'
+                 and s._SequenceProvider_key = v._Term_key
+                 order by a.accid
+                 ''', 'auto')
 
 markerList = {}
 
@@ -116,14 +115,14 @@ for r in results:
 
     # print one row of the marker record
 
-    if not markerList.has_key(key):
-	fp.write(r['mgiID'] + TAB)
+    if key not in markerList:
+        fp.write(r['mgiID'] + TAB)
         fp.write(r['symbol'] + TAB)
-	fp.write('MGI' + TAB)
-	fp.write(r['mgiID'] + TAB)
-	fp.write(r['featureType'] + TAB)
-	fp.write(CRT)
-	markerList[key] = value
+        fp.write('MGI' + TAB)
+        fp.write(r['mgiID'] + TAB)
+        fp.write(r['featureType'] + TAB)
+        fp.write(CRT)
+        markerList[key] = value
 
     # print row of the gene model sequence
     fp.write(r['mgiID'] + TAB)
@@ -133,11 +132,10 @@ for r in results:
     fp.write(mgi_utils.prvalue(r['rawbiotype']) + TAB)
 
     if r['_Qualifier_key'] == 615419:
-	fp.write('Representative')
+        fp.write('Representative')
     fp.write(CRT)
 
 fp.write(CRT + '(%d genes affected)' % (len(markerList)) + CRT)
 
 db.useOneConnection(0)
 reportlib.finish_nonps(fp)	# non-postscript file
-

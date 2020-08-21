@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #Report:
@@ -65,15 +64,15 @@ rnaMethods = "5'' RACE, 3'' RACE"
 
 # put configured methods in form usable by sql
 temp = ''
-tokens = string.split(rnaMethods, ',')
+tokens = str.split(rnaMethods, ',')
 for i in range(len(tokens) - 1):
     # concatenate all but the last token
-    #temp = temp + '"' + string.strip(tokens[i]) + '", '
-    temp = temp + "'" + string.strip(tokens[i]) + "', "   
+    #temp = temp + '"' + str.strip(tokens[i]) + '", '
+    temp = temp + "'" + str.strip(tokens[i]) + "', "   
 # add last token, sans ','
-temp = temp + "'" + string.strip(tokens[-1]) + "'"
+temp = temp + "'" + str.strip(tokens[-1]) + "'"
 rnaMethods = temp
-print 'rnaMethods: %s' %rnaMethods
+print(('rnaMethods: %s' %rnaMethods))
 
 
 #
@@ -107,7 +106,7 @@ alleleIdAndCreatorDictByAlleleKey = {}
 
 db.useOneConnection(1)
 
-print 'Loading lookups ...'
+print('Loading lookups ...')
 sys.stdout.flush()
 
 # get dbGSSGeneTrap Collection sequence coordinates
@@ -149,7 +148,7 @@ results = db.sql('SELECT * from dcSeqs', 'auto')
 for r in results:
     seqKey = r['_Sequence_key']
     coordList = [ r['startCoordinate'], r['endCoordinate'], \
-	r['strand'], r['chromosome'] ]
+        r['strand'], r['chromosome'] ]
     gtCoordDictBySeqKey[seqKey] = coordList
     seqIdDictBySeqKey[seqKey] = r['seqId']
 
@@ -236,33 +235,32 @@ seqType = 'DNA'
 fp = reportlib.init(sys.argv[0], fileExt = '.gff', outputdir = \
    outputDir, printHeading = None)
 
-print 'Writing gff file ...'
+print('Writing gff file ...')
 sys.stdout.flush()
 
 for seqKey in gtCoordDictBySeqKey:
-    if alleleKeyDictBySeqKey.has_key(seqKey):
-	coordList = gtCoordDictBySeqKey[seqKey]
-	column1 = coordList[3]
-	column4 = str(coordList[0])
-	column5 = str(coordList[1])
-	column7 = coordList[2]
-	alleleKey = alleleKeyDictBySeqKey[seqKey]
-	seqTagID = seqTagIdsDictBySeqKey[seqKey]
-	seqID = seqIdDictBySeqKey[seqKey]
-	
-	alleleList = alleleIdAndCreatorDictByAlleleKey[alleleKey]
+    if seqKey in alleleKeyDictBySeqKey:
+        coordList = gtCoordDictBySeqKey[seqKey]
+        column1 = coordList[3]
+        column4 = str(coordList[0])
+        column5 = str(coordList[1])
+        column7 = coordList[2]
+        alleleKey = alleleKeyDictBySeqKey[seqKey]
+        seqTagID = seqTagIdsDictBySeqKey[seqKey]
+        seqID = seqIdDictBySeqKey[seqKey]
+        
+        alleleList = alleleIdAndCreatorDictByAlleleKey[alleleKey]
         mgiID = alleleList[0]
         creator = alleleList[1]
-	fp.write(column1 + TAB)
-	fp.write(column2 + TAB)
-	fp.write(column3 + TAB)
-	fp.write(column4 + TAB)
-	fp.write(column5 + TAB)
-	fp.write(column6 + TAB)
-	fp.write(column7 + TAB)
-	fp.write(column8 + TAB)
-	fp.write(column9 % (creator, seqTagID, seqID, mgiID, seqType) + CRT)
+        fp.write(column1 + TAB)
+        fp.write(column2 + TAB)
+        fp.write(column3 + TAB)
+        fp.write(column4 + TAB)
+        fp.write(column5 + TAB)
+        fp.write(column6 + TAB)
+        fp.write(column7 + TAB)
+        fp.write(column8 + TAB)
+        fp.write(column9 % (creator, seqTagID, seqID, mgiID, seqType) + CRT)
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
-

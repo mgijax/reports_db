@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -75,14 +74,14 @@ fp.write('#\n\n')
 #
 
 db.sql('''select a._Allele_key, a._Marker_key, a.symbol, a.name,
-	aa.accID as projectID, ldb.name as ldb, m.symbol as markerSymbol
-	into temporary table komp 
-	from ALL_Allele a, ACC_Accession aa, ACC_LogicalDB ldb, MRK_Marker m 
+        aa.accID as projectID, ldb.name as ldb, m.symbol as markerSymbol
+        into temporary table komp 
+        from ALL_Allele a, ACC_Accession aa, ACC_LogicalDB ldb, MRK_Marker m 
         where a._Allele_key = aa._Object_key 
         and aa._MGIType_key = 11 
         and aa._LogicalDB_key in (125, 126) 
         and aa._LogicalDB_key = ldb._LogicalDB_key 
-	and a._Marker_key = m._Marker_key''', None)
+        and a._Marker_key = m._Marker_key''', None)
 
 db.sql('create index idx1 on komp(_Allele_key)', None)
 db.sql('create index idx2 on komp(_Marker_key)', None)
@@ -128,18 +127,18 @@ for r in results:
 #
 
 results = db.sql('''
-	select distinct k._Allele_key, a.accID
-	from komp k, ALL_Allele_CellLine c, ACC_Accession a
+        select distinct k._Allele_key, a.accID
+        from komp k, ALL_Allele_CellLine c, ACC_Accession a
         where k._Allele_key = c._Allele_key
-	and c._MutantCellLine_key = a._Object_key
+        and c._MutantCellLine_key = a._Object_key
         and a._MGIType_key = 28
         and a._LogicalDB_key in (108,109)
-	''', 'auto')
+        ''', 'auto')
 mutantID = {}
 for r in results:
     key = r['_Allele_key']
     value = r['accID']
-    if not mutantID.has_key(key):
+    if key not in mutantID:
         mutantID[key] = []
     mutantID[key].append(value)
 
@@ -151,16 +150,15 @@ results = db.sql('select * from komp order by projectID', 'auto')
 for r in results:
 
     fp.write(r['projectID'] + TAB + \
-	     r['ldb'] + TAB + \
-	     alleleID[r['_Allele_key']] + TAB + \
-	     r['symbol'] + TAB + \
-	     r['name'] + TAB + \
-	     markerID[r['_Marker_key']] + TAB + \
-	     r['markerSymbol'] + TAB)
+             r['ldb'] + TAB + \
+             alleleID[r['_Allele_key']] + TAB + \
+             r['symbol'] + TAB + \
+             r['name'] + TAB + \
+             markerID[r['_Marker_key']] + TAB + \
+             r['markerSymbol'] + TAB)
 
-    if mutantID.has_key(r['_Allele_key']):
-	fp.write(string.join(mutantID[r['_Allele_key']], ','))
+    if r['_Allele_key'] in mutantID:
+        fp.write(','.join(mutantID[r['_Allele_key']]))
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
-

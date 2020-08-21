@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -54,37 +53,37 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 # Select probes w/ problem note
 db.sql('''
-	select p._Probe_key, p.name 
+        select p._Probe_key, p.name 
         into temporary table probes 
         from PRB_Notes n, PRB_Probe p 
         where lower(n.note) like '%staff have found evidence of artifact in the sequence of this molecular%'
         and n._Probe_key = p._Probe_key
-	''', None)
+        ''', None)
 db.sql('create index probes_idx1 on probes(_Probe_key)', None)
 
 # Select probes w/ Seq IDs and without Seq IDs
 db.sql('''
-	(
-	select distinct p._Probe_key, p.name, a.accID 
-	into temporary table probeseqs 
-	from probes p, ACC_Accession a 
-	where p._Probe_key = a._Object_key  
-	and a._MGIType_key = 3 
-	and a._LogicalDB_key = 9 
-	union 
-	select distinct p._Probe_key, p.name, null as accID
-	from probes p, ACC_Accession pa 
-	where p._Probe_key = pa._Object_key 
-	and pa._MGIType_key = 3 
-	and pa.prefixPart = 'MGI:' 
-	and pa._LogicalDB_key = 1 
-	and not exists (select 1 from ACC_Accession a 
-	where p._Probe_key = a._Object_key  
-	and a._MGIType_key = 3 
-	and a._LogicalDB_key = 9) 
-	)
-	order by _Probe_key
-	''', None)
+        (
+        select distinct p._Probe_key, p.name, a.accID 
+        into temporary table probeseqs 
+        from probes p, ACC_Accession a 
+        where p._Probe_key = a._Object_key  
+        and a._MGIType_key = 3 
+        and a._LogicalDB_key = 9 
+        union 
+        select distinct p._Probe_key, p.name, null as accID
+        from probes p, ACC_Accession pa 
+        where p._Probe_key = pa._Object_key 
+        and pa._MGIType_key = 3 
+        and pa.prefixPart = 'MGI:' 
+        and pa._LogicalDB_key = 1 
+        and not exists (select 1 from ACC_Accession a 
+        where p._Probe_key = a._Object_key  
+        and a._MGIType_key = 3 
+        and a._LogicalDB_key = 9) 
+        )
+        order by _Probe_key
+        ''', None)
 db.sql('create index probeseqs_idx1 on probeseqs(_Probe_key)', None)
 
 # Select probes w/ only one Seq ID
@@ -93,41 +92,40 @@ db.sql('create index forncbi_idx1 on forncbi(_Probe_key)', None)
 
 # Select probe's markers which hybridizie
 results = db.sql('''
-	select p._Probe_key, p.name, p.accID, ma.accID as markerID
-	from forncbi n, probeseqs p, PRB_Marker m, ACC_Accession ma 
-	where n._Probe_key = p._Probe_key
-	and p._Probe_key = m._Probe_key 
-	and m.relationship = 'H' 
-	and m._Marker_key = ma._Object_key 
-	and ma._MGIType_key = 2 
-	and ma.prefixPart = 'MGI:' 
-	and ma._LogicalDB_key = 1 
-	and ma.preferred = 1 
-	order by p.accID
-	''', 'auto')
+        select p._Probe_key, p.name, p.accID, ma.accID as markerID
+        from forncbi n, probeseqs p, PRB_Marker m, ACC_Accession ma 
+        where n._Probe_key = p._Probe_key
+        and p._Probe_key = m._Probe_key 
+        and m.relationship = 'H' 
+        and m._Marker_key = ma._Object_key 
+        and ma._MGIType_key = 2 
+        and ma.prefixPart = 'MGI:' 
+        and ma._LogicalDB_key = 1 
+        and ma.preferred = 1 
+        order by p.accID
+        ''', 'auto')
 
 prevProbe = 0
 markers = []
 
 for r in results:
 
-	if prevProbe != r['_Probe_key']:
-		if len(markers) > 0:
-			fp.write(string.join(markers, ','))
-		markers = ''
+        if prevProbe != r['_Probe_key']:
+                if len(markers) > 0:
+                        fp.write(','.join(markers))
+                markers = ''
 
-		if prevProbe > 0:
-			fp.write(reportlib.CRT)
+                if prevProbe > 0:
+                        fp.write(reportlib.CRT)
 
-		fp.write(mgi_utils.prvalue(r['accID']) + reportlib.TAB)
-		fp.write(mgi_utils.prvalue(r['name']) + reportlib.TAB)
+                fp.write(mgi_utils.prvalue(r['accID']) + reportlib.TAB)
+                fp.write(mgi_utils.prvalue(r['name']) + reportlib.TAB)
 
-		prevProbe = r['_Probe_key']
-		markers = []
+                prevProbe = r['_Probe_key']
+                markers = []
 
         markers.append(r['markerID'])
 
-fp.write(string.join(markers, ','))
+fp.write(','.join(markers))
 fp.write(reportlib.CRT)
 reportlib.finish_nonps(fp)
-

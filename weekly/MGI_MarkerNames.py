@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -68,9 +67,9 @@ db.sql('''select m._Marker_key, m.symbol, m.name, a.accID, a.numericPart, t.name
         and a._MGIType_key = 2 
         and a._LogicalDB_key = 1 
         and a.prefixPart = 'MGI:' 
-	and a.preferred = 1
-	and m._Marker_Type_key = t._Marker_Type_key
-	''', None)
+        and a.preferred = 1
+        and m._Marker_Type_key = t._Marker_Type_key
+        ''', None)
 
 db.sql('create index idx1 on markers(_Marker_key)', None)
 
@@ -88,7 +87,7 @@ results = db.sql('''
 for r in results:
     key = r['_Marker_key']
     value = r['term']
-    if not mgiFeature.has_key(key):
+    if key not in mgiFeature:
         mgiFeature[key] = []
     mgiFeature[key].append(value)
 
@@ -96,20 +95,20 @@ for r in results:
 # synonyms
 #
 results = db.sql('''select m._Marker_key, s.synonym 
-	from markers m, MGI_Synonym s, MGI_SynonymType st 
-	where m._Marker_key = s._Object_key 
-	and s._MGIType_key = 2 
-	and s._SynonymType_key = st._SynonymType_key 
-	union
-	select distinct m._Marker_key, h.history
-	from markers m, MRK_History_View h
-	where m._Marker_key = h._Marker_key
-	''', 'auto')
+        from markers m, MGI_Synonym s, MGI_SynonymType st 
+        where m._Marker_key = s._Object_key 
+        and s._MGIType_key = 2 
+        and s._SynonymType_key = st._SynonymType_key 
+        union
+        select distinct m._Marker_key, h.history
+        from markers m, MRK_History_View h
+        where m._Marker_key = h._Marker_key
+        ''', 'auto')
 mgiSyn = {}
 for r in results:
     key = r['_Marker_key']
     value = r['synonym']
-    if not mgiSyn.has_key(key):
+    if key not in mgiSyn:
         mgiSyn[key] = []
     mgiSyn[key].append(value)
 
@@ -117,30 +116,10 @@ for r in results:
 # non-mouse symbols
 #
 results = db.sql('''
-	select distinct m._Marker_key, mm.symbol || '|' || o.commonName as synonym
-	from markers m,
-		MRK_Cluster mc, MRK_ClusterMember mcm, MRK_ClusterMember mcm2, 
-		MRK_Marker mm, MGI_Organism o
-	where mc._ClusterSource_key = 9272151
-	and mc._Cluster_key = mcm._Cluster_key
-	and mcm._Marker_key = m._Marker_key
-	and mcm._Cluster_key = mcm2._Cluster_key
-	and mcm2._Marker_key = mm._Marker_key
-	and mm._Organism_key in (2,40)
-	and mm._Organism_key = o._Organism_key
-	''', 'auto')
-mgiNonMouse = {}
-for r in results:
-    key = r['_Marker_key']
-    value = r['synonym']
-    if not mgiNonMouse.has_key(key):
-        mgiNonMouse[key] = []
-    mgiNonMouse[key].append(value)
-
-results = db.sql('''
-	select distinct m._Marker_key, s.synonym || '|' || o.commonName as synonym
-	from markers m, MRK_Cluster mc, MRK_ClusterMember mcm, MRK_ClusterMember mcm2, 
-		MRK_Marker mm, MGI_Organism o, MGI_Synonym s
+        select distinct m._Marker_key, mm.symbol || '|' || o.commonName as synonym
+        from markers m,
+                MRK_Cluster mc, MRK_ClusterMember mcm, MRK_ClusterMember mcm2, 
+                MRK_Marker mm, MGI_Organism o
         where mc._ClusterSource_key = 9272151
         and mc._Cluster_key = mcm._Cluster_key
         and mcm._Marker_key = m._Marker_key
@@ -148,13 +127,33 @@ results = db.sql('''
         and mcm2._Marker_key = mm._Marker_key
         and mm._Organism_key in (2,40)
         and mm._Organism_key = o._Organism_key
-	and mm._Marker_key = s._Object_key
-	and s._MGIType_key = 2
-	''', 'auto')
+        ''', 'auto')
+mgiNonMouse = {}
 for r in results:
     key = r['_Marker_key']
     value = r['synonym']
-    if not mgiNonMouse.has_key(key):
+    if key not in mgiNonMouse:
+        mgiNonMouse[key] = []
+    mgiNonMouse[key].append(value)
+
+results = db.sql('''
+        select distinct m._Marker_key, s.synonym || '|' || o.commonName as synonym
+        from markers m, MRK_Cluster mc, MRK_ClusterMember mcm, MRK_ClusterMember mcm2, 
+                MRK_Marker mm, MGI_Organism o, MGI_Synonym s
+        where mc._ClusterSource_key = 9272151
+        and mc._Cluster_key = mcm._Cluster_key
+        and mcm._Marker_key = m._Marker_key
+        and mcm._Cluster_key = mcm2._Cluster_key
+        and mcm2._Marker_key = mm._Marker_key
+        and mm._Organism_key in (2,40)
+        and mm._Organism_key = o._Organism_key
+        and mm._Marker_key = s._Object_key
+        and s._MGIType_key = 2
+        ''', 'auto')
+for r in results:
+    key = r['_Marker_key']
+    value = r['synonym']
+    if key not in mgiNonMouse:
         mgiNonMouse[key] = []
     mgiNonMouse[key].append(value)
 
@@ -173,7 +172,7 @@ mgiID = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not mgiID.has_key(key):
+    if key not in mgiID:
         mgiID[key] = []
     mgiID[key].append(value)
 
@@ -182,26 +181,26 @@ for r in results:
 results = db.sql('select * from markers order by numericPart', 'auto')
 
 for r in results:
-	key = r['_Marker_key']
+        key = r['_Marker_key']
 
-	fp.write(r['accID'] + reportlib.TAB)
+        fp.write(r['accID'] + reportlib.TAB)
         fp.write(r['symbol'] + reportlib.TAB)
         fp.write(r['markerType'] + reportlib.TAB)
 
-	if mgiFeature.has_key(key):
-            fp.write(string.join(mgiFeature[key], '|'))
+        if key in mgiFeature:
+            fp.write('|'.join(mgiFeature[key]))
         fp.write(reportlib.TAB)
 
-	fp.write(r['name'] + reportlib.TAB)
+        fp.write(r['name'] + reportlib.TAB)
 
-	if mgiSyn.has_key(key):
-	    fp.write(string.join(mgiSyn[key], reportlib.TAB) + reportlib.TAB)
+        if key in mgiSyn:
+            fp.write(reportlib.TAB.join(mgiSyn[key]) + reportlib.TAB)
 
-	if mgiNonMouse.has_key(key):
-	    fp.write(string.join(mgiNonMouse[key], reportlib.TAB) + reportlib.TAB)
+        if key in mgiNonMouse:
+            fp.write(reportlib.TAB.join(mgiNonMouse[key]) + reportlib.TAB)
 
-	if mgiID.has_key(key):
-	    fp.write(string.join(mgiID[key], reportlib.TAB))
-	fp.write(reportlib.CRT)
+        if key in mgiID:
+            fp.write(reportlib.TAB.join(mgiID[key]))
+        fp.write(reportlib.CRT)
 
 reportlib.finish_nonps(fp)

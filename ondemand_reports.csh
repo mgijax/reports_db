@@ -26,7 +26,7 @@ cd ${ONDEMAND}
 
 foreach i (*.py)
     echo `date`: $i | tee -a ${LOG}
-    $i >>& ${LOG}
+    ${PYTHON} $i >>& ${LOG}
 end
 
 echo `date`: End on-demand public reports | tee -a ${LOG}

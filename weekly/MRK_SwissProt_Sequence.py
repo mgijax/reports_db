@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -72,31 +71,30 @@ db.sql('''
 # Retrieve any Nucleotide Seq IDs which exist for Markers
 
 results = db.sql('''
-	select m._Marker_key, a.accID 
-	from markers m, ACC_Accession a 
+        select m._Marker_key, a.accID 
+        from markers m, ACC_Accession a 
         where m._Marker_key = a._Object_key 
         and a._MGIType_key = 2 
         and a._LogicalDB_key = 9 
-	order by m._Marker_key, a.accID
-	''', 'auto')
+        order by m._Marker_key, a.accID
+        ''', 'auto')
 seqIDs = {}
 for r in results:
-    if not seqIDs.has_key(r['_Marker_key']):
-	seqIDs[r['_Marker_key']] = []
+    if r['_Marker_key'] not in seqIDs:
+        seqIDs[r['_Marker_key']] = []
     seqIDs[r['_Marker_key']].append(r['accID'])
 
 results = db.sql('select * from markers order by symbol, mgiID', 'auto')
 for r in results:
 
-	fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
-	         mgi_utils.prvalue(r['name']) + reportlib.TAB + \
-	         mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
-	         mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
+        fp.write(mgi_utils.prvalue(r['symbol']) + reportlib.TAB + \
+                 mgi_utils.prvalue(r['name']) + reportlib.TAB + \
+                 mgi_utils.prvalue(r['mgiID']) + reportlib.TAB + \
+                 mgi_utils.prvalue(r['chromosome']) + reportlib.TAB)
 
-	if seqIDs.has_key(r['_Marker_key']):
-		fp.write(string.join(seqIDs[r['_Marker_key']], ' '))
+        if r['_Marker_key'] in seqIDs:
+                fp.write(' '.join(seqIDs[r['_Marker_key']]))
 
-	fp.write(reportlib.CRT)
+        fp.write(reportlib.CRT)
 
 reportlib.finish_nonps(fp)
-

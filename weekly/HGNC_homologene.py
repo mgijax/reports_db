@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -71,7 +70,7 @@ def getCoords(logicalDBkey, provider):
 
     if logicalDBkey in [ncbi, ensembl]:
         results = db.sql('''
-		select m._Marker_key, a.accID, 
+                select m._Marker_key, a.accID, 
                        c.chromosome, c.strand, 
                        c.startCoordinate::int as startC, 
                        c.endCoordinate::int as endC 
@@ -81,15 +80,15 @@ def getCoords(logicalDBkey, provider):
                     and mc._Sequence_key = a._Object_key 
                     and a._MGIType_key = %d
                     and a._LogicalDB_key = %d 
-		 ''' % (sequenceType, logicalDBkey) , 'auto')
+                 ''' % (sequenceType, logicalDBkey) , 'auto')
 
         for r in results:
             key = r['_Marker_key']
             value = r
             tempCoords[key] = value
     else:
-	raise 'BadValueError', 'Unknown logicalDBkey in getCoords: %s' % \
-		logicalDBkey
+        raise ValueError('Unknown logicalDBkey in getCoords: %s' % \
+                logicalDBkey)
  
     return tempCoords
 
@@ -99,47 +98,47 @@ def loadLookups():
     # load lookup mapping mouse marker key to human marker keys from both HGNC and HG clusters
     # while we are at it, load mapping of human markers to their HGene ids
     results = db.sql('''select cm._Cluster_key, cm._Marker_key, m._Organism_key, c.clusterId
-	from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
-	where c._ClusterType_key = 9272150
-	and c._ClusterSource_key in (9272151, 13437099)  
-	and c._Cluster_key = cm._Cluster_key
-	and cm._Marker_key = m._Marker_key''', 'auto')
+        from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
+        where c._ClusterType_key = 9272150
+        and c._ClusterSource_key in (9272151, 13437099)  
+        and c._Cluster_key = cm._Cluster_key
+        and cm._Marker_key = m._Marker_key''', 'auto')
 
     tempClusterDict = {}
     for r in results:
-	clusterKey = r['_Cluster_key']
-	markerKey = r['_Marker_key']
-	orgKey = r['_Organism_key']
-	hgeneId = r['clusterId']
-	if not tempClusterDict.has_key(clusterKey):
-	   tempClusterDict[clusterKey] = [[],[]]
-	if orgKey == 1:
-	    tempClusterDict[clusterKey][0].append(markerKey)
-	     # if this is a homologene cluster (aka has a clusterId (HGNC is null))
+        clusterKey = r['_Cluster_key']
+        markerKey = r['_Marker_key']
+        orgKey = r['_Organism_key']
+        hgeneId = r['clusterId']
+        if clusterKey not in tempClusterDict:
+           tempClusterDict[clusterKey] = [[],[]]
+        if orgKey == 1:
+            tempClusterDict[clusterKey][0].append(markerKey)
+             # if this is a homologene cluster (aka has a clusterId (HGNC is null))
             if hgeneId != None:
-                if not hgeneIdDict.has_key(markerKey):
+                if markerKey not in hgeneIdDict:
                     hgeneIdDict[markerKey]= []
                 hgeneIdDict[markerKey].append(hgeneId)
-   	else:
-	    tempClusterDict[clusterKey][1].append(markerKey)
+        else:
+            tempClusterDict[clusterKey][1].append(markerKey)
 
     # load lookup mapping mouse marker key to the set of all human markers it has homology with
-    for clusterKey in tempClusterDict.keys():
-	mouseList = tempClusterDict[clusterKey][0]
-	humanList = tempClusterDict[clusterKey][1]
-	hgncList = []
-	for mKey in mouseList:
-	    if not homologyDict.has_key(mKey):
-		homologyDict[mKey] = []
-	    homologyDict[mKey] =  homologyDict[mKey] + humanList
+    for clusterKey in list(tempClusterDict.keys()):
+        mouseList = tempClusterDict[clusterKey][0]
+        humanList = tempClusterDict[clusterKey][1]
+        hgncList = []
+        for mKey in mouseList:
+            if mKey not in homologyDict:
+                homologyDict[mKey] = []
+            homologyDict[mKey] =  homologyDict[mKey] + humanList
 
     # load lookup mapping human markers to their HGNC IDs
     results = db.sql('''select accid, _Object_key
-	from ACC_Accession
-	where _MGIType_key = 2 
-	and _LogicalDB_key = 64''', 'auto')
+        from ACC_Accession
+        where _MGIType_key = 2 
+        and _LogicalDB_key = 64''', 'auto')
     for r in results:
-	hgncIdDict[r['_Object_key']] = r['accid']
+        hgncIdDict[r['_Object_key']] = r['accid']
 
     # load ccds lookup
     results = db.sql('''select _Object_key as markerKey, accID
@@ -148,11 +147,11 @@ def loadLookups():
         and preferred = 1
         and _LogicalDB_key = %s''' % ccds, 'auto')
     for r in results:
-	mKey = r['markerKey']
-	id =  r['accID']
-	if not ccdsDict.has_key(mKey):
-	    ccdsDict[mKey] = []
-	ccdsDict[mKey].append(id)
+        mKey = r['markerKey']
+        id =  r['accID']
+        if mKey not in ccdsDict:
+            ccdsDict[mKey] = []
+        ccdsDict[mKey].append(id)
 
     # load feature type lookup
     results = db.sql('''select m._Marker_key, t.term 
@@ -166,10 +165,10 @@ def loadLookups():
         and v._Term_key = t._Term_key''', 'auto')
 
     for r in results:
-	markerKey = r['_Marker_key']
-	featureType = r['term']
-	featureTypeDict[markerKey] = featureType
-	
+        markerKey = r['_Marker_key']
+        featureType = r['term']
+        featureTypeDict[markerKey] = featureType
+        
      
 #
 # Main
@@ -205,13 +204,13 @@ db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name
         from MRK_Marker m, ACC_Accession a
         where m._Organism_key = 1
         and m._Marker_Status_key = 1
-	and m._Marker_Type_key in (1,7)
+        and m._Marker_Type_key in (1,7)
         and m._Marker_key = a._Object_key
         and a._MGIType_key = 2
         and a.prefixPart = 'MGI:'
         and a._LogicalDB_key = 1
         and a.preferred = 1
-	''', None)
+        ''', None)
 
 db.sql('create index idx1 on markers(_Marker_key)', None)
 
@@ -236,14 +235,14 @@ for r in results:
     fp.write(r['accID'] + TAB)
     fp.write(r['symbol'] + TAB)
     fp.write(r['name'] + TAB)
-    if featureTypeDict.has_key(key):
-	fp.write(featureTypeDict[key] + TAB)
+    if key in featureTypeDict:
+        fp.write(featureTypeDict[key] + TAB)
     else:
-	fp.write(noneDisplay)
+        fp.write(noneDisplay)
 
     # NCBI coordinate (5-9)
 
-    if ncbiCoords.has_key(key):
+    if key in ncbiCoords:
         c = ncbiCoords[key]
         fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
@@ -255,7 +254,7 @@ for r in results:
 
     # Ensembl coordinate (10-14)
 
-    if ensemblCoords.has_key(key):
+    if key in ensemblCoords:
         c = ensemblCoords[key]
         fp.write(c['accID'] + TAB)
         fp.write(c['chromosome'] + TAB)
@@ -266,45 +265,45 @@ for r in results:
         fp.write(5*noneDisplay)
 
     # CCDS (20)
-    if ccdsDict.has_key(key):
-	ids = string.join(ccdsDict[key], '|')
-	fp.write(ids + TAB)
+    if key in ccdsDict:
+        ids = '|'.join(ccdsDict[key])
+        fp.write(ids + TAB)
     else:
-	fp.write(noneDisplay)
+        fp.write(noneDisplay)
 
     # HGNC and HomoloGene(21-22)
     # If the mouse key has no HG or HGNC homology leave blank
-    if not homologyDict.has_key(key):
-	fp.write(noneDisplay)
-	fp.write(noneDisplay)
+    if key not in homologyDict:
+        fp.write(noneDisplay)
+        fp.write(noneDisplay)
     else:
-	# list of human markers this mouse has homology with
-	humanList = homologyDict[key]
-	hgncList = []
-	hgeneList = []
+        # list of human markers this mouse has homology with
+        humanList = homologyDict[key]
+        hgncList = []
+        hgeneList = []
 
-	# get the HGene ID associated with  the human homologs for this mouse marker
-	if hgeneIdDict.has_key(key):
-	    hgeneList = hgeneIdDict[key]
+        # get the HGene ID associated with  the human homologs for this mouse marker
+        if key in hgeneIdDict:
+            hgeneList = hgeneIdDict[key]
 
-	# get the HGNC IDs associated with the human homologs for this mouse marker
-	for hKey in humanList:
-	    if hgncIdDict.has_key(hKey):
-	        hgncList.append(hgncIdDict[hKey])
+        # get the HGNC IDs associated with the human homologs for this mouse marker
+        for hKey in humanList:
+            if hKey in hgncIdDict:
+                hgncList.append(hgncIdDict[hKey])
 
-	# create sets, there could be dups
-	hgncSet = set(hgncList)
-	hgeneSet = set(hgeneList)
-	# write out each set pipe delimited
-	if hgncSet:
-	    fp.write(string.join(hgncSet, '|') + TAB)
-	else:
-	    fp.write(noneDisplay)
-	if hgeneSet: 
-	    fp.write(string.join(hgeneSet, '|') + TAB)
-	else:
+        # create sets, there could be dups
+        hgncSet = set(hgncList)
+        hgeneSet = set(hgeneList)
+        # write out each set pipe delimited
+        if hgncSet:
+            fp.write('|'.join(hgncSet) + TAB)
+        else:
             fp.write(noneDisplay)
-	    
+        if hgeneSet: 
+            fp.write('|'.join(hgeneSet) + TAB)
+        else:
+            fp.write(noneDisplay)
+            
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)

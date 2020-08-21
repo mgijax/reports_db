@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -56,9 +55,9 @@ cmd = '''
 results = db.sql(cmd, 'auto')
 
 for r in results:
-	fp.write(r['dag'] + TAB)
-	fp.write(r['accID'] + TAB)
-	fp.write(r['term'] + CRT)
+        fp.write(r['dag'] + TAB)
+        fp.write(r['accID'] + TAB)
+        fp.write(r['term'] + CRT)
 
 reportlib.finish_nonps(fp)
 
@@ -82,4 +81,3 @@ reportlib.finish_nonps(fp)
 #	fp.write(r['term'] + CRT)
 #
 #reportlib.finish_nonps(fp)
-

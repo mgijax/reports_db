@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 '''
 #
@@ -136,20 +135,20 @@ db.sql('create index deletedIDS_idx2 on deletedIDs(_LogicalDB_key)', None)
 #
 
 db.sql('''
-	select m._Marker_key, m.symbol, m.name, m.chromosome, 
-	mlc.genomicChromosome,
-	m.cmoffset, upper(substring(s.status, 1, 1)) as markerStatus, t.name as markerType
-	into temporary table markers 
-	from MRK_Marker m, MRK_Status s, MRK_Types t,
-		MRK_Location_Cache mlc
-	where m._Organism_key = 1 
-	and m._Marker_Status_key = 1 
-	and m._Marker_key = mlc._Marker_key 
-	and m._Marker_Status_key = s._Marker_Status_key 
-	and m._Marker_Type_key = t._Marker_Type_key 
-	and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key 
-	and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27, 133) and a.prefixPart not in ('XP_', 'NP_'))
-	''', None)
+        select m._Marker_key, m.symbol, m.name, m.chromosome, 
+        mlc.genomicChromosome,
+        m.cmoffset, upper(substring(s.status, 1, 1)) as markerStatus, t.name as markerType        
+        into temporary table markers 
+        from MRK_Marker m, MRK_Status s, MRK_Types t,
+                MRK_Location_Cache mlc
+        where m._Organism_key = 1 
+        and m._Marker_Status_key = 1 
+        and m._Marker_key = mlc._Marker_key 
+        and m._Marker_Status_key = s._Marker_Status_key 
+        and m._Marker_Type_key = t._Marker_Type_key 
+        and exists (select 1 from ACC_Accession a where m._Marker_key = a._Object_key 
+        and a._MGIType_key = 2 and a._LogicalDB_key in (9, 27, 133) and a.prefixPart not in ('XP_', 'NP_'))
+        ''', None)
 db.sql('create index markers_idx1 on markers(_Marker_key)', None)
 db.sql('create index markers_idx2 on markers(symbol)', None)
 
@@ -174,15 +173,15 @@ for r in results:
 # Feature types
 # 
 results = db.sql('''
-	select distinct _Marker_key, term
-	from MRK_MCV_Cache
-	where qualifier = 'D' ''', 'auto')
+        select distinct _Marker_key, term
+        from MRK_MCV_Cache
+        where qualifier = 'D' ''', 'auto')
 mcvTerms = {}
 for r in results:
     key = r['_Marker_key']
     term = r['term']
-    if not mcvTerms.has_key(key):
-	mcvTerms[key] = []
+    if key not in mcvTerms:
+        mcvTerms[key] = []
     mcvTerms[key].append(term)
 #
 # coordinates
@@ -190,17 +189,17 @@ for r in results:
 results = db.sql('''	
     select m._marker_key,
            c.strand, 
-	   c.startCoordinate::int as startC,
-	   c.endCoordinate::int as endC
+           c.startCoordinate::int as startC,
+           c.endCoordinate::int as endC
     from markers m, MRK_Location_Cache c
     where m._marker_key = c._marker_key
-	''', 'auto')
+        ''', 'auto')
 coords = {}
 for r in results:
     key = r['_marker_key']
     value = r
-    if not coords.has_key(key):
-	coords[key] = []
+    if key not in coords:
+        coords[key] = []
     coords[key].append(value)
 
 # GenBank ids
@@ -216,8 +215,8 @@ gbID = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not gbID.has_key(key):
-	gbID[key] = []
+    if key not in gbID:
+        gbID[key] = []
     gbID[key].append(value)
 # UniGene ids
 
@@ -233,7 +232,7 @@ ugID = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not ugID.has_key(key):
+    if key not in ugID:
         ugID[key] = []
     ugID[key].append(value)
 
@@ -251,8 +250,8 @@ rstrans = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not rstrans.has_key(key):
-	rstrans[key] = []
+    if key not in rstrans:
+        rstrans[key] = []
     rstrans[key].append(value)
 
 # RefSeq protein ids
@@ -269,8 +268,8 @@ rsprot = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not rsprot.has_key(key):
-	rsprot[key] = []
+    if key not in rsprot:
+        rsprot[key] = []
     rsprot[key].append(value)
 
 # Ensembl transript IDs
@@ -286,7 +285,7 @@ enstrans = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not enstrans.has_key(key):
+    if key not in enstrans:
         enstrans[key] = []
     enstrans[key].append(value)
 
@@ -303,7 +302,7 @@ ensprot = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not ensprot.has_key(key):
+    if key not in ensprot:
         ensprot[key] = []
     ensprot[key].append(value)
 
@@ -320,8 +319,8 @@ uniprotID = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not uniprotID.has_key(key):
-	uniprotID[key] = []
+    if key not in uniprotID:
+        uniprotID[key] = []
     uniprotID[key].append(value)
 
 # TrEMBL ids
@@ -337,8 +336,8 @@ tremblID = {}
 for r in results:
     key = r['_Marker_key']
     value = r['accID']
-    if not tremblID.has_key(key):
-	tremblID[key] = []
+    if key not in tremblID:
+        tremblID[key] = []
     tremblID[key].append(value)
 
 # process
@@ -347,22 +346,22 @@ results = db.sql('select * from markers order by symbol', 'auto')
 
 for r in results:
 
-	key = r['_Marker_key']
-	symbol = r['symbol']
+        key = r['_Marker_key']
+        symbol = r['symbol']
 
-	#
-	# skipping markers that do not cotain a genbank and refseq transcript id
-	# sc - 9/16/15, TR11957, remove this constraint
-	#if not gbID.has_key(key) and not rstrans.has_key(key):
-	#    #print 'not gb', symbol
-	#    continue
+        #
+        # skipping markers that do not cotain a genbank and refseq transcript id
+        # sc - 9/16/15, TR11957, remove this constraint
+        #if not gbID.has_key(key) and not rstrans.has_key(key):
+        #    #print 'not gb', symbol
+        #    continue
 
-	if r['cmoffset'] == -1.0:
-		cmoffset = 'syntenic'
-	elif r['cmoffset'] == -999.0:
-		cmoffset = 'N/A'
-	else:
-		cmoffset = str(r['cmoffset'])
+        if r['cmoffset'] == -1.0:
+                cmoffset = 'syntenic'
+        elif r['cmoffset'] == -999.0:
+                cmoffset = 'N/A'
+        else:
+                cmoffset = str(r['cmoffset'])
 
 #	1:  MGI Marker Accession ID
 #	2:  Marker Symbol
@@ -372,21 +371,21 @@ for r in results:
 #	6:  cM position
 #	7:  Chromosome
 
-	if r['genomicChromosome']:
-		chromosome = r['genomicChromosome']
-	else:
-		chromosome = r['chromosome']
+        if r['genomicChromosome']:
+                chromosome = r['genomicChromosome']
+        else:
+                chromosome = r['chromosome']
 
-	fp.write(mgiID[key] + TAB + \
-	       	 r['symbol'] + TAB + \
-	       	 r['markerStatus'] + TAB + \
-	         r['markerType'] + TAB + \
-	         r['name'] + TAB + \
-	         cmoffset + TAB + \
-	         chromosome + TAB)
+        fp.write(mgiID[key] + TAB + \
+                 r['symbol'] + TAB + \
+                 r['markerStatus'] + TAB + \
+                 r['markerType'] + TAB + \
+                 r['name'] + TAB + \
+                 cmoffset + TAB + \
+                 chromosome + TAB)
 
-	# genome coordinates: column 8-9-10
-        if coords.has_key(key):
+        # genome coordinates: column 8-9-10
+        if key in coords:
                 fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['startC']) + TAB)
                 fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['endC']) + TAB)
                 fp.write(mgi_utils.prvalue(coords[r['_Marker_key']][0]['strand']) + TAB)
@@ -394,48 +393,47 @@ for r in results:
                 fp.write(TAB + TAB + TAB)
 
 #	11: GenBank ID
-	if gbID.has_key(key):
-		fp.write(string.join(gbID[key], '|'))
-	fp.write(TAB)
+        if key in gbID:
+                fp.write('|'.join(gbID[key]))
+        fp.write(TAB)
 
 #	12: RefSeq ID
-	if rstrans.has_key(key):
-		fp.write(string.join(rstrans[key], '|'))
-	fp.write(TAB)
+        if key in rstrans:
+                fp.write('|'.join(rstrans[key]))
+        fp.write(TAB)
 
 #	13: Ensembl transcript ID
-        if enstrans.has_key(key):
-                fp.write(string.join(enstrans[key], '|'))
-	fp.write(TAB)
+        if key in enstrans:
+                fp.write('|'.join(enstrans[key]))
+        fp.write(TAB)
 
 #	14: UniProt ID
-        if uniprotID.has_key(key):
-                fp.write(string.join(uniprotID[key], '|'))
-	fp.write(TAB)
+        if key in uniprotID:
+                fp.write('|'.join(uniprotID[key]))
+        fp.write(TAB)
 
 #	15: TrEMBL ID
-        if tremblID.has_key(key):
-                fp.write(string.join(tremblID[key], '|'))
-	fp.write(TAB)
+        if key in tremblID:
+                fp.write('|'.join(tremblID[key]))
+        fp.write(TAB)
 
 #	16: Ensembl protein ID
-        if ensprot.has_key(key):
-                fp.write(string.join(ensprot[key], '|'))
-	fp.write(TAB)
+        if key in ensprot:
+                fp.write('|'.join(ensprot[key]))
+        fp.write(TAB)
 
 #	17: RefSeq protein ID
-	if rsprot.has_key(key):
-		fp.write(string.join(rsprot[key], '|'))
+        if key in rsprot:
+                fp.write('|'.join(rsprot[key]))
         fp.write(TAB)
 #	18: UniGene ID
-        if ugID.has_key(key):
-                fp.write(string.join(ugID[key], '|'))
+        if key in ugID:
+                fp.write('|'.join(ugID[key]))
         fp.write(TAB)
 
 #	19: MCV Term
-	if mcvTerms.has_key(key):
-		fp.write(string.join(mcvTerms[key], '|'))
-	fp.write(CRT)
+        if key in mcvTerms:
+                fp.write('|'.join(mcvTerms[key]))
+        fp.write(CRT)
 
 reportlib.finish_nonps(fp)
-
