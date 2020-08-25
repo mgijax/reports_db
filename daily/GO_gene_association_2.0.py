@@ -11,6 +11,19 @@
 #
 # gpad col vs gaf col
 #
+#!! 1. DB_Object_ID ::= ID       MGI or PR
+#!! 2. Negation ::= 'NOT'
+#!! 3. Relation ::= OBO_ID
+#!! 4. Ontology_Class_ID ::= OBO_ID
+#!! 5. Reference ::= [ID] ('|' ID)*
+#!! 6. Evidence_type ::= OBO_ID
+#!! 7. With_or_From ::= [ID] ('|' | ‘,’ ID)*
+#!! 8. Interacting_taxon_ID ::= NCBITaxon:[Taxon_ID]
+#!! 9. Date ::= YYYY-MM-DD
+#!! 10. Assigned_by ::= Prefix
+#!! 11. Annotation_Extensions ::= [Extension_Conj] ('|' Extension_Conj)*
+#!! 12. Annotation_Properties ::= [Property_Value_Pair] ('|' Property_Value_Pair)*
+#
 # DB			1	1
 # DB_Object_ID		2	2/17 (isoforms)
 # Qualifier		3	4
@@ -24,153 +37,8 @@
 # Annotation Extension	11	16
 # Annotation Properties	12
 # 
-# IMPORTANT THINGS TO KNOW:
-#
-#    gaf/col11 (annotation extension) and gpad/col16 should be equal.
-#    except :  ISO annotations are excluded from gaf/col11 (blank)
-#    see "lib_py_report/go_annot_extensions.py" for the list of
-#	excluded Properties and excluded Evidence
-#
-#    gpad/col16 : will *never* contains > 1 stanza, and will always use the "," delimiter
-#
-# History:
-#
-# lec   04/01/2020 python 3 upgrade
-#
-# sc    03/21/2020 python 3 upgrade
-#
-# lec	03/04/2019
-#	- TR13049/use same assignedBy logic for both GAF and GPAD files
-#
-# lec	01/22/2019
-#	- TR13010/addGPADReportRow/add special processing if inferredFrom=InterPro
-#
-# lec	02/21/2018
-#	- TR12768/if assigned_by = 'UniProtKB' or 'RGD', then set to 'MGI'
-#
-# lec	10/25/2017
-#	- TR12664/noctua-model-id
-#
-# lec	07/14/2016
-#	- TR12349/12345/Noctua/GPAD added
-#
-# kstone 09/14/2015
-#	- TR12070 Refactored col16 and col17 logic into 'go_annot_extensions' and 'go_isoforms' modules
-#		Removed extra protein values for col17. Use only isoform 'gene product' GO properties now
-#
-# lec	04/22/2015
-#	- TR11932/added "GO_" (for GO_Central) to set proper assignedBy value
-#
-# sc	11/06/2014
-#	- TR11772/Modification of GAF file references
-#
-# lec   10/24/2014
-#       - TR11750/postres complient
-#
-# lec	07/02/2014
-#	- TR11693/only include official/interum markers
-#
-# lec	07/01/2014
-#	- TR11710/doGAFCol16
-#
-# lec	01/13/2014
-#	- TR11570/fix GO qualifier; use VOC_Term
-#
-# lec	01/02/2014
-#	- TR11518/add "new" doGAFCol16()
-#	- all mgi-properties shoudl now be coverted to go-properties
-#
-# lec	08/27/2013
-#	- TR11459/GOANNOT_RELATIONSHIP/fix
-#
-# lec	05/28/2013
-#	- TR11060/add all UniProtKB: and PR:
-#
-# lec	01/15/2013
-#	- TR11112/use GOANNOTRELATIONSHIP to generate column 16
-#
-# lec	05/08/2012
-#	- TR11060/add secondary file/subset/
-#	  only contains annotations where column 17 (gene product) has UniProtKB:xxxx-??
-#	  gene_association_pro.mgi
-#
-# lec	03/13/2012
-# lec	03/08/2012
-#	pubMed = {} was being called/selected twice
-#	pubMed = change query to 'distinct'
-#
-# lec	06/20/2011
-#   - TR10044/MGI_Notes --> VOC_Evidence_Property
-#	this affects col16LookupByEvidence, isoformsProtein, column 12, 16, 17
-#
-# lec	03/30/2011
-#   - TR10652/change 'NCBI:' to 'RefSeq:'
-#
-# lec	03/21/2011
-#   - TR9962/add 'RefGenome' to column 15
-#
-# lec	03/15/2011
-#   - TR10633/allow PRO ids (PR:) in column 17
-#
-# lec
-#   - TR6839/marker types
-#   - marker type 11 (microRNA) moved to marker type 1 (gene)
-#   - changes to proteins/proteinsGene hash/column 17
-#
-# lec   06/17/2010
-#   - check logicalDB for proteins and proteinsGene hash
-#     and fix prefix name for Vega, Ensembl
-#
-# lec	06/10/2010
-#   - cleanup up cell ontology, isoform protein and protein hashes
-#   - added TR9901/date history (see below)
-#
-# lec	06/03/2010
-#   - TAB not being written in between column 15/column 16
-#   - column 16/17: replace MRK_Marker with go/marker temp table
-#
-# lec	04/29/2010
-#   - TR9777/"swissload" login name changed to "uniprotload"
-#
-# lec	03/02/2010
-#   - TR10035; added RGD check for column 15
-#
-# mhall 02/02/2010
-#   - TR 9901; column 12, 16, 17
-#
-# lec   07/24/2008
-#   - TR 9134; change UniProt to UniProtKB
-#
-# lec   05/07/2008
-#   - TR 8997; lowercase the marker types
-#
-# lec   01/25/2007
-#   - TR 8122; don't convert inferredFrom delimiters; use as is in the database
-#
-# lec   09/14/2006
-#   - TR 7904; append GOA annotations   
-#
-# lec   10/19/2005
-#   - added PMID, TR 7173
-#
-# lec   10/04/2005
-#   - TR 5188; GO Qualifier
-#
-# lec   10/03/2005
-#   - replace SWALL with UniProt
-#
-# lec   03/10/2004
-#       - only include Markers of type Gene
-#
-# lec   02/11/2003
-#   - TR 4511; add new column "assigned by"
-#
-# lec   04/02/2002
-#   - TR 3527; some terms may not have DAGs; this shouldn't happen
-#   but we don't want the report to bomb if it does.
-#
-# lec   01/28/2002
-#   - new - revision 2.0
+# lec   08/25/2020
+#       - TR13272/converting to GPI 2.0
 #
 '''
 
@@ -189,7 +57,7 @@ import ecolib
 db.setTrace()
 
 MGIPREFIX = 'MGI'
-SPECIES = 'taxon:10090'
+SPECIES = 'NCBITaxon:10090'
 
 #
 # if in list 1, then use 'UniProt'
@@ -1047,7 +915,7 @@ reportlib.finish_nonps(fp2)
 # GPAD 2.0
 #
 
-fp = reportlib.init('mgi', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init('mgi2', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('!gpa-version: 2.0\n') 
 fp.write('!\n')
