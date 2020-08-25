@@ -25,7 +25,8 @@ echo `date`: Start daily public reports | tee -a ${LOG}
 # Generate daily public reports.
 #
 cd ${PUBDAILY}
-foreach i (*.py)
+#foreach i (*.py)
+foreach i (GO_gene_association.py GO_gpi.py)
     echo `date`: $i | tee -a ${LOG}
     ${PYTHON} $i >>& ${LOG}
 end
