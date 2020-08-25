@@ -328,6 +328,10 @@ def doSetup():
         key = r['_AnnotEvidence_key']
         value = r['value'].replace('MGI:', 'MGI:MGI:')
         value = r['term'] + '(' + value + ')'
+
+        # TR13272/for version 2
+        value = value.replace('_', ' ')
+
         if key not in gpadCol11Lookup:
             gpadCol11Lookup[key] = []
         gpadCol11Lookup[key].append(value)
@@ -772,7 +776,6 @@ def addGPADReportRow(reportRow, r):
         else:
             default_relation_for_aspect = dagQualifier[dag[r['_Term_key']]]
 
-        # replace "_" with space
         default_relation_for_aspect = default_relation_for_aspect.replace('_', ' ')
 
         try:
