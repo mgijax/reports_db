@@ -53,7 +53,6 @@ import db
 goloadpath = os.environ['GOLOAD'] + '/lib'
 sys.path.insert(0, goloadpath)
 import ecolib
-import rolib
 
 db.setTrace()
 
@@ -95,12 +94,14 @@ proteins = {}
 # gpad lookups
 #
 # translate dag to qualifier (col 3)
-dagQualifier = {'C':'part_of', 'P':'acts_upstream_of_or_within', 'F':'enables'}
+dagQualifier = {'C':'BFO:0000050', 'P':'RO:0002264', 'F':'RO:0002327'}
 taxonLookup = {}
 ecoLookupByEco = {}
 ecoLookupByEvidence = {}
 evidenceLookup = {}
+goPropertyLookup = {}
 gpadCol3Lookup = {}
+gpadROCol3Lookup = {}
 gpadCol11Lookup = {}
 gpadCol12Lookup = {}
 
@@ -114,8 +115,9 @@ def doSetup():
     global evidenceLookup
     global taxonLookup
     global ecoLookupByEco, ecoLookupByEvidence
-    global roLookupByRO, roLookupByName
+    global goPropertyLookup
     global gpadCol3Lookup
+    global gpadROCol3Lookup
     global gpadCol11Lookup
     global gpadCol12Lookup
     global goRefDict
@@ -234,14 +236,6 @@ def doSetup():
     ecoLookupByEco, ecoLookupByEvidence = ecolib.processECO()
     #print(ecoLookupByEvidence)
 
-    #
-    # roLookupByRO
-    # roLookupByName
-    #
-    # use goload/rolib to lookup RO using ...
-    roLookupByRO, roLookupByName = rolib.processRO()
-    #print(roLookupByName)
-
     results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
             from gomarker2 a,
                  VOC_Evidence_Property p,  
@@ -283,24 +277,63 @@ def doSetup():
     #print(taxonLookup)
 
     #
-    # gpadCol3 : go_qualifier
+    # GO/Property : note (definition) contains RO/.etc
     #
-    results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
+    results = db.sql('''select t.term, t.note
+            from VOC_Term t
+            where t._vocab_key = 82
+            and t.note is not null
+            ''', 'auto')
+    for r in results:
+        key = r['term']
+        value = r['note']
+        if key not in goPropertyLookup:
+            goPropertyLookup[key] = []
+        goPropertyLookup[key].append(value)
+    #print(goPropertyLookup)
+
+    #
+    # gpadCol3 : go_qualifier
+    # go_qualifier -> value -> RO id
+    #
+    results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value, t2.note
+            from gomarker2 a,
+                 VOC_Evidence_Property p,  
+                 VOC_Term t,
+                 VOC_Term t2
+            where a._AnnotEvidence_key = p._AnnotEvidence_key
+            and p._PropertyTerm_key = t._Term_key
+            and t.term in ('go_qualifier')
+            and p.value = t2.term
+            and t2.note is not null
+            ''', 'auto')
+    for r in results:
+        key = r['_AnnotEvidence_key']
+        value = r['note']
+        if key not in gpadCol3Lookup:
+            gpadCol3Lookup[key] = []
+        gpadCol3Lookup[key].append(value)
+    #print(gpadCol3Lookup)
+
+    #
+    # gpadROCol3 : _vocab_key = 82 where note is not null
+    #
+    results = db.sql('''select distinct a._AnnotEvidence_key, t.note
             from gomarker2 a,
                  VOC_Evidence_Property p,  
                  VOC_Term t
             where a._AnnotEvidence_key = p._AnnotEvidence_key
             and p._PropertyTerm_key = t._Term_key
-            and t.term in ('go_qualifier')
-            order by t.term, p.value
+            and t._vocab_key = 82
+            and t.note is not null
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
-        value = r['value']
-        if key not in gpadCol3Lookup:
-            gpadCol3Lookup[key] = []
-        gpadCol3Lookup[key].append(value)
-    #print(gpadCol3Lookup)
+        value = r['note']
+        if key not in gpadROCol3Lookup:
+            gpadROCol3Lookup[key] = []
+        gpadROCol3Lookup[key].append(value)
+    #print(gpadROCol3Lookup)
 
     #
     # gpadCol11 : (MGI_User.login like NOCTUA_%)
@@ -308,7 +341,7 @@ def doSetup():
     #
     # note that noctua-generated properties will *always* have one stanza
     #
-    results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
+    results = db.sql('''select distinct a._AnnotEvidence_key, t.note, p.value
             from gomarker2 a,
                  VOC_Evidence_Property p,  
                  VOC_Term t,
@@ -322,16 +355,12 @@ def doSetup():
                 'external ref', 'text', 'dual-taxon ID',
                 'noctua-model-id', 'contributor', 'individual', 'go_qualifier', 'model-state'
                 )
-            order by t.term, p.value
+            and t.note is not null
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
         value = r['value'].replace('MGI:', 'MGI:MGI:')
-        value = r['term'] + '(' + value + ')'
-
-        # TR13272/for version 2
-        value = value.replace('_', ' ')
-
+        value = r['note'] + '(' + value + ')'
         if key not in gpadCol11Lookup:
             gpadCol11Lookup[key] = []
         gpadCol11Lookup[key].append(value)
@@ -344,7 +373,7 @@ def doSetup():
     # TR13272
     # and (u.login like 'NOCTUA_%' or (u.orcid is not null and p._propertyterm_key = 18583062))
     #
-    results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
+    results = db.sql('''select distinct a._AnnotEvidence_key, t.note, p.value
             from gomarker2 a,
                  VOC_Evidence_Property p,  
                  VOC_Term t,
@@ -354,11 +383,11 @@ def doSetup():
             and a._AnnotEvidence_key = p._AnnotEvidence_key
             and p._PropertyTerm_key = t._Term_key
             and t.term not in ('occurs_in', 'part_of', 'go_qualifier', 'evidence')
-            order by t.term, p.value
+            and t.note is not null
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
-        value = r['term'] + '=' + r['value']
+        value = r['note'] + '=' + r['value']
         if key not in gpadCol12Lookup:
             gpadCol12Lookup[key] = []
         gpadCol12Lookup[key].append(value)
@@ -405,12 +434,13 @@ def doGAFCol16():
     evidenceKeyClause = ",".join([str(k) for k in sanctionedEvidenceTermKeys])
 
     cmd = '''
-    select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
+    select r.symbol, r._Object_key, r._AnnotEvidence_key, t.note as property, p.value, p.stanza
             from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
             where r._EvidenceTerm_key in (%s)
             and r._AnnotEvidence_key = p._AnnotEvidence_key
             and p._PropertyTerm_key = t._Term_key
             and p._PropertyTerm_key in (%s)
+            and t.note is not null
             order by r.symbol, 
                 r._Object_key, 
                 r._AnnotEvidence_key, 
@@ -760,30 +790,38 @@ def addGPADReportRow(reportRow, r):
 
         # 2. Negation ::= "NOT"
         # qualifier from MGD annotations
+        default_relation = ''
         if r['qualifier'] != None:
-            qualifier = r['qualifier'].strip()
+            tokens = r['qualifier'].split('|')
+            try:
+                qualifier = 'NOT'
+                property = tokens[1]
+                if property in goPropertyLookup:
+                    default_relation = goPropertyLookup[property][0];
+            except:
+                if tokens[0] == 'NOT':
+                    qualifier = 'NOT'
+                else:
+                    qualifier = ''
         else:
             qualifier = ''
         reportRow = reportRow + qualifier + TAB
 
         # 3. Relation ::= OBO_ID
-        # CONVERTED TO RO:xxx
         # use gadCol3 or DAG
-        if key in gpadCol3Lookup:
-            default_relation_for_aspect = '|'.join(gpadCol3Lookup[key])
-        elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
-            default_relation_for_aspect = 'involved_in'
-        else:
-            default_relation_for_aspect = dagQualifier[dag[r['_Term_key']]]
 
-        default_relation_for_aspect = default_relation_for_aspect.replace('_', ' ')
+        # do we append other default_relation from col 2?
 
-        try:
-                roId = roLookupByName[default_relation_for_aspect][0]
-        except:
-                roId = 'cannot find RO: ' + default_relation_for_aspect
-
-        reportRow = reportRow + roId + TAB
+        if default_relation == '':
+            if key in gpadCol3Lookup:
+                default_relation = '|'.join(gpadCol3Lookup[key])
+            elif key in gpadROCol3Lookup:
+                default_relation = '|'.join(gpadROCol3Lookup[key])
+            elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
+                default_relation = 'involved_in'
+            else:
+                default_relation = dagQualifier[dag[r['_Term_key']]]
+        reportRow = reportRow + default_relation + TAB
 
         # 4. Ontology_Class_ID ::= OBO_ID/GO ID
         reportRow = reportRow + r['termID'] + TAB
@@ -812,7 +850,6 @@ def addGPADReportRow(reportRow, r):
         reportRow = reportRow + mgi_utils.prvalue(inferredFrom) + TAB
 
         # 8. Interacting_taxon_ID ::= NCBITaxon:[Taxon_ID]
-        # CONVERTED TO : NCBITaxon:1280
         if key in taxonLookup:
             reportRow = reportRow + taxonLookup[key][0].replace('taxon', 'NCBITaxon')
         reportRow = reportRow + TAB
@@ -843,7 +880,6 @@ def addGPADReportRow(reportRow, r):
             reportRow = reportRow + MGIPREFIX + TAB
 
         # 11. Annotation_Extensions ::= [Extension_Conj] ("|" Extension_Conj)*
-        # CONVERT properties to RO
         properties = ''
         if key in gpadCol11Lookup:
             properties = ','.join(gpadCol11Lookup[key])
@@ -852,7 +888,6 @@ def addGPADReportRow(reportRow, r):
         reportRow = reportRow + properties + TAB
 
         # 12. Annotation_Properties ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
-        # CONVERT
         properties = ''
         if key in gpadCol12Lookup:
             properties = '|'.join(gpadCol12Lookup[key])
