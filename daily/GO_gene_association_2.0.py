@@ -810,13 +810,9 @@ def addGPADReportRow(reportRow, r):
         # 3. Relation ::= OBO_ID
         # use gadCol3 or DAG
 
-        # do we append other default_relation from col 2?
-
         if default_relation == '':
             if key in gpadCol3Lookup:
                 default_relation = '|'.join(gpadCol3Lookup[key])
-            elif key in gpadROCol3Lookup:
-                default_relation = '|'.join(gpadROCol3Lookup[key])
             elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
                 default_relation = 'involved_in'
             else:
