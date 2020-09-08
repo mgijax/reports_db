@@ -238,7 +238,7 @@ for r in results:
             if 11928467 in mcvKeyList:
                 continue
             else:
-                fTypes = ('|'.join(featureTypes[key])
+                fTypes = ('|'.join(featureTypes[key]))
 
         chromosome = None
 
