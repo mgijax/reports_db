@@ -814,7 +814,7 @@ def addGPADReportRow(reportRow, r):
             if key in gpadCol3Lookup:
                 default_relation = '|'.join(gpadCol3Lookup[key])
             elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
-                default_relation = 'involved_in'
+                default_relation = 'RO:0002331'
             else:
                 default_relation = dagQualifier[dag[r['_Term_key']]]
         reportRow = reportRow + default_relation + TAB
