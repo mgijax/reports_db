@@ -100,7 +100,7 @@ ecoLookupByEco = {}
 ecoLookupByEvidence = {}
 evidenceLookup = {}
 goPropertyLookup = {}
-gpadCol3Lookup = {}
+goQualifierLookup = {}
 gpadROCol3Lookup = {}
 gpadCol11Lookup = {}
 gpadCol12Lookup = {}
@@ -116,7 +116,7 @@ def doSetup():
     global taxonLookup
     global ecoLookupByEco, ecoLookupByEvidence
     global goPropertyLookup
-    global gpadCol3Lookup
+    global goQualifierLookup
     global gpadROCol3Lookup
     global gpadCol11Lookup
     global gpadCol12Lookup
@@ -310,10 +310,10 @@ def doSetup():
     for r in results:
         key = r['_AnnotEvidence_key']
         value = r['note']
-        if key not in gpadCol3Lookup:
-            gpadCol3Lookup[key] = []
-        gpadCol3Lookup[key].append(value)
-    #print(gpadCol3Lookup)
+        if key not in goQualifierLookup:
+            goQualifierLookup[key] = []
+        goQualifierLookup[key].append(value)
+    #print(goQualifierLookup)
 
     #
     # gpadROCol3 : _vocab_key = 82 where note is not null
@@ -788,8 +788,26 @@ def addGPADReportRow(reportRow, r):
         objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
         key = r['_AnnotEvidence_key']
 
+        #
+        # for col 2 Negation and col 3 Relation
+        #
+        # MGI-Qualifier : VOC_Annot._qualifier_key (_vocab_key = 52)
+        #      NOT, colocalizes_with, NOT|colocalizes_with, contributes_to, NOT|contributes_to
+        #
+        # GO-Properties : VOC_EvidenceProperty (_vocab_key = 82) (goPropertyLookup)
+        #
+        # GO-Qualifier  : VOC_EvidenceProperty where value = 'go_qualifier' (goQualifierLookup)
+        #
+        # DAG-Qualifier : hard-coded RO of C, P, F (dagQualifier)
+        #
+
+        #
         # 2. Negation ::= "NOT"
-        # qualifier from MGD annotations
+        # if MGI-Qualifier contains "NOT", then attach the term "NOT" to col 2
+        # if MGI-Qualifier = "NOT|colocalizes_with" or "NOT|contributes_to"
+        #       then find the RO id for "colocalizes_with" / "contributes_do" and attach to col 3
+        #       uses goPropertyLookup
+        #
         default_relation = ''
         if r['qualifier'] != None:
             tokens = r['qualifier'].split('|')
@@ -807,12 +825,16 @@ def addGPADReportRow(reportRow, r):
             qualifier = ''
         reportRow = reportRow + qualifier + TAB
 
+        #
         # 3. Relation ::= OBO_ID
-        # use gadCol3 or DAG
+        # if col 3 was set by previous col 2 checks, then done with col 3
+        # else if GO Property exists in goQualifierLookup, then use that RO
+        # else if inferredFrom contains "InterPro", then use RO:0002331
+        # else use dagQualifier (C, P, F)
 
         if default_relation == '':
-            if key in gpadCol3Lookup:
-                default_relation = '|'.join(gpadCol3Lookup[key])
+            if key in goQualifierLookup:
+                default_relation = '|'.join(goQualifierLookup[key])
             elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
                 default_relation = 'RO:0002331'
             else:
