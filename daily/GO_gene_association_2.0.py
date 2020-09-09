@@ -792,7 +792,6 @@ def addGPADReportRow(reportRow, r):
         # for col 2 Negation and col 3 Relation
         #
         # MGI-Qualifier : VOC_Annot._qualifier_key (_vocab_key = 52)
-        #      NOT, colocalizes_with, NOT|colocalizes_with, contributes_to, NOT|contributes_to
         #
         # GO-Properties : VOC_EvidenceProperty (_vocab_key = 82) (goPropertyLookup)
         #
@@ -804,9 +803,8 @@ def addGPADReportRow(reportRow, r):
         #
         # 2. Negation ::= "NOT"
         # if MGI-Qualifier contains "NOT", then attach the term "NOT" to col 2
-        # if MGI-Qualifier = "NOT|colocalizes_with" or "NOT|contributes_to"
-        #       then find the RO id for "colocalizes_with" / "contributes_do" and attach to col 3
-        #       uses goPropertyLookup
+        # if MGI-Qualifier = "NOT|xxxx"
+        #       then find the RO id for "xxxx" and attach to col 3 (goPropertyLookup)
         #
         default_relation = ''
         if r['qualifier'] != None:
@@ -827,8 +825,8 @@ def addGPADReportRow(reportRow, r):
 
         #
         # 3. Relation ::= OBO_ID
-        # if col 3 was set by previous col 2 checks, then done with col 3
-        # else if GO Property exists in goQualifierLookup, then use that RO
+        # if col 3 was set by previous col 2 processing then done with col 3
+        # else if GO Property exists in goQualifierLookup, then use its RO id
         # else if inferredFrom contains "InterPro", then use RO:0002331
         # else use dagQualifier (C, P, F)
 
