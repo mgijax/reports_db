@@ -345,14 +345,21 @@ def doSetup():
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
+
+        # MGI: -> MGI:MGI:
         value = r['value'].replace('MGI:', 'MGI:MGI:')
+
+        # xxxx ; zzzz -> zzzz
         tokens = value.split(';')
         value = tokens[-1]
         value = value.strip()
+
+        # EMAPA:xxx TS:xxx -> EMAPA:xxx
         if value.startswith('EMAPA:'):
                 value = value.split(' ')[0]
 
         value = r['note'] + '(' + value + ')'
+
         if key not in gpadCol11Lookup:
             gpadCol11Lookup[key] = []
         gpadCol11Lookup[key].append(value)
