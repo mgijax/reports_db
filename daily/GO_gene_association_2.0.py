@@ -349,6 +349,9 @@ def doSetup():
         tokens = value.split(';')
         value = tokens[-1]
         value = value.strip()
+        if value.startswith('EMAPA:'):
+                value = value.split(' ')[0]
+
         value = r['note'] + '(' + value + ')'
         if key not in gpadCol11Lookup:
             gpadCol11Lookup[key] = []
