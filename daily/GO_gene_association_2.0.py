@@ -46,7 +46,7 @@
 # 
 # lec   08/25/2020
 #       - TR13272/converting to GPI 2.0
-#       mgi2.gpad : dph reviewing 09/09/2020
+#       mgi2.gpad : dph reviewing 09/10/2020
 #       gene_association.mgi2 : no changes yet
 #       gene_association_pro.mgi2 : no changes yet
 #
@@ -345,16 +345,11 @@ def doSetup():
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
-
         value = r['value'].replace('MGI:', 'MGI:MGI:')
-
-        # if value = "EMAPA:xxx TSxxx", then only use "EMAPA:xxx"
-        if value.find('EMAPA') >= 0:
-                 tokens = value.split(' ')
-                 value = tokens[0]
-
+        tokens = value.split(';')
+        value = tokens[-1]
+        value = value.strip()
         value = r['note'] + '(' + value + ')'
-
         if key not in gpadCol11Lookup:
             gpadCol11Lookup[key] = []
         gpadCol11Lookup[key].append(value)
@@ -946,8 +941,6 @@ def addGPADReportRow(reportRow, r):
         properties = ''
         if key in gpadCol11Lookup:
             properties = ','.join(gpadCol11Lookup[key])
-        elif objectKey in gafCol16Lookup:
-            properties = ''.join(gafCol16Lookup[objectKey])
         reportRow = reportRow + properties + TAB
 
         # 12. Annotation_Properties ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
