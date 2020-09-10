@@ -396,7 +396,9 @@ def doSetup():
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
-        term = r['term']
+
+        # to remove any non-ascii from "text" values
+        term = ''.join(c for c in r['term'] if ord(c) >= 32)
 
         if term in ('noctua-model-id', 'model-state'):
                 value = r['term'] + '=' + r['value']
