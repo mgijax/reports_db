@@ -105,7 +105,7 @@ proteins = {}
 # gpad lookups
 #
 # translate dag to qualifier (col 3)
-dagQualifier = {'C':'BFO:0000050', 'P':'RO:0002264', 'F':'RO:0002327'}
+dagQualifier = {'C':'RO:0001025', 'P':'RO:0002264', 'F':'RO:0002327'}
 taxonLookup = {}
 ecoLookupByEco = {}
 ecoLookupByEvidence = {}
@@ -442,7 +442,7 @@ def doSetup():
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
-        value = 'contributor=' + r['orcid']
+        value = 'contributor-id=' + r['orcid']
         if key not in gpadCol12Lookup:
             gpadCol12Lookup[key] = []
         gpadCol12Lookup[key].append(value)
@@ -1056,14 +1056,13 @@ fp.write('!\n')
 doGPADFinish()
 
 # append GOA annotations, if exists : see goload/goamouse
-# CONVERT
 try:
-    goafile = open(os.environ['GOAGPAD2MGI'], 'r')
-    for line in goafile.readlines():
-        fp.write(line)
-    goafile.close()
+        goafile = open(os.environ['GOAGPAD2MGI'], 'r')
+        for line in goafile.readlines():
+                fp.write(line)
+        goafile.close()
 except:
-    pass
+        pass
 
 reportlib.finish_nonps(fp)
 
