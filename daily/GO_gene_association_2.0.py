@@ -8,6 +8,7 @@
 #	gene_association.mgi2 (GAF)
 #	gene_association_pro.mgi2 (GAF)
 #
+# ALSO CHANGE:  weekly/GO_gene_association_nonmouse.py
 #
 # GPAD
 #
@@ -1056,13 +1057,13 @@ doGPADFinish()
 
 # append GOA annotations, if exists : see goload/goamouse
 # CONVERT
-#try:
-#    goafile = open(os.environ['GOAGPADMGI'], 'r')
-#    for line in goafile.readlines():
-#        fp.write(line)
-#    goafile.close()
-#except:
-#    pass
+try:
+    goafile = open(os.environ['GOAGPAD2MGI'], 'r')
+    for line in goafile.readlines():
+        fp.write(line)
+    goafile.close()
+except:
+    pass
 
 reportlib.finish_nonps(fp)
 

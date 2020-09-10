@@ -42,6 +42,7 @@ setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
 # GOA file
 setenv GOAGAFMGI		${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gaf
 setenv GOAGPADMGI               ${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gpad
+setenv GOAGPAD2MGI              ${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gpad2
 setenv ECOFILE                  ${DATADOWNLOADS}/purl.obolibrary.org/obo/eco/eco.obo
 
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
