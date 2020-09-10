@@ -4,41 +4,51 @@
 #
 # Generates:
 #       
-#	gene_association.mgi (GAF)
-#	gene_association_pro (GAF)
-#	mgi.gpa
+#	mgi2.gpad
+#	gene_association.mgi2 (GAF)
+#	gene_association_pro.mgi2 (GAF)
 #
 #
-# gpad col vs gaf col
+# GPAD
 #
-#!! 1. DB_Object_ID ::= ID       MGI or PR
-#!! 2. Negation ::= 'NOT'
-#!! 3. Relation ::= OBO_ID
-#!! 4. Ontology_Class_ID ::= OBO_ID
-#!! 5. Reference ::= [ID] ('|' ID)*
-#!! 6. Evidence_type ::= OBO_ID
-#!! 7. With_or_From ::= [ID] ('|' | ‘,’ ID)*
-#!! 8. Interacting_taxon_ID ::= NCBITaxon:[Taxon_ID]
-#!! 9. Date ::= YYYY-MM-DD
-#!! 10. Assigned_by ::= Prefix
-#!! 11. Annotation_Extensions ::= [Extension_Conj] ('|' Extension_Conj)*
-#!! 12. Annotation_Properties ::= [Property_Value_Pair] ('|' Property_Value_Pair)*
+#!1. DB_Object_ID ::= ID       MGI or PR
+#!2. Negation ::= 'NOT'
+#!3. Relation ::= OBO_ID
+#!4. Ontology_Class_ID ::= OBO_ID
+#!5. Reference ::= [ID] ('|' ID)*
+#!6. Evidence_type ::= OBO_ID
+#!7. With_or_From ::= [ID] ('|' | ‘,’ ID)*
+#!8. Interacting_taxon_ID ::= NCBITaxon:[Taxon_ID]
+#!9. Date ::= YYYY-MM-DD
+#!10. Assigned_by ::= Prefix
+#!11. Annotation_Extensions ::= [Extension_Conj] ('|' Extension_Conj)*
+#!12. Annotation_Properties ::= [Property_Value_Pair] ('|' Property_Value_Pair)*
 #
-# DB			1	1
-# DB_Object_ID		2	2/17 (isoforms)
-# Qualifier		3	4
-# GO ID			4	5
-# DB:Reference(s)	5	6
-# Evidence code		6	7
-# With (or) From	7	8
-# Interacting taxon ID	8	13
-# Date			9	14
-# Assigned_by		10	15
-# Annotation Extension	11	16
-# Annotation Properties	12
+# GAF
+#
+#!1.  DB                              required        1               UniProtKB\n')
+#!2.  DB Object ID                    required        1               P12345\n')
+#!3.  DB Object Symbol                required        1               PHO3\n')
+#!4.  Qualifier                       optional        0 or greater    NOT\n')
+#!5.  GO ID                           required        1               GO:0003993\n')
+#!6.  DB:Reference (|DB:Reference)    required        1 or greater    PMID:2676709\n')
+#!7.  Evidence Code                   required        1               IMP\n')
+#!8.  With (or) From                  optional        0 or greater    GO:0000346\n')
+#!9.  Aspect                          required        1               F\n')
+#!10. DB Object Name                  optional        0 or 1          Toll-like receptor 4\n')
+#!11. DB Object Synonym (|Synonym)    optional        0 or greater    hToll   Tollboot\n')
+#!12. DB Object Type                  required        1               protein\n')
+#!13. Taxon(|taxon)                   required        1 or 2          taxon:9606\n')
+#!14. Date                            required        1               20090118\n')
+#!15. Assigned By                     required        1               SGD\n')
+#!16. Annotation Extension            optional        0 or greater    part_of(CL:0000576)\n')
+#!17. Gene Product Form ID            optional        0 or 1          UniProtKB:P12345-2\n')
 # 
 # lec   08/25/2020
 #       - TR13272/converting to GPI 2.0
+#       mgi2.gpad : dph reviewing 09/09/2020
+#       gene_association.mgi2 : no changes yet
+#       gene_association_pro.mgi2 : no changes yet
 #
 '''
 
@@ -101,7 +111,6 @@ ecoLookupByEvidence = {}
 evidenceLookup = {}
 goPropertyLookup = {}
 goQualifierLookup = {}
-gpadROCol3Lookup = {}
 gpadCol11Lookup = {}
 gpadCol12Lookup = {}
 
@@ -117,7 +126,6 @@ def doSetup():
     global ecoLookupByEco, ecoLookupByEvidence
     global goPropertyLookup
     global goQualifierLookup
-    global gpadROCol3Lookup
     global gpadCol11Lookup
     global gpadCol12Lookup
     global goRefDict
@@ -138,8 +146,8 @@ def doSetup():
     #	and m.symbol = 'Hk1'
     #
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
-            e._AnnotEvidence_key, e.inferredFrom, e.modification_date, e._EvidenceTerm_key, 
-            e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, 
+            e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
+            e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
             m.symbol, m.name, lower(mt.name) as markerType
         into temporary table gomarker1 
         from VOC_Annot a, 
@@ -189,8 +197,10 @@ def doSetup():
     #
     db.sql('''select distinct g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
             g._Object_key, g._AnnotEvidence_key, g._EvidenceTerm_key, g.symbol, g.name, g.markerType, 
+            to_char(g.creation_date, 'YYYY-MM-DD') as cDate,
             to_char(g.modification_date, 'YYYY-MM-DD') as mDate,
             g._CreatedBy_key,
+            g._ModifiedBy_key,
             ma.accID as markerID, 
             b.accID as refID, 
             rtrim(t.abbreviation) as evidenceCode, 
@@ -316,78 +326,115 @@ def doSetup():
     #print(goQualifierLookup)
 
     #
-    # gpadROCol3 : _vocab_key = 82 where note is not null
-    #
-    results = db.sql('''select distinct a._AnnotEvidence_key, t.note
-            from gomarker2 a,
-                 VOC_Evidence_Property p,  
-                 VOC_Term t
-            where a._AnnotEvidence_key = p._AnnotEvidence_key
-            and p._PropertyTerm_key = t._Term_key
-            and t._vocab_key = 82
-            and t.note is not null
-            ''', 'auto')
-    for r in results:
-        key = r['_AnnotEvidence_key']
-        value = r['note']
-        if key not in gpadROCol3Lookup:
-            gpadROCol3Lookup[key] = []
-        gpadROCol3Lookup[key].append(value)
-    #print(gpadROCol3Lookup)
-
-    #
-    # gpadCol11 : (MGI_User.login like NOCTUA_%)
-    #	exclude older terms (sequenceNum 1-9, 90,91,92, 93)
-    #
+    # gpadCol11 : convert properties to RO id
     # note that noctua-generated properties will *always* have one stanza
     #
     results = db.sql('''select distinct a._AnnotEvidence_key, t.note, p.value
             from gomarker2 a,
                  VOC_Evidence_Property p,  
-                 VOC_Term t,
-                 MGI_User u
-            where a._CreatedBy_key = u._User_key
-            and u.login like 'NOCTUA_%'
-            and a._AnnotEvidence_key = p._AnnotEvidence_key
+                 VOC_Term t
+            where a._AnnotEvidence_key = p._AnnotEvidence_key
             and p._PropertyTerm_key = t._Term_key
             and t.term not in (
                 'evidence', 'anatomy', 'cell type', 'gene product', 'modification', 'target', 
                 'external ref', 'text', 'dual-taxon ID',
-                'noctua-model-id', 'contributor', 'individual', 'go_qualifier', 'model-state'
+                'noctua-model-id', 'contributor', 'individual', 'go_qualifier', 'model-state',
+                'has_participant', 'regulates_o_has_participant'
                 )
             and t.note is not null
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
+
         value = r['value'].replace('MGI:', 'MGI:MGI:')
+
+        # if value = "EMAPA:xxx TSxxx", then only use "EMAPA:xxx"
+        if value.find('EMAPA') >= 0:
+                 tokens = value.split(' ')
+                 value = tokens[0]
+
         value = r['note'] + '(' + value + ')'
+
         if key not in gpadCol11Lookup:
             gpadCol11Lookup[key] = []
         gpadCol11Lookup[key].append(value)
     #print(gpadCol11Lookup)
 
     #
-    # gpadCol12 : (MGI_User.login like NOCTUA_%)
-    # exclude : occurs_in, part_of, go_qualifier, evidence
+    # gpadCol12 
+    # all annotations rows have creation/modification date
+    # creation/modification dates
     #
-    # TR13272
+    results = db.sql('''select distinct a._AnnotEvidence_key, a.cDate, a.mDate from gomarker2 a''', 'auto')
+    for r in results:
+        key = r['_AnnotEvidence_key']
+        value = 'creation-date=' + r['cDate'] + '|' + 'modification-date=' + r['mDate']
+        if key not in gpadCol12Lookup:
+            gpadCol12Lookup[key] = []
+        gpadCol12Lookup[key].append(value)
+    #print(gpadCol12Lookup)
+
+    #
+    # gpadCol12 : use actual property values
+    #
     # and (u.login like 'NOCTUA_%' or (u.orcid is not null and p._propertyterm_key = 18583062))
     #
-    results = db.sql('''select distinct a._AnnotEvidence_key, t.note, p.value
+    results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value
             from gomarker2 a,
                  VOC_Evidence_Property p,  
-                 VOC_Term t,
-                 MGI_User u
-            where a._CreatedBy_key = u._User_key
-            and (u.login like 'NOCTUA_%' or (u.orcid is not null and p._propertyterm_key = 18583062))
-            and a._AnnotEvidence_key = p._AnnotEvidence_key
+                 VOC_Term t
+            where a._AnnotEvidence_key = p._AnnotEvidence_key
             and p._PropertyTerm_key = t._Term_key
-            and t.term not in ('occurs_in', 'part_of', 'go_qualifier', 'evidence')
-            and t.note is not null
+            and t.term in ('noctua-model-id', 'model-state', 
+                'text', 'has_participant', 'regulates_o_has_participant'
+                )
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
-        value = r['note'] + '=' + r['value']
+        term = r['term']
+
+        if term in ('noctua-model-id', 'model-state'):
+                value = r['term'] + '=' + r['value']
+
+        elif term in ('text'):
+                value = 'comment=' + r['value']
+
+        elif term in ('has_participant', 'regulates_o_has_participant'):
+                value = 'comment=' + term + '(' + r['value'] + ')'
+
+        if key not in gpadCol12Lookup:
+            gpadCol12Lookup[key] = []
+        gpadCol12Lookup[key].append(value)
+    #print(gpadCol12Lookup)
+
+    #
+    # gpadCol12 
+    # createdBy/orcid
+    # modifiedBy/orcid
+    #
+    results = db.sql('''select distinct a._AnnotEvidence_key, u.orcid
+            from gomarker2 a,
+                 MGI_User u
+            where a._CreatedBy_key = u._User_key
+            and u.orcid is not null
+            union
+            select distinct a._AnnotEvidence_key, u.orcid
+            from gomarker2 a,
+                 MGI_User u
+            where a._ModifiedBy_key = u._User_key
+            and u.orcid is not null
+            union
+            select distinct a._AnnotEvidence_key, p.value
+            from gomarker2 a,
+                 VOC_Evidence_Property p,  
+                 VOC_Term t
+            where a._AnnotEvidence_key = p._AnnotEvidence_key
+            and p._PropertyTerm_key = t._Term_key
+            and t.term in ('contributor')
+            ''', 'auto')
+    for r in results:
+        key = r['_AnnotEvidence_key']
+        value = 'contributor=' + r['orcid']
         if key not in gpadCol12Lookup:
             gpadCol12Lookup[key] = []
         gpadCol12Lookup[key].append(value)
@@ -904,6 +951,7 @@ def addGPADReportRow(reportRow, r):
         reportRow = reportRow + properties + TAB
 
         # 12. Annotation_Properties ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
+        #
         properties = ''
         if key in gpadCol12Lookup:
             properties = '|'.join(gpadCol12Lookup[key])
@@ -927,7 +975,7 @@ doGAFCol16()
 doIsoform()
 
 #
-# GAF
+# GAF 2.0
 #
 
 fp = reportlib.init('gene_association', fileExt = '.mgi2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
@@ -939,18 +987,23 @@ fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
-fp.write('!! 1. DB_Object_ID              MGI or PR\n')
-fp.write('!! 2. Negation                  NOT\n')
-fp.write('!! 3. Relation                  OBO_ID\n')
-fp.write('!! 4. Ontology_Class_ID         OBO_ID\n')
-fp.write('!! 5. Reference                 ID|ID\n')
-fp.write('!! 6. Evidence_type             OBO_ID\n')
-fp.write('!! 7. With_or_From              [ID] ("|" | "," ID)\n')
-fp.write('!! 8. Interacting_taxon_ID      NCBITaxon:[Taxon_ID]\n')
-fp.write('!! 9. Date                      YYYY-MM-DD\n')
-fp.write('!! 10. Assigned_by              Prefix\n')
-fp.write('!! 11. Annotation_Extensions    [Extension_Conj] ("|" Extension_Conj)\n')
-fp.write('!! 12. Annotation_Properties    [Property_Value_Pair] ("|" Property_Value_Pair)\n')
+fp.write('!1.  DB                              required        1               UniProtKB\n')
+fp.write('!2.  DB Object ID                    required        1               P12345\n')
+fp.write('!3.  DB Object Symbol                required        1               PHO3\n')
+fp.write('!4.  Qualifier                       optional        0 or greater    NOT\n')
+fp.write('!5.  GO ID                           required        1               GO:0003993\n')
+fp.write('!6.  DB:Reference (|DB:Reference)    required        1 or greater    PMID:2676709\n')
+fp.write('!7.  Evidence Code                   required        1               IMP\n')
+fp.write('!8.  With (or) From                  optional        0 or greater    GO:0000346\n')
+fp.write('!9.  Aspect                          required        1               F\n')
+fp.write('!10. DB Object Name                  optional        0 or 1          Toll-like receptor 4\n')
+fp.write('!11. DB Object Synonym (|Synonym)    optional        0 or greater    hToll   Tollboot\n')
+fp.write('!12. DB Object Type                  required        1               protein\n')
+fp.write('!13. Taxon(|taxon)                   required        1 or 2          taxon:9606\n')
+fp.write('!14. Date                            required        1               20090118\n')
+fp.write('!15. Assigned By                     required        1               SGD\n')
+fp.write('!16. Annotation Extension            optional        0 or greater    part_of(CL:0000576)\n')
+fp.write('!17. Gene Product Form ID            optional        0 or 1          UniProtKB:P12345-2\n')
 fp.write('!\n')
 
 doProtein()
@@ -980,18 +1033,18 @@ fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
 fp.write('!\n')
 fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
 fp.write('!\n')
-fp.write('! 1.  DB_Object_ID            ::= ID       MGI or PR\n')
-fp.write('! 2.  Negation                ::= "NOT"\n')
-fp.write('! 3.  Relation                ::= OBO_ID\n')
-fp.write('! 4.  Ontology_Class_ID       ::= OBO_ID\n')
-fp.write('! 5.  Reference               ::= [ID] ("|" ID)*\n')
-fp.write('! 6.  Evidence_type           ::= OBO_ID\n')
-fp.write('! 7.  With_or_From            ::= [ID] ("|" | "," ID)*\n')
-fp.write('! 8.  Interacting_taxon_ID    ::= NCBITaxon:[Taxon_ID]\n')
-fp.write('! 9.  Date                    ::= YYYY-MM-DD\n')
-fp.write('! 10. Assigned_by             ::= Prefix\n')
-fp.write('! 11. Annotation_Extensions   ::= [Extension_Conj] ("|" Extension_Conj)*\n')
-fp.write('! 12. Annotation_Properties   ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
+fp.write('!1.  DB_Object_ID            ::= ID MGI or PR\n')
+fp.write('!2.  Negation                ::= "NOT"\n')
+fp.write('!3.  Relation                ::= OBO_ID\n')
+fp.write('!4.  Ontology_Class_ID       ::= OBO_ID\n')
+fp.write('!5.  Reference               ::= [ID] ("|" ID)*\n')
+fp.write('!6.  Evidence_type           ::= OBO_ID\n')
+fp.write('!7.  With_or_From            ::= [ID] ("|" | "," ID)*\n')
+fp.write('!8.  Interacting_taxon_ID    ::= NCBITaxon:[Taxon_ID]\n')
+fp.write('!9.  Date                    ::= YYYY-MM-DD\n')
+fp.write('!10. Assigned_by             ::= Prefix\n')
+fp.write('!11. Annotation_Extensions   ::= [Extension_Conj] ("|" Extension_Conj)*\n')
+fp.write('!12. Annotation_Properties   ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
 fp.write('!\n')
 
 doGPADFinish()
