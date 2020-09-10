@@ -397,18 +397,24 @@ def doSetup():
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
+        term = r['term']
 
         # to remove any non-ascii from "text" values
-        term = ''.join(c for c in r['term'] if ord(c) >= 32)
+        value = ''.join(c for c in r['value'] if ord(c) >= 32)
+
+        # text with "|" -> space
+        # text with "," -> space
+        value = value.replace('|', ' ')
+        value = value.replace(',', ' ')
 
         if term in ('noctua-model-id', 'model-state'):
-                value = r['term'] + '=' + r['value']
+                value = term + '=' + value
 
         elif term in ('text'):
-                value = 'comment=' + r['value']
+                value = 'comment=' + value
 
         elif term in ('has_participant', 'regulates_o_has_participant'):
-                value = 'comment=' + term + '(' + r['value'] + ')'
+                value = 'comment=' + term + '(' + value + ')'
 
         if key not in gpadCol12Lookup:
             gpadCol12Lookup[key] = []
