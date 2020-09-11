@@ -39,6 +39,9 @@ import ecolib
 
 db.setTrace()
 
+TAB = reportlib.TAB
+CRT = reportlib.CRT
+
 MGIPREFIX = 'MGI'
 
 #
@@ -48,9 +51,6 @@ MGIPREFIX = 'MGI'
 #
 assignedByList1 = ['uniprotload']
 assignedByList2 = ['GOC', 'GO_Central']
-
-TAB = reportlib.TAB
-CRT = reportlib.CRT
 
 # see doSetup()
 dag = {}
