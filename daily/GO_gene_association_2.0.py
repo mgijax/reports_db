@@ -624,24 +624,6 @@ def doProtein():
 #
 def doGAFFinish():
 
-    #!1  DB               
-    #!2  DB Object ID    
-    #!3  DB Object Symbol
-    #!4  Qualifier      
-    #!5  GO ID         
-    #!6  DB:Reference (|DB:Reference) 
-    #!7  Evidence Code               
-    #!8  With (or) From             
-    #!9  Aspect                     
-    #!10 DB Object Name             
-    #!11 DB Object Synonym (|Synonym)
-    #!12 DB Object Type             
-    #!13 Taxon(|taxon)             
-    #!14 Date                     
-    #!15 Assigned By             
-    #!16 Annotation Extension   
-    #!17 Gene Product Form ID  
-
     #
     # process results
     #
@@ -778,19 +760,6 @@ def doGAFFinish():
 #
 def doGPADFinish():
 
-    #! 1  DB_Object_ID
-    #! 2  Negation
-    #! 3  Relation
-    #! 4  Ontology_Class_ID
-    #! 5  Reference
-    #! 6  Evidence_type
-    #! 7  With_or_From
-    #! 8  Interacting_taxon_ID
-    #! 9  Date
-    #! 10 Assigned_by
-    #! 11 Annotation_Extensions
-    #! 12 Annotation_Properties
-
     #
     # process results
     #
@@ -806,8 +775,7 @@ def doGPADFinish():
         if dag[r['_Term_key']] not in dagQualifierGPAD:
             continue
 
-        #
-        #  1. DB_Object_ID ::= ID       MGI or PR
+        #! 1  DB_Object_ID
         #
         # if an Isoform (gene_product) exists, then create the annotation using:
         # 	isoformsProtein prefix (PR, RefSeq, UniProtDB, EMBL) ":" accession id  of isoformProtein object (Q92WPO-1)
@@ -858,7 +826,7 @@ def addGPADReportRow(reportRow, r):
         #
 
         #
-        # 2. Negation ::= "NOT"
+        #! 2  Negation
         # if MGI-Qualifier contains "NOT", then attach the term "NOT" to col 2
         # if MGI-Qualifier = "NOT|xxxx"
         #       then find the RO id for "xxxx" and attach to col 3 (goPropertyLookup)
@@ -881,7 +849,8 @@ def addGPADReportRow(reportRow, r):
         reportRow = reportRow + qualifier + TAB
 
         #
-        # 3. Relation ::= OBO_ID
+        #
+        #! 3  Relation
         # if col 3 was set by previous col 2 processing then done with col 3
         # else if GO Property exists in goQualifierLookup, then use its RO id
         # else if inferredFrom contains "InterPro", then use RO:0002331
@@ -896,10 +865,10 @@ def addGPADReportRow(reportRow, r):
                 default_relation = dagQualifierGPAD[dag[r['_Term_key']]]
         reportRow = reportRow + default_relation + TAB
 
-        # 4. Ontology_Class_ID ::= OBO_ID/GO ID
+        #! 4  Ontology_Class_ID
         reportRow = reportRow + r['termID'] + TAB
 
-        # 5. Reference ::= [ID] ("|" ID)*
+        #! 5  Reference
         references = []
         references.append(MGIPREFIX + ':' + r['refID'])
         if r['_Refs_key'] in pubMed:
@@ -909,7 +878,7 @@ def addGPADReportRow(reportRow, r):
                 references.append(goRefDict[r['_Refs_key']])
         reportRow = reportRow + '|'.join(references) + TAB
 
-        # 6. Evidence_type ::= OBO_ID
+        #! 6  Evidence_type
         if key in evidenceLookup:
             reportRow = reportRow + evidenceLookup[key][0]
         elif r['evidenceCode'] in ecoLookupByEvidence:
@@ -918,19 +887,19 @@ def addGPADReportRow(reportRow, r):
             reportRow = reportRow + 'NOT FOUND'
         reportRow = reportRow + TAB
 
-        # 7. With_or_From ::= [ID] ("|" | "," ID)*
+        #! 7  With_or_From
         inferredFrom = mgi_utils.prvalue(r['inferredFrom']).replace('MGI:', 'MGI:MGI:')
         reportRow = reportRow + mgi_utils.prvalue(inferredFrom) + TAB
 
-        # 8. Interacting_taxon_ID ::= NCBITaxon:[Taxon_ID]
+        #! 8  Interacting_taxon_ID
         if key in taxonLookup:
             reportRow = reportRow + taxonLookup[key][0].replace('taxon', 'NCBITaxon')
         reportRow = reportRow + TAB
 
-        # 9. Date ::= YYYY-MM-DD
+        #! 9  Date
         reportRow = reportRow + str(r['mDate']) + TAB
 
-        # 10. Assigned_by ::= Prefix
+        #! 10 Assigned_by
 
         # remove "NOCTUA_"; for example:  "NOCTUA_MGI" ==> "MGI"
         if r['assignedBy'].find('NOCTUA_') >= 0:
@@ -952,14 +921,13 @@ def addGPADReportRow(reportRow, r):
         else:
             reportRow = reportRow + MGIPREFIX + TAB
 
-        # 11. Annotation_Extensions ::= [Extension_Conj] ("|" Extension_Conj)*
+        #! 11 Annotation_Extensions
         properties = ''
         if key in gpadCol11Lookup:
             properties = ','.join(gpadCol11Lookup[key])
         reportRow = reportRow + properties + TAB
 
-        # 12. Annotation_Properties ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
-        #
+        #! 12 Annotation_Properties
         properties = ''
         if key in gpadCol12Lookup:
             properties = '|'.join(gpadCol12Lookup[key])
