@@ -10,7 +10,7 @@
 #
 # ALSO CHANGE:  weekly/GO_gene_association_nonmouse.py
 #
-# GPAD
+# GPAD 2.0
 #
 #!1. DB_Object_ID ::= ID       MGI or PR
 #!2. Negation ::= 'NOT'
@@ -25,26 +25,8 @@
 #!11. Annotation_Extensions ::= [Extension_Conj] ('|' Extension_Conj)*
 #!12. Annotation_Properties ::= [Property_Value_Pair] ('|' Property_Value_Pair)*
 #
-# GAF
+# GAF 2.2
 #
-#!1.  DB                              required        1               UniProtKB\n')
-#!2.  DB Object ID                    required        1               P12345\n')
-#!3.  DB Object Symbol                required        1               PHO3\n')
-#!4.  Qualifier                       optional        0 or greater    NOT\n')
-#!5.  GO ID                           required        1               GO:0003993\n')
-#!6.  DB:Reference (|DB:Reference)    required        1 or greater    PMID:2676709\n')
-#!7.  Evidence Code                   required        1               IMP\n')
-#!8.  With (or) From                  optional        0 or greater    GO:0000346\n')
-#!9.  Aspect                          required        1               F\n')
-#!10. DB Object Name                  optional        0 or 1          Toll-like receptor 4\n')
-#!11. DB Object Synonym (|Synonym)    optional        0 or greater    hToll   Tollboot\n')
-#!12. DB Object Type                  required        1               protein\n')
-#!13. Taxon(|taxon)                   required        1 or 2          taxon:9606\n')
-#!14. Date                            required        1               20090118\n')
-#!15. Assigned By                     required        1               SGD\n')
-#!16. Annotation Extension            optional        0 or greater    part_of(CL:0000576)\n')
-#!17. Gene Product Form ID            optional        0 or 1          UniProtKB:P12345-2\n')
-# 
 # lec   08/25/2020
 #       - TR13272/converting to GPI 2.0
 #       mgi2.gpad : dph reviewing 09/10/2020
