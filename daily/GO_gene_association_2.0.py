@@ -9,23 +9,13 @@
 #	gene_association_pro.mgi2 (GAF)
 #
 # ALSO CHANGE:  weekly/GO_gene_association_nonmouse.py
+# 09/11/2020 per David Hill, do nothing until we have Tues/09/15 meeting
 #
-# GPAD 2.0
+# GPAD 2.0 : see below
+# fp.write('!gpa-version: 2.0\n') 
 #
-#!1. DB_Object_ID ::= ID       MGI or PR
-#!2. Negation ::= 'NOT'
-#!3. Relation ::= OBO_ID
-#!4. Ontology_Class_ID ::= OBO_ID
-#!5. Reference ::= [ID] ('|' ID)*
-#!6. Evidence_type ::= OBO_ID
-#!7. With_or_From ::= [ID] ('|' | ‘,’ ID)*
-#!8. Interacting_taxon_ID ::= NCBITaxon:[Taxon_ID]
-#!9. Date ::= YYYY-MM-DD
-#!10. Assigned_by ::= Prefix
-#!11. Annotation_Extensions ::= [Extension_Conj] ('|' Extension_Conj)*
-#!12. Annotation_Properties ::= [Property_Value_Pair] ('|' Property_Value_Pair)*
-#
-# GAF 2.2
+# GAF 2.2 : see below
+# fp.write('!gaf-version: 2.2\n')
 #
 # lec   08/25/2020
 #       - TR13272/converting to GPI 2.0
@@ -50,7 +40,6 @@ import ecolib
 db.setTrace()
 
 MGIPREFIX = 'MGI'
-SPECIES = 'NCBITaxon:10090'
 
 #
 # if in list 1, then use 'UniProt'
@@ -87,7 +76,8 @@ proteins = {}
 # gpad lookups
 #
 # translate dag to qualifier (col 3)
-dagQualifier = {'C':'RO:0001025', 'P':'RO:0002264', 'F':'RO:0002327'}
+dagQualifierGAF = {'C':'part_of', 'P':'acts_upstream_of_or_within', 'F':'enables'}
+dagQualifierGPAD = {'C':'RO:0001025', 'P':'RO:0002264', 'F':'RO:0002327'}
 taxonLookup = {}
 ecoLookupByEco = {}
 ecoLookupByEvidence = {}
@@ -634,6 +624,24 @@ def doProtein():
 #
 def doGAFFinish():
 
+    #!1  DB               
+    #!2  DB Object ID    
+    #!3  DB Object Symbol
+    #!4  Qualifier      
+    #!5  GO ID         
+    #!6  DB:Reference (|DB:Reference) 
+    #!7  Evidence Code               
+    #!8  With (or) From             
+    #!9  Aspect                     
+    #!10 DB Object Name             
+    #!11 DB Object Synonym (|Synonym)
+    #!12 DB Object Type             
+    #!13 Taxon(|taxon)             
+    #!14 Date                     
+    #!15 Assigned By             
+    #!16 Annotation Extension   
+    #!17 Gene Product Form ID  
+
     #
     # process results
     #
@@ -646,25 +654,31 @@ def doGAFFinish():
         if r['_Term_key'] not in dag:
             continue
 
-        if dag[r['_Term_key']] not in dagQualifier:
+        if dag[r['_Term_key']] not in dagQualifierGAF:
             continue
 
         objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
 
-        # columns 1-5
+        #!1  DB               
+        #!2  DB Object ID    
+        #!3  DB Object Symbol
         reportRow = MGIPREFIX + TAB
         reportRow = reportRow + str(r['markerID']) + TAB
         reportRow = reportRow + r['symbol'] + TAB
 
+        #!4  Qualifier      
         if r['qualifier'] != None:
             qualifier = r['qualifier'].strip()
+        elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
+            qualifier = 'involved_in'
         else:
-            qualifier = ''
-
+            qualifier = dagQualifierGAF[dag[r['_Term_key']]]
         reportRow = reportRow + qualifier + TAB
+
+        #!5  GO ID         
         reportRow = reportRow + r['termID'] + TAB
 
-        # column 6; reference
+        #!6  DB:Reference (|DB:Reference) 
         references = []
         references.append(MGIPREFIX + ':' + r['refID'])
         if r['_Refs_key'] in pubMed:
@@ -674,24 +688,25 @@ def doGAFFinish():
                 references.append(goRefDict[r['_Refs_key']])
         reportRow = reportRow + '|'.join(references) + TAB
 
-        # column 7
+        #!7  Evidence Code               
         reportRow = reportRow + r['evidenceCode'] + TAB
 
-        # column 8
+        #!8  With (or) From             
         inferredFrom = mgi_utils.prvalue(r['inferredFrom']).replace('MGI:', 'MGI:MGI:')
         reportRow = reportRow + inferredFrom + TAB
 
-        # column 9-10
+        #!9  Aspect                     
+        #!10 DB Object Name             
         reportRow = reportRow + dag[r['_Term_key']] + TAB
         reportRow = reportRow + r['name'] + TAB
 
-        # column 11
+        #!11 DB Object Synonym (|Synonym)
         if r['_Object_key'] in syns:
             reportRow = reportRow + '|'.join(syns[r['_Object_key']]) + TAB
         else:
             reportRow = reportRow + TAB
 
-        # column 12
+        #!12 DB Object Type             
         # if marker is associated with an isoform (via go/annotation)
         # or marker is associated with a protein (via marker/sequence cache)
         # 	print('protein')
@@ -702,14 +717,13 @@ def doGAFFinish():
         else:
             reportRow = reportRow + r['markerType'] + TAB
                 
-        # column 13
-        reportRow = reportRow + SPECIES + TAB
+        #!13 Taxon(|taxon)             
+        reportRow = reportRow + 'taxon:10090' + TAB
 
-        # column 14
+        #!14 Date                     
         reportRow = reportRow + str(r['mDate']) + TAB
 
-        # column 15; assigned by
-
+        #!15 Assigned By             
         # remove "GOA_"; for example:  "GOA_IntAct" ==> "IntAct"
         # remove "NOCTUA_"; for example:  "NOCTUA_MGI" ==> "MGI"
         if r['assignedBy'].find('NOCTUA_') >= 0:
@@ -730,7 +744,7 @@ def doGAFFinish():
         else:
             reportRow = reportRow + MGIPREFIX + TAB
 
-        #
+        #!16 Annotation Extension   
         # column 16
         # contains property/value information
         # see lib_py_report/go_annot_extensions.py for list of excluded properties
@@ -739,7 +753,7 @@ def doGAFFinish():
             properties = ''.join(gafCol16Lookup[objectKey])
         reportRow = reportRow + properties + TAB
 
-        # column 17
+        #!17 Gene Product Form ID  
         # if isoformProtein = true
         #    then use isoformsProtein
         isoforms = ''
@@ -764,18 +778,18 @@ def doGAFFinish():
 #
 def doGPADFinish():
 
-    #!! 1. DB_Object_ID ::= ID       MGI or PR
-    #!! 2. Negation ::= 'NOT'
-    #!! 3. Relation ::= OBO_ID
-    #!! 4. Ontology_Class_ID ::= OBO_ID
-    #!! 5. Reference ::= [ID] ('|' ID)*
-    #!! 6. Evidence_type ::= OBO_ID
-    #!! 7. With_or_From ::= [ID] ('|' | ‘,’ ID)*
-    #!! 8. Interacting_taxon_ID ::= NCBITaxon:[Taxon_ID]
-    #!! 9. Date ::= YYYY-MM-DD
-    #!! 10. Assigned_by ::= Prefix
-    #!! 11. Annotation_Extensions ::= [Extension_Conj] ('|' Extension_Conj)*
-    #!! 12. Annotation_Properties ::= [Property_Value_Pair] ('|' Property_Value_Pair)*
+    #! 1  DB_Object_ID
+    #! 2  Negation
+    #! 3  Relation
+    #! 4  Ontology_Class_ID
+    #! 5  Reference
+    #! 6  Evidence_type
+    #! 7  With_or_From
+    #! 8  Interacting_taxon_ID
+    #! 9  Date
+    #! 10 Assigned_by
+    #! 11 Annotation_Extensions
+    #! 12 Annotation_Properties
 
     #
     # process results
@@ -789,7 +803,7 @@ def doGPADFinish():
         if r['_Term_key'] not in dag:
             continue
 
-        if dag[r['_Term_key']] not in dagQualifier:
+        if dag[r['_Term_key']] not in dagQualifierGPAD:
             continue
 
         #
@@ -840,7 +854,7 @@ def addGPADReportRow(reportRow, r):
         #
         # GO-Qualifier  : VOC_EvidenceProperty where value = 'go_qualifier' (goQualifierLookup)
         #
-        # DAG-Qualifier : hard-coded RO of C, P, F (dagQualifier)
+        # DAG-Qualifier : hard-coded RO of C, P, F (dagQualifierGPAD)
         #
 
         #
@@ -871,7 +885,7 @@ def addGPADReportRow(reportRow, r):
         # if col 3 was set by previous col 2 processing then done with col 3
         # else if GO Property exists in goQualifierLookup, then use its RO id
         # else if inferredFrom contains "InterPro", then use RO:0002331
-        # else use dagQualifier (C, P, F)
+        # else use dagQualifierGPAD (C, P, F)
 
         if default_relation == '':
             if key in goQualifierLookup:
@@ -879,7 +893,7 @@ def addGPADReportRow(reportRow, r):
             elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
                 default_relation = 'RO:0002331'
             else:
-                default_relation = dagQualifier[dag[r['_Term_key']]]
+                default_relation = dagQualifierGPAD[dag[r['_Term_key']]]
         reportRow = reportRow + default_relation + TAB
 
         # 4. Ontology_Class_ID ::= OBO_ID/GO ID
@@ -969,48 +983,47 @@ doGAFCol16()
 doIsoform()
 
 #
-# GAF 2.0
+# GAF 2.2
 #
 
 fp = reportlib.init('gene_association', fileExt = '.mgi2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp2 = reportlib.init('gene_association_pro', fileExt = '.mgi2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-fp.write('!gaf-version: 2.1\n')
-fp.write('!software version: $Revision$\n')
-fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
+fp.write('!gaf-version: 2.2\n')
+fp.write('!generated-by: MGI\n')
+fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 fp.write('!\n')
-fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
-fp.write('!\n')
-fp.write('!1.  DB                              required        1               UniProtKB\n')
-fp.write('!2.  DB Object ID                    required        1               P12345\n')
-fp.write('!3.  DB Object Symbol                required        1               PHO3\n')
-fp.write('!4.  Qualifier                       optional        0 or greater    NOT\n')
-fp.write('!5.  GO ID                           required        1               GO:0003993\n')
-fp.write('!6.  DB:Reference (|DB:Reference)    required        1 or greater    PMID:2676709\n')
-fp.write('!7.  Evidence Code                   required        1               IMP\n')
-fp.write('!8.  With (or) From                  optional        0 or greater    GO:0000346\n')
-fp.write('!9.  Aspect                          required        1               F\n')
-fp.write('!10. DB Object Name                  optional        0 or 1          Toll-like receptor 4\n')
-fp.write('!11. DB Object Synonym (|Synonym)    optional        0 or greater    hToll   Tollboot\n')
-fp.write('!12. DB Object Type                  required        1               protein\n')
-fp.write('!13. Taxon(|taxon)                   required        1 or 2          taxon:9606\n')
-fp.write('!14. Date                            required        1               20090118\n')
-fp.write('!15. Assigned By                     required        1               SGD\n')
-fp.write('!16. Annotation Extension            optional        0 or greater    part_of(CL:0000576)\n')
-fp.write('!17. Gene Product Form ID            optional        0 or 1          UniProtKB:P12345-2\n')
+fp.write('!1  DB                              required        1       UniProtKB\n')
+fp.write('!2  DB Object ID                    required        1       P12345\n')
+fp.write('!3  DB Object Symbol                required        1       PHO3\n')
+fp.write('!4  Qualifier                       required        1 or 2  NOT|involved_in\n')
+fp.write('!5  GO ID                           required        1       GO:0003993\n')
+fp.write('!6  DB:Reference (|DB:Reference)    required        1 or greater    PMID:2676709\n')
+fp.write('!7  Evidence Code                   required        1       IMP\n')
+fp.write('!8  With (or) From                  optional        0 or greater    GO:0000346\n')
+fp.write('!9  Aspect                          required        1       F\n')
+fp.write('!10 DB Object Name                  optional        0 or 1  Toll-like receptor 4\n')
+fp.write('!11 DB Object Synonym (|Synonym)    optional        0 or greater    hToll\n')
+fp.write('!12 DB Object Type                  required        1       protein\n')
+fp.write('!13 Taxon(|taxon)                   required        1 or 2  taxon:9606\n')
+fp.write('!14 Date                            required        1       20090118\n')
+fp.write('!15 Assigned By                     required        1       SGD\n')
+fp.write('!16 Annotation Extension            optional        0 or greater    part_of(CL:0000576)\n')
+fp.write('!17 Gene Product Form ID            optional        0 or 1  UniProtKB:P12345-2\n')
 fp.write('!\n')
 
 doProtein()
 doGAFFinish()
 
+# TO-DO/turned off until GOA/Mouse has a GAF 2.2 version
 # append GOA annotations, if exists : see goload/goamouse
-try:
-    goaFile = open(os.environ['GOAGAFMGI'], 'r')
-    for line in goaFile.readlines():
-        fp.write(line)
-    goaFile.close()
-except:
-    pass
+#try:
+#    goaFile = open(os.environ['GOAGAFMGI'], 'r')
+#    for line in goaFile.readlines():
+#        fp.write(line)
+#    goaFile.close()
+#except:
+#    pass
 
 reportlib.finish_nonps(fp)
 reportlib.finish_nonps(fp2)
@@ -1022,23 +1035,21 @@ reportlib.finish_nonps(fp2)
 fp = reportlib.init('mgi2', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('!gpa-version: 2.0\n') 
+fp.write('!generated-by: MGI\n')
+fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 fp.write('!\n')
-fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
-fp.write('!\n')
-fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
-fp.write('!\n')
-fp.write('!1.  DB_Object_ID            ::= ID MGI or PR\n')
-fp.write('!2.  Negation                ::= "NOT"\n')
-fp.write('!3.  Relation                ::= OBO_ID\n')
-fp.write('!4.  Ontology_Class_ID       ::= OBO_ID\n')
-fp.write('!5.  Reference               ::= [ID] ("|" ID)*\n')
-fp.write('!6.  Evidence_type           ::= OBO_ID\n')
-fp.write('!7.  With_or_From            ::= [ID] ("|" | "," ID)*\n')
-fp.write('!8.  Interacting_taxon_ID    ::= NCBITaxon:[Taxon_ID]\n')
-fp.write('!9.  Date                    ::= YYYY-MM-DD\n')
-fp.write('!10. Assigned_by             ::= Prefix\n')
-fp.write('!11. Annotation_Extensions   ::= [Extension_Conj] ("|" Extension_Conj)*\n')
-fp.write('!12. Annotation_Properties   ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
+fp.write('!1  DB_Object_ID            ::= ID MGI or PR\n')
+fp.write('!2  Negation                ::= "NOT"\n')
+fp.write('!3  Relation                ::= OBO_ID\n')
+fp.write('!4  Ontology_Class_ID       ::= OBO_ID\n')
+fp.write('!5  Reference               ::= [ID] ("|" ID)*\n')
+fp.write('!6  Evidence_type           ::= OBO_ID\n')
+fp.write('!7  With_or_From            ::= [ID] ("|" | "," ID)*\n')
+fp.write('!8  Interacting_taxon_ID    ::= NCBITaxon:[Taxon_ID]\n')
+fp.write('!9  Date                    ::= YYYY-MM-DD\n')
+fp.write('!10 Assigned_by             ::= Prefix\n')
+fp.write('!11 Annotation_Extensions   ::= [Extension_Conj] ("|" Extension_Conj)*\n')
+fp.write('!12 Annotation_Properties   ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
 fp.write('!\n')
 
 doGPADFinish()
