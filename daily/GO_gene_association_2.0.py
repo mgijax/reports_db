@@ -75,8 +75,9 @@ proteins = {}
 #
 # gpad lookups
 #
-# translate dag to qualifier (col 3)
+# translate dag to qualifier
 dagQualifierGAF = {'C':'part_of', 'P':'acts_upstream_of_or_within', 'F':'enables'}
+# located_in, acts_upstream_of_or_within, enables
 dagQualifierGPAD = {'C':'RO:0001025', 'P':'RO:0002264', 'F':'RO:0002327'}
 taxonLookup = {}
 ecoLookupByEco = {}
@@ -253,7 +254,7 @@ def doSetup():
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
-        value = r['value']
+        value = r['value'].replace('taxon', 'NCBITaxon')
         if key not in taxonLookup:
             taxonLookup[key] = []
         taxonLookup[key].append(value)
@@ -893,7 +894,7 @@ def addGPADReportRow(reportRow, r):
 
         #! 8  Interacting_taxon_ID
         if key in taxonLookup:
-            reportRow = reportRow + taxonLookup[key][0].replace('taxon', 'NCBITaxon')
+            reportRow = reportRow + taxonLookup[key][0]
         reportRow = reportRow + TAB
 
         #! 9  Date
