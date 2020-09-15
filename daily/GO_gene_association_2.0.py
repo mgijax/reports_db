@@ -72,13 +72,15 @@ forPROC = {}
 # see doProtein() : protein identifiers
 proteins = {}
 
+# translate dag to qualifier
+dagQualifierGAF = {'C':'located_in', 'P':'acts_upstream_of_or_within', 'F':'enables'}
+
+# located_in, acts_upstream_of_or_within, enables
+dagQualifierGPAD = {'C':'RO:0001025', 'P':'RO:0002264', 'F':'RO:0002327'}
+
 #
 # gpad lookups
 #
-# translate dag to qualifier
-dagQualifierGAF = {'C':'located_in', 'P':'acts_upstream_of_or_within', 'F':'enables'}
-# located_in, acts_upstream_of_or_within, enables
-dagQualifierGPAD = {'C':'RO:0001025', 'P':'RO:0002264', 'F':'RO:0002327'}
 taxonLookup = {}
 ecoLookupByEco = {}
 ecoLookupByEvidence = {}
