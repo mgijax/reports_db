@@ -656,6 +656,8 @@ def doGAFFinish():
             qualifier = 'involved_in'
         else:
             qualifier = dagQualifierGAF[dag[r['_Term_key']]]
+        if qualifier.find('NOT') >= 0:
+            qualifier = qualifier + '|' + dagQualifierGAF[dag[r['_Term_key']]]
         reportRow = reportRow + qualifier + TAB
 
         #!5  GO ID         
