@@ -74,9 +74,11 @@ proteins = {}
 
 # translate dag to qualifier
 dagQualifierGAF = {'C':'located_in', 'P':'acts_upstream_of_or_within', 'F':'enables'}
+goQualifierGAF = {}
 
 # located_in, acts_upstream_of_or_within, enables
 dagQualifierGPAD = {'C':'RO:0001025', 'P':'RO:0002264', 'F':'RO:0002327'}
+goQualifierGPAD = {}
 
 #
 # gpad lookups
@@ -86,7 +88,6 @@ ecoLookupByEco = {}
 ecoLookupByEvidence = {}
 evidenceLookup = {}
 goPropertyLookup = {}
-goQualifierLookup = {}
 gpadCol11Lookup = {}
 gpadCol12Lookup = {}
 
@@ -101,7 +102,8 @@ def doSetup():
     global taxonLookup
     global ecoLookupByEco, ecoLookupByEvidence
     global goPropertyLookup
-    global goQualifierLookup
+    global goQualifierGAF
+    global goQualifierGPAD
     global gpadCol11Lookup
     global gpadCol12Lookup
     global goRefDict
@@ -295,11 +297,19 @@ def doSetup():
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
+
+        value = r['value']
+        if key not in goQualifierGAF:
+            goQualifierGAF[key] = []
+        goQualifierGAF[key].append(value)
+
         value = r['note']
-        if key not in goQualifierLookup:
-            goQualifierLookup[key] = []
-        goQualifierLookup[key].append(value)
-    #print(goQualifierLookup)
+        if key not in goQualifierGPAD:
+            goQualifierGPAD[key] = []
+        goQualifierGPAD[key].append(value)
+
+    #print(goQualifierGAF)
+    #print(goQualifierGPAD)
 
     #
     # gpadCol11 : convert properties to RO id
@@ -367,7 +377,8 @@ def doSetup():
             where a._AnnotEvidence_key = p._AnnotEvidence_key
             and p._PropertyTerm_key = t._Term_key
             and t.term in ('noctua-model-id', 'model-state', 
-                'text', 'has_participant', 'regulates_o_has_participant'
+                'has_participant', 'regulates_o_has_participant',
+                'text'
                 )
             ''', 'auto')
     for r in results:
@@ -385,9 +396,9 @@ def doSetup():
         if term in ('noctua-model-id', 'model-state'):
                 value = term + '=' + value
 
+        # "comment" is part of Dustin's initial noctua load; then it can be removed
         elif term in ('text'):
                 value = 'comment=' + value
-
         elif term in ('has_participant', 'regulates_o_has_participant'):
                 value = 'comment=' + term + '(' + value + ')'
 
@@ -470,7 +481,7 @@ def doGAFCol16():
     evidenceKeyClause = ",".join([str(k) for k in sanctionedEvidenceTermKeys])
 
     cmd = '''
-    select r.symbol, r._Object_key, r._AnnotEvidence_key, t.note as property, p.value, p.stanza
+    select r.symbol, r._Object_key, r._AnnotEvidence_key, t.term as property, p.value, p.stanza
             from gomarker2 r, VOC_Evidence_Property p, VOC_Term t
             where r._EvidenceTerm_key in (%s)
             and r._AnnotEvidence_key = p._AnnotEvidence_key
@@ -481,7 +492,7 @@ def doGAFCol16():
                 r._Object_key, 
                 r._AnnotEvidence_key, 
                 p.stanza, 
-                p.sequenceNum, 
+                p.sequenceNum,
                 property
     ''' % (evidenceKeyClause, propertyKeyClause)
 
@@ -508,7 +519,7 @@ def doGAFCol16():
         gafCol16Lookup[objectKey].append(sep + r['property'] + '(' + value + ')')
         stanza = r['stanza']
 
-    #print9gafCol16Lookup)
+    #print(gafCol16Lookup)
 
 ## end doGAFCol16()
 
@@ -643,6 +654,7 @@ def doGAFFinish():
             continue
 
         objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
+        key = r['_AnnotEvidence_key']
 
         #!1  DB               
         #!2  DB Object ID    
@@ -652,7 +664,9 @@ def doGAFFinish():
         reportRow = reportRow + r['symbol'] + TAB
 
         #!4  Qualifier      
-        if r['qualifier'] != None:
+        if key in goQualifierGAF:
+            qualifier = '|'.join(goQualifierGAF[key])
+        elif r['qualifier'] != None:
             qualifier = r['qualifier'].strip()
         elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
             qualifier = 'involved_in'
@@ -825,7 +839,7 @@ def addGPADReportRow(reportRow, r):
         #
         # GO-Properties : VOC_EvidenceProperty (_vocab_key = 82) (goPropertyLookup)
         #
-        # GO-Qualifier  : VOC_EvidenceProperty where value = 'go_qualifier' (goQualifierLookup)
+        # GO-Qualifier  : VOC_EvidenceProperty where value = 'go_qualifier' (goQualifierGPAD)
         #
         # DAG-Qualifier : hard-coded RO of C, P, F (dagQualifierGPAD)
         #
@@ -857,13 +871,13 @@ def addGPADReportRow(reportRow, r):
         #
         #! 3  Relation
         # if col 3 was set by previous col 2 processing then done with col 3
-        # else if GO Property exists in goQualifierLookup, then use its RO id
+        # else if GO Property exists in goQualifierGPAD, then use its RO id
         # else if inferredFrom contains "InterPro", then use RO:0002331
         # else use dagQualifierGPAD (C, P, F)
 
         if default_relation == '':
-            if key in goQualifierLookup:
-                default_relation = '|'.join(goQualifierLookup[key])
+            if key in goQualifierGPAD:
+                default_relation = '|'.join(goQualifierGPAD[key])
             elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
                 default_relation = 'RO:0002331'
             else:
