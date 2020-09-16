@@ -129,6 +129,7 @@ def doSetup():
     #
     # retrieve data set to process
     #
+    #   and m.symbol = 'Asap1'
     #   and m.symbol = 'Mbd2'
     #   and m.symbol = 'Adipoq'
     #   and m.symbol = 'Birc3'
@@ -690,22 +691,25 @@ def doGAFFinish():
         # {'C':'located_in', 'P':'acts_upstream_of_or_within', 'F':'enables'
         #
         # If the Annotation contains a GO-Qualifier, then use the “go_qualifier”/value
+        #       If MGI-Qualifier = NOT, then attach NOT to front of GO-Qualifier
+        #       For example :  NOT|enables
         # Else if the MGI-Qualifier is not empty, then use the MGI-Qualifier value
         # Else if the Annotation/Inferred From contains “InterPro:”, then use “involved_in”
         # Else use Default Qualifier
         #
 
         #!4  Qualifier      
+        qualifier = ""
         if key in goQualifierGAF:
-            qualifier = '|'.join(goQualifierGAF[key])
+            if r['qualifier'] == 'NOT':
+               qualifier = 'NOT|'
+            qualifier = qualifier + '|'.join(goQualifierGAF[key])
         elif r['qualifier'] != None:
             qualifier = r['qualifier'].strip()
         elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
             qualifier = 'involved_in'
         else:
             qualifier = dagQualifierGAF[dag[r['_Term_key']]]
-        if qualifier.find('NOT') >= 0:
-            qualifier = qualifier + '|' + dagQualifierGAF[dag[r['_Term_key']]]
         reportRow = reportRow + qualifier + TAB
 
         #!5  GO ID         
@@ -886,7 +890,7 @@ def addGPADReportRow(reportRow, r):
         if r['qualifier'] != None:
             tokens = r['qualifier'].split('|')
             try:
-                qualifier = 'NOT'
+                qualifier = tokes[0]
                 property = tokens[1]
                 if property in goPropertyLookup:
                     default_relation = goPropertyLookup[property][0];
@@ -895,6 +899,9 @@ def addGPADReportRow(reportRow, r):
                     qualifier = 'NOT'
                 else:
                     qualifier = ''
+                    property = tokens[0]
+                    if property in goPropertyLookup:
+                        default_relation = goPropertyLookup[property][0];
         else:
             qualifier = ''
         reportRow = reportRow + qualifier + TAB
