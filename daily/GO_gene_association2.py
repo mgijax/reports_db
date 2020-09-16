@@ -900,12 +900,12 @@ def addGPADReportRow(reportRow, r):
         reportRow = reportRow + qualifier + TAB
 
         #
-        #
         #! 3  Relation
         # if col 3 was set by previous col 2 processing then done with col 3
         # else if GO Property exists in goQualifierGPAD, then use its RO id
         # else if inferredFrom contains "InterPro", then use RO:0002331
         # else use dagQualifierGPAD (C, P, F)
+        #
 
         if default_relation == '':
             if key in goQualifierGPAD:
