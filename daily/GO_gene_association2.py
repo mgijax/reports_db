@@ -674,6 +674,27 @@ def doGAFFinish():
         reportRow = reportRow + str(r['markerID']) + TAB
         reportRow = reportRow + r['symbol'] + TAB
 
+        #
+        # GO-Qualifier : value where GO-Property = “go_qualifier”
+        # For example : GO-Property = “go_qualifier”, value = “part_of”
+        #
+        # MGI-Qualifier :  MGI original qualifier list before GO started
+        #       empty
+        #       NOT
+        #       colocalizes_with
+        #       NOT|colocalizes_with
+        #       contributes_to
+        #       NOT|contributes_to
+        #
+        # Default Qualifier:
+        # {'C':'located_in', 'P':'acts_upstream_of_or_within', 'F':'enables'
+        #
+        # If the Annotation contains a GO-Qualifier, then use the “go_qualifier”/value
+        # Else if the MGI-Qualifier is not empty, then use the MGI-Qualifier value
+        # Else if the Annotation/Inferred From contains “InterPro:”, then use “involved_in”
+        # Else use Default Qualifier
+        #
+
         #!4  Qualifier      
         if key in goQualifierGAF:
             qualifier = '|'.join(goQualifierGAF[key])
