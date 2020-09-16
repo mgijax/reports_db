@@ -1,8 +1,10 @@
 '''
 #
-# GO_gene_association_2.0.py
+# GO_gene_association2.py
 #
 # Generates:
+# intentionally creating gaf & gpad using one script
+# because they use much of the same logic/lookups/etc
 #       
 #	mgi2.gpad
 #	gene_association.mgi2 (GAF)
