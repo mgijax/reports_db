@@ -6,9 +6,9 @@
 # intentionally creating gaf & gpad using one script
 # because they use much of the same logic/lookups/etc
 #       
-#	mgi2.gpad
 #	gene_association.mgi2 (GAF)
 #	gene_association_pro.mgi2 (GAF)
+#	mgi2.gpad
 #
 # ALSO CHANGE:  weekly/GO_gene_association_nonmouse.py
 # 09/11/2020 per David Hill, do nothing until we have Tues/09/15 meeting
@@ -18,6 +18,15 @@
 #
 # GAF 2.2 : see below
 # fp.write('!gaf-version: 2.2\n')
+#
+# IMPORTANT THINGS TO KNOW:
+#
+#    gaf/col11 (annotation extension) and gpad/col16 should be equal.
+#    except :  ISO annotations are excluded from gaf/col11 (blank)
+#    see "lib_py_report/go_annot_extensions.py" for the list of
+#	excluded Properties and excluded Evidence
+#
+#    gpad/col16 : will *never* contains > 1 stanza, and will always use the "," delimiter
 #
 # lec   08/25/2020
 #       - TR13272/converting to GPI 2.0
