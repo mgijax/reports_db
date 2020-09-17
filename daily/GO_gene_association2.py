@@ -208,6 +208,10 @@ def doSetup():
         and b._LogicalDB_key = 1 
         and g._EvidenceTerm_key = t._Term_key 
         and g._ModifiedBy_key = u._User_key
+
+        -- for Dustin/only MGI_curated
+        and (u.orcid is not null and p._propertyterm_key = 18583062)
+
         ''', None)
     db.sql('create index gomarker2_idx1 on gomarker2(symbol)', None)
     db.sql('create index gomarker2_idx2 on gomarker2(_Refs_key)', None)
@@ -693,6 +697,7 @@ def doGAFFinish():
         # If the Annotation contains a GO-Qualifier, then use the “go_qualifier”/value
         #       If MGI-Qualifier = NOT, then attach NOT to front of GO-Qualifier
         #       For example :  NOT|enables
+        # Else if the MGI-Qualifier = "NOT, then "NOT:" + Default Qualifier
         # Else if the MGI-Qualifier is not empty, then use the MGI-Qualifier value
         # Else if the Annotation/Inferred From contains “InterPro:”, then use “involved_in”
         # Else use Default Qualifier
@@ -704,6 +709,8 @@ def doGAFFinish():
             if r['qualifier'] == 'NOT':
                qualifier = 'NOT|'
             qualifier = qualifier + '|'.join(goQualifierGAF[key])
+        elif r['qualifier'] == 'NOT':
+            qualifier = 'NOT|' + dagQualifierGAF[dag[r['_Term_key']]]
         elif r['qualifier'] != None:
             qualifier = r['qualifier'].strip()
         elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
