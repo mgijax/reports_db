@@ -146,7 +146,8 @@ def doSetup():
              VOC_Evidence e, 
              MRK_Marker m, 
              MRK_Types mt, 
-             VOC_Term q
+             VOC_Term q,
+             MGI_User u
         where a._AnnotType_key = 1000 
         and a._Annot_key = e._Annot_key 
         and a._Object_key = m._Marker_key 
@@ -158,6 +159,10 @@ def doSetup():
         and ta.preferred = 1 
         and m._Marker_Type_key = mt._Marker_Type_key 
         and a._Qualifier_key = q._Term_key 
+        and e._ModifiedBy_key = u._User_key
+        and m.symbol = 'Tfg'
+        -- for Dustin/only MGI_curated
+        and u.orcid is not null
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -210,9 +215,10 @@ def doSetup():
         and g._ModifiedBy_key = u._User_key
 
         -- for Dustin/only MGI_curated
-        and (u.orcid is not null and p._propertyterm_key = 18583062)
+        and u.orcid is not null
 
         ''', None)
+
     db.sql('create index gomarker2_idx1 on gomarker2(symbol)', None)
     db.sql('create index gomarker2_idx2 on gomarker2(_Refs_key)', None)
     db.sql('create index gomarker2_idx3 on gomarker2(_AnnotEvidence_key)', None)
@@ -1087,14 +1093,15 @@ fp.write('!\n')
 
 doGPADFinish()
 
+# for Dustin
 # append GOA annotations, if exists : see goload/goamouse
-try:
-        goafile = open(os.environ['GOAGPAD2MGI'], 'r')
-        for line in goafile.readlines():
-                fp.write(line)
-        goafile.close()
-except:
-        pass
+#try:
+#        goafile = open(os.environ['GOAGPAD2MGI'], 'r')
+#        for line in goafile.readlines():
+#                fp.write(line)
+#        goafile.close()
+#except:
+#        pass
 
 reportlib.finish_nonps(fp)
 
