@@ -1,3 +1,9 @@
+TAG: reports_db-6-0-16-5
+DATE: 10/30/2020
+STAFF: sc
+CHANGES: HMD_HumanPhenotype.py
+TR13418 - Missing fields in HMD_HumanPhenotyp.rpt
+
 TAG: reports_db-6-0-16-4
 DATE: 09/08/2020
 STAFF: dbm

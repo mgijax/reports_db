@@ -72,9 +72,9 @@ def createDict(results, keyField, valueField):
                 key = r[keyField]
                 value = r[valueField]
                 if key not in d:
-                    d[key] = ' '
-                if d[key].find(value) == -1:
-                    d[key] = value.join([d[key]])
+                    d[key] = []
+                if value not in d[key]:
+                    d[key].append(value)
         return d
 
 
@@ -182,7 +182,6 @@ results = db.sql('''
         and a._LogicalDB_key = 55
         ''', 'auto')
 hlocus = createDict(results, '_Object_key', 'accID')
-
 #
 # Get the MP Header Terms for the mouse markers using 1015/MP->Marker (derivied) annotations
 # find the SetMember/ancestor of MP/descendent
@@ -207,12 +206,10 @@ mpheno = createDict(results, 'mouseKey', 'accID')
 results = db.sql('select * from homology order by humanSym, mouseSym', 'auto')
 
 for r in results:
-
     hasHGNC = 'no'
     clusterID = None
 
     mouseKey = r['mouseKey']
-
     if mouseKey in  hgncMouseList:
         hasHGNC = 'yes'
 
@@ -220,9 +217,8 @@ for r in results:
         clusterID = hgMouseDict[mouseKey]
 
     fp.write(r['humanSym'] + TAB)
-
     if r['humanKey'] in hlocus:
-        fp.write(hlocus[r['humanKey']] + TAB)
+        fp.write(', '.join(hlocus[r['humanKey']]) + TAB)
     else:
         fp.write(TAB)
 
@@ -235,10 +231,10 @@ for r in results:
     fp.write(r['mouseSym'] + TAB)
 
     if mouseKey in mmgi:
-        fp.write(mmgi[mouseKey] + TAB)
+        fp.write(', '.join(mmgi[mouseKey]) + TAB)
 
     if mouseKey in mpheno:
-        fp.write(mpheno[mouseKey] + TAB)
+        fp.write(', '.join(mpheno[mouseKey]) + TAB)
     else:
         fp.write(TAB)
 
