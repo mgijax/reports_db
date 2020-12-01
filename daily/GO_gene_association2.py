@@ -34,6 +34,22 @@
 #       gene_association.mgi2 : no changes yet
 #       gene_association_pro.mgi2 : no changes yet
 #
+# For Gaf2.2
+# If the annotation has the value GO:0008150 (biological_process) in column 5, 
+#       then the value in column 4 should be involved_in.
+# If the annotation has the value GO:0003674 (molecular_function) in column 5, 
+#       then the value in column 4 should be enables.
+# If the annotation has the value GO:0005575 (cellular_component) in column 5, 
+#       then the value in column 4 should be is_active_in.
+#
+# For GPAD 2.0
+# If the annotation has the value GO:0008150 (biological_process) in column 4, 
+#       then the value in column 3 should be RO:0002331 (involved_in).
+# If the annotation has the value GO:0003674 (molecular_function) in column 4, 
+#       then the value in column 3 should be RO:0002327 (enables).
+# If the annotation has the value GO:0005575 (cellular_component) in column 4, 
+#       then the value in column 3 should be RO:0002432 (is_active_in).
+#
 '''
 
 import sys
@@ -135,6 +151,12 @@ def doSetup():
     #   and m.symbol = 'Birc3'
     #	and m.symbol = 'Hk1'
     #
+    # for Dustin, exclude:
+    # _refs_key |    mgiid    |  jnumid  |                       short_citation
+    # -----------+-------------+----------+-------------------------------------------------------------
+    #     156949 | MGI:4417868 | J:155856 | Mouse Genome Informatics Scientific Curators,  2010 Jan;():
+    #     165659 | MGI:4834177 | J:164563 | Mouse Genome Informatics Scientific Curators,  2010 Oct;():
+
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
             e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
@@ -160,9 +182,9 @@ def doSetup():
         and m._Marker_Type_key = mt._Marker_Type_key 
         and a._Qualifier_key = q._Term_key 
         and e._ModifiedBy_key = u._User_key
-        and m.symbol = 'Tfg'
         -- for Dustin/only MGI_curated
         and u.orcid is not null
+        and e._Refs_key not in (156949, 165659)
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -700,18 +722,30 @@ def doGAFFinish():
         # Default Qualifier:
         # {'C':'located_in', 'P':'acts_upstream_of_or_within', 'F':'enables'
         #
-        # If the Annotation contains a GO-Qualifier, then use the “go_qualifier”/value
+        # If the annotation has the value GO:0008150 (biological_process) in column 5, 
+        #       then the value in column 4 should be involved_in.
+        # else if the annotation has the value GO:0003674 (molecular_function) in column 5, 
+        #       then the value in column 4 should be enables.
+        # else if the annotation has the value GO:0005575 (cellular_component) in column 5, 
+        #       then the value in column 4 should be is_active_in.
+        # else if the Annotation contains a GO-Qualifier, then use the “go_qualifier”/value
         #       If MGI-Qualifier = NOT, then attach NOT to front of GO-Qualifier
         #       For example :  NOT|enables
-        # Else if the MGI-Qualifier = "NOT, then "NOT:" + Default Qualifier
-        # Else if the MGI-Qualifier is not empty, then use the MGI-Qualifier value
-        # Else if the Annotation/Inferred From contains “InterPro:”, then use “involved_in”
-        # Else use Default Qualifier
+        # else if the MGI-Qualifier = "NOT, then "NOT:" + Default Qualifier
+        # else if the MGI-Qualifier is not empty, then use the MGI-Qualifier value
+        # else if the Annotation/Inferred From contains “InterPro:”, then use “involved_in”
+        # else use Default Qualifier
         #
 
         #!4  Qualifier      
         qualifier = ""
-        if key in goQualifierGAF:
+        if r['termID'] == 'GO:0008150':
+                qualifier = 'involved_in'
+        elif r['termID'] == 'GO:0003674':
+                qualifier = 'enables'
+        elif r['termID'] == 'GO:0005575':
+                qualifier = 'is_active_in'
+        elif key in goQualifierGAF:
             if r['qualifier'] == 'NOT':
                qualifier = 'NOT|'
             qualifier = qualifier + '|'.join(goQualifierGAF[key])
@@ -915,19 +949,35 @@ def addGPADReportRow(reportRow, r):
                     property = tokens[0]
                     if property in goPropertyLookup:
                         default_relation = goPropertyLookup[property][0];
+            #if tokens[0] == 'colocalizes_with':
+            if r['termID'] == 'GO:0004129':
+                print('qualifier:', r['termID'], qualifier)
+                print('default: ', r['termID'], default_relation)
         else:
             qualifier = ''
         reportRow = reportRow + qualifier + TAB
 
         #
         #! 3  Relation
-        # if col 3 was set by previous col 2 processing then done with col 3
+        #
+        # If the annotation has the value GO:0008150 (biological_process) in column 4, 
+        #       then the value in column 3 should be RO:0002331 (involved_in).
+        # else if the annotation has the value GO:0003674 (molecular_function) in column 4, 
+        #       then the value in column 3 should be RO:0002327 (enables).
+        # else if the annotation has the value GO:0005575 (cellular_component) in column 4, 
+        #       then the value in column 3 should be RO:0002432 (is_active_in).
+        # else if col 3 was set by previous col 2 processing then done with col 3
         # else if GO Property exists in goQualifierGPAD, then use its RO id
         # else if inferredFrom contains "InterPro", then use RO:0002331
         # else use dagQualifierGPAD (C, P, F)
         #
-
-        if default_relation == '':
+        if r['termID'] == 'GO:0008150':
+                default_relation = 'RO:0002331'
+        elif r['termID'] == 'GO:0003674':
+                default_relation = 'RO:0002327'
+        elif r['termID'] == 'GO:0005575':
+                default_relation = 'RO:0002432'
+        elif default_relation == '':
             if key in goQualifierGPAD:
                 default_relation = '|'.join(goQualifierGPAD[key])
             elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
