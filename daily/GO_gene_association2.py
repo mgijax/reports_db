@@ -183,8 +183,8 @@ def doSetup():
         and a._Qualifier_key = q._Term_key 
         and e._ModifiedBy_key = u._User_key
         -- for Dustin/only MGI_curated
-        and u.orcid is not null
-        and e._Refs_key not in (156949, 165659)
+        --and u.orcid is not null
+        --and e._Refs_key not in (156949, 165659)
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -237,7 +237,7 @@ def doSetup():
         and g._ModifiedBy_key = u._User_key
 
         -- for Dustin/only MGI_curated
-        and u.orcid is not null
+        --and u.orcid is not null
 
         ''', None)
 
@@ -949,10 +949,9 @@ def addGPADReportRow(reportRow, r):
                     property = tokens[0]
                     if property in goPropertyLookup:
                         default_relation = goPropertyLookup[property][0];
-            #if tokens[0] == 'colocalizes_with':
-            if r['termID'] == 'GO:0004129':
-                print('qualifier:', r['termID'], qualifier)
-                print('default: ', r['termID'], default_relation)
+            #if r['termID'] == 'GO:0004129':
+                #print('qualifier:', r['termID'], qualifier)
+                #print('default: ', r['termID'], default_relation)
         else:
             qualifier = ''
         reportRow = reportRow + qualifier + TAB
