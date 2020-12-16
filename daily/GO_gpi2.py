@@ -2,6 +2,8 @@
 #
 # GO_gpi_2.0.py
 #
+# cat mgi2.gpi | grep -v '^!' | awk 'BEGIN {FS="\t"} {print NF}' | sort | uniq -c
+#
 # Report:
 #       see: wiki/mediawiki/index.php/sw:GOload 
 #       contains link to GO/GPI format
@@ -260,8 +262,6 @@ for r in results:
                 fp.write("|".join(markerUniProtKB[marker]))
         fp.write(TAB)
 
-        fp.write(TAB)
-
         fp.write(CRT)
 
 #
@@ -305,6 +305,8 @@ for r in results:
                 fp.write('col 5 bad no feature type/marker type =  ' + str(r['_Marker_Type_key']) + TAB)
 
 	fp.write(SPECIES + TAB)
+	fp.write(TAB)
+	fp.write(TAB)
 	fp.write(TAB)
 
 	if marker in markerUniProtKB:
