@@ -424,7 +424,7 @@ for r in results:
     refsKey = r['_refs_key']
     key = strainKey + refsKey
 
-    # no genotypes
+    # no genotypes with mp or do annotations
     if key not in mpGenotypes and key not in doGenotypes:
         fp.write(r['strain'] + TAB)
         fp.write(r['strainid'] + TAB)

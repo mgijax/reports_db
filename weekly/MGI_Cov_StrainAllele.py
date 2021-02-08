@@ -174,7 +174,6 @@ and aa.symbol in ('Tg(FOXJ1-ACE2)1Rba')
         if key not in alleles:
                 alleles[key] = []
         alleles[key].append(value)
-    print(alleles)
 
     #
     # strain set
@@ -392,7 +391,7 @@ def initializeAlleleGeneral():
 def processStrainSet():
 
     #
-    # strainSet
+    # strainSet by strain
     #
     results = db.sql('select * from strainSet order by strain, short_citation', 'auto')
     for r in results:
@@ -428,7 +427,7 @@ def processStrainSet():
 def processAlleleSet():
 
     #
-    # strainSet
+    # strainSet by alleles
     #
     results = db.sql('select * from strainSet order by strain, short_citation', 'auto')
     for r in results:
@@ -436,6 +435,10 @@ def processAlleleSet():
         strainKey = r['_strain_key']
         refsKey = r['_refs_key']
         key = strainKey + refsKey
+        strain = r['strain']
+
+        if strain.startswith('involves') or strain.startswith('either'):
+            strain = 'NO STRAIN'
 
         # no genotypes with mp or do annotations
         if key not in mpGenotypes and key not in doGenotypes:
@@ -460,40 +463,6 @@ def processAlleleSet():
         # DO annotations
         if key in doGenotypes:
            processDO(r, strainKey, refsKey, key)
-
-    #
-    # alleleSet
-    #
-    #results = db.sql('select * from alleleSet order by symbol, short_citation', 'auto')
-    #for r in results:
-#
-#        alleleKey = r['_allele_key']
-#        refsKey = r['_refs_key']
-#        key = alleleKey + refsKey
-#
-#        #fp.write(r['strain'] + TAB)
-#        #fp.write(r['strainid'] + TAB)
-#        #fp.write('|'.join(strainAttrs[strainKey]) + TAB)
-#        fp.write(TAB*4)
-#        fp.write(r['symbol'] + TAB)
-#        fp.write(r['alleleid'] + TAB)
-#        fp.write(r['alleletype'] + TAB)
-#
-## 8/H) Allele subtypes  (pipe delimited)
-#        fp.write(TAB)
-#
-#        fp.write(TAB*4)
-#        fp.write(r['short_citation'] + TAB)
-#        fp.write(r['jnumid'] + TAB)
-#        fp.write('|'.join(covidTags[refsKey]) + CRT)
-#
-#        # MP annotations
-#        #if key in mpGenotypes:
-#        #   processMP(key)
-#
-#        # DO annotations
-#        #if key in doGenotypes:
-#        #   processDO(key)
 
 def processMP(r, strainKey, refsKey, key):
 
@@ -629,7 +598,7 @@ fp.write('#\n')
 initializeRefSet()
 initializeAlleleExclude()
 initializeStrainSet1()
-#processStrainSet()
+processStrainSet()
 initializeStrainSet2()
 processAlleleSet()
 
