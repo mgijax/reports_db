@@ -12,7 +12,7 @@
 #     allele type = 'Transgenic' AND subtypes only in: 'Reporter', 'Transactivator', 'Recombinase', 'Inducible'
 #
 # strain by strain-reference associations
-#     strain is associated with covid-reference (mgi_reference_assoc) and reference is not in by-strain set
+#     strain is associated with covid-reference (mgi_reference_assoc)
 # 
 # strain by allele-reference associations
 #     allele is associated with covid-reference (mgi_reference_assoc) and reference is not in by-strain set
@@ -25,6 +25,7 @@
 #    -> if genotype
 #        -> if allele
 #           -> allele is not wild-type
+#           -> allele not in alleleExclude
 #        -> genotype with MP header OR
 #        -> genotype with DO annotation
 #
@@ -70,6 +71,10 @@ doGenotypes = {}
 alleles = {}
 alleleSubtypes = {}
 
+#
+# select covid references
+# select covid tags
+#
 def initializeRefSet():
     global covidTags
 
@@ -110,7 +115,10 @@ def initializeRefSet():
         covidTags[key].append(value)
     #print(covidTags)
 
-def initializeStrainSet1():
+#
+# strain by strain-reference associations
+#
+def initializeByStrain():
 
     #
     # strain set
@@ -133,9 +141,12 @@ def initializeStrainSet1():
     db.sql('create index refsKey1 on strainSet(_refs_key)', None)
 
     initializeStrainGeneral()
-    initializeAlleleSet1()
+    initializeAlleleSet()
 
-def initializeStrainSet2():
+#
+# strain by allele-reference associations
+#
+def initializeByAllele():
     global alleles
 
     alleles = {}
@@ -203,13 +214,18 @@ def initializeStrainSet2():
     initializeStrainGeneral()
     initializeAlleleGeneral()
 
+#
+# strain attributes
+# mpGenotypes with mp annotations with covid reference
+# doGenotypes with DO annotations with at least 1 covid reference
+#
 def initializeStrainGeneral():
     global strainAttrs
     global mpGenotypes
     global doGenotypes
 
     #
-    # strainattr lookup
+    # strain attributes
     #
     cmd = '''
     select distinct s._strain_key, t.term as strainattr
@@ -305,12 +321,12 @@ def initializeStrainGeneral():
         doGenotypes[key].append(value)
     #print(doGenotypes)
 
+#
+# allele exclusions
+#     allele type = 'Transgenic' AND subtypes only in: 'Reporter', 'Transactivator', 'Recombinase', 'Inducible'
+#
 def initializeAlleleExclude():
 
-    #
-    # alleles
-    # exclude where Allele type = 'Transgenic' (847126)
-    # and subtypes are ONLY: 'reporter', 'transactivator' and/or 'recombinase'
     cmd = '''
     select distinct a._allele_key
     into temp table alleleExclude
@@ -330,15 +346,15 @@ def initializeAlleleExclude():
     db.sql(cmd, None)
     db.sql('create index alleleKey1 on alleleExclude(_allele_key)', None)
 
-def initializeAlleleSet1():
+#
+# alleles
+#       exclude wildtype Alleles
+#
+def initializeAlleleSet():
     global alleles
 
     alleles = {}
 
-    #
-    # alleles
-    # exclude wildtype Alleles
-    #
     cmd = '''
     select distinct g._genotype_key, a.accid as alleleid, aa._allele_key, aa.symbol, t.term as alleletype
     into temp table alleleSet
@@ -367,6 +383,9 @@ def initializeAlleleSet1():
 
     initializeAlleleGeneral()
 
+#
+# allele subtypes
+#
 def initializeAlleleGeneral():
     global alleleSubtypes
 
@@ -393,7 +412,10 @@ def initializeAlleleGeneral():
         alleleSubtypes[key].append(value)
     #print(alleleSubtypes)
 
-def processStrainSet():
+#
+# process strain by allele-reference associations
+#
+def processByStrain():
 
     #
     # strainSet by strain
@@ -430,7 +452,10 @@ def processStrainSet():
         if key in doGenotypes:
            processDO(r, strain, strainKey, refsKey, key)
 
-def processAlleleSet():
+#
+# process strain by allele-reference associations
+#
+def processByAllele():
 
     #
     # strainSet by alleles
@@ -470,6 +495,9 @@ def processAlleleSet():
         if key in doGenotypes:
            processDO(r, strain, strainKey, refsKey, key)
 
+#
+# mp annotations
+#
 def processMP(r, strain, strainKey, refsKey, key):
 
     for g in mpGenotypes[key]:
@@ -522,6 +550,9 @@ def processMP(r, strain, strainKey, refsKey, key):
             fp.write(r['jnumid'] + TAB)
             fp.write('|'.join(covidTags[refsKey]) + CRT)
 
+#
+# do annotations
+#
 def processDO(r, strain, strainKey, refsKey, key):
 
     for g in doGenotypes[key]:
@@ -603,10 +634,10 @@ fp.write('#\n')
 
 initializeRefSet()
 initializeAlleleExclude()
-initializeStrainSet1()
-processStrainSet()
-initializeStrainSet2()
-processAlleleSet()
+initializeByStrain()
+processByStrain()
+initializeByAllele()
+processByAllele()
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
