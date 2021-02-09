@@ -183,8 +183,8 @@ def doSetup():
         and a._Qualifier_key = q._Term_key 
         and e._ModifiedBy_key = u._User_key
         -- for Dustin/only MGI_curated
-        --and u.orcid is not null
-        --and e._Refs_key not in (156949, 165659)
+        and u.orcid is not null
+        and e._Refs_key not in (156949, 165659)
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -237,7 +237,7 @@ def doSetup():
         and g._ModifiedBy_key = u._User_key
 
         -- for Dustin/only MGI_curated
-        --and u.orcid is not null
+        and u.orcid is not null
 
         ''', None)
 
@@ -359,7 +359,7 @@ def doSetup():
     # gpadCol11 : convert properties to RO id
     # note that noctua-generated properties will *always* have one stanza
     #
-    results = db.sql('''select distinct a._AnnotEvidence_key, t.note, p.value
+    results = db.sql('''select distinct a._AnnotEvidence_key, t.note, p.value, p.stanza
             from gomarker2 a,
                  VOC_Evidence_Property p,  
                  VOC_Term t
@@ -372,6 +372,7 @@ def doSetup():
                 'has_participant', 'regulates_o_has_participant'
                 )
             and t.note is not null
+            order by a._AnnotEvidence_key, p.stanza
             ''', 'auto')
     for r in results:
         key = r['_AnnotEvidence_key']
@@ -391,8 +392,18 @@ def doSetup():
         value = r['note'] + '(' + value + ')'
 
         if key not in gpadCol11Lookup:
-            gpadCol11Lookup[key] = []
-        gpadCol11Lookup[key].append(value)
+                gpadCol11Lookup[key] = []
+                stanza = 0
+
+        if stanza == 0:
+                sep = ''
+        elif r['stanza'] != stanza:
+                sep = '|'
+        else:
+                sep = ','
+
+        gpadCol11Lookup[key].append(sep + value)
+        stanza = r['stanza']
     #print(gpadCol11Lookup)
 
     #
@@ -1044,7 +1055,7 @@ def addGPADReportRow(reportRow, r):
         #! 11 Annotation_Extensions
         properties = ''
         if key in gpadCol11Lookup:
-            properties = ','.join(gpadCol11Lookup[key])
+            properties = ''.join(gpadCol11Lookup[key])
         reportRow = reportRow + properties + TAB
 
         #! 12 Annotation_Properties
@@ -1073,10 +1084,7 @@ doIsoform()
 #
 # GAF 2.2
 #
-
 fp = reportlib.init('gene_association', fileExt = '.mgi2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-fp2 = reportlib.init('gene_association_pro', fileExt = '.mgi2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-
 fp.write('!gaf-version: 2.2\n')
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
@@ -1100,6 +1108,9 @@ fp.write('!16 Annotation Extension            optional        0 or greater    pa
 fp.write('!17 Gene Product Form ID            optional        0 or 1  UniProtKB:P12345-2\n')
 fp.write('!\n')
 
+fp2 = reportlib.init('gene_association_pro', fileExt = '.mgi2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2.write('!gaf-version: 2.2\n')
+
 doProtein()
 doGAFFinish()
 
@@ -1119,9 +1130,7 @@ reportlib.finish_nonps(fp2)
 #
 # GPAD 2.0
 #
-
 fp = reportlib.init('mgi2', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-
 fp.write('!gpa-version: 2.0\n') 
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
@@ -1142,7 +1151,6 @@ fp.write('!\n')
 
 doGPADFinish()
 
-# for Dustin
 # append GOA annotations, if exists : see goload/goamouse
 #try:
 #        goafile = open(os.environ['GOAGPAD2MGI'], 'r')
