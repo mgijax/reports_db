@@ -172,7 +172,7 @@ def initializeByStrain():
     and s._strain_key = r._Object_key
     and cv._refs_key = r._refs_key
     and r._mgitype_key = 10
-    and s.strain in ('B6.Cg-Tg(K18-ACE2)2Prlmn/J')
+    --and s.strain in ('B6.Cg-Tg(K18-ACE2)2Prlmn/J')
     ''' 
 
     db.sql(cmd, None)
@@ -218,7 +218,7 @@ def initializeByAllele():
     and aa.iswildtype = 0
     and not exists (select 1 from alleleExclude e where aa._allele_key = e._allele_key)
     and not exists (select 1 from genotypeExclude e where g._genotype_key = e._genotype_key)
-    and aa.symbol in ('Tg(K18-ACE2)2Prlmn', 'Ccl2<tm1Rol>')
+    --and aa.symbol in ('Tg(K18-ACE2)2Prlmn', 'Ccl2<tm1Rol>')
     '''
     db.sql(cmd, None)
     db.sql('create index alleleKey2 on alleleSet(_allele_key)', None)
@@ -564,7 +564,7 @@ def processByStrain():
     #
     # strainSet by strain
     #
-    results = db.sql('select * from strainSet order by jnumid, strain, short_citation', 'auto')
+    results = db.sql('select * from strainSet order by strain, short_citation', 'auto')
     for r in results:
 
         strain = r['strain']
@@ -604,7 +604,7 @@ def processByAllele():
     #
     # strainSet by alleles
     #
-    results = db.sql('select * from strainSet order by jnumid, strain, short_citation', 'auto')
+    results = db.sql('select * from strainSet order by strain, short_citation', 'auto')
     for r in results:
 
         strainKey = r['_strain_key']
@@ -681,7 +681,7 @@ fp.write('#\n')
 initializeRefSet()
 initializeAlleleExclude()
 initializeByStrain()
-#processByStrain()
+processByStrain()
 initializeByAllele()
 processByAllele()
 
