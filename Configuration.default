@@ -42,7 +42,6 @@ setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
 # GOA file
 setenv GOAGAFMGI		${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gaf
 setenv GOAGPADMGI               ${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gpad
-setenv GOAGPAD2MGI              ${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gpad2
 setenv ECOFILE                  ${DATADOWNLOADS}/purl.obolibrary.org/obo/eco/eco.obo
 
 # ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
@@ -75,3 +74,7 @@ setenv IMSR_STRAINS_CSV		${DATADOWNLOADS}/bhmgiimsr01.jax.org/allStrains.csv
 
 # Iphone archive
 setenv IPHONEARCHIVE		${FTPREPORTDIR}/archive/iphone
+
+# Alliance human/mouse homology file for weekly/MGI_Cov_Human_Gene.py
+setenv ALLIANCE_HUMAN_FILE_GZ     "/mgi/all/wts_projects/13400/13459/MGI_Cov_Human_Gene/DISEASE-ALLIANCE_HUMAN_17.tsv.gz"
+setenv ALLIANCE_HUMAN_FILE     "/mgi/all/wts_projects/13400/13459/MGI_Cov_Human_Gene/DISEASE-ALLIANCE_HUMAN_17.tsv"
