@@ -22,6 +22,12 @@ touch ${LOG}
 echo `date`: Start weekly public reports | tee -a ${LOG}
 
 #
+# unzip files
+#
+echo "unzip input file ${ALLIANCE_HUMAN_FILE_GZ}" >> ${LOG}
+gunzip -f ${ALLIANCE_HUMAN_FILE_GZ} >> ${LOG}
+
+#
 # Generate weekly public reports.
 #
 cd ${PUBWEEKLY}
