@@ -338,12 +338,10 @@ def initializeStrainGeneral():
 #
 # mp annotations
 #
-def processMP(mode, fp, r, key):
+def processMP(r, key):
 
-    if mode == 'strain':
-        strain = r['strain']
-        strainKey = r['_strain_key']
-
+    strain = r['strain']
+    strainKey = r['_strain_key']
     refsKey = r['_refs_key']
 
     for g in mpGenotypes[key]:
@@ -351,7 +349,7 @@ def processMP(mode, fp, r, key):
         gKey = g['_genotype_key']
 
         # no alleles
-        if mode == 'strain' and gKey not in allelesByGenotype:
+        if gKey not in allelesByGenotype:
 
             fp.write(strain + TAB)
             fp.write(r['strainid'] + TAB)
@@ -374,61 +372,38 @@ def processMP(mode, fp, r, key):
         for a in allelesByGenotype[gKey]:
             aKey = a['_allele_key']
 
-            if mode == 'strain':
+            fp.write(strain + TAB)
+            fp.write(r['strainid'] + TAB)
 
-                fp.write(strain + TAB)
-                fp.write(r['strainid'] + TAB)
-
-                if strainKey in strainAttrs:
-                    fp.write('|'.join(strainAttrs[strainKey]) + TAB)
-                else:
-                    fp.write(TAB)
-
-                fp.write(g['genotypeid'] + TAB)
-                fp.write(a['symbol'] + TAB)
-                fp.write(a['alleleid'] + TAB)
-                fp.write(a['alleletype'] + TAB)
-
-                if aKey in alleleSubtypes:
-                    fp.write('|'.join(alleleSubtypes[aKey]) + TAB)
-                else:
-                    fp.write(TAB)
-
-                fp.write(TAB*2)
-                fp.write(g['label'] + TAB)
-                fp.write(g['mpid'] + TAB)
-                fp.write(r['short_citation'] + TAB)
-                fp.write(r['jnumid'] + TAB)
-                fp.write('|'.join(covidTags[refsKey]) + CRT)
-
+            if strainKey in strainAttrs:
+                fp.write('|'.join(strainAttrs[strainKey]) + TAB)
             else:
+                fp.write(TAB)
 
-                fp.write(a['symbol'] + TAB)
-                fp.write(a['alleleid'] + TAB)
-                fp.write(a['alleletype'] + TAB)
-                fp.write(g['genotypeid'] + TAB)
+            fp.write(g['genotypeid'] + TAB)
+            fp.write(a['symbol'] + TAB)
+            fp.write(a['alleleid'] + TAB)
+            fp.write(a['alleletype'] + TAB)
 
-                if aKey in alleleSubtypes:
-                    fp.write('|'.join(alleleSubtypes[aKey]) + TAB)
-                else:
-                    fp.write(TAB)
+            if aKey in alleleSubtypes:
+                fp.write('|'.join(alleleSubtypes[aKey]) + TAB)
+            else:
+                fp.write(TAB)
 
-                fp.write(TAB*2)
-                fp.write(g['label'] + TAB)
-                fp.write(g['mpid'] + TAB)
-                fp.write(r['short_citation'] + TAB)
-                fp.write(r['jnumid'] + TAB)
-                fp.write('|'.join(covidTags[refsKey]) + CRT)
+            fp.write(TAB*2)
+            fp.write(g['label'] + TAB)
+            fp.write(g['mpid'] + TAB)
+            fp.write(r['short_citation'] + TAB)
+            fp.write(r['jnumid'] + TAB)
+            fp.write('|'.join(covidTags[refsKey]) + CRT)
 
 #
 # do annotations
 #
-def processDO(mode, fp, r, key):
+def processDO(r, key):
 
-    if mode == 'strain':
-        strain = r['strain']
-        strainKey = r['_strain_key']
-
+    strain = r['strain']
+    strainKey = r['_strain_key']
     refsKey = r['_refs_key']
 
     for g in doGenotypes[key]:
@@ -436,7 +411,7 @@ def processDO(mode, fp, r, key):
         gKey = g['_genotype_key']
 
         # no alleles
-        if mode == 'strain' and gKey not in allelesByGenotype:
+        if gKey not in allelesByGenotype:
             fp.write(strain + TAB)
             fp.write(r['strainid'] + TAB)
 
@@ -458,51 +433,30 @@ def processDO(mode, fp, r, key):
         for a in allelesByGenotype[gKey]:
             aKey = a['_allele_key']
 
-            if mode == 'strain':
+            fp.write(strain + TAB)
+            fp.write(r['strainid'] + TAB)
 
-                fp.write(strain + TAB)
-                fp.write(r['strainid'] + TAB)
-
-                if strainKey in strainAttrs:
-                    fp.write('|'.join(strainAttrs[strainKey]) + TAB)
-                else:
-                    fp.write(TAB)
-
-                fp.write(g['genotypeid'] + TAB)
-                fp.write(a['symbol'] + TAB)
-                fp.write(a['alleleid'] + TAB)
-                fp.write(a['alleletype'] + TAB)
-
-                if aKey in alleleSubtypes:
-                    fp.write('|'.join(alleleSubtypes[aKey]) + TAB)
-                else:
-                    fp.write(TAB)
-
-                fp.write(g['term'] + TAB)
-                fp.write(g['doid'] + TAB)
-                fp.write(TAB*2)
-                fp.write(r['short_citation'] + TAB)
-                fp.write(r['jnumid'] + TAB)
-                fp.write('|'.join(covidTags[refsKey]) + CRT)
-
+            if strainKey in strainAttrs:
+                fp.write('|'.join(strainAttrs[strainKey]) + TAB)
             else:
+                fp.write(TAB)
 
-                fp.write(a['symbol'] + TAB)
-                fp.write(a['alleleid'] + TAB)
-                fp.write(a['alleletype'] + TAB)
-                fp.write(g['genotypeid'] + TAB)
+            fp.write(g['genotypeid'] + TAB)
+            fp.write(a['symbol'] + TAB)
+            fp.write(a['alleleid'] + TAB)
+            fp.write(a['alleletype'] + TAB)
 
-                if aKey in alleleSubtypes:
-                    fp.write('|'.join(alleleSubtypes[aKey]) + TAB)
-                else:
-                    fp.write(TAB)
+            if aKey in alleleSubtypes:
+                fp.write('|'.join(alleleSubtypes[aKey]) + TAB)
+            else:
+                fp.write(TAB)
 
-                fp.write(g['term'] + TAB)
-                fp.write(g['doid'] + TAB)
-                fp.write(TAB*2)
-                fp.write(r['short_citation'] + TAB)
-                fp.write(r['jnumid'] + TAB)
-                fp.write('|'.join(covidTags[refsKey]) + CRT)
+            fp.write(g['term'] + TAB)
+            fp.write(g['doid'] + TAB)
+            fp.write(TAB*2)
+            fp.write(r['short_citation'] + TAB)
+            fp.write(r['jnumid'] + TAB)
+            fp.write('|'.join(covidTags[refsKey]) + CRT)
 
 #
 # process strain by allele-reference associations
@@ -538,11 +492,11 @@ def processByStrain():
 
         # MP annotations
         if key in mpGenotypes:
-           processMP('strain', fp, r, key)
+           processMP(r, key)
 
         # DO annotations
         if key in doGenotypes:
-           processDO('strain', fp, r, key)
+           processDO(r, key)
 
 #
 # main
@@ -572,7 +526,6 @@ fp.write('#\n')
 
 initializeRefSet()
 initializeAlleleExclude()
-
 initializeByStrain()
 processByStrain()
 
