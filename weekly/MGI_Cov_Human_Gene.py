@@ -93,10 +93,12 @@ def init():
 
     for r in results:
         hgncID = r['hgncID']
+        print('hgncID from database: %s' % hgncID)
         mouseHomology = '%s|%s' % (r['accid'], r['symbol'])
         if hgncID not in hgncIdToMouseHomDict:
             hgncIdToMouseHomDict[hgncID] = []
         hgncIdToMouseHomDict[hgncID].append(mouseHomology)
+    print('len(hgncIdToMouseHomDict): %s' % len(hgncIdToMouseHomDict))
 # Main
 #
 
@@ -133,6 +135,7 @@ for line in fpIn.readlines():
     line = str.strip(line)
     tokens = str.split(line, TAB)
     DBObjectID = tokens[3]
+    print('hgncID from file: %s' % DBObjectID)
     DBObjectSymbol = tokens[4]
     AssociationType = tokens[5]
     DOID = tokens[6]
@@ -146,7 +149,7 @@ for line in fpIn.readlines():
     if AssociationType not in assocTypeIncludeList:
         continue
     if DBObjectID not in hgncIdToMouseHomDict:
-        fpOut.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (DBObjectID, TAB, DBObjectSymbol, TAB, AssociationType, TAB, DOID, TAB, DOtermName, TAB, Reference, TAB, Source, TAB, symbol, TAB, ID, CRT))
+        fpOut.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (DBObjectID, TAB, DBObjectSymbol, TAB, AssociationType, TAB, DOID, TAB, DOtermName, TAB, Reference, TAB, Source, TAB, symbol, TAB, mgiID, CRT))
         continue
     mouseHomologyList = hgncIdToMouseHomDict[DBObjectID]
     for homology in mouseHomologyList:
