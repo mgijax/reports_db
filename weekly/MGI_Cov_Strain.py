@@ -1,6 +1,6 @@
 '''
 #
-# MGI_Cov_StrainAllele.py
+# MGI_Cov_Strain.py
 #
 # Report:
 #       TR13459
@@ -14,12 +14,6 @@
 # strain by strain-reference associations
 #     strain is associated with covid-reference (mgi_reference_assoc)
 # 
-# strain by allele-reference associations
-#     allele is associated with covid-reference (mgi_reference_assoc) and reference is not in by-strain set
-#     allele is associated with a genotype (gxd_allelegenotype)
-#     allele is not wild-type
-#     allele not in alleleExclude
-#
 # for each Strain:
 #    -> if no genotype OR
 #    -> if genotype
@@ -69,7 +63,6 @@ strainAttrs = {}
 mpGenotypes = {}
 doGenotypes = {}
 allelesByGenotype = {}
-allelesByStrain = {}
 alleleSubtypes = {}
 
 #
@@ -156,7 +149,8 @@ def initializeAlleleExclude():
 #
 # strain by strain-reference associations
 #
-def initializeByStrain():
+def initializeStrain():
+    global allelesByGenotype
 
     #
     # strain set
@@ -172,58 +166,34 @@ def initializeByStrain():
     and s._strain_key = r._Object_key
     and cv._refs_key = r._refs_key
     and r._mgitype_key = 10
-    --and s.strain in ('B6.Cg-Tg(K18-ACE2)2Prlmn/J')
     ''' 
 
     db.sql(cmd, None)
     db.sql('create index strainKey on strainSet(_strain_key)', None)
     db.sql('create index refsKey1 on strainSet(_refs_key)', None)
 
-    initializeStrainGeneral()
-    initializeAlleleSet()
-
-#
-# strain by allele-reference associations
-#
-def initializeByAllele():
-    global allelesByGenotype, allelesByStrain
-
+    #
+    # alleles by genotype
+    #
     allelesByGenotype = {}
-    allelesByStrain = {}
-
-    #
-    # strain by allele
-    #
-    # allele is associated with covid-reference (mgi_reference_assoc)
-    # allele is associated with a genotype (gxd_allelegenotype)
-    # allele is not wild-type
-    # allele not in alleleExclude
-    # genotype not in genotypeExclude
-    #
-    db.sql('drop table if exists alleleSet', None)
     cmd = '''
-    select distinct aa._allele_key, aa.symbol, a.accid as alleleid, t.term as alleletype, cv._refs_key, g._genotype_key, g._strain_key
+    select distinct g._genotype_key, a.accid as alleleid, aa._allele_key, aa.symbol, t.term as alleletype
     into temp table alleleSet
-    from all_allele aa, acc_accession a, covidRefs cv, mgi_reference_assoc r, voc_term t, gxd_allelegenotype ag, gxd_genotype g
-    where aa._allele_key = a._object_key
+    from strainSet s, gxd_genotype g, gxd_allelegenotype ag, acc_accession a, all_allele aa, voc_term t
+    where s._strain_key = g._strain_key
+    and g._genotype_key = ag._genotype_key
+    and ag._allele_key = a._object_key
     and a._mgitype_key = 11
     and a._logicaldb_key = 1
     and a.preferred = 1
-    and aa._allele_key = r._Object_key
-    and cv._refs_key = r._refs_key
-    and r._mgitype_key = 11
-    and aa._allele_type_key = t._term_key
-    and aa._allele_key = ag._allele_key
-    and ag._genotype_key = g._genotype_key
+    and ag._allele_key = aa._allele_key
     and aa.iswildtype = 0
+    and aa._allele_type_key = t._term_key
     and not exists (select 1 from alleleExclude e where aa._allele_key = e._allele_key)
-    and not exists (select 1 from genotypeExclude e where g._genotype_key = e._genotype_key)
-    --and aa.symbol in ('Tg(K18-ACE2)2Prlmn', 'Ccl2<tm1Rol>')
     '''
     db.sql(cmd, None)
     db.sql('create index alleleKey2 on alleleSet(_allele_key)', None)
-    db.sql('create index refsKey2 on alleleSet(_refs_key)', None)
-    results = db.sql('select distinct _allele_key, symbol, alleleid, alleletype, _genotype_key from alleleSet', 'auto')
+    results = db.sql('select * from alleleSet', 'auto')
     for r in results:
         key = r['_genotype_key']
         value = r
@@ -231,37 +201,31 @@ def initializeByAllele():
                 allelesByGenotype[key] = []
         allelesByGenotype[key].append(value)
     #print(allelesByGenotype)
-    results = db.sql('select distinct _allele_key, symbol, alleleid, alleletype, _strain_key from alleleSet', 'auto')
-    for r in results:
-        key = r['_strain_key']
-        value = r
-        if key not in allelesByStrain:
-                allelesByStrain[key] = []
-        allelesByStrain[key].append(value)
-    #print(allelesByStrain)
 
     #
-    # using strain-by-allele set (alleleSet)
+    # alleleSubtype lookup
     #
-    db.sql('drop table if exists strainSet', None)
     cmd = '''
-    select distinct s._strain_key, s.strain, a.accid as strainid, cv.*
-    into temp table strainSet
-    from prb_strain s, acc_accession a, covidRefs cv, alleleSet aa
-    where s._strain_key = a._object_key
-    and a._mgitype_key = 10
-    and a._logicaldb_key = 1
-    and a.preferred = 1
-    and s._strain_key = aa._strain_key
-    and cv._refs_key = aa._refs_key
-    ''' 
-
-    db.sql(cmd, None)
-    db.sql('create index strainKey on strainSet(_strain_key)', None)
-    db.sql('create index refsKey1 on strainSet(_refs_key)', None)
+    select distinct ag._allele_key, t.term
+    from strainSet s, gxd_genotype g, gxd_allelegenotype ag, alleleSet aa, voc_annot v, voc_term t
+    where s._strain_key = g._strain_key
+    and g._genotype_key = ag._genotype_key
+    and ag._allele_key = aa._allele_key
+    and ag._allele_key = v._object_key
+    and v._annottype_key = 1014
+    and v._term_key = t._term_key
+    and not exists (select 1 from alleleExclude e where aa._allele_key = e._allele_key)
+    '''
+    results = db.sql(cmd, 'auto')
+    for r in results:
+        key = r['_allele_key']
+        value = r['term']
+        if key not in alleleSubtypes:
+                alleleSubtypes[key] = []
+        alleleSubtypes[key].append(value)
+    #print(alleleSubtypes)
 
     initializeStrainGeneral()
-    initializeAlleleGeneral()
 
 #
 # strain attributes
@@ -272,6 +236,7 @@ def initializeStrainGeneral():
     global strainAttrs
     global mpGenotypes
     global doGenotypes
+    global alleleSubtypes
 
     #
     # strain attributes
@@ -371,72 +336,6 @@ def initializeStrainGeneral():
     #print(doGenotypes)
 
 #
-# alleles
-#       exclude wildtype Alleles
-#
-def initializeAlleleSet():
-    global allelesByGenotype
-
-    allelesByGenotype = {}
-
-    cmd = '''
-    select distinct g._genotype_key, a.accid as alleleid, aa._allele_key, aa.symbol, t.term as alleletype
-    into temp table alleleSet
-    from strainSet s, gxd_genotype g, gxd_allelegenotype ag, acc_accession a, all_allele aa, voc_term t
-    where s._strain_key = g._strain_key
-    and g._genotype_key = ag._genotype_key
-    and ag._allele_key = a._object_key
-    and a._mgitype_key = 11
-    and a._logicaldb_key = 1
-    and a.preferred = 1
-    and ag._allele_key = aa._allele_key
-    and aa.iswildtype = 0
-    and aa._allele_type_key = t._term_key
-    and not exists (select 1 from alleleExclude e where aa._allele_key = e._allele_key)
-    '''
-    db.sql(cmd, None)
-    db.sql('create index alleleKey2 on alleleSet(_allele_key)', None)
-    results = db.sql('select * from alleleSet', 'auto')
-    for r in results:
-        key = r['_genotype_key']
-        value = r
-        if key not in allelesByGenotype:
-                allelesByGenotype[key] = []
-        allelesByGenotype[key].append(value)
-    #print(allelesByGenotype)
-
-    initializeAlleleGeneral()
-
-#
-# allele subtypes
-#
-def initializeAlleleGeneral():
-    global alleleSubtypes
-
-    #
-    # alleleSubtype lookup
-    #
-    cmd = '''
-    select distinct ag._allele_key, t.term
-    from strainSet s, gxd_genotype g, gxd_allelegenotype ag, alleleSet aa, voc_annot v, voc_term t
-    where s._strain_key = g._strain_key
-    and g._genotype_key = ag._genotype_key
-    and ag._allele_key = aa._allele_key
-    and ag._allele_key = v._object_key
-    and v._annottype_key = 1014
-    and v._term_key = t._term_key
-    and not exists (select 1 from alleleExclude e where aa._allele_key = e._allele_key)
-    '''
-    results = db.sql(cmd, 'auto')
-    for r in results:
-        key = r['_allele_key']
-        value = r['term']
-        if key not in alleleSubtypes:
-                alleleSubtypes[key] = []
-        alleleSubtypes[key].append(value)
-    #print(alleleSubtypes)
-
-#
 # mp annotations
 #
 def processMP(r, key):
@@ -451,6 +350,7 @@ def processMP(r, key):
 
         # no alleles
         if gKey not in allelesByGenotype:
+
             fp.write(strain + TAB)
             fp.write(r['strainid'] + TAB)
 
@@ -466,10 +366,12 @@ def processMP(r, key):
             fp.write(r['short_citation'] + TAB)
             fp.write(r['jnumid'] + TAB)
             fp.write('|'.join(covidTags[refsKey]) + CRT)
+
             continue
                 
         for a in allelesByGenotype[gKey]:
             aKey = a['_allele_key']
+
             fp.write(strain + TAB)
             fp.write(r['strainid'] + TAB)
 
@@ -504,7 +406,6 @@ def processDO(r, key):
     strainKey = r['_strain_key']
     refsKey = r['_refs_key']
 
-
     for g in doGenotypes[key]:
 
         gKey = g['_genotype_key']
@@ -531,6 +432,7 @@ def processDO(r, key):
                 
         for a in allelesByGenotype[gKey]:
             aKey = a['_allele_key']
+
             fp.write(strain + TAB)
             fp.write(r['strainid'] + TAB)
 
@@ -559,7 +461,7 @@ def processDO(r, key):
 #
 # process strain by allele-reference associations
 #
-def processByStrain():
+def processStrain():
 
     #
     # strainSet by strain
@@ -586,62 +488,6 @@ def processByStrain():
             fp.write(r['short_citation'] + TAB)
             fp.write(r['jnumid'] + TAB)
             fp.write('|'.join(covidTags[refsKey]) + CRT)
-            continue
-
-        # MP annotations
-        if key in mpGenotypes:
-           processMP(r, key)
-
-        # DO annotations
-        if key in doGenotypes:
-           processDO(r, key)
-
-#
-# process strain by allele-reference associations
-#
-def processByAllele():
-
-    #
-    # strainSet by alleles
-    #
-    results = db.sql('select * from strainSet order by strain, short_citation', 'auto')
-    for r in results:
-
-        strainKey = r['_strain_key']
-        refsKey = r['_refs_key']
-        key = strainKey + refsKey
-
-        # do not display 'strain' if 'involves' or 'either'
-        if r['strain'].startswith('involves') or r['strain'].startswith('either'):
-            r['strain'] = ''
-
-        # no genotypes with mp or do annotations
-        if key not in mpGenotypes and key not in doGenotypes:
-            for a in allelesByStrain[strainKey]:
-                aKey = a['_allele_key']
-
-                fp.write(r['strain'] + TAB)
-                fp.write(r['strainid'] + TAB)
-
-                if strainKey in strainAttrs:
-                    fp.write('|'.join(strainAttrs[strainKey]) + TAB)
-                else:
-                    fp.write(TAB)
-
-                fp.write(a['symbol'] + TAB)
-                fp.write(a['alleleid'] + TAB)
-                fp.write(a['alleletype'] + TAB)
-    
-                if aKey in alleleSubtypes:
-                    fp.write('|'.join(alleleSubtypes[aKey]) + TAB)
-                else:
-                    fp.write(TAB)
-
-                fp.write(TAB*5)
-                fp.write(r['short_citation'] + TAB)
-                fp.write(r['jnumid'] + TAB)
-                fp.write('|'.join(covidTags[refsKey]) + CRT)
-
             continue
 
         # MP annotations
@@ -680,10 +526,8 @@ fp.write('#\n')
 
 initializeRefSet()
 initializeAlleleExclude()
-initializeByStrain()
-processByStrain()
-initializeByAllele()
-processByAllele()
+initializeStrain()
+processStrain()
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
