@@ -15,24 +15,24 @@
 #     allele is not wild-type
 #     allele not in alleleExclude
 #
-# if allele is associated with a genotype (gxd_allelegenotype)
+# for alleles that contain genotype (gxd_allelegenotype)
 #     genotype with 1 marker
 #     genotype must contain MP or DO annotation using covid-reference
 #
 # Output format:
 #
-# 1/E) Allele symbol
-# 2/F) Allele MGI ID 
-# 3/G) Allele type 
-# 4/D) Genotype MGI ID
-# 5/H) Allele subtypes  (pipe delimited)
-# 6/I) DO term
-# 7/J) DO ID 
-# 8/K) MP term
-# 9/L) MP ID
-# 10/M) Reference short citation 
-# 11/N) Reference JnumID 
-# 12/O) Reference-associated COV tags (pipe delimited) 
+# 1/A) Allele symbol
+# 2/B) Allele MGI ID 
+# 3/C) Allele type 
+# 4/D) Allele subtypes  (pipe delimited)
+# 5/E) Genotype MGI ID
+# 6/F) DO term
+# 7/G) DO ID 
+# 8/H) MP term
+# 9/I) MP ID
+# 10/J) Reference short citation 
+# 11/K) Reference JnumID 
+# 12/L) Reference-associated COV tags (pipe delimited) 
 #
 # History:
 #
@@ -52,10 +52,8 @@ TAB = reportlib.TAB
 CRT = reportlib.CRT
 
 covidTags = {}
-strainAttrs = {}
 mpGenotypes = {}
 doGenotypes = {}
-allelesByGenotype = {}
 alleleSubtypes = {}
 
 #
@@ -142,8 +140,7 @@ def initializeAlleleExclude():
 #
 # allele by allele-reference associations
 #
-def initializeByAllele():
-    global allelesByGenotype
+def initializeAllele():
     global alleleSubtype
 
     #
@@ -167,7 +164,7 @@ def initializeByAllele():
     and aa._allele_type_key = t._term_key
     and aa.iswildtype = 0
     and not exists (select 1 from alleleExclude e where aa._allele_key = e._allele_key)
-    and aa.symbol in ('Tg(K18-ACE2)2Prlmn', 'Ccl2<tm1Rol>')
+    --and aa.symbol in ('Tg(K18-ACE2)2Prlmn')
     '''
     db.sql(cmd, None)
     db.sql('create index alleleKey2 on alleleSet(_allele_key)', None)
@@ -233,7 +230,7 @@ def initializeByAllele():
     #print(mpGenotypes)
 
     #
-    # doGenotypes with DO annotations with at least 1 covid reference
+    # doGenotypes with DO annotations with covid reference
     #
     cmd = '''
     select distinct s._allele_key, s._refs_key, g._genotype_key, a.accid as genotypeid, tt.term, aa.accid as doid
@@ -279,13 +276,13 @@ def processMP(r, key):
         fp.write(r['symbol'] + TAB)
         fp.write(r['alleleid'] + TAB)
         fp.write(r['alleletype'] + TAB)
-        fp.write(g['genotypeid'] + TAB)
 
         if alleleKey in alleleSubtypes:
             fp.write('|'.join(alleleSubtypes[alleleKey]) + TAB)
         else:
             fp.write(TAB)
 
+        fp.write(g['genotypeid'] + TAB)
         fp.write(TAB*2)
         fp.write(g['label'] + TAB)
         fp.write(g['mpid'] + TAB)
@@ -306,13 +303,13 @@ def processDO(r, key):
         fp.write(r['symbol'] + TAB)
         fp.write(r['alleleid'] + TAB)
         fp.write(r['alleletype'] + TAB)
-        fp.write(g['genotypeid'] + TAB)
 
         if alleleKey in alleleSubtypes:
             fp.write('|'.join(alleleSubtypes[alleleKey]) + TAB)
         else:
             fp.write(TAB)
 
+        fp.write(g['genotypeid'] + TAB)
         fp.write(g['term'] + TAB)
         fp.write(g['doid'] + TAB)
         fp.write(TAB*2)
@@ -323,31 +320,30 @@ def processDO(r, key):
 #
 # process allele-reference associations
 #
-def processByAllele():
+def processAllele():
 
     #
     # alleleSet
     #
-    results = db.sql('select * from alleleSet order by jnumid, symbol, short_citation', 'auto')
+    results = db.sql('select * from alleleSet order by symbol, jnumid, short_citation', 'auto')
     for r in results:
 
         alleleKey = r['_allele_key']
         refsKey = r['_refs_key']
         key = alleleKey + refsKey
 
-        # genotypes but no mp or do annotations
+        # allele without genotype/mp or genotype/do annotations
         if key not in mpGenotypes and key not in doGenotypes:
             fp.write(r['symbol'] + TAB)
             fp.write(r['alleleid'] + TAB)
             fp.write(r['alleletype'] + TAB)
-            fp.write(TAB)
 
             if alleleKey in alleleSubtypes:
                 fp.write('|'.join(alleleSubtypes[alleleKey]) + TAB)
             else:
                 fp.write(TAB)
 
-            fp.write(TAB*4)
+            fp.write(TAB*5)
             fp.write(r['short_citation'] + TAB)
             fp.write(r['jnumid'] + TAB)
             fp.write('|'.join(covidTags[refsKey]) + CRT)
@@ -374,8 +370,8 @@ fp.write('#\n')
 fp.write('#1/A) Allele symbol\n')
 fp.write('#2/B) Allele MGI ID \n')
 fp.write('#3/C) Allele type \n')
-fp.write('#4/D) Genotype MGI ID\n')
-fp.write('#5/E) Allele subtypes (pipe delimited) \n')
+fp.write('#4/D) Allele subtypes (pipe delimited) \n')
+fp.write('#5/E) Genotype MGI ID\n')
 fp.write('#6/F) DO term\n')
 fp.write('#7/G) DO ID \n')
 fp.write('#8/H) MP term\n')
@@ -387,8 +383,8 @@ fp.write('#\n')
 
 initializeRefSet()
 initializeAlleleExclude()
-initializeByAllele()
-processByAllele()
+initializeAllele()
+processAllele()
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)

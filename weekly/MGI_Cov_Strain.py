@@ -149,7 +149,7 @@ def initializeAlleleExclude():
 #
 # strain by strain-reference associations
 #
-def initializeByStrain():
+def initializeStrain():
     global allelesByGenotype
 
     #
@@ -461,7 +461,7 @@ def processDO(r, key):
 #
 # process strain by allele-reference associations
 #
-def processByStrain():
+def processStrain():
 
     #
     # strainSet by strain
@@ -526,8 +526,8 @@ fp.write('#\n')
 
 initializeRefSet()
 initializeAlleleExclude()
-initializeByStrain()
-processByStrain()
+initializeStrain()
+processStrain()
 
 reportlib.finish_nonps(fp)
 db.useOneConnection(0)
