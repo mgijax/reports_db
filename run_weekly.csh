@@ -24,8 +24,8 @@ echo `date`: Start weekly public reports | tee -a ${LOG}
 #
 # unzip files
 #
-echo "unzip input file ${ALLIANCE_HUMAN_FILE_GZ}" >> ${LOG}
-gunzip -f ${ALLIANCE_HUMAN_FILE_GZ} >> ${LOG}
+echo "unzipping input file ${ALLIANCE_HUMAN_FILE_GZ}" >> ${LOG}
+gunzip -cf ${ALLIANCE_HUMAN_FILE_GZ} > ${ALLIANCE_HUMAN_FILE}
 
 #
 # Generate weekly public reports.
