@@ -105,10 +105,25 @@ def writeRecord(i, r, e):
         fp.write(TAB)
 
         # field 4
-        if r['qualifier'] != None:
-            qualifier = str.strip(r['qualifier'])
+        qualifier = ""
+        if r['termID'] == 'GO:0008150':
+                qualifier = 'involved_in'
+        elif r['termID'] == 'GO:0003674':
+                qualifier = 'enables'
+        elif r['termID'] == 'GO:0005575':
+                qualifier = 'is_active_in'
+        elif key in goQualifierGAF:
+            if r['qualifier'] == 'NOT':
+               qualifier = 'NOT|'
+            qualifier = qualifier + '|'.join(goQualifierGAF[key])
+        elif r['qualifier'] == 'NOT':
+            qualifier = 'NOT|' + dagQualifierGAF[dag[r['_Term_key']]]
+        elif r['qualifier'] != None:
+            qualifier = r['qualifier'].strip()
+        elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
+            qualifier = 'involved_in'
         else:
-            qualifier = ''
+            qualifier = dagQualifierGAF[dag[r['_Term_key']]]
         fp.write(qualifier + TAB)
 
         # field 5
@@ -152,7 +167,9 @@ def writeRecord(i, r, e):
 
 db.useOneConnection(1)
 fp = reportlib.init('gene_association', fileExt = '.mgi_nonmouse', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-fp.write('!gaf-version: 1.0' + CRT)
+fp.write('!gpa-version: 2.2\n')
+fp.write('!generated-by: MGI\n')
+fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 
 #
 # retrieve all dag abbrevations for each term
@@ -243,6 +260,30 @@ for r in results:
     if eKey not in evidence:
         evidence[eKey] = []
     evidence[eKey].append(dictvalue)
+
+#
+# goQualifierGAF : go_qualifier
+#
+goQualifierGAF = {}
+results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value, t2.note
+    from gomarker2 a,
+        VOC_Evidence_Property p,  
+        VOC_Term t,
+        VOC_Term t2
+    where a._AnnotEvidence_key = p._AnnotEvidence_key
+    and p._PropertyTerm_key = t._Term_key
+    and t.term in ('go_qualifier')
+    and p.value = t2.term
+    and t2.note is not null
+    ''', 'auto')
+for r in results:
+    key = r['_AnnotEvidence_key']
+    value = r['value']
+    if key not in goQualifierGAF:
+        goQualifierGAF[key] = []
+    goQualifierGAF[key].append(value)
+
+#print(goQualifierGAF)
 
 #
 # process results

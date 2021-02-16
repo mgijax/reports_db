@@ -2,11 +2,18 @@ TAG: reports_db-6-0-16-?
 DATE: ?
 STAFF: lec, sc
 CHANGES: 
+
 TR13459/Coronavirus Reports for Jax Web Resources
+GAF 2.2
 MGI_Cov_Human_Gene.py
 MGI_Cov_Mouse_Gene.py
 MGI_Cov_Allele.py
 MGI_Cov_Strain.py
+
+TR13272/GO meeting/CalTech/tasks to-do
+GO_gene_association.py
+GO_gpi.py
+GO_gene_association_nonmouse.py
 
 TAG: reports_db-6-0-16-5
 DATE: 10/30/2020

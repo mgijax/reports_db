@@ -8,8 +8,6 @@
 #
 # Output format:
 #
-# version 1.2
-#
 #   1.  DB                     required  1             1             MGI
 #   2.  DB_Object_ID           required  1             2/17          MGI:87870
 #   3.  DB_Object_Symbol       required  1             3             Acat1
