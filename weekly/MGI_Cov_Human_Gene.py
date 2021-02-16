@@ -109,15 +109,20 @@ init()
     
 # Print the header record for the report.
 #
-fpOut.write('DBObjectID (HGNC ID)' + TAB)
-fpOut.write('DBObjectSymbol (Human Gene Symbol)' + TAB)
-fpOut.write('AssociationType ' + TAB)
-fpOut.write('DOID' + TAB)
-fpOut.write('DOtermName' + TAB)
-fpOut.write('Reference' + TAB)
-fpOut.write('Source' + TAB)
-fpOut.write('MGI gene symbol (ortholog of human gene in 1)' + TAB)
-fpOut.write('MGI gene ID' + CRT)
+fpOut.write('#\n')
+fpOut.write('# This report contains human genes associated with coronavirus research references from the Alliance of Genome Resources.\n')
+fpOut.write('# Each line contains an individual human gene, mouse ortholog and reference combination.\n')
+fpOut.write('#\n')
+fpOut.write('#1. DBObjectID (HGNC ID)\n')
+fpOut.write('#2. DBObjectSymbol (Human Gene Symbol)\n')
+fpOut.write('#3. AssociationType\n')
+fpOut.write('#4. DOID\n')
+fpOut.write('#5. DOtermName\n')
+fpOut.write('#6. Reference\n')
+fpOut.write('#7. Source\n')
+fpOut.write('#8. MGI gene symbol (ortholog of human gene in 1)\n')
+fpOut.write('#9. MGI gene ID\n')
+fpOut.write('#\n')
 
 for line in fpIn.readlines():
     if str.find(line, '#') == 0 or str.find(line, 'Taxon') == 0: # ignore comments, and header
