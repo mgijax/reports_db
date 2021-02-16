@@ -10,9 +10,6 @@
 #	gene_association_pro.mgi (GAF)
 #	mgi.gpad
 #
-# ALSO CHANGE:  weekly/GO_gene_association_nonmouse.py
-# 09/11/2020 per David Hill, do nothing until we have Tues/09/15 meeting
-#
 # GAF 2.2 : see below
 # fp.write('!gaf-version: 2.2\n')
 #
@@ -28,19 +25,8 @@
 #
 #    gpad/col16 : will *never* contains > 1 stanza, and will always use the "," delimiter
 #
-# lec   08/25/2020
+# lec   02/16/2021
 #       - TR13272/converting to GPI 2.0
-#       mgi2.gpad : dph reviewing 09/10/2020
-#       gene_association.mgi2 : no changes yet
-#       gene_association_pro.mgi2 : no changes yet
-#
-# For GAF2.2
-# If the annotation has the value GO:0008150 (biological_process) in column 5, 
-#       then the value in column 4 should be involved_in.
-# If the annotation has the value GO:0003674 (molecular_function) in column 5, 
-#       then the value in column 4 should be enables.
-# If the annotation has the value GO:0005575 (cellular_component) in column 5, 
-#       then the value in column 4 should be is_active_in.
 #
 '''
 
@@ -109,7 +95,6 @@ taxonLookup = {}
 ecoLookupByEco = {}
 ecoLookupByEvidence = {}
 evidenceLookup = {}
-goPropertyLookup = {}
 gpadCol11Lookup = {}
 gpadCol12Lookup = {}
 
@@ -123,7 +108,6 @@ def doSetup():
     global evidenceLookup
     global taxonLookup
     global ecoLookupByEco, ecoLookupByEvidence
-    global goPropertyLookup
     global goQualifierGAF
     global goQualifierGPAD
     global gpadCol11Lookup
@@ -302,22 +286,6 @@ def doSetup():
             taxonLookup[key] = []
         taxonLookup[key].append(value)
     #print(taxonLookup)
-
-    #
-    # GO/Property : note (definition) contains RO/.etc
-    #
-    results = db.sql('''select t.term, t.note
-            from VOC_Term t
-            where t._vocab_key = 82
-            and t.note is not null
-            ''', 'auto')
-    for r in results:
-        key = r['term']
-        value = r['note']
-        if key not in goPropertyLookup:
-            goPropertyLookup[key] = []
-        goPropertyLookup[key].append(value)
-    #print(goPropertyLookup)
 
     #
     # goQualifierGAF : go_qualifier
