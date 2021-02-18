@@ -1,28 +1,12 @@
 '''
 #
-# GO_gpi_2.0.py
+# GO_gpi.py
 #
-# cat mgi2.gpi | grep -v '^!' | awk 'BEGIN {FS="\t"} {print NF}' | sort | uniq -c
+# cat mgi.gpi | grep -v '^!' | awk 'BEGIN {FS="\t"} {print NF}' | sort | uniq -c
 #
 # Report:
 #       see: wiki/mediawiki/index.php/sw:GOload 
 #       contains link to GO/GPI format
-#
-# Output format:
-#
-# Columns
-#
-# 1. DB_Object_ID                               ::= ID       MGI or PR
-# 2. DB_Object_Symbol                           ::= xxxx
-# 3. DB_Object_Name                             ::= xxxx
-# 4. DB_Object_Synonyms                         ::= [Label] ('|' Label)*
-# 5. DB_Object_Type                             ::= OBO_ID
-# 6. DB_Object_Taxon                            ::= NCBITaxon:[Taxon_ID]
-# 7. Encoded_By                                 ::= [ID] ('|' ID)* : NEW
-# 8. Parent_Protein                             ::= [ID] ('|' ID)*
-# 9. Protein_Containing_Complex_Members         : not populated at this time
-# 10. DB_Xrefs                                  ::= [ID] ('|' ID)*
-# 11. Gene_Product_Properties                   : not populated at this time
 #
 # History:
 #
@@ -54,7 +38,7 @@ CRT = reportlib.CRT
 
 db.useOneConnection(1)
 
-fp = reportlib.init('mgi2', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init('mgi', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('!!gpi-version: 2.0\n')
 fp.write('!!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
@@ -414,12 +398,12 @@ for r in results:
 
 # attach PR/protein_complex generated from proisoformload 
 #try:
-gpi2FileName = os.environ['DATALOADSOUTPUT'] + '/pro/proisoformload/output/gpi2.txt'
-gpi2File = open(gpi2FileName, 'r')
-for line in gpi2File.readlines():
+gpiFileName = os.environ['DATALOADSOUTPUT'] + '/pro/proisoformload/output/gpi2.txt'
+gpiFile = open(gpiFileName, 'r')
+for line in gpiFile.readlines():
         fp.write(line)
 #except:
-#        exit(1, 'Could not open file %s\n' % gpi2FileName)
+#        exit(1, 'Could not open file %s\n' % gpiFileName)
 
 # end isoforms
 #

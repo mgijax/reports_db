@@ -1,23 +1,23 @@
 '''
 #
-# GO_gene_association2.py
+# GO_gene_association.py
 #
 # Generates:
 # intentionally creating gaf & gpad using one script
 # because they use much of the same logic/lookups/etc
 #       
-#	gene_association.mgi2 (GAF)
-#	gene_association_pro.mgi2 (GAF)
-#	mgi2.gpad
+#	gene_association.mgi (GAF)
+#	gene_association_pro.mgi (GAF)
+#	mgi.gpad
 #
 # ALSO CHANGE:  weekly/GO_gene_association_nonmouse.py
 # 09/11/2020 per David Hill, do nothing until we have Tues/09/15 meeting
 #
-# GPAD 2.0 : see below
-# fp.write('!gpa-version: 2.0\n') 
-#
-# GAF 2.2 : see below
+# GAF2.2 : see below
 # fp.write('!gaf-version: 2.2\n')
+#
+# GPAD2.0 : see below
+# fp.write('!gpa-version: 2.0\n') 
 #
 # IMPORTANT THINGS TO KNOW:
 #
@@ -29,12 +29,9 @@
 #    gpad/col16 : will *never* contains > 1 stanza, and will always use the "," delimiter
 #
 # lec   08/25/2020
-#       - TR13272/converting to GPI 2.0
-#       mgi2.gpad : dph reviewing 09/10/2020
-#       gene_association.mgi2 : no changes yet
-#       gene_association_pro.mgi2 : no changes yet
+#       - TR13272/converting to GAF2.2, GPAD2.0
 #
-# For Gaf2.2
+# For GAF2.2
 # If the annotation has the value GO:0008150 (biological_process) in column 5, 
 #       then the value in column 4 should be involved_in.
 # If the annotation has the value GO:0003674 (molecular_function) in column 5, 
@@ -42,7 +39,7 @@
 # If the annotation has the value GO:0005575 (cellular_component) in column 5, 
 #       then the value in column 4 should be is_active_in.
 #
-# For GPAD 2.0
+# For GPAD2.0
 # If the annotation has the value GO:0008150 (biological_process) in column 4, 
 #       then the value in column 3 should be RO:0002331 (involved_in).
 # If the annotation has the value GO:0003674 (molecular_function) in column 4, 
@@ -1084,7 +1081,7 @@ doIsoform()
 #
 # GAF 2.2
 #
-fp = reportlib.init('gene_association', fileExt = '.mgi2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp.write('!gaf-version: 2.2\n')
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
@@ -1108,7 +1105,7 @@ fp.write('!16 Annotation Extension            optional        0 or greater    pa
 fp.write('!17 Gene Product Form ID            optional        0 or 1  UniProtKB:P12345-2\n')
 fp.write('!\n')
 
-fp2 = reportlib.init('gene_association_pro', fileExt = '.mgi2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2 = reportlib.init('gene_association_pro', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp2.write('!gaf-version: 2.2\n')
 fp2.write('!generated-by: MGI\n')
 fp2.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
@@ -1132,7 +1129,7 @@ reportlib.finish_nonps(fp2)
 #
 # GPAD 2.0
 #
-fp = reportlib.init('mgi2', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init('mgi', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp.write('!gpa-version: 2.0\n') 
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
