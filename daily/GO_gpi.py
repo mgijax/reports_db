@@ -1,6 +1,8 @@
 '''
 #
-# GO_gpi.py
+# GO_gpi_2.0.py
+#
+# cat mgi2.gpi | grep -v '^!' | awk 'BEGIN {FS="\t"} {print NF}' | sort | uniq -c
 #
 # Report:
 #       see: wiki/mediawiki/index.php/sw:GOload 
@@ -8,22 +10,24 @@
 #
 # Output format:
 #
-#   1.  DB                     required  1             1             MGI
-#   2.  DB_Object_ID           required  1             2/17          MGI:87870
-#   3.  DB_Object_Symbol       required  1             3             Acat1
-#   4.  DB_Object_Name         optional  0 or greater  10            acetyl-Coenzyme A acetyltransferase 1
-#   5.  DB_Object_Synonym(s)   optional  0 or greater  11            Acat|6330585C21Rik
-#   6.  DB_Object_Type         required  1             12            gene
-#   7.  Taxon                  required  1             13            taxon:10090
-#   8.  Parent_Object_ID       optional  0 or 1        -             if DB_Object_ID = Isoform, then MGI:id of the Isoform
-#   9.  DB_Xref(s)             optional  0 or greater  -             if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform
-#   10. Properties             optional  0 or greater  -             blank
+# Columns
 #
-#   DB_Object_Type = 'gene', DB = 'MGI', DB_Object_ID = 'MGI:xxxx'
-#   DB_Object_Type = 'protein', DB = 'PR', DB_Object_ID = 'xxxx', Parent_Object_ID = 'MGI:MGI:xxxx', DB_Xref = 'UniProtDB:xxx'
-#   DB_Object_Type = 'transcript', DB = 'EMBL', 'RefSeq', 'ENSEMBL', 'Parent_Object_ID = 'MGI:MGI:xxxx'
+# 1. DB_Object_ID                               ::= ID       MGI or PR
+# 2. DB_Object_Symbol                           ::= xxxx
+# 3. DB_Object_Name                             ::= xxxx
+# 4. DB_Object_Synonyms                         ::= [Label] ('|' Label)*
+# 5. DB_Object_Type                             ::= OBO_ID
+# 6. DB_Object_Taxon                            ::= NCBITaxon:[Taxon_ID]
+# 7. Encoded_By                                 ::= [ID] ('|' ID)* : NEW
+# 8. Parent_Protein                             ::= [ID] ('|' ID)*
+# 9. Protein_Containing_Complex_Members         : not populated at this time
+# 10. DB_Xrefs                                  ::= [ID] ('|' ID)*
+# 11. Gene_Product_Properties                   : not populated at this time
 #
 # History:
+#
+# lec   04/01/2020 python 3 upgrade
+#       - TR13272/GPI 2.0
 #
 # lec   04/01/2020 python 3 upgrade
 #
@@ -43,38 +47,32 @@ import db
 
 db.setTrace()
 
-DB_PREFIX = 'MGI'
-SPECIES = 'taxon:10090'
-DBTYPE_MARKER = 'gene'
-DBTYPE_ISOFORM = 'protein'
-DBTYPE_RNA = 'transcript'
+SPECIES = 'NCBITaxon:10090'
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
 db.useOneConnection(1)
 
-fp = reportlib.init('mgi', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp = reportlib.init('mgi2', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-fp.write('!gpi-version: 1.2\n')
-fp.write('!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
-fp.write('!\n')
-fp.write('! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
-fp.write('!\n')
-fp.write('!  DB                     required  1             1             MGI\n')
-fp.write('!  DB_Object_ID           required  1             2/17          MGI:87870\n')
-fp.write('!  DB_Object_Symbol       required  1             3             Acat1\n')
-fp.write('!  DB_Object_Name         optional  0 or greater  10            acetyl-Coenzyme A acetyltransferase 1\n')
-fp.write('!  DB_Object_Synonym(s)   optional  0 or greater  11            Acat|6330585C21Rik\n')
-fp.write('!  DB_Object_Type         required  1             12            gene\n')
-fp.write('!  Taxon                  required  1             13            taxon:10090\n')
-fp.write('!  Parent_Object_ID       optional  0 or 1        -             if DB_Object_ID = Isoform, then MGI:id of the Isoform\n')
-fp.write('!  DB_Xref(s)             optional  0 or greater  -             if DB_Object_ID = Isoform, then UniProtKB:id of the Isoform\n')
-fp.write('!  Properties             optional  0 or greater  -             blank\n\n')
-fp.write('!  DB_Object_Type = "gene", DB = "MGI", DB_Object_ID = "MGI:xxxx"\n')
-fp.write('!  DB_Object_Type = "protein", DB = "PR", DB_Object_ID = "xxxx", Parent_Object_ID = "MGI:MGI:xxxx", DB_Xref = "UniProtDB:xxx"\n')
-fp.write('!  DB_Object_Type = "transcript", DB = "EMBL", "RefSeq", "ENSEMBL", Parent_Object_ID = "MGI:MGI:xxxx"\n')
-fp.write('!\n')
+fp.write('!!gpi-version: 2.0\n')
+fp.write('!!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
+fp.write('!!\n')
+fp.write('!! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
+fp.write('!!\n')
+fp.write('!! 1. DB_Object_ID\n')
+fp.write('!! 2. DB_Object_Symbol\n')
+fp.write('!! 3. DB_Object_Name\n')
+fp.write('!! 4. DB_Object_Synonyms\n')
+fp.write('!! 5. DB_Object_Type\n')
+fp.write('!! 6. DB_Object_Taxon\n')
+fp.write('!! 7. Encoded_By\n')
+fp.write('!! 8. Parent_Protein\n')
+fp.write('!! 9. Protein_Containing_Complex_Members\n')
+fp.write('!! 10. DB_Xrefs\n')
+fp.write('!! 11. Gene_Product_Properties\n')
+fp.write('!!\n')
 
 #
 # markers
@@ -130,7 +128,6 @@ results = db.sql('''
         and a.prefixPart = 'MGI:'
         and a.preferred = 1
         and a._Object_key = m._Marker_key
-        and m._Marker_Type_key = 1
         and m._Marker_Status_key = 1
         and m._Organism_key = 1
         and m._Marker_key = s._Object_key
@@ -170,7 +167,6 @@ results = db.sql('''
         select sm.accID as uniprotID, a.accID as markerID, sm._LogicalDB_key
         from SEQ_Marker_Cache sm, ACC_Accession a
         where sm._LogicalDB_key in (13,41)
-        and sm._Marker_Type_key = 1 
         and sm._Organism_key = 1 
         and sm._Marker_key = a._Object_key
         and a._MGIType_key = 2 
@@ -188,27 +184,30 @@ for r in results:
 
 #
 # markers:terms
+# marker with feature type
 #
 
 results = db.sql('''
-        select a.accID as accID, m.symbol, m.name
-        from ACC_Accession a, MRK_Marker m
+        select a.accID as accID, m.symbol, m.name, m._Marker_Type_key, t.term
+        from ACC_Accession a, MRK_Marker m, VOC_Annot v, VOC_Term t
         where a._MGIType_key = 2
         and a._LogicalDB_key = 1
         and a.prefixPart = 'MGI:'
         and a.preferred = 1
         and a._Object_key = m._Marker_key
-        and m._Marker_Type_key = 1
         and m._Marker_Status_key = 1
+        and m._Marker_Type_key in (1,7,10)
         and m._Organism_key = 1
+        and m._Marker_key = v._Object_key
+        and v._AnnotType_key = 1011
+        and v._Term_key = t._Term_key
         order by m.symbol
         ''', 'auto')
 
 for r in results:
         marker = r['accID']
 
-        fp.write(DB_PREFIX + TAB)
-        fp.write(r['accID'] + TAB)
+        fp.write('MGI:' + r['accID'] + TAB)
         fp.write(r['symbol'] + TAB)
         fp.write(r['name'] + TAB)
 
@@ -216,8 +215,47 @@ for r in results:
                 fp.write("|".join(markerSynonyms[marker]))
         fp.write(TAB)
 
-        fp.write(DBTYPE_MARKER + TAB)
+        # 5. DB_Object_Type
+        if r['_Marker_Type_key'] == 1 and r['term'] == 'unclassified gene':
+                fp.write('SO:0000704' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'protein coding gene':
+                fp.write('SO:0001217' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'non-coding RNA gene':
+                fp.write('SO:0001263' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'heritable phenotypic marker':
+                fp.write('SO:0001645' + TAB)
+        elif r['_Marker_Type_key'] == 1 and \
+                        (r['term'] == 'lncRNA gene' \
+                        or r['term'] == 'antisense lncRNA gene' \
+                        or r['term'] == 'lincRNA gene' \
+                        or r['term'] == 'sense intronic lncRNA gene' \
+                        or r['term'] == 'sense overlapping lncRNA gene' \
+                        or r['term'] == 'bidirectional promoter lncRNA gene' \
+                        or r['term'] == 'rRNA gene' \
+                        or r['term'] == 'tRNA gene' \
+                        or r['term'] == 'snRNA gene' \
+                        or r['term'] == 'snoRNA gene' \
+                        or r['term'] == 'miRNA gene' \
+                        or r['term'] == 'scRNA gene' \
+                        or r['term'] == 'SRP RNA gene' \
+                        or r['term'] == 'RNase P RNA gene' \
+                        or r['term'] == 'RNase MRP RNA gene' \
+                        or r['term'] == 'telomerase RNA gene' \
+                        or r['term'] == 'unclassified non-coding RNA gene' \
+                        or r['term'] == 'ribozyme gene'):
+                fp.write('SO:0001263' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'gene segment':
+                fp.write('SO:3000000' + TAB)
+        elif r['_Marker_Type_key'] == 7:
+                fp.write('SO:0000336' + TAB)
+        elif r['_Marker_Type_key'] == 10:
+                fp.write('SO:0001411' + TAB)
+        else:
+                fp.write('col 5 bad with feature type =  ' + r['term'] + TAB)
+
         fp.write(SPECIES + TAB)
+        fp.write(TAB)
+        fp.write(TAB)
         fp.write(TAB)
 
         if marker in markerUniProtKB:
@@ -225,6 +263,57 @@ for r in results:
         fp.write(TAB)
 
         fp.write(CRT)
+
+#
+# marker without feature type; use marker type
+#
+
+results = db.sql('''
+	select a.accID as accID, m.symbol, m.name, m._Marker_Type_key
+	from ACC_Accession a, MRK_Marker m
+	where a._MGIType_key = 2
+	and a._LogicalDB_key = 1
+	and a.prefixPart = 'MGI:'
+	and a.preferred = 1
+	and a._Object_key = m._Marker_key
+	and m._Marker_Status_key = 1
+        and m._Marker_Type_key in (1,7,10)
+	and m._Organism_key = 1
+        and not exists (select v.* from VOC_Annot v
+                where m._Marker_key = v._Object_key
+                and v._AnnotType_key = 1011
+                )
+        order by m.symbol
+   	''', 'auto')
+
+for r in results:
+	marker = r['accID']
+
+	fp.write('MGI:' + r['accID'] + TAB)
+	fp.write(r['symbol'] + TAB)
+	fp.write(r['name'] + TAB)
+
+	if marker in markerSynonyms:
+		fp.write("|".join(markerSynonyms[marker]))
+	fp.write(TAB)
+
+	if r['_Marker_Type_key'] == 7:
+                fp.write('SO:0000336' + TAB)
+	elif r['_Marker_Type_key'] == 10:
+                fp.write('SO:0001411' + TAB)
+	else:
+                fp.write('col 5 bad no feature type/marker type =  ' + str(r['_Marker_Type_key']) + TAB)
+
+	fp.write(SPECIES + TAB)
+	fp.write(TAB)
+	fp.write(TAB)
+	fp.write(TAB)
+
+	if marker in markerUniProtKB:
+		fp.write("|".join(markerUniProtKB[marker]))
+	fp.write(TAB)
+
+	fp.write(CRT)
 
 #
 # end markers
@@ -287,15 +376,13 @@ results = db.sql('''
         where t._Vocab_key = 112
         and t._term_key = a._Object_key 
         and a._LogicalDB_key = 183
-        order by a.accID, symbol
+        order by symbol, a.accID
         ''', 'auto')
 
 for r in results:
-        prefixPart, accID = r['accID'].split(':')
         isoform = r['accID']
 
-        fp.write(prefixPart + TAB)
-        fp.write(accID + TAB)
+        fp.write(isoform + TAB)
         fp.write(r['symbol'] + TAB)
         fp.write(r['name'] + TAB)
 
@@ -303,22 +390,37 @@ for r in results:
                 fp.write("|".join(isoformSynonyms[isoform]))
         fp.write(TAB)
 
-        fp.write(DBTYPE_ISOFORM + TAB)
+        fp.write('PR:000000001' + TAB)
         fp.write(SPECIES + TAB)
 
-        # Parent_Object_ID/MGI id
+        # 7. Encoded_By                                 ::= [ID] ('|' ID)*
         if isoform in markerByIsoform:
                 fp.write('MGI:' + markerByIsoform[isoform][0])
         fp.write(TAB)
 
-        # DB_Xref/UniProtKB id
+        # 8. Parent_Protein                             ::= [ID] ('|' ID)*
+        fp.write(TAB)
+
+        # 9. Protein_Containing_Complex_Members         ::= [ID] ('|' ID)*
+        fp.write(TAB)
+
+        # 10. DB_Xrefs                                  ::= [ID] ('|' ID)*
         if isoform in isoformUniProt:
                 fp.write(isoformUniProt[isoform][0])
         fp.write(TAB)
 
+        # 11. Gene_Product_Properties  
         fp.write(CRT)
 
-#
+# attach PR/protein_complex generated from proisoformload 
+#try:
+gpi2FileName = os.environ['DATALOADSOUTPUT'] + '/pro/proisoformload/output/gpi2.txt'
+gpi2File = open(gpi2FileName, 'r')
+for line in gpi2File.readlines():
+        fp.write(line)
+#except:
+#        exit(1, 'Could not open file %s\n' % gpi2FileName)
+
 # end isoforms
 #
 
@@ -329,48 +431,58 @@ for r in results:
 for ldbsearch in (9, 27, 133):
 
     results = db.sql('''
-            WITH rna AS
-            (
-            select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key
-                    from SEQ_Marker_Cache sm, ACC_Accession a
-                    where sm._SequenceType_key = 316346
-                    and sm._Marker_Type_key = 1 
-                    and sm._Organism_key = 1 
-                    and sm._LogicalDB_key = %s
-                    and sm._Sequence_key = a._Object_key
-                    and a._MGIType_key = 19
-                    and a.prefixPart not in ('XR_', 'XM_')
-                )
-            select rna.rnaID, a.accID as markerID, rna._LogicalDB_key
-            from rna, ACC_Accession a
-            where rnaID in (select rnaID from rna group by rnaID having count(*) = 1)
+	    WITH rna AS
+	    (
+	    select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key, t.term
+        	    from SEQ_Marker_Cache sm, ACC_Accession a, VOC_Annot v, VOC_Term t
+        	    where sm._SequenceType_key = 316346
+        	    and sm._Marker_Type_key = 1 
+        	    and sm._Organism_key = 1 
+		    and sm._LogicalDB_key = %s
+		    and sm._Sequence_key = a._Object_key
+		    and a._MGIType_key = 19
+	            and a.prefixPart not in ('XR_', 'XM_')
+                    and sm._Marker_key = v._Object_key
+                    and v._AnnotType_key = 1011
+                    and v._Term_key = t._Term_key
+	        )
+	    select rna.rnaID, a.accID as markerID, rna._LogicalDB_key, rna.term
+	    from rna, ACC_Accession a
+	    where rnaID in (select rnaID from rna group by rnaID having count(*) = 1)
             and rna._Marker_key = a._Object_key
             and a._MGIType_key = 2
             and a._LogicalDB_key = 1
             and a.preferred = 1
-            order by rna._LogicalDB_key, rnaID
-            ''' % (ldbsearch), 'auto')
+	    order by rna._LogicalDB_key
+   	    ''' % (ldbsearch), 'auto')
 
     for r in results:
     
-            ldb = r['_LogicalDB_key']
-            if ldb == 9:
-                    ldbName = 'EMBL'
-            elif ldb == 27:
-                    ldbName = 'RefSeq'
-            elif ldb == 133:
-                    ldbName = 'ENSEMBL'
+	    ldb = r['_LogicalDB_key']
+	    if ldb == 9:
+		    ldbName = 'EMBL'
+	    elif ldb == 27:
+		    ldbName = 'RefSeq'
+	    elif ldb == 133:
+		    ldbName = 'ENSEMBL'
     
-            fp.write(ldbName + TAB)
-            fp.write(r['rnaID'] + TAB)
-            fp.write(r['rnaID'] + TAB)
-            fp.write(TAB)
-            fp.write(TAB)
-            fp.write(DBTYPE_RNA + TAB)
-            fp.write(SPECIES + TAB)
-            fp.write('MGI:' + r['markerID'] + TAB)
-            fp.write(TAB)
-            fp.write(CRT)
+	    # if protein coding gene
+	    if r['term'] == 'protein coding gene':
+                DBTYPE_RNA = 'SO:0000234'
+	    else:
+                DBTYPE_RNA = 'SO:0000655'
+                
+	    fp.write(ldbName + ':' + r['rnaID'] + TAB)
+	    fp.write(r['rnaID'] + TAB)
+	    fp.write(TAB)
+	    fp.write(TAB)
+	    fp.write(DBTYPE_RNA + TAB)
+	    fp.write(SPECIES + TAB)
+	    fp.write('MGI:' + r['markerID'] + TAB)
+	    fp.write(TAB)
+	    fp.write(TAB)
+	    fp.write(TAB)
+	    fp.write(CRT)
 
 # end RNAs
 
