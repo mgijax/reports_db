@@ -117,7 +117,7 @@ def writeRecord(i, r, e):
         elif r['_AnnotEvidence_key'] in goQualifierGAF:
             if r['qualifier'] == 'NOT':
                qualifier = 'NOT|'
-            qualifier = qualifier + '|'.join(goQualifierGAF[key])
+            qualifier = qualifier + '|'.join(goQualifierGAF[r['_AnnotEvidence_key']])
         elif r['qualifier'] == 'NOT':
             qualifier = 'NOT|' + dagQualifierGAF[dag[r['_Term_key']]]
         elif r['qualifier'] != None:
@@ -192,7 +192,7 @@ db.sql('''
                  e.modification_date, e._Refs_key
         into temporary table gomarker1 
         from VOC_Annot a, ACC_Accession ta, VOC_Term t, VOC_Evidence e, 
-             VOC_Term et, VOC_Term q, MGI_User u 
+             VOC_Term et, VOC_Term q, MGI_User u , MRK_Marker m
         where a._AnnotType_key = 1000 
         and a._Annot_key = e._Annot_key 
         and a._Term_key = t._Term_key 
@@ -207,6 +207,7 @@ db.sql('''
         and e._Refs_key not in (89196,105787) 
         and u.login not in ('GOC', 'RGD', 'UniProtKB')
         and u.login not like 'GOA%'
+        and a._Object_key = m._Marker_key
         ''', None)
 
 db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
@@ -276,7 +277,6 @@ results = db.sql('''select distinct a._AnnotEvidence_key, t.term, p.value, t2.no
     and p._PropertyTerm_key = t._Term_key
     and t.term in ('go_qualifier')
     and p.value = t2.term
-    and t2.note is not null
     ''', 'auto')
 for r in results:
     key = r['_AnnotEvidence_key']
