@@ -88,6 +88,8 @@ FIELD15 = 'MGI'
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
+dagQualifierGAF = {'C':'located_in', 'P':'acts_upstream_of_or_within', 'F':'enables'}
+
 def writeRecord(i, r, e):
 
         # if we can't find the DAG for the Term, skip it
@@ -112,7 +114,7 @@ def writeRecord(i, r, e):
                 qualifier = 'enables'
         elif r['termID'] == 'GO:0005575':
                 qualifier = 'is_active_in'
-        elif key in goQualifierGAF:
+        elif r['_AnnotEvidence_key'] in goQualifierGAF:
             if r['qualifier'] == 'NOT':
                qualifier = 'NOT|'
             qualifier = qualifier + '|'.join(goQualifierGAF[key])
@@ -120,7 +122,7 @@ def writeRecord(i, r, e):
             qualifier = 'NOT|' + dagQualifierGAF[dag[r['_Term_key']]]
         elif r['qualifier'] != None:
             qualifier = r['qualifier'].strip()
-        elif r['inferredFrom'] != None and r['inferredFrom'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
+        elif r['uniprotIDs'] != None and r['uniprotIDs'].find('InterPro:') >= 0 and dag[r['_Term_key']] == 'P':
             qualifier = 'involved_in'
         else:
             qualifier = dagQualifierGAF[dag[r['_Term_key']]]
