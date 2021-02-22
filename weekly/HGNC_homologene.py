@@ -10,6 +10,10 @@
 #
 # History:
 #
+# sc    02/22/2021
+#       TR13349 - B39 project. Update to use alliance direct homology
+#               (was using Homologene and HGNC)
+#
 # 11/24/2015 - TR11968
 #	updated the homology
 #
@@ -100,7 +104,7 @@ def loadLookups():
     results = db.sql('''select cm._Cluster_key, cm._Marker_key, m._Organism_key, c.clusterId
         from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
         where c._ClusterType_key = 9272150
-        and c._ClusterSource_key in (9272151, 13437099)  
+        and c._ClusterSource_key = 75885739
         and c._Cluster_key = cm._Cluster_key
         and cm._Marker_key = m._Marker_key''', 'auto')
 

@@ -23,6 +23,10 @@
 #
 # History:
 #
+# sc    02/22/2021
+#       TR13349 - B39 project. Update to use alliance direct homology
+#               (was using Homologene)
+#
 # lec	05/13/2015
 #	- TR11652/convert to MRK_Cluster
 #
@@ -120,7 +124,7 @@ results = db.sql('''
         from markers m,
                 MRK_Cluster mc, MRK_ClusterMember mcm, MRK_ClusterMember mcm2, 
                 MRK_Marker mm, MGI_Organism o
-        where mc._ClusterSource_key = 9272151
+        where mc._ClusterSource_key = 75885739
         and mc._Cluster_key = mcm._Cluster_key
         and mcm._Marker_key = m._Marker_key
         and mcm._Cluster_key = mcm2._Cluster_key
@@ -140,7 +144,7 @@ results = db.sql('''
         select distinct m._Marker_key, s.synonym || '|' || o.commonName as synonym
         from markers m, MRK_Cluster mc, MRK_ClusterMember mcm, MRK_ClusterMember mcm2, 
                 MRK_Marker mm, MGI_Organism o, MGI_Synonym s
-        where mc._ClusterSource_key = 9272151
+        where mc._ClusterSource_key = 75885739
         and mc._Cluster_key = mcm._Cluster_key
         and mcm._Marker_key = m._Marker_key
         and mcm._Cluster_key = mcm2._Cluster_key

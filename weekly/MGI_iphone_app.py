@@ -39,6 +39,9 @@
 #	12: DO ID: (xxxx||xxxx||...)
 #
 #####
+# sc    02/22/2021
+#       TR13349 - B39 project. Update to use alliance direct homology
+#               (was using Homologene)
 #TR11732 Changes
 #Remove the following 23 columns:
 #       5:  URL prefix (by marker id)
@@ -432,33 +435,33 @@ def iphone_genes():
     #
     # DO human disease (_annottype_key = 1022)
     #
-    db.sql('''select c.clusterID, cm.*, m._Organism_key
+    db.sql('''select cm.*, m._Organism_key
         into temporary table mouse
         from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
         where c._ClusterType_key = 9272150
-        and c._ClusterSource_key = 9272151
+        and c._ClusterSource_key = 75885739
         and c._Cluster_key = cm._Cluster_key
         and cm._Marker_key = m._Marker_key
         and m._Organism_key = 1''', None)
 
-    db.sql('create index mouse_idx on mouse(clusterID)', None)
+    db.sql('create index mouse_idx on mouse(_Cluster_key)', None)
 
-    db.sql('''select c.clusterID, cm.*, m._Organism_key
+    db.sql('''select cm.*, m._Organism_key
         into temporary table human
         from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
         where c._ClusterType_key = 9272150
-        and c._ClusterSource_key = 9272151
+        and c._ClusterSource_key = 75885739
         and c._Cluster_key = cm._Cluster_key
         and cm._Marker_key = m._Marker_key
         and m._Organism_key = 2''', None)
 
-    db.sql('create index human_idx on human(clusterID)', None)
+    db.sql('create index human_idx on human(_Cluster_key)', None)
 
     results = db.sql('''select distinct m._marker_key, a.accid
             from markers m, mouse hm, human hh,
             VOC_Annot aa, ACC_Accession a
             where m._marker_key = hm._marker_key
-            and hm.clusterID = hh.clusterID
+            and hm._Cluster_key = hh._Cluster_key
             and hh._Marker_key = aa._object_key
             and aa._annottype_key = 1022
             and aa._term_key = a._object_key

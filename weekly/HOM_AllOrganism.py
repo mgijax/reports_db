@@ -6,7 +6,7 @@ HOM_AllOrganism.py
 # Produce a homology class report for all organism that includes the following
 # tab-delimited fields:
 #
-# 1)  HomoloGene ID
+# 2/22/21 removed: 1)  HomoloGene ID
 # 2)  Common Organism Name
 # 3)  NCBI Taxon ID
 # 4)  Symbol
@@ -21,6 +21,12 @@ HOM_AllOrganism.py
 #
 # Usage:
 #       HOM_AllOrganism.py
+#
+# HISTORY
+#
+# sc    02/22/2021
+#       TR13349 - B39 project. Update to use alliance direct homology
+#               (was using Homologene and HGNC)
 #
 """
 
@@ -52,6 +58,9 @@ synonym = {}
 # Define the sort order of the organisms within a homology class
 # based on organism key.
 #
+# sc 2/22/21 - we only have mouse, human, rat, zebrafish, but leaving
+# the others in as the Alliance will be adding organisms to their homology
+#
 organismOrder = [ 1, 2, 10, 94, 13, 11, 40, 63, 95, 84 ]
 
 
@@ -65,7 +74,7 @@ organismOrder = [ 1, 2, 10, 94, 13, 11, 40, 63, 95, 84 ]
 #
 def writeRecord (r):
     markerKey = r['_Marker_key']
-    fp.write(str(r['homologeneID']) + TAB)
+    #fp.write(str(r['homologeneID']) + TAB)
     fp.write(r['commonName'] + TAB)
     fp.write(r['taxonID'] + TAB)
     fp.write(r['symbol'] + TAB)
@@ -181,7 +190,7 @@ for r in results:
 #
 # Print the header record for the report.
 #
-fp.write('HomoloGene ID' + TAB)
+#fp.write('HomoloGene ID' + TAB)
 fp.write('Common Organism Name' + TAB)
 fp.write('NCBI Taxon ID' + TAB)
 fp.write('Symbol' + TAB)
@@ -197,13 +206,14 @@ fp.write('Synonyms' + CRT)
 
 
 #
-# Get HomoloGene ID, organism name, taxon ID, marker symbol/name. and
+# Get Cluster Key, organism name, taxon ID, marker symbol/name. and
 # EntrezGene ID that will be needed for each row of the report. These are
 # saved in a temp table because the marker key for each row will be used
 # to query for the remaining info.
 #
 db.sql('''
-        select cast(a1.accID as int) as homologeneID,
+        --select cast(a1.accID as int) as homologeneID,
+        select c._Cluster_key,
                o._Organism_key,
                o.commonName,
                a2.accID as taxonID,
@@ -212,18 +222,18 @@ db.sql('''
                m.name,
                a3.accID as entrezgeneID
         into temporary table temp1
-        from ACC_Accession a1,
-             MRK_Cluster c,
+        --from ACC_Accession a1,
+        from  MRK_Cluster c,
              MRK_ClusterMember cm,
              MRK_Marker m,
              MGI_Organism o,
              ACC_Accession a2,
              ACC_Accession a3
-        where a1._LogicalDB_key = 81 and
-              a1._MGIType_key = 39 and
-              a1._Object_key = c._Cluster_key and
-              c._ClusterType_key = 9272150 and
-              c._ClusterSource_key = 9272151 and
+        --where a1._LogicalDB_key = 81 and
+        --      a1._MGIType_key = 39 and
+        --      a1._Object_key = c._Cluster_key and
+        where c._ClusterType_key = 9272150 and
+              c._ClusterSource_key = 75885739 and
               c._Cluster_key = cm._Cluster_key and
               cm._Marker_key = m._Marker_key and
               m._Organism_key = o._Organism_key and
@@ -425,11 +435,12 @@ synonym[markerKey] = synList
 
 
 #
-# Get the Homologene, organism and marker data from the temp table that
+# Get the Cluster Key, organism and marker data from the temp table that
 # will represent separate lines on the report.
 #
 results = db.sql('''
-        select homologeneID,
+        --select homologeneID,
+        select _Cluster_key,
                _Organism_key,
                commonName,
                taxonID,
@@ -438,24 +449,24 @@ results = db.sql('''
                name,
                entrezgeneID
         from temp1 
-        order by homologeneID,
-                 _Organism_key,
+        --order by homologeneID,
+        order by _Cluster_key,_Organism_key,
                  symbol
         ''','auto')
 
 h = {}
-homologeneID = -1
+clusterKey = -1
 
 for r in results:
     #
     # If this row is the start of a new homology class and it is not the
     # first one, write out the prior one and reset the homology dictionary.
     #
-    if r['homologeneID'] != homologeneID and homologeneID != -1:
+    if r['_Cluster_key'] != clusterKey and clusterKey != -1:
         writeHomologyClass(h)
         h = {}
 
-    homologeneID = r['homologeneID']
+    clusterKey = r['_Cluster_key']
 
     #
     # If there is already a list of results sets in the homology dictionary
