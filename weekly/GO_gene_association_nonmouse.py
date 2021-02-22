@@ -16,21 +16,23 @@
 #
 # Special format for this report:
 #
-#   1.  Database designation (UniProt) required
-#   2.  DB_Object_ID (Inferred From (id minus the UniProt prefix))
-#   3.  DB_Object_Symbol (null) optional
-#   4.  Qualifier (NOT) optional
-#   5.  GO id required
-#   6.  DB:Reference (|DB:Reference) (PubMed ID of Reference from GO notes) required
-#   7.  Evidence code required
-#   8.  With (or) From	optional
-#   9.  Aspect required (GO DAG Abbreviation (F, P, C))
-#   10. DB_Object_Name optional (null)
-#   11. DB_Object_Synonym optional (null)
-#   12. DB_Object_Type required (protein)
-#   13. taxon (|taxon) required (null)
-#   14. Modification Date required (YYYYMMDD)
-#   15. Assigned By required (MGI)
+# !1  DB                              required        1       UniProtKB\n')
+# !2  DB Object ID                    required        1       P12345\n')
+# !3  DB Object Symbol                required        1       PHO3\n')
+# !4  Qualifier                       required        1 or 2  NOT|involved_in\n')
+# !5  GO ID                           required        1       GO:0003993\n')
+# !6  DB:Reference (|DB:Reference)    required        1 or greater    PMID:2676709\n')
+# !7  Evidence Code                   required        1       IMP\n')
+# !8  With (or) From                  optional        0 or greater    GO:0000346\n')
+# !9  Aspect                          required        1       F\n')
+# !10 DB Object Name                  optional        0 or 1  Toll-like receptor 4\n')
+# !11 DB Object Synonym (|Synonym)    optional        0 or greater    hToll\n')
+# !12 DB Object Type                  required        1       protein\n')
+# !13 Taxon(|taxon)                   required        1 or 2  taxon:9606\n')
+# !14 Date                            required        1       20090118\n')
+# !15 Assigned By                     required        1       SGD\n')
+# !16 Annotation Extension            optional        0 or greater    part_of(CL:0000576)\n')
+# !17 Gene Product Form ID            optional        0 or 1  UniProtKB:P12345-2\n')
 #
 # exclude J:88213 (olfactory load)
 # exclude J:104715 (tbreddy's Rat)
@@ -159,8 +161,9 @@ def writeRecord(i, r, e):
         fp.write(str(r['mDate']) + TAB)
 
         # field 15
-        fp.write(FIELD15)
+        fp.write(FIELD15 + TAB)
 
+        fp.write(TAB)
         fp.write(CRT)
 
 #
