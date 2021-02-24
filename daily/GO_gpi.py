@@ -41,6 +41,7 @@ db.useOneConnection(1)
 fp = reportlib.init('mgi', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('!gpi-version: 2.0\n')
+fp.write('!namespace: MGI\n')
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 
