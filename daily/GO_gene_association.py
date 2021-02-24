@@ -449,10 +449,10 @@ def doSetup():
                 value = term + '=' + value
 
         # "comment" is part of Dustin's initial noctua load; then it can be removed
-        elif term in ('text'):
-                value = 'comment=' + value
-        elif term in ('has_participant', 'regulates_o_has_participant'):
-                value = 'comment=' + term + '(' + value + ')'
+        #elif term in ('text'):
+        #        value = 'comment=' + value
+        #elif term in ('has_participant', 'regulates_o_has_participant'):
+        #        value = 'comment=' + term + '(' + value + ')'
 
         if key not in gpadCol12Lookup:
             gpadCol12Lookup[key] = []
