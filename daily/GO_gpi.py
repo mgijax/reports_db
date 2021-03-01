@@ -8,6 +8,18 @@
 #       see: wiki/mediawiki/index.php/sw:GOload 
 #       contains link to GO/GPI format
 #
+# 1  DB_Object_ID
+# 2  DB_Object_Symbol
+# 3  DB_Object_Name
+# 4  DB_Object_Synonyms 
+# 5  DB_Object_Type
+# 6  DB_Object_Taxon
+# 7  Encoded_By 
+# 8  Parent_Protein 
+# 9  Protein_Containing_Complex_Members 
+# 10 DB_Xrefs 
+# 11 Gene_Product_Properties 
+#
 # History:
 #
 # lec   04/01/2020 python 3 upgrade
@@ -352,13 +364,6 @@ results = db.sql('''
 
 for r in results:
         isoform = r['accID']
-
-        # 1 DB_Object_ID
-        # 2 DB_Object_Symbol
-        # 3 DB_Object_Name
-        # 4 DB_Object_Synonyms 
-        # 5 DB_Object_Type
-        # 6 DB_Object_Taxon
 
         fp.write(isoform + TAB)
         fp.write(r['symbol'] + TAB)
