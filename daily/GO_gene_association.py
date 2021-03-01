@@ -148,11 +148,6 @@ def doSetup():
     #   and m.symbol = 'Birc3'
     #	and m.symbol = 'Hk1'
     #
-    # for Dustin, exclude:
-    # _refs_key |    mgiid    |  jnumid  |                       short_citation
-    # -----------+-------------+----------+-------------------------------------------------------------
-    #     156949 | MGI:4417868 | J:155856 | Mouse Genome Informatics Scientific Curators,  2010 Jan;():
-    #     165659 | MGI:4834177 | J:164563 | Mouse Genome Informatics Scientific Curators,  2010 Oct;():
 
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
@@ -179,9 +174,6 @@ def doSetup():
         and m._Marker_Type_key = mt._Marker_Type_key 
         and a._Qualifier_key = q._Term_key 
         and e._ModifiedBy_key = u._User_key
-        -- for Dustin/only MGI_curated
-        --and u.orcid is not null
-        --and e._Refs_key not in (156949, 165659)
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -232,10 +224,6 @@ def doSetup():
         and b._LogicalDB_key = 1 
         and g._EvidenceTerm_key = t._Term_key 
         and g._ModifiedBy_key = u._User_key
-
-        -- for Dustin/only MGI_curated
-        --and u.orcid is not null
-
         ''', None)
 
     db.sql('create index gomarker2_idx1 on gomarker2(symbol)', None)
@@ -447,12 +435,6 @@ def doSetup():
 
         if term in ('noctua-model-id', 'model-state'):
                 value = term + '=' + value
-
-        # "comment" is part of Dustin's initial noctua load; then it can be removed
-        elif term in ('text'):
-                value = 'comment=' + value
-        elif term in ('has_participant', 'regulates_o_has_participant'):
-                value = 'comment=' + term + '(' + value + ')'
 
         if key not in gpadCol12Lookup:
             gpadCol12Lookup[key] = []
@@ -1085,25 +1067,6 @@ fp = reportlib.init('gene_association', fileExt = '.mgi', outputdir = os.environ
 fp.write('!gaf-version: 2.2\n')
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
-fp.write('!\n')
-fp.write('!1  DB                              required        1       UniProtKB\n')
-fp.write('!2  DB Object ID                    required        1       P12345\n')
-fp.write('!3  DB Object Symbol                required        1       PHO3\n')
-fp.write('!4  Qualifier                       required        1 or 2  NOT|involved_in\n')
-fp.write('!5  GO ID                           required        1       GO:0003993\n')
-fp.write('!6  DB:Reference (|DB:Reference)    required        1 or greater    PMID:2676709\n')
-fp.write('!7  Evidence Code                   required        1       IMP\n')
-fp.write('!8  With (or) From                  optional        0 or greater    GO:0000346\n')
-fp.write('!9  Aspect                          required        1       F\n')
-fp.write('!10 DB Object Name                  optional        0 or 1  Toll-like receptor 4\n')
-fp.write('!11 DB Object Synonym (|Synonym)    optional        0 or greater    hToll\n')
-fp.write('!12 DB Object Type                  required        1       protein\n')
-fp.write('!13 Taxon(|taxon)                   required        1 or 2  taxon:9606\n')
-fp.write('!14 Date                            required        1       20090118\n')
-fp.write('!15 Assigned By                     required        1       SGD\n')
-fp.write('!16 Annotation Extension            optional        0 or greater    part_of(CL:0000576)\n')
-fp.write('!17 Gene Product Form ID            optional        0 or 1  UniProtKB:P12345-2\n')
-fp.write('!\n')
 
 fp2 = reportlib.init('gene_association_pro', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp2.write('!gaf-version: 2.2\n')
@@ -1133,20 +1096,6 @@ fp = reportlib.init('mgi', fileExt = '.gpad', outputdir = os.environ['REPORTOUTP
 fp.write('!gpa-version: 2.0\n') 
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
-fp.write('!\n')
-fp.write('!1  DB_Object_ID            ::= ID MGI or PR\n')
-fp.write('!2  Negation                ::= "NOT"\n')
-fp.write('!3  Relation                ::= OBO_ID\n')
-fp.write('!4  Ontology_Class_ID       ::= OBO_ID\n')
-fp.write('!5  Reference               ::= [ID] ("|" ID)*\n')
-fp.write('!6  Evidence_type           ::= OBO_ID\n')
-fp.write('!7  With_or_From            ::= [ID] ("|" | "," ID)*\n')
-fp.write('!8  Interacting_taxon_ID    ::= NCBITaxon:[Taxon_ID]\n')
-fp.write('!9  Date                    ::= YYYY-MM-DD\n')
-fp.write('!10 Assigned_by             ::= Prefix\n')
-fp.write('!11 Annotation_Extensions   ::= [Extension_Conj] ("|" Extension_Conj)*\n')
-fp.write('!12 Annotation_Properties   ::= [Property_Value_Pair] ("|" Property_Value_Pair)*\n')
-fp.write('!\n')
 
 doGPADFinish()
 

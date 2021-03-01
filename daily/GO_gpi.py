@@ -40,23 +40,10 @@ db.useOneConnection(1)
 
 fp = reportlib.init('mgi', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-fp.write('!!gpi-version: 2.0\n')
-fp.write('!!date: %s $\n' % (mgi_utils.date("%m/%d/%Y")))
-fp.write('!!\n')
-fp.write('!! from Mouse Genome Database (MGD) & Gene Expression Database (GXD)\n')
-fp.write('!!\n')
-fp.write('!! 1. DB_Object_ID\n')
-fp.write('!! 2. DB_Object_Symbol\n')
-fp.write('!! 3. DB_Object_Name\n')
-fp.write('!! 4. DB_Object_Synonyms\n')
-fp.write('!! 5. DB_Object_Type\n')
-fp.write('!! 6. DB_Object_Taxon\n')
-fp.write('!! 7. Encoded_By\n')
-fp.write('!! 8. Parent_Protein\n')
-fp.write('!! 9. Protein_Containing_Complex_Members\n')
-fp.write('!! 10. DB_Xrefs\n')
-fp.write('!! 11. Gene_Product_Properties\n')
-fp.write('!!\n')
+fp.write('!gpi-version: 2.0\n')
+fp.write('!namespace: MGI\n')
+fp.write('!generated-by: MGI\n')
+fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 
 #
 # markers
