@@ -353,6 +353,13 @@ results = db.sql('''
 for r in results:
         isoform = r['accID']
 
+        # 1 DB_Object_ID
+        # 2 DB_Object_Symbol
+        # 3 DB_Object_Name
+        # 4 DB_Object_Synonyms 
+        # 5 DB_Object_Type
+        # 6 DB_Object_Taxon
+
         fp.write(isoform + TAB)
         fp.write(r['symbol'] + TAB)
         fp.write(r['name'] + TAB)
@@ -364,23 +371,23 @@ for r in results:
         fp.write('PR:000000001' + TAB)
         fp.write(SPECIES + TAB)
 
-        # 7. Encoded_By                                 ::= [ID] ('|' ID)*
+        # 7 Encoded_By                                 ::= [ID] ('|' ID)*
         if isoform in markerByIsoform:
                 fp.write('MGI:' + markerByIsoform[isoform][0])
         fp.write(TAB)
 
-        # 8. Parent_Protein                             ::= [ID] ('|' ID)*
+        # 8 Parent_Protein                             ::= [ID] ('|' ID)*
         fp.write(TAB)
 
-        # 9. Protein_Containing_Complex_Members         ::= [ID] ('|' ID)*
+        # 9 Protein_Containing_Complex_Members         ::= [ID] ('|' ID)*
         fp.write(TAB)
 
-        # 10. DB_Xrefs                                  ::= [ID] ('|' ID)*
+        # 10 DB_Xrefs                                  ::= [ID] ('|' ID)*
         if isoform in isoformUniProt:
                 fp.write(isoformUniProt[isoform][0])
         fp.write(TAB)
 
-        # 11. Gene_Product_Properties  
+        # 11 Gene_Product_Properties  
         fp.write(CRT)
 
 # attach PR/protein_complex generated from proisoformload 
