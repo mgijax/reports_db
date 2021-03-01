@@ -148,11 +148,6 @@ def doSetup():
     #   and m.symbol = 'Birc3'
     #	and m.symbol = 'Hk1'
     #
-    # for Dustin, exclude:
-    # _refs_key |    mgiid    |  jnumid  |                       short_citation
-    # -----------+-------------+----------+-------------------------------------------------------------
-    #     156949 | MGI:4417868 | J:155856 | Mouse Genome Informatics Scientific Curators,  2010 Jan;():
-    #     165659 | MGI:4834177 | J:164563 | Mouse Genome Informatics Scientific Curators,  2010 Oct;():
 
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
@@ -179,9 +174,6 @@ def doSetup():
         and m._Marker_Type_key = mt._Marker_Type_key 
         and a._Qualifier_key = q._Term_key 
         and e._ModifiedBy_key = u._User_key
-        -- for Dustin/only MGI_curated
-        --and u.orcid is not null
-        --and e._Refs_key not in (156949, 165659)
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -232,10 +224,6 @@ def doSetup():
         and b._LogicalDB_key = 1 
         and g._EvidenceTerm_key = t._Term_key 
         and g._ModifiedBy_key = u._User_key
-
-        -- for Dustin/only MGI_curated
-        --and u.orcid is not null
-
         ''', None)
 
     db.sql('create index gomarker2_idx1 on gomarker2(symbol)', None)
@@ -447,12 +435,6 @@ def doSetup():
 
         if term in ('noctua-model-id', 'model-state'):
                 value = term + '=' + value
-
-        # "comment" is part of Dustin's initial noctua load; then it can be removed
-        #elif term in ('text'):
-        #        value = 'comment=' + value
-        #elif term in ('has_participant', 'regulates_o_has_participant'):
-        #        value = 'comment=' + term + '(' + value + ')'
 
         if key not in gpadCol12Lookup:
             gpadCol12Lookup[key] = []
