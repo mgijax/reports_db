@@ -247,7 +247,7 @@
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Vertebrate Homology</B></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>1. Homology Classes - Includes: mouse, human, chimpanzee, rhesus macaque, dog, cattle, rat, chicken, western clawed frog, zebrafish (tab-delimited)</B></TD></TR>
+        <TR><TD><B>1. Homology Classes - Includes: mouse, human, rat, zebrafish (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR>
             <TD>HomoloGene ID</TD>
