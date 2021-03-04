@@ -75,6 +75,7 @@ organismOrder = [ 1, 2, 10, 94, 13, 11, 40, 63, 95, 84 ]
 def writeRecord (r):
     markerKey = r['_Marker_key']
     #fp.write(str(r['homologeneID']) + TAB)
+    fp.write(str(r['_Cluster_key']) + TAB)
     fp.write(r['commonName'] + TAB)
     fp.write(r['taxonID'] + TAB)
     fp.write(r['symbol'] + TAB)
@@ -413,7 +414,7 @@ results = db.sql('''
              MGI_Synonym s
         where t._Marker_key = s._Object_key and
               s._MGIType_key = 2
-        order by t._Marker_key,
+        order by t.symbol,
                  s.synonym
         ''','auto')
 

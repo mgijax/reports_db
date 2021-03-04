@@ -6,13 +6,14 @@
 #	(TR 11968)
 #
 # Usage:
-#       HGNC_homologene.py
+#       HGNC_AllianceHomology.py
 #
 # History:
 #
 # sc    02/22/2021
 #       TR13349 - B39 project. Update to use alliance direct homology
 #               (was using Homologene and HGNC)
+#       report renamed HGNC_homologene.py --> HGNC_AllianeHomology.py
 #
 # 11/24/2015 - TR11968
 #	updated the homology
@@ -54,8 +55,6 @@ homologyDict = {}
 
 # HGNC {humanKey: hgncId, ...}
 hgncIdDict = {}
-# HG {humanKey: [hgId1, ...], ...} 
-hgeneIdDict = {}
 
 hgnc = 64
 homologene = 81
@@ -97,11 +96,11 @@ def getCoords(logicalDBkey, provider):
     return tempCoords
 
 def loadLookups():
-    global homologyDict, hgncIdDict, hgeneIdDict, ccdsDict, featureTypeDict
+    global homologyDict, hgncIdDict, ccdsDict, featureTypeDict
 
     # load lookup mapping mouse marker key to human marker keys from both HGNC and HG clusters
     # while we are at it, load mapping of human markers to their HGene ids
-    results = db.sql('''select cm._Cluster_key, cm._Marker_key, m._Organism_key, c.clusterId
+    results = db.sql('''select cm._Cluster_key, cm._Marker_key, m._Organism_key
         from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
         where c._ClusterType_key = 9272150
         and c._ClusterSource_key = 75885739
@@ -113,16 +112,10 @@ def loadLookups():
         clusterKey = r['_Cluster_key']
         markerKey = r['_Marker_key']
         orgKey = r['_Organism_key']
-        hgeneId = r['clusterId']
         if clusterKey not in tempClusterDict:
            tempClusterDict[clusterKey] = [[],[]]
         if orgKey == 1:
             tempClusterDict[clusterKey][0].append(markerKey)
-             # if this is a homologene cluster (aka has a clusterId (HGNC is null))
-            if hgeneId != None:
-                if markerKey not in hgeneIdDict:
-                    hgeneIdDict[markerKey]= []
-                hgeneIdDict[markerKey].append(hgeneId)
         else:
             tempClusterDict[clusterKey][1].append(markerKey)
 
@@ -199,8 +192,7 @@ fp.write('Ensembl Gene end' + TAB)
 fp.write('Ensembl Gene strand' + TAB)
 
 fp.write('CCDS IDs' + TAB)
-fp.write('HGNC ID' + TAB)
-fp.write('HomoloGene ID' + CRT)
+fp.write('HGNC ID' + CRT)
 
 # all active genes/pseudogenes
 db.sql('''select m._Marker_key, a.accID, a.numericPart, m.symbol, m.name
@@ -279,16 +271,10 @@ for r in results:
     # If the mouse key has no HG or HGNC homology leave blank
     if key not in homologyDict:
         fp.write(noneDisplay)
-        fp.write(noneDisplay)
     else:
         # list of human markers this mouse has homology with
         humanList = homologyDict[key]
         hgncList = []
-        hgeneList = []
-
-        # get the HGene ID associated with  the human homologs for this mouse marker
-        if key in hgeneIdDict:
-            hgeneList = hgeneIdDict[key]
 
         # get the HGNC IDs associated with the human homologs for this mouse marker
         for hKey in humanList:
@@ -297,17 +283,11 @@ for r in results:
 
         # create sets, there could be dups
         hgncSet = set(hgncList)
-        hgeneSet = set(hgeneList)
         # write out each set pipe delimited
         if hgncSet:
             fp.write('|'.join(hgncSet) + TAB)
         else:
             fp.write(noneDisplay)
-        if hgeneSet: 
-            fp.write('|'.join(hgeneSet) + TAB)
-        else:
-            fp.write(noneDisplay)
-            
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)

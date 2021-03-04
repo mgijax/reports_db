@@ -79,6 +79,7 @@ organismOrder = [ 1, 2 ]
 def writeRecord (r):
     markerKey = r['_Marker_key']
     #fp.write(str(r['homologeneID']) + TAB)
+    fp.write(str(r['_Cluster_key']) + TAB)
     fp.write(r['commonName'] + TAB)
     fp.write(r['taxonID'] + TAB)
     fp.write(r['symbol'] + TAB)
