@@ -78,7 +78,6 @@ organismOrder = [ 1, 2 ]
 #
 def writeRecord (r):
     markerKey = r['_Marker_key']
-    #fp.write(str(r['homologeneID']) + TAB)
     fp.write(str(r['_Cluster_key']) + TAB)
     fp.write(r['commonName'] + TAB)
     fp.write(r['taxonID'] + TAB)
@@ -202,7 +201,6 @@ for r in results:
 #
 # Print the header record for the report.
 #
-#fp.write('HomoloGene ID' + TAB)
 fp.write('Common Organism Name' + TAB)
 fp.write('NCBI Taxon ID' + TAB)
 fp.write('Symbol' + TAB)
@@ -225,7 +223,6 @@ fp.write('SWISS_PROT IDs' + CRT)
 # to query for the remaining info.
 #
 db.sql('''
-        --select cast(a1.accID as int) as homologeneID,
         select c._Cluster_key,
                o._Organism_key,
                o.commonName,
@@ -234,16 +231,12 @@ db.sql('''
                m.symbol,
                a3.accID as entrezgeneID
         into temporary table temp1
-        --from ACC_Accession a1,
         from MRK_Cluster c,
              MRK_ClusterMember cm,
              MRK_Marker m,
              MGI_Organism o,
              ACC_Accession a2,
              ACC_Accession a3
-        --where a1._LogicalDB_key = 81 and
-        --      a1._MGIType_key = 39 and
-        --      a1._Object_key = c._Cluster_key and
         where c._ClusterType_key = 9272150 and
               c._ClusterSource_key = 75885739 and
               c._Cluster_key = cm._Cluster_key and
@@ -504,7 +497,6 @@ swissProtID[markerKey] = idList
 # will represent separate lines on the report.
 #
 results = db.sql('''
-        --select homologeneID,
         select _Cluster_key,
                _Organism_key,
                commonName,
@@ -513,7 +505,6 @@ results = db.sql('''
                symbol,
                entrezgeneID
         from temp1 
-        --order by homologeneID,
         order by _Cluster_key,
                  _Organism_key,
                  symbol

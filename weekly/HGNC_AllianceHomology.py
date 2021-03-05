@@ -57,7 +57,6 @@ homologyDict = {}
 hgncIdDict = {}
 
 hgnc = 64
-homologene = 81
 
 def getCoords(logicalDBkey, provider):
 
@@ -98,8 +97,7 @@ def getCoords(logicalDBkey, provider):
 def loadLookups():
     global homologyDict, hgncIdDict, ccdsDict, featureTypeDict
 
-    # load lookup mapping mouse marker key to human marker keys from both HGNC and HG clusters
-    # while we are at it, load mapping of human markers to their HGene ids
+    # load lookup mapping mouse marker key to human marker keys from Alliance Direct
     results = db.sql('''select cm._Cluster_key, cm._Marker_key, m._Organism_key
         from MRK_Cluster c, MRK_ClusterMember cm, MRK_Marker m
         where c._ClusterType_key = 9272150
@@ -267,7 +265,6 @@ for r in results:
     else:
         fp.write(noneDisplay)
 
-    # HGNC and HomoloGene(21-22)
     # If the mouse key has no HG or HGNC homology leave blank
     if key not in homologyDict:
         fp.write(noneDisplay)
