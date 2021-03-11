@@ -15,8 +15,8 @@
 # 5. DOtermName  (input file col 8)
 # 6. Reference  (input file col 14)
 # 7. Source  (input file col 16
-# 8. MGI gene symbol (ortholog of human gene in 1)
-# 9. MGI gene ID
+# 8. MGI gene ID
+# 9. MGI gene symbol (ortholog of human gene in 1)
 #
 # skip comment lines(#) and column header
 # skip if HGNC ID not in MGD
@@ -120,8 +120,8 @@ fpOut.write('#4. DOID\n')
 fpOut.write('#5. DOtermName\n')
 fpOut.write('#6. Reference\n')
 fpOut.write('#7. Source\n')
-fpOut.write('#8. MGI gene symbol (ortholog of human gene in 1)\n')
-fpOut.write('#9. MGI gene ID\n')
+fpOut.write('#8. MGI gene ID\n')
+fpOut.write('#9. MGI gene symbol (ortholog of human gene in 1)\n')
 fpOut.write('#\n')
 
 for line in fpIn.readlines():
