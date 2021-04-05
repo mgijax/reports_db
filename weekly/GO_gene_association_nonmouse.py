@@ -172,7 +172,7 @@ def writeRecord(i, r, e):
 
 db.useOneConnection(1)
 fp = reportlib.init('gene_association', fileExt = '.mgi_nonmouse', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-fp.write('!gpa-version: 2.2\n')
+fp.write('!gaf-version: 2.2\n')
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 
