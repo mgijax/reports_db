@@ -70,6 +70,9 @@ results = db.sql('''
         and a1.preferred = 1
         and v._Term_key = a2._Object_key
         and a2._MGIType_key = 13
+        and exists (select 1 from MRK_Marker m where v._Object_key = m._Marker_key
+                and m._Marker_Status_key = 1
+                )
         ''', 'auto')
 
 for r in results:
@@ -329,6 +332,9 @@ results = db.sql('''
         and a1._MGIType_key = 13
         and v._Annot_key = ve._Annot_key
         and ve._AnnotEvidence_key = p._AnnotEvidence_key
+        and exists (select 1 from MRK_Marker m where v._Object_key = m._Marker_key
+                and m._Marker_Status_key = 1
+                )
         ''', 'auto')
 for r in results:
         key = r['prID']
