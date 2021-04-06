@@ -76,5 +76,5 @@ setenv IMSR_STRAINS_CSV		${DATADOWNLOADS}/bhmgiimsr01.jax.org/allStrains.csv
 setenv IPHONEARCHIVE		${FTPREPORTDIR}/archive/iphone
 
 # Alliance human/mouse homology file for weekly/MGI_Cov_Human_Gene.py
-setenv ALLIANCE_HUMAN_FILE_GZ     "/mgi/all/wts_projects/13400/13459/MGI_Cov_Human_Gene/DISEASE-ALLIANCE_HUMAN_17.tsv.gz"
-setenv ALLIANCE_HUMAN_FILE     "/mgi/all/wts_projects/13400/13459/MGI_Cov_Human_Gene/DISEASE-ALLIANCE_HUMAN_17.tsv"
+setenv ALLIANCE_HUMAN_FILE_GZ     "/data/downloads/fms.alliancegenome.org/download/DISEASE-ALLIANCE_MGI.tsv.gz"
+setenv ALLIANCE_HUMAN_FILE     "/data/downloads/fms.alliancegenome.org/download/DISEASE-ALLIANCE_MGI.tsv"
