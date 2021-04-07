@@ -365,6 +365,9 @@ results = db.sql('''
 for r in results:
         isoform = r['accID']
 
+        if isoform not in markerByIsoform:
+            continue
+
         fp.write(isoform + TAB)
         fp.write(r['symbol'] + TAB)
         fp.write(r['name'] + TAB)
@@ -377,9 +380,7 @@ for r in results:
         fp.write(SPECIES + TAB)
 
         # 7. Encoded_By                                 ::= [ID] ('|' ID)*
-        if isoform in markerByIsoform:
-                fp.write('MGI:' + markerByIsoform[isoform][0])
-        fp.write(TAB)
+        fp.write('MGI:' + markerByIsoform[isoform][0] + TAB)
 
         # 8. Parent_Protein                             ::= [ID] ('|' ID)*
         fp.write(TAB)
