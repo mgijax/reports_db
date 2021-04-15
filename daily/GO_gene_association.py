@@ -990,7 +990,7 @@ def addGPADReportRow(reportRow, r):
         reportRow = reportRow + '|'.join(references) + TAB
 
         #! 6  Evidence_type
-        if key in evidenceLookup:
+        if r['assignedBy'].find('NOCTUA_') >= 0 and key in evidenceLookup:
             reportRow = reportRow + evidenceLookup[key][0]
         elif r['evidenceCode'] in ecoLookupByEvidence:
             reportRow = reportRow + ecoLookupByEvidence[r['evidenceCode']]
