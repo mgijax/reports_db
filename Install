@@ -6,14 +6,9 @@
 
 cd `dirname $0` && source ./Configuration
 
-# create server side include file for ftp url
-echo "$FTPURL" > includes/ftp_url.html
-
 # link index page from FTP report directory
 rm -rf ${FTPREPORTDIR}/index.shtml ${FTPREPORTDIR}/index.html
-rm -rf ${FTPREPORTDIR}/includes
 cp ${PUBRPTS}/index.shtml ${FTPREPORTDIR}/index.shtml
-cp -r ${PUBRPTS}/includes ${FTPREPORTDIR}/includes
 
 #
 # permissions
