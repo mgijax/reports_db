@@ -44,8 +44,7 @@
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD>
 <A NAME="ftp"><B>Additional Reports</B></A><BR>
 <p>Downloads of short gene descriptions, gene expression, disease annotations, genetic and molecular interaction, and variant data for mouse available from the <a href="https://www.alliancegenome.org/downloads" target="_blank">Alliance of Genome Resources</a>.</p>
-<P>These files, along with some additional reports, are also available from this <A HREF="http://www.informatics.jax.org/downloads/">Index</A>.<BR><BR>
-</TD></TR></TABLE>
+<P>These files, along with some additional reports, are also available from this <A HREF="<!--#include file="includes/ftp_url.html" -->">Index</A>.<BR><BR>
 
 <!-- -->
 
