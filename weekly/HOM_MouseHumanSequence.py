@@ -6,7 +6,7 @@ HOM_MouseHumanSequence.py
 # Produce a homology class report for mouse and human sequences that includes
 # the following tab-delimited fields:
 #
-# 2/22/21 removed: 1)  HomoloGene ID
+# 1)  2/22/21 Replaced HomoloGene ID with DB Class Key
 # 2)  Common Organism Name
 # 3)  NCBI Taxon ID
 # 4)  Symbol
@@ -201,6 +201,7 @@ for r in results:
 #
 # Print the header record for the report.
 #
+fp.write('DB Class Key' + TAB)
 fp.write('Common Organism Name' + TAB)
 fp.write('NCBI Taxon ID' + TAB)
 fp.write('Symbol' + TAB)
