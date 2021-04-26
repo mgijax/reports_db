@@ -107,6 +107,10 @@ def initializeRefSet():
 # genotype exclusion
 #     genotype that has > 1 marker
 #
+# OR
+#
+# allele status in ('In Progress', 'Reserved', 'Deleted')
+#
 def initializeAlleleExclude():
 
     cmd = '''
@@ -124,6 +128,10 @@ def initializeAlleleExclude():
             and v._annottype_key = 1014
             and v._term_key not in (11025588,11025589,13289567,11025592)
             )
+    union
+    select distinct a._allele_key
+    from all_allele a
+    where a._allele_status_key in (847111, 847112, 847113)
     '''
     db.sql(cmd, None)
     db.sql('create index alleleKey1 on alleleExclude(_allele_key)', None)
