@@ -1,11 +1,21 @@
+TAG: reports_db-6-0-16-21
+DATE: 04/27/2021
+STAFF: lec
+CHANGES:
+wts2-606/Human gene COV report has mouse genes
+Configuration.default
+setenv ALLIANCE_HUMAN_FILE_GZ  "/data/downloads/fms.alliancegenome.org/download/DISEASE-ALLIANCE_HUMAN.tsv.gz"
+setenv ALLIANCE_HUMAN_FILE     "/data/downloads/fms.alliancegenome.org/download/DISEASE-ALLIANCE_HUMAN.tsv"
+
 TAG: reports_db-6-0-16-20
 DATE: 04/26/2021
 STAFF: lec
-CHANGES: 
+CHANGES:
 wts2-603/Remove private alleles and strains from the reports for the Coronavirus tables
 weekly/MGI_Cov_Allele.py
 weekly/MGI_Cov_Strain.py
 
+TAG: reports_db-6-0-16-19
 DATE: 04/15/2021
 STAFF: lec
 CHANGES:
