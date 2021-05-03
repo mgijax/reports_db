@@ -21,7 +21,7 @@
 # skip comment lines(#) and column header
 # skip if HGNC ID not in MGD
 # skip if association type not in ['is_implicated_in', 'is_not_implicated_in']
-# pull in hybrid mouse orthology if it exists
+# pull in alliance clustered mouse orthology if it exists
 #
 # Usage:
 #       MGI_Cov_Human_Gene.py
@@ -70,7 +70,7 @@ def init():
     fpIn = open(inFile, 'r') 
 
     # create HGNC ID to Mouse Homology Lookup
-    db.sql('''-- get hgnc id and hybrid cluster to which they belong
+    db.sql('''-- get hgnc id and alliance cluster to which they belong
         select a.accid as hgncID, cm._cluster_key
         into temporary table clusterKeys
         from acc_accession a, mrk_cluster c, mrk_clustermember cm
