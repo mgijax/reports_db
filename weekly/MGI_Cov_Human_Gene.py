@@ -74,7 +74,7 @@ def init():
         select a.accid as hgncID, cm._cluster_key
         into temporary table clusterKeys
         from acc_accession a, mrk_cluster c, mrk_clustermember cm
-        where c._clustersource_key = 75885740 -- alliance clustered
+        where c._clustersource_key = 75885739 -- alliance direct
         and c._cluster_key = cm._cluster_key
         and cm._marker_key = a._object_key
         and a._mgitype_key = 2
