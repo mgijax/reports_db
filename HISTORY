@@ -1,3 +1,10 @@
+TAG: reports_db-6-0-16-22
+DATE: 05/06/2021
+STAFF: lec
+CHANGES:
+wts2-605/COV reports showing only headers
+reports must run as daily reports so they use the production database : bib_workflow_tag must not be empty
+
 TAG: reports_db-6-0-16-21
 DATE: 04/27/2021
 STAFF: lec
