@@ -45,7 +45,6 @@
 <A NAME="ftp"><B>Additional Reports</B></A><BR>
 <p>Downloads of short gene descriptions, gene expression, disease annotations, genetic and molecular interaction, and variant data for mouse available from the <a href="https://www.alliancegenome.org/downloads" target="_blank">Alliance of Genome Resources</a>.</p>
 <P>These files, along with some additional reports, are also available from this <A HREF="<!--#include file="includes/ftp_url.html" -->">Index</A>.<BR><BR>
-</TD></TR></TABLE>
 
 <!-- -->
 
@@ -247,10 +246,10 @@
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Vertebrate Homology</B></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>1. Homology Classes - Includes: mouse, human, chimpanzee, rhesus macaque, dog, cattle, rat, chicken, western clawed frog, zebrafish (tab-delimited)</B></TD></TR>
+        <TR><TD><B>1. Homology Classes - Includes: mouse, human, rat, zebrafish (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR>
-            <TD>HomoloGene ID</TD>
+            <TD>DB Class Key</TD>
             <TD>Common Organism Name</TD>
             <TD>NCBI Taxon ID</TD>
             <TD>Symbol</TD>
@@ -263,13 +262,13 @@
             <TD>Name</TD><TD>Synonyms (pipe-delimited)</TD>
             </TR></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HOM_AllOrganism.rpt">HOM_AllOrganism.rpt</A> (sorted by HomoloGene ID)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HOM_AllOrganism.rpt">HOM_AllOrganism.rpt</A> (sorted by DB Class Key)</TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE><B>2. Human and Mouse Homology Classes with Sequence information (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR>
-            <TD>HomoloGene ID</TD>
+            <TD>DB Class Key</TD>
             <TD>Common Organism Name</TD>
             <TD>NCBI Taxon ID</TD>
             <TD>Symbol</TD>
@@ -284,22 +283,21 @@
             <TD>SWISS-PROT IDs<BR>(comma-delimited)</TD>
         </TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HOM_MouseHumanSequence.rpt">HOM_MouseHumanSequence.rpt</A> (sorted by HomoloGene ID)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HOM_MouseHumanSequence.rpt">HOM_MouseHumanSequence.rpt</A> (sorted by DB Class Key)</TD></TR>
         </TD></TR>
 
     <TR><TD><TABLE>
 
-	<TR><TD><B>3. Mouse Genes with HomoloGene, HGNC and CCDS IDs</B></TD></TR>
+	<TR><TD><B>3. Mouse Genes with Alliance Homology and HGNC and CCDS IDs</B></TD></TR>
 	<TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>NCBI Gene ID</TD><TD>NCBI Gene Chromosome</TD><TD>NCBI Gene start</TD><TD>NCBI Gene end</TD><TD>NCBI Gene strand</TD><TD>Ensembl Gene ID</TD><TD>Ensembl Gene chromosome</TD><TD>Ensembl Gene start</TD><TD>Ensembl Gene end</TD><TD>Ensembl Gene strand</TD><TD><TD>CCDS IDs (comma delimited)</TD><TD>HGNC ID</TD><TD>HomoloGene ID</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>Mouse Marker Name</TD><TD>NCBI Gene ID</TD><TD>NCBI Gene Chromosome</TD><TD>NCBI Gene start</TD><TD>NCBI Gene end</TD><TD>NCBI Gene strand</TD><TD>Ensembl Gene ID</TD><TD>Ensembl Gene chromosome</TD><TD>Ensembl Gene start</TD><TD>Ensembl Gene end</TD><TD>Ensembl Gene strand</TD><TD><TD>CCDS IDs (comma delimited)</TD><TD>HGNC ID</TD></TABLE>
         </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HGNC_homologene.rpt">HGNC_homologene.rpt</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HGNC_AllianceHomology.rpt">HGNC_AllianceHomology.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
         <TR><TD><B>4. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>HomoloGene ID</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>High-level Mammalian Phenotype ID<BR>(space-delimited)</T
-D></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>High-level Mammalian Phenotype ID<BR>(comma-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_HumanPhenotype.rpt">HMD_HumanPhenotype.rpt</A></TD></TR>
     </TABLE></TD></TR>
@@ -447,7 +445,7 @@ D></TABLE>
     <TR><TD><TABLE>
         <TR><TD><B>2. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>HomoloGene ID</TD><TD>HGNC Association?</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>High-level Mammalian Phenotype ID<BR>(space-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>HGNC Association?</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>High-level Mammalian Phenotype ID<BR>(space-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_HumanPhenotype.rpt">HMD_HumanPhenotype.rpt</A></TD></TR>
     </TABLE></TD></TR>
@@ -555,7 +553,7 @@ D></TABLE>
     <TR><TD><TABLE>
         <TR><TD><B>12. Associations of Mouse Genes with DO Diseases</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>DO Disease ID</TD><TD>DO Disease Name</TD><TD>HomoloGene ID</TD><TD>Common Organism Name</TD><TD>NCBI Taxon ID</TD><TD>Symbol</TD><TD>EntrezGene ID</TD><TD>Mouse MGI ID</TD></TR></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>DO Disease ID</TD><TD>DO Disease Name</TD><TD>Common Organism Name</TD><TD>NCBI Taxon ID</TD><TD>Symbol</TD><TD>EntrezGene ID</TD><TD>Mouse MGI ID</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_DO.rpt">MGI_DO.rpt</A></TD></TR>
     </TABLE></TD></TR>

@@ -9,7 +9,7 @@
 # 1) DO Disease ID
 # 2) DO Disease Name
 # 3) OMIM IDs (piped-delimited)
-# 4) HomoloGene ID (for the homology class of the marker, if one)
+# TR13349 removed: 4) HomoloGene ID (for the homology class of the marker, if one)
 # 5) Common Organism Name
 # 6) NCBI Taxon ID (for the organism)
 # 7) Symbol (for the marker)
@@ -19,6 +19,10 @@
 # Sort by: 2, 3, 5 (above)
 #
 # History:
+#
+# sc    02/22/2021
+#       TR13349 - B39 project. Update to use alliance direct homology
+#               (was using Homologene)
 #
 # 06/05/2017	lec
 #	- remove complicated sort/use simple sort
@@ -124,22 +128,6 @@ for r in results:
         omimLookup[key].append(value)
 
 #
-# cache the HomoloGene ID by Marker
-#
-homologeneLookup = {}
-results = db.sql('''select mc.clusterID, mcm._Marker_key
-        from diseaseannot m, MRK_Cluster mc, MRK_ClusterMember mcm, VOC_Term vt
-        where m._Object_key = mcm._Marker_key
-        and mc._Cluster_key = mcm._Cluster_key
-        and mc._ClusterSource_key = vt._Term_key
-        and vt.term = 'HomoloGene' ''', 'auto')
-for r in results:
-    key = r['_Marker_key']
-    value = r['clusterID']
-    homologeneLookup[key] = []
-    homologeneLookup[key].append(value)
-
-#
 # cache the EntrezGene ID by Marker
 #
 entrezGeneLookup = {}
@@ -160,7 +148,6 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 fp.write('DO Disease ID' + TAB)
 fp.write('DO Disease Name' + TAB)
 fp.write('OMIM IDs' + TAB)
-fp.write('HomoloGene ID' + TAB)
 fp.write('Common Organism Name' + TAB)
 fp.write('NCBI Taxon ID' + TAB)
 fp.write('Symbol' + TAB)
@@ -175,10 +162,6 @@ for r in results:
 
     if r['_Term_key'] in omimLookup:
         fp.write('|'.join(omimLookup[r['_Term_key']]))
-    fp.write(TAB)
-
-    if r['_Object_key'] in homologeneLookup:
-        fp.write('|'.join(homologeneLookup[r['_Object_key']]))
     fp.write(TAB)
 
     fp.write(r['commonName'] + TAB)

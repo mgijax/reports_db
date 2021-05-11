@@ -8,6 +8,18 @@
 #       see: wiki/mediawiki/index.php/sw:GOload 
 #       contains link to GO/GPI format
 #
+# 1  DB_Object_ID
+# 2  DB_Object_Symbol
+# 3  DB_Object_Name
+# 4  DB_Object_Synonyms 
+# 5  DB_Object_Type
+# 6  DB_Object_Taxon
+# 7  Encoded_By 
+# 8  Parent_Protein 
+# 9  Protein_Containing_Complex_Members 
+# 10 DB_Xrefs 
+# 11 Gene_Product_Properties 
+#
 # History:
 #
 # lec   04/01/2020 python 3 upgrade
@@ -382,18 +394,18 @@ for r in results:
         # 7. Encoded_By                                 ::= [ID] ('|' ID)*
         fp.write('MGI:' + markerByIsoform[isoform][0] + TAB)
 
-        # 8. Parent_Protein                             ::= [ID] ('|' ID)*
+        # 8 Parent_Protein                             ::= [ID] ('|' ID)*
         fp.write(TAB)
 
-        # 9. Protein_Containing_Complex_Members         ::= [ID] ('|' ID)*
+        # 9 Protein_Containing_Complex_Members         ::= [ID] ('|' ID)*
         fp.write(TAB)
 
-        # 10. DB_Xrefs                                  ::= [ID] ('|' ID)*
+        # 10 DB_Xrefs                                  ::= [ID] ('|' ID)*
         if isoform in isoformUniProt:
                 fp.write(isoformUniProt[isoform][0])
         fp.write(TAB)
 
-        # 11. Gene_Product_Properties  
+        # 11 Gene_Product_Properties  
         fp.write(CRT)
 
 # attach PR/protein_complex generated from proisoformload 
