@@ -1,3 +1,26 @@
+TAG: reports_db-6-0-17-3
+DATE: 06/09/2021
+STAFF: merge tr13349 branch to master - was not done prior to release
+Merge output my notes with dates for master and branch:
+Updating 0851bca..f38d587
+Fast-forward
+ HISTORY                                            | 10 +++-  OK
+ daily/GO_gpi.py                                    | 20 +++++--  master: 4/7 branch: 4/8
+ daily/MGI_Cov_Human_Gene.py                        |  6 +--  master: 5/6 branch: 5/11
+ index.shtml                                        | 24 ++++----- OK
+ runone_postgres_report.csh                         | 63 ----------------------  OK - deleted see b elow
+ ...HGNC_homologene.py => HGNC_AllianceHomology.py} | 41 ++++----------  OK
+ weekly/HMD_HumanPhenotype.py                       | 53 ++----------------  master:10/30/20 branch: 3/4
+ weekly/HOM_AllOrganism.py                          | 44 ++++++++-------  master: 4/2/20 branch: 4/19
+ weekly/HOM_MouseHumanSequence.py                   | 35 ++++++------  master: 4/2/20 branch: 4/19
+ weekly/MGI_DO.py                                   | 27 ++--------  master: 4/2/20 branch: 3/4
+ weekly/MGI_MarkerNames.py                          |  8 ++-  master: 4/2/20 branch: 2/22
+ weekly/MGI_iphone_app.py                           | 17 +++---  master: 4/2/20 branch: 2/22
+ 12 files changed, 116 insertions(+), 232 deletions(-)
+ delete mode 100755 runone_postgres_report.csh OK
+ rename weekly/{HGNC_homologene.py => HGNC_AllianceHomology.py} (87%) OK
+ mode change 100755 => 100644 weekly/MGI_iphone_app.py
+
 TAG: reports_db-6-0-17-2
 DATE: 06/07/2021
 STAFF: sc
