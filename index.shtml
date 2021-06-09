@@ -445,7 +445,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>2. Mouse/Human Orthology with Phenotype Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>HGNC Association?</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>High-level Mammalian Phenotype ID<BR>(space-delimited)</TD></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>Human Marker Symbol</TD><TD>Human Entrez Gene ID</TD><TD>Mouse Marker Symbol</TD><TD>MGI Marker Accession ID</TD><TD>High-level Mammalian Phenotype ID<BR>(space-delimited)</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_HumanPhenotype.rpt">HMD_HumanPhenotype.rpt</A></TD></TR>
     </TABLE></TD></TR>
@@ -553,7 +553,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>12. Associations of Mouse Genes with DO Diseases</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>DO Disease ID</TD><TD>DO Disease Name</TD><TD>Common Organism Name</TD><TD>NCBI Taxon ID</TD><TD>Symbol</TD><TD>EntrezGene ID</TD><TD>Mouse MGI ID</TD></TR></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>DO Disease ID</TD><TD>DO Disease Name</TD>><TD>OMIM ID (pipe delimited)</TD><TD>Common Organism Name</TD><TD>NCBI Taxon ID</TD><TD>Symbol</TD><TD>EntrezGene ID</TD><TD>Mouse MGI ID</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_DO.rpt">MGI_DO.rpt</A></TD></TR>
     </TABLE></TD></TR>
