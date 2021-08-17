@@ -13,8 +13,8 @@
 # 3. AssociationType (input file col 6)
 # 4. DOID (input file col 7)
 # 5. DOtermName  (input file col 8)
-# 6. Reference  (input file col 14)
-# 7. Source  (input file col 16
+# 6. Reference  (input file col 16)
+# 7. Source  (input file col 18
 # 8. MGI gene ID
 # 9. MGI gene symbol (ortholog of human gene in 1)
 #
@@ -27,6 +27,9 @@
 #       MGI_Cov_Human_Gene.py
 #
 # History:
+#
+#  sc 08/17/2021
+#       - alliance changed format of input file and broke the report
 #
 #  sc  02/02/2021
 #       - created
@@ -135,8 +138,8 @@ for line in fpIn.readlines():
     AssociationType = tokens[5]
     DOID = tokens[6]
     DOtermName = tokens[7]
-    Reference = tokens[13]
-    Source = tokens[15]
+    Reference = tokens[15]
+    Source = tokens[17]
     symbol = '' # default if HGNC ID not in database
     mgiID = ''  # as we want to include these in the report
     if DOID not in DOIDIncludeList:
