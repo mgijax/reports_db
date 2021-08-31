@@ -127,19 +127,24 @@ fpOut.write('#8. MGI gene ID\n')
 fpOut.write('#9. MGI gene symbol (ortholog of human gene in 1)\n')
 fpOut.write('#\n')
 
+headers = []
 for line in fpIn.readlines():
-    if str.find(line, '#') == 0 or str.find(line, 'Taxon') == 0: # ignore comments, and header
+    line = str.strip(line)
+    if str.find(line, '#') == 0: # ignore comments
+        continue
+    elif str.find(line, 'Taxon') == 0: # header
+        headers = str.split(line, TAB)
         continue
     
-    line = str.strip(line)
     tokens = str.split(line, TAB)
-    DBObjectID = tokens[3]
-    DBObjectSymbol = tokens[4]
-    AssociationType = tokens[5]
-    DOID = tokens[6]
-    DOtermName = tokens[7]
-    Reference = tokens[15]
-    Source = tokens[17]
+    
+    DBObjectID = tokens[headers.index('DBObjectID')]
+    DBObjectSymbol = tokens[headers.index('DBObjectSymbol')]
+    AssociationType = tokens[headers.index('AssociationType')]
+    DOID = tokens[headers.index('DOID')]
+    DOtermName = tokens[headers.index('DOtermName')]
+    Reference = tokens[headers.index('Reference')]
+    Source = tokens[headers.index('Source')]
     symbol = '' # default if HGNC ID not in database
     mgiID = ''  # as we want to include these in the report
     if DOID not in DOIDIncludeList:

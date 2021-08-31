@@ -1,3 +1,9 @@
+TAG: reports_db-6-0-17-8
+DATE: 08/31/2021
+STAFF: sc
+CHANGES: WTS2-678  Parse Alliance data files by column header, not by position
+Alliance clustered and direct preprocessor updates
+
 TAG: reports_db-6-0-17-7
 DATE: 08/17/2021
 STAFF: sc
