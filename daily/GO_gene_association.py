@@ -159,7 +159,6 @@ def doSetup():
         where a._AnnotType_key = 1000 
         and a._Annot_key = e._Annot_key 
         and a._Object_key = m._Marker_key 
-        and m._Marker_Type_key = 1 
         and m._Marker_Status_key = 1
         and a._Term_key = t._Term_key 
         and a._Term_key = ta._Object_key 
