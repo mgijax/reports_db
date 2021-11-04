@@ -1,3 +1,10 @@
+DATE: 11/04/2021
+STAFF: lec
+per YAKS, removing obsolete view/report
+#       deleted:    ondemand/MAP_Mapping.py
+#       deleted:    ondemand/MGI_CloneSet.py
+#       deleted:    ondemand_reports.csh
+
 TAG: reports_db-6-0-17-11
 TAG: reports_db-6-0-17-10
 DATE: 10/19/2021
