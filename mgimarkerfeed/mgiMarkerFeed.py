@@ -972,13 +972,12 @@ def alleles():
     fp = open(OUTPUTDIR + 'allele_note.bcp', 'w')
 
     results = db.sql('''
-            select a._Allele_key, rtrim(nc.note) as note, nc.sequenceNum, nt.noteType, 
+            select a._Allele_key, rtrim(n.note) as note, nt.noteType, 
                 to_char(n.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
                 to_char(n.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
-            from alleles a, MGI_Note n, MGI_NoteChunk nc, MGI_NoteType nt 
+            from alleles a, MGI_Note n
             where a._Allele_key = n._Object_key 
             and n._MGIType_key = 11 
-            and n._Note_key = nc._Note_key 
             and n._NoteType_key = nt._NoteType_key
             and nt.private = 0
             ''', 'auto')
@@ -987,7 +986,7 @@ def alleles():
     for r in results:
             fp.write(repr(r['_Allele_key']) + COLDELIM + \
                      r['noteType'] + COLDELIM + \
-                     repr(r['sequenceNum']) + COLDELIM + \
+                     '1' + COLDELIM + \
                      mgi_utils.prvalue(r['note']) + COLDELIM + \
                      str(r['cdate']) + COLDELIM + \
                      str(r['mdate']) + LINEDELIM)
@@ -1256,15 +1255,14 @@ def genotypes():
     fp = open(OUTPUTDIR + 'genotype.bcp', 'w')
 
     results = db.sql('''
-          select g._Genotype_key, s.strain, p.isConditional, p._ExistsAs_key, c.note, 
+          select g._Genotype_key, s.strain, p.isConditional, p._ExistsAs_key, n.note, 
                 to_char(p.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
                 to_char(p.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
-          from genotypes g, GXD_Genotype p, PRB_Strain s, MGI_Note n, MGI_NoteChunk c 
+          from genotypes g, GXD_Genotype p, PRB_Strain s, MGI_Note n
           where g._Genotype_key = p._Genotype_key 
           and p._Strain_key = s._Strain_key 
           and g._Genotype_key = n._Object_key 
           and n._NoteType_key = 1016 
-          and n._Note_key = c._Note_key
           ''', 'auto')
 
     for r in results:
@@ -1624,17 +1622,17 @@ def references():
 
     results = db.sql('''
         select g._Refs_key, g._Genotype_key, g._Annot_key, g._AnnotEvidence_key, g.cdate, g.mdate, 
-        n._Note_key, n.noteType, n.sequenceNum, n.note 
+        n._Note_key, n.noteType, n.note 
         from genoreferences g, MGI_Note_VocEvidence_View n 
         where g._AnnotEvidence_key = n._Object_key 
-        order by g._Genotype_key, g._AnnotEvidence_key, n.sequenceNum
+        order by g._Genotype_key, g._AnnotEvidence_key
         ''', 'auto')
     for r in results:
             fp.write(repr(r['_Annot_key']) + COLDELIM + \
                      repr(r['_Refs_key']) + COLDELIM + \
                      repr(r['_Note_key']) + COLDELIM + \
                      r['noteType'] + COLDELIM + \
-                     repr(r['sequenceNum']) + COLDELIM + \
+                     '1' + COLDELIM + \
                      r['note'] + COLDELIM + \
                      str(r['cdate']) + COLDELIM + \
                      str(r['mdate']) + LINEDELIM)
