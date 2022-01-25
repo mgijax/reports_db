@@ -975,7 +975,7 @@ def alleles():
             select a._Allele_key, rtrim(n.note) as note, nt.noteType, 
                 to_char(n.creation_date, 'Mon DD YYYY HH:MIAM') as cdate,
                 to_char(n.modification_date, 'Mon DD YYYY HH:MIAM') as mdate
-            from alleles a, MGI_Note n
+            from alleles a, MGI_Note n, MGI_NoteType nt
             where a._Allele_key = n._Object_key 
             and n._MGIType_key = 11 
             and n._NoteType_key = nt._NoteType_key
