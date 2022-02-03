@@ -10,6 +10,11 @@
 #	gene_association_pro.mgi (GAF)
 #	mgi.gpad
 #
+#       annotations w/out NOCUTA or GO_Central (PAINT)
+#	gene_association_nonoctua.mgi (GAF)
+#	gene_association_nonoctua_pro.mgi (GAF)
+#	mgi_nonoctua.gpad
+#
 # ALSO CHANGE:  weekly/GO_gene_association_nonmouse.py
 # 09/11/2020 per David Hill, do nothing until we have Tues/09/15 meeting
 #
@@ -110,28 +115,10 @@ gpadCol11Lookup = {}
 gpadCol12Lookup = {}
 
 #
-# begin doSetup()
+# begin doSetup1()
+# query for all GO annotations
 #
-def doSetup():
-    global dag
-    global syns
-    global pubMed
-    global evidenceLookup
-    global taxonLookup
-    global ecoLookupByEco, ecoLookupByEvidence
-    global goPropertyLookup
-    global goQualifierGAF
-    global goQualifierGPAD
-    global gpadCol11Lookup
-    global gpadCol12Lookup
-    global goRefDict
-
-    #
-    # retrieve all dag abbrevations for each term
-    #
-    results = db.sql('select distinct _Object_key, rtrim(dagAbbrev) as dagAbbrev from DAG_Node_View where _Vocab_key = 4', 'auto')
-    for r in results:
-        dag[r['_Object_key']] = r['dagAbbrev']
+def doSetup1():
 
     #
     # retrieve data set to process
@@ -142,6 +129,9 @@ def doSetup():
     #   and m.symbol = 'Birc3'
     #	and m.symbol = 'Hk1'
     #
+
+    db.sql('drop table if exists gomarker1', None)
+    db.commit()
 
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
@@ -175,6 +165,87 @@ def doSetup():
     db.sql('create index gomarker1_idx4 on gomarker1(_ModifiedBy_key)', None)
     db.sql('create index gomarker1_idx5 on gomarker1(_AnnotEvidence_key)', None)
 
+    doSetup()
+
+#
+# begin doSetup2()
+# query for all GO annotations except NOCTUA and GO_Central
+#
+def doSetup2():
+
+    #
+    # retrieve data set to process
+    #
+    #   and m.symbol = 'Asap1'
+    #   and m.symbol = 'Mbd2'
+    #   and m.symbol = 'Adipoq'
+    #   and m.symbol = 'Birc3'
+    #	and m.symbol = 'Hk1'
+    #
+
+    db.sql('drop table if exists gomarker1;', None)
+    db.commit()
+
+    db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
+            e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
+            e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
+            m.symbol, m.name, lower(mt.name) as markerType
+        into temporary table gomarker1 
+        from VOC_Annot a, 
+             ACC_Accession ta, 
+             VOC_Term t, 
+             VOC_Evidence e, 
+             MRK_Marker m, 
+             MRK_Types mt, 
+             VOC_Term q,
+             MGI_User u
+        where a._AnnotType_key = 1000 
+        and a._Annot_key = e._Annot_key 
+        and a._Object_key = m._Marker_key 
+        and m._Marker_Status_key = 1
+        and m._Marker_Type_key = 1 
+        and a._Term_key = t._Term_key 
+        and a._Term_key = ta._Object_key 
+        and ta._MGIType_key = 13 
+        and ta.preferred = 1 
+        and m._Marker_Type_key = mt._Marker_Type_key 
+        and a._Qualifier_key = q._Term_key 
+        and e._ModifiedBy_key = u._User_key
+        and u.login not like 'NOCTUA%'
+        and u.login != 'GO_Central'
+        ''', None)
+    db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
+    db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
+    db.sql('create index gomarker1_idx3 on gomarker1(_Refs_key)', None)
+    db.sql('create index gomarker1_idx4 on gomarker1(_ModifiedBy_key)', None)
+    db.sql('create index gomarker1_idx5 on gomarker1(_AnnotEvidence_key)', None)
+
+    doSetup()
+
+#
+# begin doSetup()
+#
+def doSetup():
+    global dag
+    global syns
+    global pubMed
+    global evidenceLookup
+    global taxonLookup
+    global ecoLookupByEco, ecoLookupByEvidence
+    global goPropertyLookup
+    global goQualifierGAF
+    global goQualifierGPAD
+    global gpadCol11Lookup
+    global gpadCol12Lookup
+    global goRefDict
+
+    #
+    # retrieve all dag abbrevations for each term
+    #
+    results = db.sql('select distinct _Object_key, rtrim(dagAbbrev) as dagAbbrev from DAG_Node_View where _Vocab_key = 4', 'auto')
+    for r in results:
+        dag[r['_Object_key']] = r['dagAbbrev']
+
     #
     # retrieve synonyms for markers in data set
     #
@@ -195,6 +266,8 @@ def doSetup():
     #
     # resolve foreign keys and store in "results" table
     #
+    db.sql('drop table if exists gomarker2', None)
+    db.commit()
     db.sql('''select distinct g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
             g._Object_key, g._AnnotEvidence_key, g._EvidenceTerm_key, g.symbol, g.name, g.markerType, 
             to_char(g.creation_date, 'YYYY-MM-DD') as cDate,
@@ -349,7 +422,7 @@ def doSetup():
                 'evidence', 'anatomy', 'cell type', 'gene product', 'modification', 'target', 
                 'external ref', 'text', 'dual-taxon ID',
                 'noctua-model-id', 'contributor', 'individual', 'go_qualifier', 'model-state',
-                'has_participant', 'regulates_o_has_participant'
+                'has_participant', 'regulates_o_has_participant', 'creation-date'
                 )
             and t.note is not null
             order by a._AnnotEvidence_key, p.stanza
@@ -374,6 +447,8 @@ def doSetup():
         if key not in gpadCol11Lookup:
                 gpadCol11Lookup[key] = []
                 stanza = 0
+        else:
+                stanza = 1
 
         if stanza == 0:
                 sep = ''
@@ -496,6 +571,8 @@ def doGAFCol16():
     # exclude: certain properties
     #
 
+    gafCol16Lookup = {}
+
     cmd = '''
     select r.symbol, r._Object_key, r._AnnotEvidence_key, t1.term as property, p.value, p.stanza
             from gomarker2 r, VOC_Evidence_Property p, VOC_Term t1, VOC_Term t2
@@ -529,6 +606,7 @@ def doGAFCol16():
     '''
 
     results = db.sql(cmd, 'auto')
+    stanza = 1
 
     for r in results:
         objectKey = str(r['_Object_key']) + ':' + str(r['_AnnotEvidence_key'])
@@ -1059,7 +1137,7 @@ def addGPADReportRow(reportRow, r):
 db.useOneConnection(1)
 
 # querying the database/setting up lookups
-doSetup()
+doSetup1()
 doGAFCol16()
 doIsoform()
 
@@ -1095,7 +1173,67 @@ reportlib.finish_nonps(fp2)
 #
 # GPAD 2.0
 #
+
 fp = reportlib.init('mgi', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp.write('!gpa-version: 2.0\n') 
+fp.write('!generated-by: MGI\n')
+fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
+
+doGPADFinish()
+
+# append GOA annotations, if exists : see goload/goamouse
+try:
+        goafile = open(os.environ['GOAGPAD2MGI'], 'r')
+        for line in goafile.readlines():
+                fp.write(line)
+        goafile.close()
+except:
+        pass
+
+reportlib.finish_nonps(fp)
+
+###########################
+# no-noctua versions
+###########################
+
+db.useOneConnection(1)
+
+# querying the database/setting up lookups
+doSetup2()
+doGAFCol16()
+doIsoform()
+
+fp = reportlib.init('gene_association_nonoctua', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp.write('!gaf-version: 2.2\n')
+fp.write('!generated-by: MGI\n')
+fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
+
+fp2 = reportlib.init('gene_association_nonoctua_pro', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
+fp2.write('!gaf-version: 2.2\n')
+fp2.write('!generated-by: MGI\n')
+fp2.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
+
+doProtein()
+doGAFFinish()
+
+# TO-DO/turned off until GOA/Mouse has a GAF 2.2 version
+# append GOA annotations, if exists : see goload/goamouse
+try:
+    goaFile = open(os.environ['GOAGAFMGI'], 'r')
+    for line in goaFile.readlines():
+        fp.write(line)
+    goaFile.close()
+except:
+    pass
+
+reportlib.finish_nonps(fp)
+reportlib.finish_nonps(fp2)
+
+#
+# GPAD 2.0
+#
+
+fp = reportlib.init('mgi_nonoctua', fileExt = '.gpad', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp.write('!gpa-version: 2.0\n') 
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
