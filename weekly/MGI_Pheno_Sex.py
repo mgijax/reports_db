@@ -42,11 +42,11 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 db.sql('''select a._Object_key as _Genotype_key, 
         a2.accid as genotypeID, a._Term_key, t1.term as mpTerm,  
         p.value as gender, a1.accid as mpID, t2.term as annotQual, 
-        s.strain as bgStrain, nc.note as alleleComp, e._Refs_key
+        s.strain as bgStrain, n.note as alleleComp, e._Refs_key
     into temporary table noRef
     from VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, VOC_Term t1, 
         VOC_Term t2, ACC_Accession a1, ACC_Accession a2, GXD_Genotype g, 
-        PRB_Strain s,  MGI_Note n, MGI_NoteChunk nc
+        PRB_Strain s, MGI_Note n
     where a._AnnotType_key = 1002 -- MP
     and a._Annot_key = e._Annot_key
     and e._AnnotEvidence_key = p._AnnotEvidence_key
@@ -67,7 +67,6 @@ db.sql('''select a._Object_key as _Genotype_key,
     and g._Strain_key = s._Strain_key -- background strain
     and g._Genotype_key = n._Object_key
     and n._Notetype_key = 1016
-    and n._Note_key = nc._Note_key
     order by a._Object_key''', None)
 db.sql('''create index idx1 on noRef(_Refs_key)''', None)
 results = db.sql('''select nr.*, c.mgiID, c.pubmedID

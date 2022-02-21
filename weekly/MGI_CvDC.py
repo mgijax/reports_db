@@ -174,13 +174,12 @@ for r in results:
 # general notes (1020)
 #
 results = db.sql('''
-        select a._Allele_key, nc.note 
-        from allele a, MGI_Note n, MGI_NoteChunk nc 
+        select a._Allele_key, n.note 
+        from allele a, MGI_Note n
         where a._Allele_key = n._Object_key 
         and n._MGIType_key = 11 
         and n._NoteType_key = 1020
-        and n._Note_key = nc._Note_key 
-        order by a._Allele_key, nc.sequenceNum
+        order by a._Allele_key
         ''', 'auto')
 notes = {}
 for r in results:

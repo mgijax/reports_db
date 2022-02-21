@@ -68,9 +68,9 @@ db.sql('''create index idx1 on impc(_Allele_key) ''', None)
 
 db.sql('''select _Object_key as _Allele_key, note
         into temporary table cidNote
-        from MGI_Note n, MGI_NOteChunk nc
+        from MGI_Note n
         where n._Notetype_key = 1041
-        and n._Note_key = nc._Note_key''', None)
+        ''', None)
 
 db.sql('''create index idx2 on cidNote(_Allele_key)''', None)
 

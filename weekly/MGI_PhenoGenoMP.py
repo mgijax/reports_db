@@ -124,11 +124,10 @@ for r in results:
 # resolve Allele Combination display
 #
 results = db.sql('''
-        select distinct m._Object_key, nc.note 
-        from mp m, MGI_Note n, MGI_NoteChunk nc 
+        select distinct m._Object_key, n.note 
+        from mp m, MGI_Note n
         where m._Object_key = n._Object_key 
         and n._NoteType_key = 1016 
-        and n._Note_key = nc._Note_key
         ''', 'auto')
 mpDisplay = {}
 for r in results:
