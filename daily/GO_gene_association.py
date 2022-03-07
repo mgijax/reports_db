@@ -1155,7 +1155,6 @@ fp2.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 doProtein()
 doGAFFinish()
 
-# TO-DO/turned off until GOA/Mouse has a GAF 2.2 version
 # append GOA annotations, if exists : see goload/goamouse
 try:
     goaFile = open(os.environ['GOAGAFMGI'], 'r')
@@ -1214,7 +1213,6 @@ fp2.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 doProtein()
 doGAFFinish()
 
-# TO-DO/turned off until GOA/Mouse has a GAF 2.2 version
 # append GOA annotations, if exists : see goload/goamouse
 try:
     goaFile = open(os.environ['GOAGAFMGI'], 'r')
