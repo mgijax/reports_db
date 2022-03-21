@@ -57,11 +57,6 @@ env | sort | tee -a ${LOG}
 #
 cd ${REPORTOUTPUTDIR}
 
-echo `date`: Copy non-mouse gene association file to ${FTPCUSTOM} | tee -a ${LOG}
-echo `date`: gene_association.mgi_nonmouse | tee -a ${LOG}
-cp gene_association.mgi_nonmouse ${FTPCUSTOM}
-rm -f gene_association.mgi_nonmouse
-
 echo `date`: Copy reports to ${FTPREPORTDIR} | tee -a ${LOG}
 foreach i (*)
     if ( ! -d $i ) then
