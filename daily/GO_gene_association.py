@@ -237,6 +237,21 @@ def doSetup():
     global gpadCol12Lookup
     global goRefDict
 
+    # since this is called twice...reset
+    dag = {}
+    syns = {}
+    pubMed = {}
+    evidenceLookup = {}
+    taxonLookup = {}
+    ecoLookupByEco = {}
+    ecoLookupByEvidence = {}
+    goPropertyLookup = {}
+    goQualifierGAF = {}
+    goQualifierGPAD = {}
+    gpadCol11Lookup = {}
+    gpadCol12Lookup = {}
+    goRefDict = {}
+
     #
     # retrieve all dag abbrevations for each term
     #
