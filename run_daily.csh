@@ -36,7 +36,7 @@ end
 cd ${REPORTOUTPUTDIR}
 
 echo `date`: Copy reports | tee -a ${LOG}
-foreach i (gene_association.mgi gene_association_pro.mgi mgi.gpad mgi.gpi)
+foreach i (gene_association.mgi gene_association_pro.mgi mgi.gpad mgi.gpi mgi_nonoctua.gpad)
     echo `date`: $i | tee -a ${LOG}
     cat $i | gzip -cf9 > $i.gz
     touch $i $i.gz
