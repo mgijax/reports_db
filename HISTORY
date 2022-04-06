@@ -1,3 +1,4 @@
+TAG: reports_db-6-0-18-5
 TAG: reports_db-6-0-18-4
 TAG: reports_db-6-0-18-3
 TAG: reports_db-6-0-18-2
@@ -7,7 +8,8 @@ wts2-703/tr13272/GO-Noctua
 GO_gene_association.py
 #       deleted:    weekly/GO_gene_association_nonmouse.py
 #       rpt_release.csh/remove copy GO_gene_association_nonmouse
-#       rpt_release.csh/add mgi_nonoctua.gpad       
+#       run_daily.csh/add mgi_nonoctua.gpad       
+#       run_daily.csh/add gene_association_nonoctua.mgi
 
 TAG: reports_db-6-0-18-1
 DATE: 02/21/2022
