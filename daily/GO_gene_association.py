@@ -824,6 +824,7 @@ def doGAFFinish():
 
         #!4  Qualifier      
         qualifier = ""
+        createAnotherRow = 0
         if r['termID'] == 'GO:0008150':
                 qualifier = 'involved_in'
         elif r['termID'] == 'GO:0003674':
@@ -833,7 +834,9 @@ def doGAFFinish():
         elif key in goQualifierGAF:
             if r['qualifier'] == 'NOT':
                qualifier = 'NOT|'
-            qualifier = qualifier + '|'.join(goQualifierGAF[key])
+            qualifier = qualifier + goQualifierGAF[key][0]
+            # only one go_qualifier per row
+            createAnotherRow = 1
         elif r['qualifier'] == 'NOT':
             qualifier = 'NOT|' + dagQualifierGAF[dag[r['_Term_key']]]
         elif r['qualifier'] != None:
@@ -930,6 +933,22 @@ def doGAFFinish():
         reportRow = reportRow + isoforms + CRT
 
         fp.write(reportRow)
+
+        #
+        # wts2-857/The Rat iso load for GO is adding go_qualifiers during consumption.
+        # if goQualifierGAF > 1 value, then create another row
+        #
+        if createAnotherRow == 1 and len(goQualifierGAF[key]) > 1:
+                oldValue = ""
+                l = 0
+                for newValue in goQualifierGAF[key]:
+                        if l == 0:
+                                oldValue = newValue
+                        else:
+                                print(r['symbol'], r['termID'], goQualifierGAF[key], newValue)
+                                reportRow = reportRow.replace(oldValue, newValue)
+                                fp.write(reportRow)
+                        l += 1
 
         #
         # TR11060
