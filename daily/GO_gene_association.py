@@ -945,7 +945,7 @@ def doGAFFinish():
                         if l == 0:
                                 oldValue = newValue
                         else:
-                                print(r['symbol'], r['termID'], goQualifierGAF[key], newValue)
+                                #print(r['symbol'], r['termID'], goQualifierGAF[key], newValue)
                                 reportRow = reportRow.replace(oldValue, newValue)
                                 fp.write(reportRow)
                         l += 1
