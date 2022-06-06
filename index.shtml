@@ -131,7 +131,8 @@
 
     <TR><TD><TABLE>
         <TR><TD><B>3. MGI Sequence Coordinates (in GFF3 format)(tab-delimited)</B></TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="../mgigff3/MGI.gff3.gz">MGI.gff3.gz</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3a.<A HREF="../mgigff3/MGI.gff3.gz">MGI.gff3.gz</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3b.<A HREF="../mgigff3/MGIreg.gff3.gz">MGIreg.gff3.gz (regulatory features)</A></TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>

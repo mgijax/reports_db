@@ -1,9 +1,7 @@
-TAG: reports_db-6-0-19-2
-TAG: reports_db-6-0-19-1
-DATE: 05/20/2022
-STAFF: lec
-wts2-857/The Rat iso load for GO is adding go_qualifiers during consumption
-GO_gene_association.py
+TAG: reports_db-6-0-20-1
+DATE: 06/06/2022
+STAFF: sc
+added MGIreg.gff3 to index.shtml
 
 TAG: reports_db-6-0-18-5
 TAG: reports_db-6-0-18-4
