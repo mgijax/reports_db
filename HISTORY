@@ -1,7 +1,12 @@
-TAG: reports_db-6-0-19-3
+TAG: reports_db-6-0-20-2
 DATE: 06/14/2022
 STAFF: lec
 wts2-884/Include more granular Sequence Ontology terms for object types in mgi.gpi
+
+TAG: reports_db-6-0-20-1
+DATE: 06/06/2022
+STAFF: sc
+added MGIreg.gff3 to index.shtml
 
 TAG: reports_db-6-0-19-2
 TAG: reports_db-6-0-19-1
