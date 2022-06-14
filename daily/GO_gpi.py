@@ -215,25 +215,43 @@ for r in results:
                 fp.write('SO:0001263' + TAB)
         elif r['_Marker_Type_key'] == 1 and r['term'] == 'heritable phenotypic marker':
                 fp.write('SO:0001645' + TAB)
-        elif r['_Marker_Type_key'] == 1 and \
-                        (r['term'] == 'lncRNA gene' \
-                        or r['term'] == 'antisense lncRNA gene' \
-                        or r['term'] == 'lincRNA gene' \
-                        or r['term'] == 'sense intronic lncRNA gene' \
-                        or r['term'] == 'sense overlapping lncRNA gene' \
-                        or r['term'] == 'bidirectional promoter lncRNA gene' \
-                        or r['term'] == 'rRNA gene' \
-                        or r['term'] == 'tRNA gene' \
-                        or r['term'] == 'snRNA gene' \
-                        or r['term'] == 'snoRNA gene' \
-                        or r['term'] == 'miRNA gene' \
-                        or r['term'] == 'scRNA gene' \
-                        or r['term'] == 'SRP RNA gene' \
-                        or r['term'] == 'RNase P RNA gene' \
-                        or r['term'] == 'RNase MRP RNA gene' \
-                        or r['term'] == 'telomerase RNA gene' \
-                        or r['term'] == 'unclassified non-coding RNA gene' \
-                        or r['term'] == 'ribozyme gene'):
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'antisense lncRNA gene':      
+                fp.write('SO:0002182' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'bidirectional promoter lncRNA gene':  
+                fp.write('SO:0002185' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'lincRNA gene':        
+                fp.write('SO:0001641' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'lncRNA gene': 
+                fp.write('SO:0002127' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'miRNA gene':  
+                fp.write('SO:0001265' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'non-coding RNA gene': 
+                fp.write('SO:0001263' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'ribozyme gene':       
+                fp.write('SO:0002181' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'RNase MRP RNA gene':  
+                fp.write('SO:0001640' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'RNase P RNA gene':    
+                fp.write('SO:0001639' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'rRNA gene':   
+                fp.write('SO:0001637' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'scRNA gene':  
+                fp.write('SO:0001266' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'sense intronic lncRNA gene':  
+                fp.write('SO:0002184' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'sense overlapping lncRNA gene':       
+                fp.write('SO:0002183' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'snoRNA gene': 
+                fp.write('SO:0001267' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'snRNA gene':  
+                fp.write('SO:0001268' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'SRP RNA gene':        
+                fp.write('SO:0001269' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'telomerase RNA gene': 
+                fp.write('SO:0001643' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'tRNA gene':   
+                fp.write('SO:0001272' + TAB)
+        elif r['_Marker_Type_key'] == 1 and r['term'] == 'unclassified non-coding RNA gene':    
                 fp.write('SO:0001263' + TAB)
         elif r['_Marker_Type_key'] == 1 and r['term'] == 'gene segment':
                 fp.write('SO:3000000' + TAB)
