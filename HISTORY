@@ -1,3 +1,15 @@
+TAG: reports_db-6-0-21-?
+DATE: 07/14/2022
+STAFF: lec
+wts2-920/Changes to MGI GAF (GO annotations) for consistency of types with those reported in mgi.gpi file
+GO_gene_association.py/use SO terms for col 12
+
+TAG: reports_db-6-0-21-1
+DATE: 07/18/2022
+STAFF: lec
+wts2-704/Problem with MGI's latest Europe PMC external links upload
+ncbilinkout/pubmed_linkout.py
+
 TAG: reports_db-6-0-20-3
 DATE: 06/15/2022
 STAFF: sc
