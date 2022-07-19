@@ -136,14 +136,15 @@ def doSetup1():
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
             e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
-            m.symbol, m.name, lower(mt.name) as markerType
+            m.symbol, m.name, m._Marker_Type_key, vf.term as featureType
         into temporary table gomarker1 
         from VOC_Annot a, 
              ACC_Accession ta, 
              VOC_Term t, 
              VOC_Evidence e, 
              MRK_Marker m, 
-             MRK_Types mt, 
+             VOC_Annot v,
+             VOC_Term vf,
              VOC_Term q,
              MGI_User u
         where a._AnnotType_key = 1000 
@@ -154,7 +155,9 @@ def doSetup1():
         and a._Term_key = ta._Object_key 
         and ta._MGIType_key = 13 
         and ta.preferred = 1 
-        and m._Marker_Type_key = mt._Marker_Type_key 
+        and m._Marker_key = v._Object_key
+        and v._AnnotType_key = 1011
+        and v._Term_key = vf._Term_key
         and a._Qualifier_key = q._Term_key 
         and e._ModifiedBy_key = u._User_key
         ''', None)
@@ -188,14 +191,15 @@ def doSetup2():
     db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
             e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
-            m.symbol, m.name, lower(mt.name) as markerType
+            m.symbol, m.name, m._Marker_Type_key, vf.term as featureType
         into temporary table gomarker1 
         from VOC_Annot a, 
              ACC_Accession ta, 
              VOC_Term t, 
              VOC_Evidence e, 
              MRK_Marker m, 
-             MRK_Types mt, 
+             VOC_Annot v,
+             VOC_Term vf,
              VOC_Term q,
              MGI_User u
         where a._AnnotType_key = 1000 
@@ -206,7 +210,9 @@ def doSetup2():
         and a._Term_key = ta._Object_key 
         and ta._MGIType_key = 13 
         and ta.preferred = 1 
-        and m._Marker_Type_key = mt._Marker_Type_key 
+        and m._Marker_key = v._Object_key
+        and v._AnnotType_key = 1011
+        and v._Term_key = vf._Term_key
         and a._Qualifier_key = q._Term_key 
         and e._ModifiedBy_key = u._User_key
         and u.login not like 'NOCTUA%'
@@ -282,7 +288,7 @@ def doSetup():
     db.sql('drop table if exists gomarker2', None)
     db.commit()
     db.sql('''select distinct g._Refs_key, g._Term_key, g.termID, g.qualifier, g.inferredFrom, 
-            g._Object_key, g._AnnotEvidence_key, g._EvidenceTerm_key, g.symbol, g.name, g.markerType, 
+            g._Object_key, g._AnnotEvidence_key, g._EvidenceTerm_key, g.symbol, g.name, g._Marker_Type_key, g.featureType,
             to_char(g.creation_date, 'YYYY-MM-DD') as cDate,
             to_char(g.modification_date, 'YYYY-MM-DD') as mDate,
             to_char(g.modification_date, 'YYYYMMDD') as gafDate,
@@ -879,16 +885,61 @@ def doGAFFinish():
             reportRow = reportRow + TAB
 
         #!12 DB Object Type             
-        # if marker is associated with an isoform (via go/annotation)
-        # or marker is associated with a protein (via marker/sequence cache)
-        # 	print('protein')
-        # else, print(marker type (ex. 'gene'))
-
-        if objectKey in isoformsProtein or r['_Object_key'] in proteins:
-            reportRow = reportRow + 'protein' + TAB
+        if r['_Marker_Type_key'] == 1 and r['featureType'] == 'unclassified gene':
+                reportRow = reportRow + 'gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'protein coding gene':
+                reportRow = reportRow + 'protein_coding_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'non-coding RNA gene':
+                reportRow = reportRow + 'ncRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'heritable phenotypic marker':
+                reportRow = reportRow + 'genetic_marker' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'antisense lncRNA gene':      
+                reportRow = reportRow + 'antisense_lncRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'bidirectional promoter lncRNA gene':  
+                reportRow = reportRow + 'bidirectional_promoter_lncRNA' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'lincRNA gene':        
+                reportRow = reportRow + 'lincRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'lncRNA gene': 
+                reportRow = reportRow + 'lncRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'miRNA gene':  
+                reportRow = reportRow + 'miRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'non-coding RNA gene': 
+                reportRow = reportRow + 'ncRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'ribozyme gene':       
+                reportRow = reportRow + 'ribozyme_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'RNase MRP RNA gene':  
+                reportRow = reportRow + 'RNase_MRP_RNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'RNase P RNA gene':    
+                reportRow = reportRow + 'RNase_P_RNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'rRNA gene':   
+                reportRow = reportRow + 'rRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'scRNA gene':  
+                reportRow = reportRow + 'scRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'sense intronic lncRNA gene':  
+                reportRow = reportRow + 'sense_intronic_ncRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'sense overlapping lncRNA gene':       
+                reportRow = reportRow + 'sense_overlap_ncRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'snoRNA gene': 
+                reportRow = reportRow + 'snoRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'snRNA gene':  
+                reportRow = reportRow + 'snRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'SRP RNA gene':        
+                reportRow = reportRow + 'SRP_RNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'telomerase RNA gene': 
+                reportRow = reportRow + 'telomerase_RNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'tRNA gene':   
+                reportRow = reportRow + 'tRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'unclassified non-coding RNA gene':    
+                reportRow = reportRow + 'ncRNA_gene' + TAB
+        elif r['_Marker_Type_key'] == 1 and r['featureType'] == 'gene segment':
+                reportRow = reportRow + 'gene_segment' + TAB
+        elif r['_Marker_Type_key'] == 7:
+                reportRow = reportRow + 'pseudogene' + TAB
+        elif r['_Marker_Type_key'] == 10:
+                reportRow = reportRow + 'biological_region' + TAB
         else:
-            reportRow = reportRow + r['markerType'] + TAB
-                
+                reportRow = reportRow + 'bad feature type =  ' + r['featureType'] + TAB
+
         #!13 Taxon(|taxon)             
         reportRow = reportRow + 'taxon:10090' + TAB
 

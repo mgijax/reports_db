@@ -1,5 +1,5 @@
-TAG: reports_db-6-0-21-?
-DATE: 07/14/2022
+TAG: reports_db-6-0-21-2
+DATE: 07/19/2022
 STAFF: lec
 wts2-920/Changes to MGI GAF (GO annotations) for consistency of types with those reported in mgi.gpi file
 GO_gene_association.py/use SO terms for col 12
