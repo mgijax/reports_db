@@ -345,6 +345,7 @@ results = db.sql('''
         and t._term_key = a._Object_key and a._LogicalDB_key = 183
         and a._LogicalDB_key = 183
         and t._Term_key = s._Object_key and s._MGIType_key = 13
+        and exists (select 1 from VOC_Annot v where v._annottype_key = 1019 and t._term_key = v._term_key)
         ''', 'auto')
 for r in results:
         key = r['accID']
@@ -370,6 +371,7 @@ results = db.sql('''
         and exists (select 1 from MRK_Marker m 
                 where v._Object_key = m._Marker_key
                 and m._Marker_Status_key = 1
+                and m._Marker_Type_key in (1,7,10)
                 )
         ''', 'auto')
 for r in results:
@@ -389,6 +391,13 @@ results = db.sql('''
         where t._Vocab_key = 112
         and t._term_key = a._Object_key 
         and a._LogicalDB_key = 183
+        and exists (select 1 from VOC_Annot v, MRK_Marker m 
+                where v._annottype_key = 1019 
+                and t._term_key = v._term_key
+                and v._Object_key = m._Marker_key
+                and m._Marker_Status_key = 1
+                and m._Marker_Type_key in (1,7,10)
+                )
         order by symbol, a.accID
         ''', 'auto')
 
@@ -428,10 +437,10 @@ for r in results:
 
 # attach PR/protein_complex generated from proisoformload 
 #try:
-gpiFileName = os.environ['DATALOADSOUTPUT'] + '/pro/proisoformload/output/gpi2.txt'
-gpiFile = open(gpiFileName, 'r')
-for line in gpiFile.readlines():
-        fp.write(line)
+#gpiFileName = os.environ['DATALOADSOUTPUT'] + '/pro/proisoformload/output/gpi2.txt'
+#gpiFile = open(gpiFileName, 'r')
+#for line in gpiFile.readlines():
+#        fp.write(line)
 #except:
 #        exit(1, 'Could not open file %s\n' % gpiFileName)
 
@@ -448,7 +457,7 @@ for ldbsearch in (9, 27, 133):
 	    WITH rna AS
 	    (
 	    select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key, t.term
-        	    from SEQ_Marker_Cache sm, ACC_Accession a, VOC_Annot v, VOC_Term t
+        	    from SEQ_Marker_Cache sm, ACC_Accession a, VOC_Annot v, VOC_Term t, MRK_Marker m
         	    where sm._SequenceType_key = 316346
         	    and sm._Marker_Type_key = 1 
         	    and sm._Organism_key = 1 
@@ -459,6 +468,8 @@ for ldbsearch in (9, 27, 133):
                     and sm._Marker_key = v._Object_key
                     and v._AnnotType_key = 1011
                     and v._Term_key = t._Term_key
+                    and sm._Marker_key = m._Marker_key
+                    and m._Marker_Status_key = 1
 	        )
 	    select rna.rnaID, a.accID as markerID, rna._LogicalDB_key, rna.term
 	    from rna, ACC_Accession a
