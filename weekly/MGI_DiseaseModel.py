@@ -27,11 +27,11 @@
 # 3:  NOT model : NOT or blank
 # 4:  Allele Pairs 
 # 5:  Strain Background 
-# 6:  Mouse genotype RR id associated with DO term
-# 7:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or transactivator)
-# 8:  Allele MGI ID 
-# 9:  Total number of allele references for allele in column 6/7
-# 10: Repository ID for allele (if available, can be null)
+# 6:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or transactivator)
+# 7:  Allele MGI ID 
+# 8:  Total number of allele references for allele in column 6/7
+# 9:  Repository ID for allele (if available, can be null)
+# 10: Mouse genotype RR id associated with DO term
 # 11: Mouse gene symbol from allele in column 6/7
 # 12: Mouse gene ID
 # 13: Repository ID for gene (if available, can be null)
@@ -91,8 +91,7 @@ def initialize():
         for r in results:
                 key = r['doID']
                 value = r['accID']
-
-                if r['_LogicalDB_key'] == '1':
+                if r['_LogicalDB_key'] == 1:
                         if key not in genotypeidLookup:
                                 genotypeidLookup[key] = []
                         genotypeidLookup[key].append(value)
@@ -286,11 +285,11 @@ def processReport2():
         # 3:  NOT model : NOT or blank
         # 4:  Allele Pairs 
         # 5:  Strain Background 
-        # 6:  Mouse genotype RR id associated with DO term
-        # 7:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or transactivator)
-        # 8:  Allele MGI ID 
-        # 9:  Total number of allele references for allele in column 6/7
-        # 10: Repository ID for allele (if available, can be null)
+        # 6:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or transactivator)
+        # 7:  Allele MGI ID 
+        # 8:  Total number of allele references for allele in column 6/7
+        # 9:  Repository ID for allele (if available, can be null)
+        # 10: Mouse genotype RR id associated with DO term
         # 11: Mouse gene symbol from allele in column 6/7
         # 12: Mouse gene ID
         # 13: Repository ID for gene (if available, can be null)
@@ -302,11 +301,11 @@ def processReport2():
         fp2.write('NOT model' + TAB)
         fp2.write('Allele Pairs' + TAB)
         fp2.write('Strain Background' + TAB)
-        fp2.write('Mouse genotype RR id associated with DO term' + TAB)
         fp2.write('Allele symbol from col 4' + TAB)
         fp2.write('Allele MGI ID' + TAB)
         fp2.write('Total number of allele references' + TAB)
         fp2.write('Repository ID from allele' + TAB)
+        fp2.write('Mouse genotype RR id associated with DO term' + TAB)
         fp2.write('Marker symbol from col 4' + TAB)
         fp2.write('Marker MGI ID' + TAB)
         fp2.write('Repository ID from gene' + CRT)
@@ -432,14 +431,9 @@ def processReport2():
                         # 5: Strain Background
                         fp2.write(strain + TAB)
 
-                        # 6:  Mouse genotype RR id associated with DO term
-                        if doID in rridLookup:
-                                fp2.write('|'.join(rridLookup[doID]))
-                        fp2.write(TAB)
-
-                        # 7:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or rransactivator)
-                        # 8:  Allele MGI ID 
-                        # 9:  Total number of allele references for allele in column 6/7
+                        # 6:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or rransactivator)
+                        # 7:  Allele MGI ID 
+                        # 8:  Total number of allele references for allele in column 6/7
                         if isWildType == 0 and skipAllele == 0:
                                 fp2.write(alleleSymbol + TAB)
                                 fp2.write(alleleID + TAB)
@@ -447,9 +441,14 @@ def processReport2():
                         else:
                                 fp2.write(TAB*3)
 
-                        # 10: Repository ID for allele (if available, can be null)
+                        # 9: Repository ID for allele (if available, can be null)
                         if alleleID in repositoryAlleleLookup:
                                 fp2.write('|'.join(repositoryAlleleLookup[alleleID]))
+                        fp2.write(TAB)
+
+                        # 10: Mouse genotype RR id associated with DO term
+                        if doID in rridLookup:
+                                fp2.write('|'.join(rridLookup[doID]))
                         fp2.write(TAB)
 
                         # 11: Mouse gene symbol from allele in column 6/7
