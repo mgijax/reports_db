@@ -312,7 +312,6 @@ def processReport2():
 
         # final orthology results where DO associations exist (qualifier != NOT)
         # where human marker -> DO/Human Marker (1022) exists
-        # and mouse marker/allele/genotype -> DO/Genotype may/may not exist
         db.sql('''
         select distinct c.m_marker_key, c.msymbol, c.markerID, t1._term_key, t1.term as doTerm, t2.term as qualifierTerm, a.accID as doID
         into temporary table results2
