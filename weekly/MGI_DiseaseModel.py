@@ -366,7 +366,8 @@ def processReport2():
 
         # number of allele references for isWildType = 0 and skipAllele = 0
         alleleRefLookup = {}
-        results = db.sql('''select a._Object_key, count(distinct a._Refs_key) as counter
+        results = db.sql('''
+                select a._Object_key, count(distinct a._Refs_key) as counter
                 from results2 r, GXD_AlleleGenotype ag, ALL_Allele aa, MGI_Reference_Assoc a
                 where r.m_Marker_key = ag._Marker_key
                 and ag._Allele_key = aa._Allele_key
