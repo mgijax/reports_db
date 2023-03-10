@@ -625,6 +625,7 @@
         <TD>Allele MGI ID</TD>
         <TD>Total number of allele references</TD>
         <TD>Repository ID for allele (pipe-delimited)</TD>
+        <TD>Mouse genotype RR id (pipe-delimited)</TD>
         <TD>Mouse gene symbol</TD>
         <TD>Mouse gene ID</TD>
         <TD>Repository ID for gene (pipe-delimited)</TD>

@@ -15,7 +15,7 @@
 # 3:  HGNC id for human gene
 # 4:  DO term name associated with human gene (if >1, show in separate row, duplicate other columns 1-3, and 5)
 # 5:  DO term ID associated with human gene
-# 6:  Mouse genotype IDs associated with DO term (pipe delimited if >1 and allow null values in this column)
+# 6:  Mouse genotype IDs
 # 7:  Mouse gene (related to human gene in column 1)
 # 8:  Mouse MGI ID
 # 9:  Facilities
@@ -30,11 +30,11 @@
 # 6:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or transactivator)
 # 7:  Allele MGI ID 
 # 8:  Total number of allele references for allele in column 6/7
-# 9:  Repository ID for allele (if available, can be null)
-# 10: Mouse genotype RR id associated with DO term
+# 9:  Repository ID for allele
+# 10: Mouse genotype RR id
 # 11: Mouse gene symbol from allele in column 6/7
 # 12: Mouse gene ID
-# 13: Repository ID for gene (if available, can be null)
+# 13: Repository ID for gene 
 #
 # History:
 #
@@ -188,7 +188,7 @@ def processReport1():
         fp1.write('HGNC id for human gene' + TAB)
         fp1.write('DO term name associated with human gene' + TAB)
         fp1.write('DO term ID associated with human gene' + TAB)
-        fp1.write('Mouse genotype IDs associated with DO term' + TAB)
+        fp1.write('Mouse genotype IDs' + TAB)
         fp1.write('Mouse gene' + TAB)
         fp1.write('Mouse MGI ID' + TAB)
         fp1.write('Facilities for mouse gene' + TAB)
@@ -252,7 +252,7 @@ def processReport1():
                 fp1.write(r['doTerm'] + TAB)
                 fp1.write(r['doID'] + TAB)
 
-                # 6:  Mouse genotype IDs associated with DO term 
+                # 6:  Mouse genotype IDs
                 if doID in genotypeidLookup:
                         fp1.write('|'.join(genotypeidLookup[doID]))
                 fp1.write(TAB)
@@ -285,14 +285,14 @@ def processReport2():
         # 3:  NOT model : NOT or blank
         # 4:  Allele Pairs 
         # 5:  Strain Background 
-        # 6:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or transactivator)
+        # 6:  Allele symbol (exclude wild type allele and allele with attribute = recombinase or transactivator)
         # 7:  Allele MGI ID 
-        # 8:  Total number of allele references for allele in column 6/7
-        # 9:  Repository ID for allele (if available, can be null)
-        # 10: Mouse genotype RR id associated with DO term
-        # 11: Mouse gene symbol from allele in column 6/7
+        # 8:  Total number of allele references for allele
+        # 9:  Repository ID for allele
+        # 10: Mouse genotype RR id
+        # 11: Mouse gene symbol from allele
         # 12: Mouse gene ID
-        # 13: Repository ID for gene (if available, can be null)
+        # 13: Repository ID for gene
 
         # report 2
         fp2 = reportlib.init('MGI_DiseaseMouseModel', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
@@ -305,28 +305,28 @@ def processReport2():
         fp2.write('Allele MGI ID' + TAB)
         fp2.write('Total number of allele references' + TAB)
         fp2.write('Repository ID from allele' + TAB)
-        fp2.write('Mouse genotype RR id associated with DO term' + TAB)
+        fp2.write('Mouse genotype RR id' + TAB)
         fp2.write('Marker symbol from col 4' + TAB)
         fp2.write('Marker MGI ID' + TAB)
         fp2.write('Repository ID from gene' + CRT)
 
         # final orthology results where DO associations exist (qualifier != NOT)
-        # where mouse marker/allele/genotype -> DO/Genotype exists
+        # where human marker -> DO/Human Marker (1022) exists
+        # and mouse marker/allele/genotype -> DO/Genotype may/may not exist
         db.sql('''
-        select distinct c.m_marker_key, c.msymbol, c.markerID, t1._term_key, t1.term as doTerm, t2.term as qualifierTerm
+        select distinct c.m_marker_key, c.msymbol, c.markerID, t1._term_key, t1.term as doTerm, t2.term as qualifierTerm, a.accID as doID
         into temporary table results2
-        from homology_mouse m, homology_human h, homology c, GXD_AlleleGenotype ag, VOC_Annot va, VOC_Term t1, VOC_Term t2
+        from homology_mouse m, homology_human h, homology c, VOC_Annot va, VOC_Term t1, VOC_Term t2, ACC_Accession a
         where c.m_Marker_key = m.m_Marker_key
         and c.h_Marker_key = h.h_Marker_key
-        and c.m_Marker_key = ag._Marker_key
-        and ag._Genotype_key = va._Object_key
-        and va._AnnotType_key = 1020
+        and c.h_Marker_key = va._Object_key
+        and va._AnnotType_key = 1022
         and va._Term_key = t1._Term_key
         and va._Qualifier_key = t2._Term_key
-        and exists (select 1 from VOC_Annot va
-                where c.h_Marker_key = va._Object_key 
-                and va._AnnotType_key = 1022
-                )
+        and va._Term_key = a._Object_key
+        and a._MGIType_key = 13
+        and a.preferred = 1
+        and a._LogicalDB_key = 191
         order by t1.term
         ''', 'auto')
         db.sql('create index results2_idx1 on results2(m_Marker_key)',  None)
@@ -334,7 +334,7 @@ def processReport2():
         # cache DO/Genotype (1020), accids
         doAlleleLookup = {}
         results = db.sql('''
-        select distinct r.m_Marker_key, t.term, a.accID as doID, g._genotype_key,
+        select distinct r.m_Marker_key, g._genotype_key,
                 aa._allele_key, aa.symbol as alleleSymbol, aaa.accID as alleleID, n.note as allelePairs, aa.isWildType, s.strain,
                 case when exists (select 1 from VOC_Annot va
                         where aa._Allele_key = va._Object_key
@@ -342,8 +342,7 @@ def processReport2():
                         and va._Term_key in (11025588,13289567)
                         ) 
                         then 1 else 0 end as skipAllele
-        from results2 r, VOC_Annot va, VOC_Term t, ACC_Accession a, 
-                GXD_AlleleGenotype ag, ALL_Allele aa, GXD_Genotype g, ACC_Accession aaa, PRB_Strain s, MGI_Note n
+        from results2 r, VOC_Annot va, GXD_AlleleGenotype ag, ALL_Allele aa, GXD_Genotype g, ACC_Accession aaa, PRB_Strain s, MGI_Note n
         where r.m_Marker_key = ag._Marker_key
         and ag._Allele_key = aa._Allele_key
         and ag._Genotype_key = g._Genotype_key
@@ -353,11 +352,6 @@ def processReport2():
         and n._NoteType_key = 1016
         and ag._Genotype_key = va._Object_key
         and va._AnnotType_key = 1020
-        and va._Term_key = t._Term_key
-        and t._Term_key = a._Object_key
-        and a._MGIType_key = 13
-        and a.preferred = 1
-        and a._LogicalDB_key = 191
         and aa._Allele_key = aaa._Object_key
         and aaa._MGIType_key = 11
         and aaa._LogicalDB_key = 1
@@ -365,7 +359,7 @@ def processReport2():
         for r in results:
                 key = r['m_Marker_key']
                 allelePairs = r['allelePairs'].replace('\n', '')
-                value = (r['doID'], r['term'], r['_allele_key'], r['alleleSymbol'], r['alleleID'], allelePairs, r['isWildType'], r['skipAllele'], r['strain'])
+                value = (r['_allele_key'], r['alleleSymbol'], r['alleleID'], allelePairs, r['isWildType'], r['skipAllele'], r['strain'])
                 if key not in doAlleleLookup:
                         doAlleleLookup[key] = []
                 doAlleleLookup[key].append(value)
@@ -399,31 +393,27 @@ def processReport2():
         for r in results:
 
                 key = r['m_Marker_key']
+                doID = r['doID']
 
-                if key not in doAlleleLookup:
-                        continue
+                # 1:  DO term name associated with human gene
+                # 2:  DO term ID associated with human gene
+                fp2.write(r['doTerm'] + TAB)
+                fp2.write(doID + TAB)
 
-                for d in doAlleleLookup[key]:
+                # 3: NOT models
+                if r['qualifierTerm'] != None:
+                        fp2.write(r['qualifierTerm'])
+                fp2.write(TAB)
 
-                        doID = d[0]
-                        doTerm = d[1]
-                        alleleKey = d[2]
-                        alleleSymbol = d[3]
-                        alleleID = d[4]
-                        allelePairs = d[5]
-                        isWildType = d[6]
-                        skipAllele = d[7]
-                        strain = d[8]
-
-                        # 1:  DO term name associated with human gene
-                        # 2:  DO term ID associated with human gene
-                        fp2.write(doTerm + TAB)
-                        fp2.write(doID + TAB)
-
-                        # 3: NOT models
-                        if r['qualifierTerm'] != None:
-                                fp2.write(r['qualifierTerm'])
-                        fp2.write(TAB)
+                if key in doAlleleLookup:
+                        d = doAlleleLookup[key][0]
+                        alleleKey = d[0]
+                        alleleSymbol = d[1]
+                        alleleID = d[2]
+                        allelePairs = d[3]
+                        isWildType = d[4]
+                        skipAllele = d[5]
+                        strain = d[6]
 
                         # 4: Allele Pairs
                         fp2.write(allelePairs + TAB)
@@ -431,7 +421,7 @@ def processReport2():
                         # 5: Strain Background
                         fp2.write(strain + TAB)
 
-                        # 6:  Allele symbol from column 4 (exclude wild type allele and allele with attribute = recombinase or rransactivator)
+                        # 6:  Allele symbol (exclude wild type allele and allele with attribute = recombinase or rransactivator)
                         # 7:  Allele MGI ID 
                         # 8:  Total number of allele references for allele in column 6/7
                         if isWildType == 0 and skipAllele == 0:
@@ -441,25 +431,27 @@ def processReport2():
                         else:
                                 fp2.write(TAB*3)
 
-                        # 9: Repository ID for allele (if available, can be null)
+                        # 9: Repository ID for allele
                         if alleleID in repositoryAlleleLookup:
                                 fp2.write('|'.join(repositoryAlleleLookup[alleleID]))
                         fp2.write(TAB)
+                else:
+                        fp2.write(TAB*6)
 
-                        # 10: Mouse genotype RR id associated with DO term
-                        if doID in rridLookup:
-                                fp2.write('|'.join(rridLookup[doID]))
-                        fp2.write(TAB)
+                # 10: Mouse genotype RR id
+                if doID in rridLookup:
+                        fp2.write('|'.join(rridLookup[doID]))
+                fp2.write(TAB)
 
-                        # 11: Mouse gene symbol from allele in column 6/7
-                        # 12: Mouse gene ID
-                        # 13: Repository ID for gene (if available, can be null)
-                        markerID = r['markerID']
-                        fp2.write(r['msymbol'] + TAB)
-                        fp2.write(markerID + TAB)
-                        if markerID in repositoryGeneLookup:
-                                fp2.write('|'.join(repositoryGeneLookup[markerID]))
-                        fp2.write(CRT)
+                # 11: Mouse gene symbol from allele 
+                # 12: Mouse gene ID
+                # 13: Repository ID for gene (if available, can be null)
+                markerID = r['markerID']
+                fp2.write(r['msymbol'] + TAB)
+                fp2.write(markerID + TAB)
+                if markerID in repositoryGeneLookup:
+                        fp2.write('|'.join(repositoryGeneLookup[markerID]))
+                fp2.write(CRT)
 
         reportlib.finish_nonps(fp2)
 
