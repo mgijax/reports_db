@@ -133,7 +133,9 @@ def doSetup1():
     db.sql('drop table if exists gomarker1', None)
     db.commit()
 
-    db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
+    db.sql('''
+        -- any mouse marker that has feature types
+        select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
             e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
             m.symbol, m.name, m._Marker_Type_key, vf.term as featureType
@@ -160,6 +162,32 @@ def doSetup1():
         and v._Term_key = vf._Term_key
         and a._Qualifier_key = q._Term_key 
         and e._ModifiedBy_key = u._User_key
+
+        -- specific for complex/cluster/region as these do not have feature types
+        union
+        select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
+            e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
+            e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
+            m.symbol, m.name, m._Marker_Type_key, 'biological_region'
+        from VOC_Annot a, 
+             ACC_Accession ta, 
+             VOC_Term t, 
+             VOC_Evidence e, 
+             MRK_Marker m, 
+             VOC_Term q,
+             MGI_User u
+        where a._AnnotType_key = 1000 
+        and a._Annot_key = e._Annot_key 
+        and a._Object_key = m._Marker_key 
+        and m._Marker_Status_key = 1
+        and m._Marker_Type_key = 10
+        and a._Term_key = t._Term_key 
+        and a._Term_key = ta._Object_key 
+        and ta._MGIType_key = 13 
+        and ta.preferred = 1 
+        and a._Qualifier_key = q._Term_key 
+        and e._ModifiedBy_key = u._User_key
+
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -188,7 +216,9 @@ def doSetup2():
     db.sql('drop table if exists gomarker1;', None)
     db.commit()
 
-    db.sql('''select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
+    db.sql('''
+        -- any mouse marker that has feature types
+        select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
             e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
             e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
             m.symbol, m.name, m._Marker_Type_key, vf.term as featureType
@@ -217,6 +247,34 @@ def doSetup2():
         and e._ModifiedBy_key = u._User_key
         and u.login not like 'NOCTUA%'
         and u.login != 'GO_Central'
+
+        -- specific for complex/cluster/region as these do not have feature types
+        union
+        select distinct a._Term_key, t.term, ta.accID as termID, q.term as qualifier, a._Object_key, 
+            e._AnnotEvidence_key, e.inferredFrom, e._EvidenceTerm_key, 
+            e._Refs_key, e._CreatedBy_key, e._ModifiedBy_key, e.creation_date, e.modification_date,
+            m.symbol, m.name, m._Marker_Type_key, 'biological_region'
+        from VOC_Annot a, 
+             ACC_Accession ta, 
+             VOC_Term t, 
+             VOC_Evidence e, 
+             MRK_Marker m, 
+             VOC_Term q,
+             MGI_User u
+        where a._AnnotType_key = 1000 
+        and a._Annot_key = e._Annot_key 
+        and a._Object_key = m._Marker_key 
+        and m._Marker_Status_key = 1
+        and m._Marker_Type_key = 10
+        and a._Term_key = t._Term_key 
+        and a._Term_key = ta._Object_key 
+        and ta._MGIType_key = 13 
+        and ta.preferred = 1 
+        and a._Qualifier_key = q._Term_key 
+        and e._ModifiedBy_key = u._User_key
+        and u.login not like 'NOCTUA%'
+        and u.login != 'GO_Central'
+
         ''', None)
     db.sql('create index gomarker1_idx1 on gomarker1(_Object_key)', None)
     db.sql('create index gomarker1_idx2 on gomarker1(_EvidenceTerm_key)', None)
@@ -729,13 +787,13 @@ def doProtein():
         select distinct r.symbol, mc._Marker_key, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
         from gomarker2 r, SEQ_Marker_Cache mc 
         where r._Object_key = mc._Marker_key 
-        and mc._Marker_Type_key = 1 
+        and mc._Marker_Type_key in (1,7,10)
         and mc._Qualifier_key = 615421 
         union 
         select distinct r.symbol, mc._Marker_key, mc.accID as seqID, mc._LogicalDB_key, mc._Qualifier_key
         from gomarker2 r, SEQ_Marker_Cache mc, MRK_MCV_Cache mcv
         where r._Object_key = mc._Marker_key 
-        and mc._Marker_Type_key = 1
+        and mc._Marker_Type_key in (1,7,10)
         and mc._Qualifier_key = 615420
         and mc._Marker_key = mcv._Marker_key
         and mcv.term = 'miRNA Gene'
@@ -938,7 +996,7 @@ def doGAFFinish():
         elif r['_Marker_Type_key'] == 10:
                 reportRow = reportRow + 'biological_region' + TAB
         else:
-                reportRow = reportRow + 'bad feature type =  ' + r['featureType'] + TAB
+                reportRow = reportRow + 'bad feature type = ' + r['featureType'] + TAB
 
         #!13 Taxon(|taxon)             
         reportRow = reportRow + 'taxon:10090' + TAB

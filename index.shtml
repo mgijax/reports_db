@@ -595,45 +595,6 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_Pheno_Sex.rpt">MGI_Pheno_Sex.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE><B>15. Mouse models of Human Disease by Human gene (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR>
-        <TD>Human gene symbol</TD>
-        <TD>Human gene name</TD>
-        <TD>HGNC id for human gene (pipe-delimited)</TD>
-        <TD>DO term name associated with human gene</TD>
-        <TD>DO term ID associated with human gene</TD>
-        <TD>Mouse genotype IDs associated with DO term (pipe-delimited)</TD>
-        <TD>Mouse gene</TD>
-        <TD>Mouse MGI ID</TD>
-        <TD>Facilities (pipe-delimited)</TD>
-        <TD>Repository ID (pipe-delimited)</TD>
-        </TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_DiseaseGeneModel.rpt">MGI_DiseaseGeneModel.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE><B>16. Human Diseases and Mouse Models by Genotype (1:1 orthologs only) (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR>
-        <TD>DO term name associated with human gene</TD>
-        <TD>DO term ID associated with human gene</TD>
-        <TD>NOT model</TD>
-        <TD>Allele Pairs</TD>
-        <TD>Strain Background</TD>
-        <TD>Allele symbol</TD>
-        <TD>Allele MGI ID</TD>
-        <TD>Total number of allele references</TD>
-        <TD>Repository ID for allele (pipe-delimited)</TD>
-        <TD>Mouse genotype RR id (pipe-delimited)</TD>
-        <TD>Mouse gene symbol</TD>
-        <TD>Mouse gene ID</TD>
-        <TD>Repository ID for gene (pipe-delimited)</TD>
-        </TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_DiseaseMouseModel.rpt">MGI_DiseaseMouseModel.rpt</A></TD></TR>
-    </TABLE></TD></TR>
-
 </TABLE><BR>
 
 <!-- -->
