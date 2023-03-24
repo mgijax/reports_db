@@ -314,15 +314,14 @@ def processReport2():
         # final orthology results where DO associations exist (qualifier != NOT)
         # where human marker -> DO/Human Marker (1022) exists
         db.sql('''
-        select distinct t1._term_key, t1.term as doTerm, t2.term as qualifierTerm, a.accID as doID
+        select distinct t1._term_key, t1.term as doTerm, a.accID as doID
         into temporary table results2
-        from homology_mouse m, homology_human h, homology c, VOC_Annot va, VOC_Term t1, VOC_Term t2, ACC_Accession a
+        from homology_mouse m, homology_human h, homology c, VOC_Annot va, VOC_Term t1, ACC_Accession a
         where c.m_Marker_key = m.m_Marker_key
         and c.h_Marker_key = h.h_Marker_key
         and c.h_Marker_key = va._Object_key
         and va._AnnotType_key = 1022
         and va._Term_key = t1._Term_key
-        and va._Qualifier_key = t2._Term_key
         and va._Term_key = a._Object_key
         and a._MGIType_key = 13
         and a.preferred = 1
@@ -333,9 +332,10 @@ def processReport2():
 
         # cache DO/Genotype (1020), accids
         # DO/Human Marker (1022) -> DO/Genotype (1020) by DO term (results2._term_key) -> Allele Pair -> Marker
+        # Allele symbol (exclude wild type allele and allele with attribute = recombinase or rransactivator)
         doAlleleLookup = {}
         results = db.sql('''
-        select distinct r._term_key, g._genotype_key,
+        select distinct r._term_key, g._genotype_key, t.term as qualifierTerm,
                 aa._allele_key, aa.symbol as alleleSymbol, aaa.accID as alleleID, n.note as allelePairs, aa.isWildType, s.strain,
                 ag._marker_key, m.symbol as markerSymbol, ma.accID as markerID,
                 case when exists (select 1 from VOC_Annot va
@@ -345,11 +345,12 @@ def processReport2():
                         ) 
                         then 1 else 0 end as skipAllele
         into temporary table alleles
-        from results2 r, VOC_Annot va, GXD_AlleleGenotype ag, ALL_Allele aa, GXD_Genotype g, ACC_Accession aaa, PRB_Strain s, MGI_Note n,
+        from results2 r, VOC_Annot va, VOC_Term t, GXD_AlleleGenotype ag, ALL_Allele aa, GXD_Genotype g, ACC_Accession aaa, PRB_Strain s, MGI_Note n,
                 MRK_Marker m, ACC_Accession ma
         where r._Term_key = va._Term_key
         and va._AnnotType_key = 1020
         and va._Object_key = g._Genotype_key
+        and va._Qualifier_key = t._Term_key
         and g._Genotype_key = ag._Genotype_key
         and ag._Allele_key = aa._Allele_key
         and g._Strain_key = s._Strain_key
@@ -410,13 +411,10 @@ def processReport2():
                                 # 2:  DO term ID associated with human gene
                                 fp2.write(r['doTerm'] + TAB)
                                 fp2.write(doID + TAB)
-                                # 3: NOT models
-                                if r['qualifierTerm'] != None:
-                                        fp2.write(r['qualifierTerm'])
-                                fp2.write(TAB)
 
                                 # allele info from doAlleleLookup
                                 genotypeKey = d['_genotype_key']
+                                qualifierTerm = d['qualifierTerm']
                                 alleleKey = d['_allele_key']
                                 alleleSymbol = d['allelesymbol']
                                 alleleID = d['alleleid']
@@ -427,13 +425,18 @@ def processReport2():
                                 isWildType = d['iswildtype']
                                 skipAllele = d['skipallele']
 
+                                # 3: NOT models
+                                if qualifierTerm != None:
+                                        fp2.write(qualifierTerm)
+                                fp2.write(TAB)
+
                                 # 4: Allele Pairs
                                 fp2.write(allelePairs + TAB)
         
                                 # 5: Strain Background
                                 fp2.write(strain + TAB)
 
-                                # 6:  Allele symbol (exclude wild type allele and allele with attribute = recombinase or rransactivator)
+                                # 6:  Allele symbol
                                 # 7:  Allele MGI ID 
                                 # 8:  Total number of allele references for allele in column 6/7
                                 if isWildType == 0 and skipAllele == 0:
@@ -468,10 +471,7 @@ def processReport2():
                         # 2:  DO term ID associated with human gene
                         fp2.write(r['doTerm'] + TAB)
                         fp2.write(doID + TAB)
-                        # 3: NOT models
-                        if r['qualifierTerm'] != None:
-                                fp2.write(r['qualifierTerm'])
-                        fp2.write(TAB*10)
+                        fp2.write(TAB*11)
                         fp2.write(CRT)
 
         reportlib.finish_nonps(fp2)
