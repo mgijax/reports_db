@@ -407,7 +407,7 @@ results = db.sql('''
                 and m._Marker_Status_key = 1
                 and m._Marker_Type_key in (1,7,10)
                 )
-        order by m.symbol, a.accID
+        order by symbol, a.accID
         ''', 'auto')
 
 for r in results:
