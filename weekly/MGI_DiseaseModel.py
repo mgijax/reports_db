@@ -184,16 +184,37 @@ def processReport1():
 
         # report 1
         fp1 = reportlib.init('MGI_DiseaseGeneModel', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-        fp1.write('Human gene symbol' + TAB)
-        fp1.write('Human gene name' + TAB)
-        fp1.write('HGNC id for human gene' + TAB)
-        fp1.write('DO term name associated with human gene' + TAB)
-        fp1.write('DO term ID associated with human gene' + TAB)
-        fp1.write('Mouse genotype IDs' + TAB)
-        fp1.write('Mouse gene' + TAB)
-        fp1.write('Mouse MGI ID' + TAB)
-        fp1.write('Facilities for mouse gene' + TAB)
-        fp1.write('Repository ID' + CRT)
+        fp1.write('''# This report queried MGI data as follows:
+# 
+# For human genes for which there is a one-to-one relationship with a mouse ortholog, show the gene symbols and names,
+# and any DO terms and DOIDs associated with the human gene,
+# and any mouse genotype IDs associated with a mouse model for the disease.
+# 
+# Transgenes and conditional alleles are included. 
+# "NOT models" (where the genotype does not sufficiently model the disease) are excluded.
+# 
+# The fields are described below:
+# Human Gene Symbol: The official gene symbol for the human gene.
+# Human Gene Name: The official name for the human gene.
+# HGNC ID for human gene: HUGO Gene Nomenclature Committee HGNC ID.
+# DO term name associated with human gene: The defined Disease Ontology (DO) term associated with a human gene.
+# DO term ID associated with human gene: The ID for the Disease Ontology term associated with a human gene.
+# Mouse genotype IDs associated with DO term: MGI genotype IDs for mouse models of the disease. Append these IDs to https://www.informatics.jax.org/allele/genoview/ to view the MGI genotype page.
+# Mouse Gene: The official marker symbol for the mouse gene.
+# MGI Mouse Gene ID: MGI gene accession ID for the mouse gene.
+# Facilities for Mouse Gene: Repositories of stocks containing mutant alleles of the mouse gene.
+# Repository ID: Repositories IDs for stocks containing mutant alleles of the mouse gene.
+''' + CRT)
+#        fp1.write('Human gene symbol' + TAB)
+#        fp1.write('Human gene name' + TAB)
+#        fp1.write('HGNC id for human gene' + TAB)
+#        fp1.write('DO term name associated with human gene' + TAB)
+#        fp1.write('DO term ID associated with human gene' + TAB)
+#        fp1.write('Mouse genotype IDs' + TAB)
+#        fp1.write('Mouse gene' + TAB)
+#        fp1.write('Mouse MGI ID' + TAB)
+#        fp1.write('Facilities for mouse gene' + TAB)
+#        fp1.write('Repository ID' + CRT)
 
         # final orthology results with DO associations and qualifier != NOT
         db.sql('''
@@ -297,19 +318,41 @@ def processReport2():
 
         # report 2
         fp2 = reportlib.init('MGI_DiseaseMouseModel', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-        fp2.write('DO term name associated with human gene' + TAB)
-        fp2.write('DO term ID associated with human gene' + TAB)
-        fp2.write('NOT model' + TAB)
-        fp2.write('Allele Pairs' + TAB)
-        fp2.write('Strain Background' + TAB)
-        fp2.write('Allele symbol from col 4' + TAB)
-        fp2.write('Allele MGI ID' + TAB)
-        fp2.write('Total number of allele references' + TAB)
-        fp2.write('Repository ID from allele' + TAB)
-        fp2.write('Mouse genotype RR id' + TAB)
-        fp2.write('Marker symbol from col 4' + TAB)
-        fp2.write('Marker MGI ID' + TAB)
-        fp2.write('Repository ID from gene' + CRT)
+        fp2.write('''# This report queried MGI data as follows:
+# 
+# For human genes for which there is a one-to-one relationship with a mouse ortholog,
+# show the DO terms and DOIDs associated with the human gene,
+# and any mouse models for the disease (with a column for the allele pairs and another for strain background)
+# It includes a column that designates whether it is annotated as a NOT model (where the genotype does not sufficiently model the disease).
+#  
+# The fields are described below:
+# DO term name associated with human gene: The defined Disease Ontology (DO) term associated with a human gene.
+# DO Term ID associated with human gene: The ID for the Disease Ontology term associated with a human gene.
+# NOT model: NOT appears when the authors have determined that the genotype does not sufficiently model the disease. This field is empty when the genotype models this disease. 
+# Allele Pairs: The official mouse allele symbols for the pairs of alleles. A wild type allele is indicated by <+>.
+# Strain Background: The genetic background for the mouse strains involved, if known.
+# Allele Symbol from column 4: The official allele symbol for the mutant allele used in column 4. 
+# Allele MGI ID: The MGI allele accession ID used in column 4.
+# Total Number of Allele References: The number of references associated with the allele in MGI.
+# Repository ID from Allele: Stock IDs that contain the allele; sourced from the International Mouse Strain Resource (IMSR). 
+# RRID from Allele: Research Resource Identifier (RRID) for the stock. 
+# Marker Symbol from column 4: The official marker symbol for the mouse marker.
+# Marker MGI ID: MGI marker accession ID for the mouse marker. 
+# Repository ID from Gene: Stock IDs that contain any mutant allele for the gene, from International Mouse Strain Resource (IMSR).
+''' + CRT)
+#        fp2.write('DO term name associated with human gene' + TAB)
+#        fp2.write('DO term ID associated with human gene' + TAB)
+#        fp2.write('NOT model' + TAB)
+#        fp2.write('Allele Pairs' + TAB)
+#        fp2.write('Strain Background' + TAB)
+#        fp2.write('Allele symbol from col 4' + TAB)
+#        fp2.write('Allele MGI ID' + TAB)
+#        fp2.write('Total number of allele references' + TAB)
+#        fp2.write('Repository ID from allele' + TAB)
+#        fp2.write('Mouse genotype RR id' + TAB)
+#        fp2.write('Marker symbol from col 4' + TAB)
+#        fp2.write('Marker MGI ID' + TAB)
+#        fp2.write('Repository ID from gene' + CRT)
 
         # final orthology results where DO associations exist (qualifier != NOT)
         # where human marker -> DO/Human Marker (1022) exists
