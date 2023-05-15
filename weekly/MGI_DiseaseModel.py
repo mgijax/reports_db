@@ -204,7 +204,7 @@ def processReport1():
 # MGI Mouse Gene ID: MGI gene accession ID for the mouse gene.
 # Facilities for Mouse Gene: Repositories of stocks containing mutant alleles of the mouse gene.
 # Repository ID: Repositories IDs for stocks containing mutant alleles of the mouse gene.
-''' + CRT)
+''')
 #        fp1.write('Human gene symbol' + TAB)
 #        fp1.write('Human gene name' + TAB)
 #        fp1.write('HGNC id for human gene' + TAB)
@@ -339,7 +339,7 @@ def processReport2():
 # Marker Symbol from column 4: The official marker symbol for the mouse marker.
 # Marker MGI ID: MGI marker accession ID for the mouse marker. 
 # Repository ID from Gene: Stock IDs that contain any mutant allele for the gene, from International Mouse Strain Resource (IMSR).
-''' + CRT)
+''')
 #        fp2.write('DO term name associated with human gene' + TAB)
 #        fp2.write('DO term ID associated with human gene' + TAB)
 #        fp2.write('NOT model' + TAB)
