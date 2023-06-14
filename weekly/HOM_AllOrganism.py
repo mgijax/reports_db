@@ -317,8 +317,8 @@ results = db.sql('''
                lc.cytogeneticOffset,
                substr(cast(lc.cmoffset as varchar),10,2) as cmoffset,
                lc.genomicChromosome,
-               substr(cast(lc.startCoordinate as varchar),10,0) as startCoordinate,
-               substr(cast(lc.endCoordinate as varchar),10,0) as endCoordinate,
+               cast(lc.startCoordinate as varchar) as startCoordinate,
+               cast(lc.endCoordinate as varchar) as endCoordinate,
                lc.strand
         from temp1 t,
              MRK_Location_Cache lc
