@@ -20,6 +20,13 @@
 # 10 DB_Xrefs 
 # 11 Gene_Product_Properties 
 #
+#
+# 1. markers of type gene (1), pseudogene (7), complex (10) with feature types
+# 2. markers of type gene (1), pseudogene (7), complex (10) without feature types
+# 3. isoforms UniProtKB from PR (183) : 1,7,10 only
+# 4. isoforms PR (183) : 1,7,10 only
+# 5. RNAs that are associated with at most 1 marker : 1,7,10 only
+#
 # History:
 #
 # lec   04/01/2020 python 3 upgrade
@@ -260,7 +267,7 @@ for r in results:
         elif r['_Marker_Type_key'] == 10:
                 fp.write('SO:0001411' + TAB)
         else:
-                fp.write('col 5 bad with feature type =  ' + r['term'] + TAB)
+                fp.write('col 5 bad with feature type = ' + r['term'] + TAB)
 
         fp.write(SPECIES + TAB)
         fp.write(TAB)
@@ -329,7 +336,8 @@ for r in results:
 #
 
 #
-# isoforms
+# isoforms:
+# 183 | Protein Isoform Ontology
 #
 
 #
@@ -383,6 +391,7 @@ for r in results:
 
 #
 # isoforms:terms
+# 183 | Protein Isoform Ontology
 #
 
 results = db.sql('''
@@ -459,7 +468,7 @@ for ldbsearch in (9, 27, 133):
 	    select distinct sm._Sequence_key, sm.accID as rnaID, sm._Marker_key, sm._LogicalDB_key, t.term
         	    from SEQ_Marker_Cache sm, ACC_Accession a, VOC_Annot v, VOC_Term t, MRK_Marker m
         	    where sm._SequenceType_key = 316346
-        	    and sm._Marker_Type_key = 1 
+        	    and sm._Marker_Type_key in (1,7,10)
         	    and sm._Organism_key = 1 
 		    and sm._LogicalDB_key = %s
 		    and sm._Sequence_key = a._Object_key
