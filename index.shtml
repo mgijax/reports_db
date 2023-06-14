@@ -259,7 +259,7 @@
             <TD>HGNC ID</TD>
             <TD>OMIM gene ID</TD>
             <TD>Genetic Location</TD>
-            <TD>Genome Coordinates: Build</TD>
+            <TD>Genome Coordinates (mouse or human)</TD>
             <TD>Name</TD><TD>Synonyms (pipe-delimited)</TD>
             </TR></TABLE>
         </TD></TR>
@@ -278,7 +278,7 @@
             <TD>HGNC ID</TD>
             <TD>OMIM gene ID</TD>
             <TD>Genetic Location</TD>
-            <TD>Genome Coordinates: Build</TD>
+            <TD>Genome Coordinates (mouse or human)</TD>
             <TD>Nucleotide RefSeq ID (comma-delimited)</TD>
             <TD>Protein RefSeq ID (comma-delimited)</TD>
             <TD>SWISS-PROT IDs<BR>(comma-delimited)</TD>
