@@ -168,23 +168,23 @@ fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], prin
 
 #
 # Get the mouse and human build versions to display with the genomic location
-# in the header record. Use "kit" as an example gene to pull the version.
+# in the header record. 
 #
 results = db.sql('''
         select m._Organism_key, lc.version
         from MRK_Marker m, MRK_Location_Cache lc
-        where m.symbol = 'kit' and
-              m._Organism_key in (1,2) and
-              m._Marker_key = lc._Marker_key
+        where m._Organism_key in (1,2)
+        and m._Marker_key = lc._Marker_key
+        and lc.version is not null
         ''','auto')
 
 mouseVersion = ''
 humanVersion = ''
 for r in results:
     if r['_Organism_key'] == 1:
-        mouseVersion = r['version']
+        mouseVersion = '(%s)' % r['version']
     if r['_Organism_key'] == 2:
-        humanVersion = r['version']
+        humanVersion = '(%s)' % r['version']
 
 
 #
@@ -199,8 +199,7 @@ fp.write('Mouse MGI ID' + TAB)
 fp.write('HGNC ID' + TAB)
 fp.write('OMIM Gene ID' + TAB)
 fp.write('Genetic Location' + TAB)
-fp.write('Genomic Coordinates (mouse: ' + mouseVersion + \
-                              ', human: ' + humanVersion + ')' + TAB)
+fp.write('Genome Coordinates (mouse or human Build)' + TAB)
 fp.write('Name' + TAB)
 fp.write('Synonyms' + CRT)
 
