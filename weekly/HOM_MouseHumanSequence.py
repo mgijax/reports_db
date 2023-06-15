@@ -193,9 +193,9 @@ mouseVersion = ''
 humanVersion = ''
 for r in results:
     if r['_Organism_key'] == 1:
-        mouseVersion = '(%s)' % r['version']
+        mouseVersion =  r['version']
     if r['_Organism_key'] == 2:
-        humanVersion = '(%s)' % r['version']
+        humanVersion = r['version']
 
 
 #
@@ -210,7 +210,8 @@ fp.write('Mouse MGI ID' + TAB)
 fp.write('HGNC ID' + TAB)
 fp.write('OMIM Gene ID' + TAB)
 fp.write('Genetic Location' + TAB)
-fp.write('Genome Coordinates (mouse or human Build)' + TAB)
+fp.write('Genome Coordinates (mouse: ' + mouseVersion + \
+                ' human: ' + humanVersion + ')' + TAB)
 fp.write('Nucleotide RefSeq IDs' + TAB)
 fp.write('Protein RefSeq IDs' + TAB)
 fp.write('SWISS_PROT IDs' + CRT)
