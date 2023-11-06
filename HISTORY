@@ -1,3 +1,10 @@
+TAG: reports_db-6-0-22-8
+DATE: 11/04/2023
+STAFF: lec
+wts2-1314/fl2-617/Add new file to MP files on FTP site
+index.shtml
+Configuration.default: setenv MPFILES                  "MPheno_OBO.ontology mp.owl mp.json mp-international.owl"
+
 TAG: reports_db-6-0-22-7
 DATE: 10/24/2023
 STAFF: sc

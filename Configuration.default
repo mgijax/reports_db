@@ -30,7 +30,7 @@ setenv ONDEMAND			${PUBRPTS}/ondemand
 
 # Mammalian Vocabulary Source
 setenv MPVOCSOURCE		${DATALOADSOUTPUT}/mgi/vocload/runTimeMP
-setenv MPFILES			"MPheno_OBO.ontology mp.owl mp.json"
+setenv MPFILES			"MPheno_OBO.ontology mp.owl mp.json mp-international.owl"
 
 # Adult Mouse Anatomy Source
 setenv MAVOCSOURCE		${DATALOADSOUTPUT}/mgi/vocload/runTimeMA

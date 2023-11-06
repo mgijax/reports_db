@@ -332,19 +332,7 @@
 <TABLE BORDER CELLPADDING=2 BGCOLOR="#FFFFFF" WIDTH="100%"><TR><TD><B>Gene Ontology Data</B></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>1. Gene Ontology (GO) Annotations of Mouse Markers (tab-delimited)
-	Notice: as of  21-Aug-2009, MGI will be providing this daily gene_association.mgi file in GAF 2.0 format. This file has two additional columns, 16 and 17, explained in detail <a href="http://wiki.geneontology.org/index.php/GAF_2.0">here</a>. 
-	<br><br>A GAF 2.0 file can be easily converted to GAF 1 by the removal of the last two columns. Additionally, a GAF 1 version of this file which is updated weekly is available <a href="http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.mgi.gz?rev=HEAD">here</a>.</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Database<BR>Designation</TD><TD>MGI Marker Accession ID</TD><TD>Mouse Marker Symbol</TD><TD>NOT<BR>Designation</TD><TD>GO<BR>Term ID</TD><TD>MGI<BR>Reference Accession ID</TD><TD>GO<BR>Evidence Code</TD><TD>Inferred From</TD>
-        <TD>Ontology<BR><FONT SIZE=-1>P=Biological Process<BR>F=Molecular Function<BR>C=Cellular Component</FONT></TD>
-        <TD>Mouse Marker Name</TD><TD>Mouse Marker Synonyms<BR>(if any)</TD><TD>Mouse Marker Type<BR><FONT SIZE=-1>gene<BR>transcript<BR>protein</FONT></TD><TD>Taxon</TD><TD>Modification Date</TD><TD>Assigned By</TD><TD>Annotation Extension</TD><TD>Gene Product</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="gene_association.mgi.gz">gene_association.mgi.gz</A></TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>2. Marker/SWISS-PROT Associations for Markers with GO Annotations (tab-delimited)</B></TD></TR>
+        <TR><TD><B>1. Marker/SWISS-PROT Associations for Markers with GO Annotations (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>SWISS-PROT ID (;-delimited)</TD></TABLE>
         </TD></TR>
@@ -353,7 +341,7 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>3. GO terms and GO IDs for all three ontologies (Biological Process, Cellular Component, Molecular Function) (tab-delimited)</B></TD></TR>
+        <TR><TD><B>2. GO terms and GO IDs for all three ontologies (Biological Process, Cellular Component, Molecular Function) (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>Ontology</TD><TD>GO ID</TD><TD>GO Term</TD></TR></TABLE>
         </TD></TR>
@@ -461,6 +449,7 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="VOC_MammalianPhenotype.rpt">VOC_MammalianPhenotype.rpt</A></TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="mp.json">mp.json</A></TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="mp.owl">mp.owl</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="mp-international.owl">mp-international.owl</A></TD></TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
