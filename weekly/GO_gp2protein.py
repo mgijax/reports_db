@@ -19,8 +19,6 @@
 #	gp2rna.mgi : any genes with/without a transcript (fp2)
 #	gp_unlocalized.mgi : all genes not in gp2protein or gp2rna (fp3)
 #
-# Used by:
-#
 # History:
 #
 # 01/30/2015	sc
@@ -242,16 +240,16 @@ for r in results:
             seqID = l[0]
             logicalDB = l[1]
             isfp1 = 1
-        else:
-            print(('RNA w/uniprot seq assoc: %s' % accID))
+        #else:
+        #    print(('RNA w/uniprot seq assoc: %s' % accID))
     elif markerKey in proteinDict:
         if tdcTerm == 'protein coding gene':
             l = proteinDict[markerKey]
             seqID = l[0]
             logicalDB = l[1]
             isfp1 = 1
-        else:
-            print(('RNA w/rep protein seq assoc: %s' % accID))
+        #else:
+        #    print(('RNA w/rep protein seq assoc: %s' % accID))
 
     # fp2 (rna)
     elif markerKey in transcriptDict:
