@@ -656,15 +656,6 @@
         </TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE>
-        <TR><TD><B>2. Association of MGI Reference Accession IDs and PubMed IDs (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Reference Accession ID</TD><TD>PubMed ID</TD><TD>Alternative MGI Reference Accession ID (J:)</TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="BIB_PubMed.rpt">BIB_PubMed.rpt</A></TD></TR>
-        </TD></TR>
-    </TABLE></TD></TR>
-
 </TABLE><BR>
 
 <!-- -->
