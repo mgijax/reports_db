@@ -60,15 +60,12 @@ import db
 db.setTrace()
 
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
 TAB = reportlib.TAB
-PAGE = reportlib.PAGE
 
 #
 # Main
 #
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('#\n')
@@ -137,5 +134,4 @@ for r in results:
 
 fp.write(CRT + '(%d genes affected)' % (len(markerList)) + CRT)
 
-db.useOneConnection(0)
 reportlib.finish_nonps(fp)	# non-postscript file

@@ -26,19 +26,14 @@ import db
 db.setTrace()
 
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
 TAB = reportlib.TAB
 
 #
 # Main
 #
 
-db.useOneConnection(1)
-
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
-
 fp.write('Marker Symbol\tMGI Marker Accession ID\tTotal number of IMSR Strains\tTotal number of Alleles\n')
-
 inFile = open('/data/downloads/www.findmice.org/report/kompCounts.txt', 'rU')
 
 #
@@ -80,4 +75,3 @@ for r in results:
         fp.write(str(r['mcount']) + CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

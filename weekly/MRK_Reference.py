@@ -25,7 +25,6 @@
  
 import sys 
 import os
-import string
 import reportlib
 import db
 
@@ -38,7 +37,6 @@ CRT = reportlib.CRT
 # Main
 #
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
@@ -125,4 +123,3 @@ for r in results:
                 fp.write('|'.join(pubmed[r['_Marker_key']]) + CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
-db.useOneConnection(0)

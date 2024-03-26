@@ -18,8 +18,6 @@
  
 import sys
 import os
-import string
-import mgi_utils
 import reportlib
 import db
 
@@ -27,8 +25,6 @@ db.setTrace()
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
-
-db.useOneConnection(1)
 
 fpLinkOut = reportlib.init('protein-mgd', fileExt = '.xml', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
@@ -74,5 +70,4 @@ fpLinkOut.write('''         </ObjectList>
 ''')
 
 reportlib.finish_nonps(fpLinkOut)
-db.useOneConnection(0)
 

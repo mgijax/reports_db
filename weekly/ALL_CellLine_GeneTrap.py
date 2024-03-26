@@ -155,8 +155,6 @@ def createImsrStrainDict():
         return facilityMap
 
 
-db.useOneConnection(1)
-
 #create report
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
@@ -324,4 +322,3 @@ for row in results:
         fp.write(row['tag'] + CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

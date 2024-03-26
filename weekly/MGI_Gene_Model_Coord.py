@@ -95,7 +95,6 @@ def getCoords(logicalDBkey, provider):
 # Main
 #
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('1. MGI accession id' + TAB)
@@ -201,4 +200,3 @@ for r in results:
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

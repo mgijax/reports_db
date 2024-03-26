@@ -24,8 +24,6 @@
 
 import sys
 import os
-import string
-import mgi_utils
 import reportlib
 import db
 
@@ -37,7 +35,6 @@ CRT = reportlib.CRT
 # Main
 #
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 db.sql('''select a._Object_key as _Genotype_key, 
         a2.accid as genotypeID, a._Term_key, t1.term as mpTerm,  
@@ -88,4 +85,3 @@ for r in results:
     fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (r['genotypeID'], TAB, r['gender'], TAB, r['mpID'], TAB, r['mpTerm'], TAB, alleleComp, TAB, str.strip(r['bgStrain']), TAB, annotQual, TAB, refID, CRT)) 
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

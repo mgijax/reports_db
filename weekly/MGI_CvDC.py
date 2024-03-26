@@ -58,15 +58,11 @@ import db
 db.setTrace()
 
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
 TAB = reportlib.TAB
-PAGE = reportlib.PAGE
 
 #
 # Main
 #
-
-db.useOneConnection(1)
 
 #
 # remove old *.html files
@@ -283,4 +279,3 @@ for r in results:
         reportlib.finish_nonps(fphtml)	# non-postscript file
 
 reportlib.finish_nonps(fp)	# non-postscript file
-db.useOneConnection(0)

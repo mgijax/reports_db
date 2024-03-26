@@ -31,7 +31,6 @@ import reportlib
 import db
 
 db.setTrace()
-db.useOneConnection(1)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -92,4 +91,3 @@ for r in results:
     fp.write('%s%s%s%s%s%s%s%s%s%s%s%s' % (alleleID, TAB, aSymbol, TAB, aName, TAB, markerID, TAB, mSymbol, TAB, cidNote, CRT))
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

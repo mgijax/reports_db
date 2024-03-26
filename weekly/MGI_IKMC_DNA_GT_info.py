@@ -64,8 +64,6 @@
  
 import sys
 import os
-import string
-import mgi_utils
 import reportlib
 import db
 
@@ -372,4 +370,3 @@ for r in results:
     fp.write('%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (col1, TAB, col2, TAB, col3, TAB, col4, TAB, col5, TAB, col6, TAB, col7, TAB, col8, TAB, col9, TAB, col10, TAB, col11, TAB, col12, TAB, col13, TAB, col14, TAB, col15, TAB, col16, TAB, col17, TAB, col18, TAB, col19, TAB, col20, TAB, col21, TAB, col22, TAB, col23, CRT))
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

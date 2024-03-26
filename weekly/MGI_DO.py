@@ -41,11 +41,7 @@ import mgi_utils
 #db.setTrace()
 
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
 TAB = reportlib.TAB
-PAGE = reportlib.PAGE
-
-db.useOneConnection(1)
 
 #
 # get the disease associations for mouse markers (1023) and human (1022) markers.
@@ -174,5 +170,4 @@ for r in results:
 
     fp.write(mgi_utils.prvalue(r['accID']) + CRT)
 
-db.useOneConnection(0)
 reportlib.finish_nonps(fp)

@@ -22,8 +22,6 @@
  
 import sys
 import os
-import string
-import mgi_utils
 import reportlib
 import db
 
@@ -33,8 +31,6 @@ CRT = reportlib.CRT
 TAB = reportlib.TAB
 
 fileName = 'pubmed-mgd-1'
-
-db.useOneConnection(1)
 
 # remove old file names
 os.system('rm -rf ' + os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
@@ -88,5 +84,4 @@ for r in results:
 
 reportlib.finish_nonps(fpLinkOut)
 reportlib.finish_nonps(fpUid)
-db.useOneConnection(0)
 

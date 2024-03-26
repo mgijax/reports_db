@@ -103,8 +103,6 @@ fp1 = reportlib.init('gp2protein', fileExt = '.mgi', outputdir = os.environ['REP
 fp2 = reportlib.init('gp2rna', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp3 = reportlib.init('gp_unlocalized', fileExt = '.mgi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
-db.useOneConnection(1)
-
 #
 # all markers of type 'gene'
 # with feature type (see below)
@@ -300,4 +298,3 @@ reportlib.finish_nonps(fp1)
 reportlib.finish_nonps(fp2)
 reportlib.finish_nonps(fp3)
 
-db.useOneConnection(1)

@@ -31,7 +31,6 @@
  
 import sys 
 import os
-import string
 import mgi_utils
 import reportlib
 import db
@@ -41,7 +40,6 @@ db.setTrace()
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-db.useOneConnection(1)
 fp1 = reportlib.init('MRK_List1', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp2 = reportlib.init('MRK_List2', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
@@ -282,4 +280,3 @@ for r in results:
 
 reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file
-db.useOneConnection(0)

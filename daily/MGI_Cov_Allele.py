@@ -370,8 +370,6 @@ def processAllele():
 # main
 #
 
-db.useOneConnection(1)
-
 fp = reportlib.init(sys.argv[0], printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 fp.write('#\n')
@@ -400,5 +398,4 @@ initializeAllele()
 processAllele()
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)
 

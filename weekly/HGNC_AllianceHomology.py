@@ -24,9 +24,7 @@
  
 import sys
 import os
-import mgi_utils
 import reportlib
-import string
 import db
 import Set
 
@@ -169,7 +167,6 @@ def loadLookups():
 # Main
 #
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('MGI Accession ID' + TAB)
@@ -288,4 +285,3 @@ for r in results:
     fp.write(CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

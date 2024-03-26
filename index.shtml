@@ -348,6 +348,13 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_terms.mgi">go_terms.mgi</A> (only those terms annotated to MGI markers are included)</TD></TR>
     </TABLE></TD></TR>
 
+    <TR><TD><TABLE>
+        <TR><TD><B>3. Gene Ontology (GO) Annotations of Mouse Markers</B> (see also <A HREF="https://geneontology.org/docs/download-go-annotations/">GO Annotation File format</A> at the <A HREF="https://geneontology.org/">Gene Ontology Consortium</A>)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GAF File: <A HREF="https://current.geneontology.org/annotations/mgi.gaf.gz">https://current.geneontology.org/annotations/mgi.gaf.gz</A>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPI File: <A HREF="https://current.geneontology.org/annotations/mgi.gpi.gz">https://current.geneontology.org/annotations/mgi.gpi.gz</A>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPAD2.0 File: <A HREF="https://current.geneontology.org/annotations/mgi.gpad.gz">https://current.geneontology.org/annotations/mgi.gpad.gz</A>
+    </TABLE></TD></TR>
+
 </TABLE><BR>
 
 <!-- -->

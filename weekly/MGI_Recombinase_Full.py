@@ -51,19 +51,14 @@
 import csv
 import sys 
 import os
-import string
 import reportlib
 import urllib.request, urllib.parse, urllib.error
 import db
 
 db.setTrace()
 
-db.useOneConnection(1)
-
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
 TAB = reportlib.TAB
-PAGE = reportlib.PAGE
 
 WI_URL = os.environ['WI_URL']
 
@@ -359,4 +354,3 @@ fpHTML.write('<pre>')
 reportlib.finish_nonps(fpHTML, isHTML = 1)  # non-postscript file
 reportlib.finish_nonps(fpTAB)	# non-postscript file
 
-db.useOneConnection(0)

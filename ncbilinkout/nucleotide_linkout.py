@@ -20,8 +20,6 @@
 
 import sys
 import os
-import string
-import mgi_utils
 import reportlib
 import db
 
@@ -31,8 +29,6 @@ CRT = reportlib.CRT
 TAB = reportlib.TAB
 maxfileCounter = int(os.environ['NCBILINKOUT_COUNT'])
 fileName = 'nucleotide-mgd-'
-
-db.useOneConnection(1)
 
 # remove old file names
 os.system('rm -rf ' + os.environ['REPORTOUTPUTDIR'] + "/" + fileName + "*")
@@ -150,5 +146,4 @@ for r in results:
 
 fpLinkOut.write('</LinkSet>' + CRT)
 reportlib.finish_nonps(fpLinkOut)
-db.useOneConnection(0)
 

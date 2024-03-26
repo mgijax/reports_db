@@ -1,5 +1,14 @@
 #
 # Report:
+#
+# 12/11/2023
+#       Note:  Contact: Scott Rizzo <Scott.Rizzo@jax.org>
+#
+# 12/8/2023:
+#       185.0.3.10.in-addr.arpa name = bhsqldb06wp.jax.org
+#       102.0.3.10.in-addr.arpa name = mebhtns01lp.jax.org
+#       5.40.168.148.in-addr.arpa name = iad-us-a-148-168-40-5.pfizer.com
+#
 #       Create several tab-delimited (bcp) files for BioDataMart feed
 #       TR12427/Disase Ontology (DO)
 #       TR 2794
@@ -164,7 +173,6 @@
  
 import sys
 import os
-import string
 import reportlib
 import mgi_utils
 import db
@@ -1816,7 +1824,6 @@ def mgi_relationship():
 # Main
 #
 
-db.useOneConnection(1)
 vocabs()
 alleles()
 markers()
@@ -1825,5 +1832,4 @@ genotypes()
 references()
 humando()
 mgi_relationship()
-db.useOneConnection(0)
 

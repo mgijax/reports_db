@@ -34,8 +34,6 @@ db.setTrace()
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-db.useOneConnection(1)
-
 fp = reportlib.init(sys.argv[0], printHeading = None, outputdir = os.environ['REPORTOUTPUTDIR'])
 
 fp.write('#\n')
@@ -143,4 +141,3 @@ for r in results:
     fp.write('|'.join(covidtags[refsKey]) + CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

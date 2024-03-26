@@ -187,8 +187,6 @@
 
 import sys
 import os
-import subprocess
-import string
 import mgi_utils
 import reportlib
 import db

@@ -41,8 +41,6 @@
  
 import sys
 import os
-import string
-import mgi_utils
 import reportlib
 import db
 
@@ -102,8 +100,6 @@ IKMC_CREATORS = 'CMHD', 'ESDB', 'EUCOMM', 'TIGM'
 #  Query and build structures
 #  Note: the starting point for this script was the gbrowseutils 
 #        DNA gene trap script which does not restrict by creator
-
-db.useOneConnection(1)
 
 print('Loading lookups ...')
 sys.stdout.flush()
@@ -279,4 +275,3 @@ for seqKey in gtCoordDictBySeqKey:
             fp.write(column9 % (creator, seqTagID, seqID, mgiID, seqType) + CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

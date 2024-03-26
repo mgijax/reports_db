@@ -53,9 +53,7 @@ import reportlib
 db.setTrace()
 
 CRT = reportlib.CRT
-SPACE = reportlib.SPACE
 TAB = reportlib.TAB
-PAGE = reportlib.PAGE
 
 IMSR_CSV = os.environ['IMSR_STRAINS_CSV']
 genotypeidLookup = {}

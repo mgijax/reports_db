@@ -55,8 +55,6 @@ SPECIES = 'NCBITaxon:10090'
 TAB = reportlib.TAB
 CRT = reportlib.CRT
 
-db.useOneConnection(1)
-
 fp = reportlib.init('mgi', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 fp.write('!gpi-version: 2.0\n')
@@ -444,18 +442,6 @@ for r in results:
         # 11 Gene_Product_Properties  
         fp.write(CRT)
 
-# attach PR/protein_complex generated from proisoformload 
-#try:
-#gpiFileName = os.environ['DATALOADSOUTPUT'] + '/pro/proisoformload/output/gpi2.txt'
-#gpiFile = open(gpiFileName, 'r')
-#for line in gpiFile.readlines():
-#        fp.write(line)
-#except:
-#        exit(1, 'Could not open file %s\n' % gpiFileName)
-
-# end isoforms
-#
-
 #
 # RNAs that are associated with at most 1 marker
 #
@@ -521,4 +507,3 @@ for ldbsearch in (9, 27, 133):
 # end RNAs
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

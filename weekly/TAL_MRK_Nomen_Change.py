@@ -22,12 +22,10 @@
  
 import sys 
 import os
-import string
 import reportlib
 import db
 
 db.setTrace()
-db.useOneConnection(1)
 
 CRT = reportlib.CRT
 TAB = reportlib.TAB
@@ -89,6 +87,4 @@ for mgiID in talMarkersList:
 fpOut.write('%sTotal: %s' % (CRT, nomenCt))
 fpIn.close()
 reportlib.finish_nonps(fpOut)	# non-postscript file
-
-db.useOneConnection(0)
 

@@ -40,7 +40,6 @@
  
 import sys
 import os
-import string
 import mgi_utils
 import reportlib
 import db
@@ -50,7 +49,6 @@ db.setTrace()
 CRT = reportlib.CRT
 TAB = reportlib.TAB
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
@@ -303,4 +301,3 @@ for r in results:
                 fp.write(CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

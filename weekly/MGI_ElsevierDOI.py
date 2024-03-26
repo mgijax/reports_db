@@ -37,7 +37,6 @@ db.setTrace()
 
 CRT = reportlib.CRT
 
-db.useOneConnection(1)
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
 #
@@ -158,4 +157,3 @@ for r in results:
     fp.write(r['accID'] + CRT)
 
 reportlib.finish_nonps(fp)
-db.useOneConnection(0)

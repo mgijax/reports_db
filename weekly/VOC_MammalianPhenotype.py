@@ -18,7 +18,6 @@
  
 import sys 
 import os
-import string
 import reportlib
 import db
 
