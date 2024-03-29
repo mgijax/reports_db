@@ -341,18 +341,11 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>2. GO terms and GO IDs for all three ontologies (Biological Process, Cellular Component, Molecular Function) (tab-delimited)</B></TD></TR>
-        <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>Ontology</TD><TD>GO ID</TD><TD>GO Term</TD></TR></TABLE>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="go_terms.mgi">go_terms.mgi</A> (only those terms annotated to MGI markers are included)</TD></TR>
-    </TABLE></TD></TR>
-
-    <TR><TD><TABLE>
-        <TR><TD><B>3. Gene Ontology (GO) Annotations of Mouse Markers</B> (see also <A HREF="https://geneontology.org/docs/download-go-annotations/">GO Annotation File format</A> at the <A HREF="https://geneontology.org/">Gene Ontology Consortium</A>)</TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GAF File: <A HREF="https://current.geneontology.org/annotations/mgi.gaf.gz">https://current.geneontology.org/annotations/mgi.gaf.gz</A>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPI File: <A HREF="https://current.geneontology.org/annotations/mgi.gpi.gz">https://current.geneontology.org/annotations/mgi.gpi.gz</A>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPAD2.0 File: <A HREF="https://current.geneontology.org/annotations/mgi.gpad.gz">https://current.geneontology.org/annotations/mgi.gpad.gz</A>
+        <TR><TD><B>2. Gene Ontology (GO) Annotations of Mouse Markers</B> (see also <A HREF="https://geneontology.org/docs/download-go-annotations/">GO Annotation File format</A> at the <A HREF="https://geneontology.org/">Gene Ontology Consortium</A>)</TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<I>Note that GO data in MGI includes recent annotations made after the official release date and thus may not be in the current official release file.</I></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GAF File: <A HREF="https://current.geneontology.org/annotations/mgi.gaf.gz">https://current.geneontology.org/annotations/mgi.gaf.gz</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPI File: <A HREF="https://current.geneontology.org/annotations/mgi.gpi.gz">https://current.geneontology.org/annotations/mgi.gpi.gz</A></TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPAD2.0 File: <A HREF="https://current.geneontology.org/annotations/mgi.gpad.gz">https://current.geneontology.org/annotations/mgi.gpad.gz</A></TD></TR>
     </TABLE></TD></TR>
 
 </TABLE><BR>
