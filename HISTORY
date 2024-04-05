@@ -12,6 +12,14 @@
 # It is used in the MGI staging feed, which is triggered every day when JaxStrain ETL is run.
 # Scott Rizzo <Scott.Rizzo@jax.org>
 
+TAG: reports_db-6-0-23-2
+DATE: 04/05/2024
+STAFF: lec
+wts2-1455/fl2-815/report BIB_PubMed needs to be re-added
+#       added:    weekly/BIB_PubMed.py
+#       used by Cc: Murphy, Terence (NIH/NLM/NCBI) [E] <murphyte@ncbi.nlm.nih.gov>
+#
+
 TAG: reports_db-6-0-23-1
 DATE: 03/29/2024
 STAFF: lec
@@ -36,7 +44,7 @@ DATE: 11/04/2023
 STAFF: lec
 wts2-1314/fl2-617/Add new file to MP files on FTP site
 index.shtml
-Configuration.default: setenv MPFILES                  "MPheno_OBO.ontology mp.owl mp.json mp-international.owl"
+Configuration.default: setenv MPFILES "MPheno_OBO.ontology mp.owl mp.json mp-international.owl"
 
 TAG: reports_db-6-0-22-7
 DATE: 10/24/2023
