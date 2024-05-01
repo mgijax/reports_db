@@ -11,6 +11,15 @@
 # mgimarkerfeed
 # It is used in the MGI staging feed, which is triggered every day when JaxStrain ETL is run.
 # Scott Rizzo <Scott.Rizzo@jax.org>
+#
+# these reports are no longer being created, but ouput files still exist.
+# so, do NOT remove these files
+# bhmgiapp01:/data/reports/reports_db/output
+# MGI_GTdbGSS_info.rpt
+# MGI_GTDNA.rpt
+# MGI_GTGUP.rpt
+# MGI_GTRNA.rpt
+#
 
 TAG: reports_db-6-0-23-2
 DATE: 04/05/2024
