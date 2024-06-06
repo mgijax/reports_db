@@ -420,15 +420,8 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="adult_mouse_anatomy.obo">adult_mouse_anatomy.obo</A>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE>
-        <TR><TD><B>5. Mouse-Human Anatomy Mappings</B></TD></TR>
-        <TR><TD>
-        </TD></TR>
-        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="ma2ncit.obo">ma2ncit.obo</A>
-    </TABLE></TD></TR>
-
     <TD><TABLE>
-        <TR><TD><B>6. Mammalian Phenotype (MP)-Mouse Developmental Anatomy (EMAPA) Mappings</B></TD></TR>
+        <TR><TD><B>5. Mammalian Phenotype (MP)-Mouse Developmental Anatomy (EMAPA) Mappings</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR><TD>MP ID</TD><TD>MP Term</TD><TD>EMAPA ID</TD><TD>EMAPA Term</TD></TR></TABLE>
         </TD></TR>
