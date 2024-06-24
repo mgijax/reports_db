@@ -25,7 +25,9 @@ TAG: reports_db-6-0-23-3
 DATE: 06/24/2024
 STAFF: lec
 wts2-1502/fl2-806/OMIM data missing from MGI_DO.rpt
+wts2-1503/fl2-907/Disease related reports are broken
 #       modified:   MGI_DO.py
+#       modified:   weekly/MGI_GenePheno.py
 
 TAG: reports_db-6-0-23-3
 DATE: 06/06/2024
