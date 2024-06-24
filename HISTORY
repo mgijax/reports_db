@@ -22,6 +22,12 @@
 #
 
 TAG: reports_db-6-0-23-3
+DATE: 06/24/2024
+STAFF: lec
+wts2-1502/fl2-806/OMIM data missing from MGI_DO.rpt
+#       modified:   MGI_DO.py
+
+TAG: reports_db-6-0-23-3
 DATE: 06/06/2024
 STAFF: lec
 wts2-1489/fl2-895/archive ma2ncit.obo
