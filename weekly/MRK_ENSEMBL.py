@@ -238,7 +238,7 @@ for r in results:
     # column 9: feature types
     if r['_Marker_key'] in featureTypes:	
         fp.write('|'.join(featureTypes[r['_Marker_key']]))
-        fp.write(TAB)
+    fp.write(TAB)
 
     # column 10-11-12
     if key in coords:
