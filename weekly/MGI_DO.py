@@ -90,10 +90,9 @@ results = db.sql('''select t._Term_key, t.term, a.accID, omim.accid as omimID
         and a._MGIType_key = 13
         and a.preferred = 1
         and a._LogicalDB_key = 191
-        and a.prefixPart = 'DOID:'
+        and a.preferred = 1
         and a._Object_key = omim._Object_key
-        and omim._LogicalDB_key = 191
-        and omim.prefixPart = 'MIM:'
+        and omim._LogicalDB_key  = 15
         union
         select t._Term_key, t.term, a.accID, null
         from VOC_Term t, ACC_Accession a
@@ -102,11 +101,10 @@ results = db.sql('''select t._Term_key, t.term, a.accID, omim.accid as omimID
         and a._MGIType_key = 13
         and a.preferred = 1
         and a._LogicalDB_key = 191
-        and a.prefixPart = 'DOID:'
+        and a.preferred = 1
         and not exists (select 1 from ACC_Accession omim
                 where a._Object_key = omim._Object_key
-                and omim._LogicalDB_key = 191
-                and omim.prefixPart = 'MIM:'
+                and omim._LogicalDB_key  = 15
                 )
         ''', 'auto')
 

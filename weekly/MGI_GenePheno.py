@@ -242,17 +242,16 @@ for r in results:
 #
 # DO annotations that do not have "NOT" qualifier
 #
-results = db.sql('''select distinct m._Object_key, a.accID, omimids.accid as omimidsID
-           from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession omimids
+results = db.sql('''select distinct m._Object_key, a.accID, doids.accid as doidsID
+           from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession doids
            where m._Object_key = va._Object_key 
            and va._AnnotType_key in (1020) 
            and va._Qualifier_key = 1614158
            and va._Term_key = a._Object_key
            and a._LogicalDB_key = 191
-           and a.prefixPart = 'DOID:'
-           and a._Object_key = omimids._Object_key
-           and omimids._LogicalDB_key = 191
-           and omimids.prefixPart = 'MIM:'
+           and a.preferred = 1
+           and a._Object_key = doids._Object_key
+           and doids._LogicalDB_key  = 15
            ''', 'auto')
 mpDO1 = {}
 mpOMIM1 = {}
@@ -263,7 +262,7 @@ for r in results:
         mpDO1[key] = [] 
     if value not in mpDO1[key]:
         mpDO1[key].append(value)
-    value = r['omimidsID']
+    value = r['doidsID']
     if key not in mpOMIM1:
         mpOMIM1[key] = []
     mpOMIM1[key].append(value)
@@ -271,17 +270,16 @@ for r in results:
 #
 # DO annotations that have "NOT" qualifier
 #
-results = db.sql('''select distinct m._Object_key, a.accID, omimids.accid as omimidsID
-           from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession omimids
+results = db.sql('''select distinct m._Object_key, a.accID, doids.accid as doidsID
+           from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession doids
            where m._Object_key = va._Object_key 
            and va._AnnotType_key in (1020) 
            and va._Qualifier_key = 1614157
            and va._Term_key = a._Object_key
            and a._LogicalDB_key = 191
            and a.preferred = 1
-           and a._Object_key = omimids._Object_key
-           and omimids._LogicalDB_key = 191
-           and omimids.prefixPart = 'MIM:'
+           and a._Object_key = doids._Object_key
+           and doids._LogicalDB_key  = 15
            ''', 'auto')
 mpDO2 = {}
 mpOMIM2 = {}
@@ -292,7 +290,7 @@ for r in results:
         mpDO2[key] = []
     if value not in mpDO2[key]:
         mpDO2[key].append(value)
-    value = r['omimidsID']
+    value = r['doidsID']
     if key not in mpOMIM2:
         mpOMIM2[key] = []
     mpOMIM2[key].append(value)
