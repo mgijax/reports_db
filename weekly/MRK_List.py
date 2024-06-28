@@ -14,6 +14,8 @@
 #
 # History:
 #
+# lec   06/28/2024
+#   wts2-1508/fl2-910/User requested change to MRK_List1.rpt
 #
 # sc    06/27/2014
 #       - TR11560 Feature Relationships project
@@ -55,9 +57,10 @@ headers = [
     "Marker Name", 
     "Marker Type",
     "Feature Type",
-    "Marker Synonyms (pipe-separated)"]
+    "Marker Synonyms (pipe-separated)"
+    ]
 
-fp1.write(TAB.join(headers) + CRT)
+fp1.write(TAB.join(headers) + TAB + "Current MGI Accession ID (if withdrawn)" + TAB + "Current Marker Symbol (if withdrawn)" + CRT)
 fp2.write(TAB.join(headers) + CRT)
 
 #
@@ -159,7 +162,9 @@ query1 = '''
            m.symbol, 
            m.markerstatus, 
            m.name, 
-           m.markertype
+           m.markertype,
+           null as currentSymbol,
+           null as currentAccid
     from markers m, ACC_Accession a
     where m._marker_status_key in (1, 3)
     and m._marker_key = a._object_key
@@ -170,6 +175,29 @@ query1 = '''
     '''
 
 query2 = '''
+    select 'NULL',
+           m._marker_key, 
+           m.chromosome, 
+           m.genomicChromosome,
+           m.cmposition, 
+           m.symbol, 
+           m.markerstatus, 
+           m.name, 
+           m.markertype,
+           m2.symbol as currentSymbol,
+           a2.accID as currentAccid
+    from markers m, MRK_Current c, MRK_Marker m2, ACC_Accession a2
+    where m._marker_status_key = 2
+    and m._marker_key = c._marker_key
+    and c._current_key = m2._marker_key
+    and m2._marker_key = a2._object_key
+    and a2._mgitype_key = 2
+    and a2.prefixpart = 'MGI:'
+    and a2._logicaldb_key = 1
+    and a2.preferred = 1
+    '''
+
+query3 = '''
     select 'NULL', 
            m._marker_key, 
            m.chromosome, 
@@ -178,15 +206,26 @@ query2 = '''
            m.symbol, 
            m.markerstatus, 
            m.name, 
-           m.markertype
+           m.markertype,
+           null as currentSymbol,
+           null as currentAccid
     from markers m
     where m._marker_status_key = 2
+    and not exists (select 1 from MRK_Current c, MRK_Marker m2, ACC_Accession a2
+        where m._marker_key = c._marker_key
+        and c._current_key = m2._marker_key
+        and m2._marker_key = a2._object_key
+        and a2._mgitype_key = 2
+        and a2.prefixpart = 'MGI:'
+        and a2._logicaldb_key = 1
+        and a2.preferred = 1
+    )
     '''
 
 #
 # include withdrawns
 #
-results = db.sql('(%s union %s) order by symbol' % (query1, query2), 'auto')
+results = db.sql('(%s union %s union %s) order by symbol' % (query1, query2, query3), 'auto')
 for r in results:
 
     key = r['_marker_key']
@@ -227,7 +266,13 @@ for r in results:
 
     if key in synonyms:
         fp1.write('|'.join(synonyms[key]))
-    fp1.write(CRT)
+    fp1.write(TAB)
+
+    if r['currentSymbol'] != None:
+        fp1.write(r['currentAccid'] + TAB)
+        fp1.write(r['currentSymbol'] + CRT)
+    else:
+        fp1.write(TAB + CRT)
 
 #
 # do not include withdrawns

@@ -54,7 +54,7 @@
     <TR><TD><TABLE>
         <TR><TD><B>1. List of Mouse Genetic Markers (sorted alphabetically by marker symbol, tab-delimited)</B></TD></TR>
         <TR><TD>
-        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Chromosome</TD><TD>cM Position</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Genome Strand</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>Marker Type</TD><TD>Feature Types (|-delimted)</TD><TD>Marker Synonyms (|-delimited)</TD></TR></TABLE>
+        <TABLE BORDER CELLPADDING=2><TR><TD>MGI Marker Accession ID</TD><TD>Chromosome</TD><TD>cM Position</TD><TD>Genome Coordinate Start</TD><TD>Genome Coordinate End</TD><TD>Genome Strand</TD><TD>Marker Symbol</TD><TD>Status</TD><TD>Marker Name</TD><TD>Marker Type</TD><TD>Feature Types (|-delimted)</TD><TD>Marker Synonyms (|-delimited)</TD><TD>Current MGI Accession ID (withdrawn only)</TD><TD>Current Marker Symbol (withdrawn only)</TD></TR></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List1.rpt">MRK_List1.rpt</A> (including withdrawn marker symbols)</TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MRK_List2.rpt">MRK_List2.rpt</A> (excluding withdrawn marker symbols)</TD></TR>
