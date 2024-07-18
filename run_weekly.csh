@@ -49,6 +49,7 @@ cd ${REPORTOUTPUTDIR}
 echo `date`: gzip reports | tee -a ${LOG}
 foreach i (MRK_List1.rpt MRK_List2.rpt)
     echo `date`: $i | tee -a ${LOG}
+    rm -rf $i.gz
     cat $i | gzip -cf9 > $i.gz
     touch $i $i.gz
 end
