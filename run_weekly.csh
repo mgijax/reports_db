@@ -42,6 +42,17 @@ end
 echo `date`: ncbilinkout.csh | tee -a ${LOG}
 ${PUBRPTS}/ncbilinkout/ncbilinkout.csh >>& ${LOG}
 
+#
+# gzip some files
+#
+cd ${REPORTOUTPUTDIR}
+echo `date`: gzip reports | tee -a ${LOG}
+foreach i (MRK_List1.rpt MRK_List2.rpt)
+    echo `date`: $i | tee -a ${LOG}
+    cat $i | gzip -cf9 > $i.gz
+    touch $i $i.gz
+end
+
 echo `date`: End weekly public reports | tee -a ${LOG}
 
 exit 0
