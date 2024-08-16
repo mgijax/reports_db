@@ -324,6 +324,20 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_HumanPhenotype.rpt">HMD_HumanPhenotype.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
+    <TR><TD><TABLE><B>5. Mouse Protein Coding Genes having one-to-one Orthology with Human Genes</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR>
+        <TD>MGI Marker Accession ID</TD>
+        <TD>Mouse Gene Symbol</TD>
+        <TD>Mouse NCBI Gene ID</TD>
+        <TD>HGNC ID</TD>
+        <TD>Human Gene Symbol</TD>
+        <TD>Human NCBI Gene ID</TD>
+        </TABLE>
+        </TD></TR>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HOM_ProteinCoding.rpt">HOM_ProteinCoding.rpt</A></TD></TR>
+    </TABLE></TD></TR>
+
 </TABLE><BR>
 
 <!-- -->
