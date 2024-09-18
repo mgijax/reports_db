@@ -25,6 +25,9 @@ setenv PUBDAILY			${PUBRPTS}/daily
 # weekly reports directory
 setenv PUBWEEKLY		${PUBRPTS}/weekly
 
+# gxd rna seql reports directory
+setenv PUBGXDRNASEQ		${PUBRPTS}/gxdrnaseq
+
 # on-demand reports directory
 setenv ONDEMAND			${PUBRPTS}/ondemand
 
@@ -38,6 +41,9 @@ setenv MAFILES			"adult_mouse_anatomy.obo"
 
 # CvDC directory
 setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
+
+# rna seq load report
+setenv GXDRNASEQDIR		${PUBREPORTDIR}/output/gxdrnaseq
 
 # GOA file
 setenv GOAGAFMGI		${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gaf
