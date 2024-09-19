@@ -30,7 +30,7 @@
 # Sort
 # 1) Gene Symbol
 # 2) Experiment ID
-# 3) Anatomical Structure (topologically sorted)
+# 3) Anatomical Structure
 # 4) Theiler Stage
 # 5) Age
 # 6) Sex
