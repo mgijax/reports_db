@@ -2,8 +2,6 @@
 #
 # GXD_RnaSeq.py
 #
-# Report:
-#
 # Generate 1 report per experiment
 #
 # 1:  MGI Gene ID
@@ -30,7 +28,7 @@
 # 20: TPM Level
 #
 # Sort
-# 1) Gene Symbol (smart alpha)
+# 1) Gene Symbol
 # 2) Experiment ID
 # 3) Anatomical Structure (topologically sorted)
 # 4) Theiler Stage
@@ -143,6 +141,7 @@ and s._genotype_key = ga._genotype_key
 and ga._allele_key = a._allele_key
 and exists (select 1 from GXD_HTSample_RNASeq rna where s._sample_key = rna._sample_key)
 group by ga._genotype_key
+order by alleles
 ''', 'auto')
 for r in results:
     key = r['_genotype_key']
