@@ -4,30 +4,30 @@
 #
 # Report:
 #
-# Geneate 1 report per experiment
+# Generate 1 report per experiment
 #
-# 1)  MGI Gene ID
-# 2)  Ensembl ID
-# 3)  Gene Symbol
-# 4)  Gene Name
-# 5)  Experiment ID
-# 6)  Anatomical Structure [gxd_htsample._emapa_key]
-# 7)  Theiler Stage [gxd_htsample._stage_key]
-# 8)  Age [gxd_htsample.age]
-# 9)  Sex [gxd_htsample._sex_key]
-# 10) Strain [gxd_htsample._genotype_key -> gxd_genotype -> prb_strain]
-# 11) Mutant Allele Pair(s) (comma delimited, if multiple)
-# 12) Notes (RNA-Seq) [htsample note]
-# 13) Sample ID (maybe combine the bioreplicate samples - comma delimited)
-# 14) Number of Biological Replicates
-# 15) Bioreplicate Set Label 
-#   (as used in the heat map: structure_ExperimentID_set key value (_rnaseqset_key) - example: hippocampus_E-GEOD-76567_323)
-#   emapa term + "_" + experiiment ID + "_" + gxd_htsample_rnaseqset.._rnaseqset_key
-# 16) Detected
-# 17) avg_TPM [gxd_htsample_rnaseq..averagetpm]
-# 18) qnTPM [gxd_htsample_rnaseq..quantilenormalizedtpm]
-# 19) avg_qnTPM [gxd_htsample_rnaseqcombined..averagequantilenormalizedtpm]
-# 20) TPM Level
+# 1:  MGI Gene ID
+# 2:  Ensembl ID
+# 3:  Gene Symbol
+# 4:  Gene Name
+# 5:  Experiment ID
+# 6:  Anatomical Structure [gxd_htsample._emapa_key]
+# 7:  Theiler Stage [gxd_htsample._stage_key]
+# 8:  Age [gxd_htsample.age]
+# 9:  Sex [gxd_htsample._sex_key]
+# 10: Strain [gxd_htsample._genotype_key -> gxd_genotype -> prb_strain]
+# 11: Mutant Allele Pair(s) (comma delimited, if multiple)
+# 12: Notes (RNA-Seq) [htsample note]
+# 13: Sample ID (maybe combine the bioreplicate samples - comma delimited)
+# 14: Number of Biological Replicates
+# 15: Bioreplicate Set Label : as used in the heat map
+#   emapa term + "_" + experiiment ID + "_" + gxd_htsample_rnaseqset._rnaseqset_key
+#   example: hippocampus_E-GEOD-76567_323)
+# 16: Detected : if TPM Level == 'Below Cutoff' then No, else Yes
+# 17: avg_TPM [gxd_htsample_rnaseq..averagetpm]
+# 18: qnTPM [gxd_htsample_rnaseq..quantilenormalizedtpm]
+# 19: avg_qnTPM [gxd_htsample_rnaseqcombined..averagequantilenormalizedtpm]
+# 20: TPM Level
 #
 # Sort
 # 1) Gene Symbol (smart alpha)
@@ -160,26 +160,26 @@ for e in eresults:
     counter += 1
 
     fp = reportlib.init(e['exptId'], outputdir = os.environ['GXDRNASEQDIR'], printHeading = None)
-    fp.write('1:MGI Gene ID' + TAB)
-    fp.write('2:Ensembl ID' + TAB)
-    fp.write('3:Gene Symbol' + TAB)
-    fp.write('4:Gene Name' + TAB)
-    fp.write('5:Experiment ID' + TAB)
-    fp.write('6:Anatomical Structure' + TAB)
-    fp.write('7:Theiler Stage' + TAB)
-    fp.write('8:Age' + TAB)
-    fp.write('9:Sex' + TAB)
-    fp.write('10:Strain' + TAB)
-    fp.write('11:Mutant Allele Pair(s)' + TAB)
-    fp.write('12:Notes' + TAB)
-    fp.write('13:Sample ID' + TAB)
-    fp.write('14:Number of Biological Replicates' + TAB)
-    fp.write('15:Bioreplicate Set Label' + TAB)
-    fp.write('16:Detected' + TAB)
-    fp.write('17:avg_TPM' + TAB)
-    fp.write('18:qnTPM' + TAB)
-    fp.write('19:avg_qnTPM' + TAB)
-    fp.write('20:TPM Level\n')
+    fp.write('MGI Gene ID' + TAB)
+    fp.write('Ensembl ID' + TAB)
+    fp.write('Gene Symbol' + TAB)
+    fp.write('Gene Name' + TAB)
+    fp.write('Experiment ID' + TAB)
+    fp.write('Anatomical Structure' + TAB)
+    fp.write('Theiler Stage' + TAB)
+    fp.write('Age' + TAB)
+    fp.write('Sex' + TAB)
+    fp.write('Strain' + TAB)
+    fp.write('Mutant Allele Pair(s)' + TAB)
+    fp.write('Notes' + TAB)
+    fp.write('Sample ID' + TAB)
+    fp.write('Number of Biological Replicates' + TAB)
+    fp.write('Bioreplicate Set Label' + TAB)
+    fp.write('Detected' + TAB)
+    fp.write('avg_TPM' + TAB)
+    fp.write('qnTPM' + TAB)
+    fp.write('avg_qnTPM' + TAB)
+    fp.write('TPM Level\n')
 
     eKey = e['_experiment_key']
 

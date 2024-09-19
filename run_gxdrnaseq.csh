@@ -22,18 +22,22 @@ touch ${LOG}
 echo `date`: Start GXD RNA Seq public reports | tee -a ${LOG}
 
 #
+# remove old files, tar, gzip
+#
+rm -rf ${GXDRNASEQDIR}/*
+
+#
 # Generate GXD RNA Seq public reports.
 #
 cd ${PUBGXDRNASEQ}
 ${PYTHON} GXD_RnaSeq.py >>& ${LOG}
 
 #
-# gzip files
+# tar & gzip files
 #
-#cd ${GXDRNASEQDIR}
 #echo `date`: tar and gzip reports | tee -a ${LOG}
-#rm -rf gxdrnaseq.tar gxdrnaseq.tar.gz
-#tar -cvf gxdrnaseq.tar GXD*.rpt
+#cd ${GXDRNASEQDIR}
+#tar -cvf gxdrnaseq.tar *.rpt
 #gzip gxdrnaseq.tar
 
 echo `date`: End GXD RNA Seq public reports | tee -a ${LOG}
