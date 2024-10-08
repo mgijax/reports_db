@@ -35,10 +35,10 @@ ${PYTHON} GXD_RnaSeq.py >>& ${LOG}
 #
 # tar & gzip files
 #
-#echo `date`: tar and gzip reports | tee -a ${LOG}
-#cd ${GXDRNASEQDIR}
-#tar -cvf gxdrnaseq.tar *.rpt
-#gzip gxdrnaseq.tar
+echo `date`: tar and gzip reports | tee -a ${LOG}
+cd ${GXDRNASEQDIR}
+tar -cvf gxdrnaseq.tar *.rpt
+gzip gxdrnaseq.tar
 
 echo `date`: End GXD RNA Seq public reports | tee -a ${LOG}
 
