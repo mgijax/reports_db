@@ -143,7 +143,7 @@ order by alleles
 ''', 'auto')
 for r in results:
     key = r['_genotype_key']
-    value = r['alleles'].replace('\n','')
+    value = r['alleles'].replace('\n',',')
     alleles[key] = value
 #print(alleles)
 
