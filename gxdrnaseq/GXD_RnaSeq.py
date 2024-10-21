@@ -56,8 +56,6 @@ CRT = reportlib.CRT
 #TAB = reportlib.TAB
 TAB = "|"
 
-reportName = 'GXD_RnaSeq'
-
 # distinct experiments
 db.sql('''
 select distinct s._experiment_key, a.accid as exptId
@@ -134,18 +132,18 @@ for r in results:
 # alleles by genotype
 alleles = {}
 results = db.sql('''
-select distinct ga._genotype_key, array_to_string(array_agg(distinct a.symbol),',') as alleles
-from experiments e, GXD_HTSample s, gxd_allelegenotype ga, all_allele a
+select distinct s._genotype_key, n.note as alleles
+from experiments e, GXD_HTSample s, MGI_Note n
 where e._experiment_key = s._experiment_key
-and s._genotype_key = ga._genotype_key
-and ga._allele_key = a._allele_key
+and s._genotype_key = n._object_key
+and n._mgitype_key = 12
+and n._notetype_key = 1016
 and exists (select 1 from GXD_HTSample_RNASeq rna where s._sample_key = rna._sample_key)
-group by ga._genotype_key
 order by alleles
 ''', 'auto')
 for r in results:
     key = r['_genotype_key']
-    value = r['alleles']
+    value = r['alleles'].replace('\n','')
     alleles[key] = value
 #print(alleles)
 
@@ -185,7 +183,7 @@ for e in eresults:
     # sample info of given experiment
     sampleByExpt = {}
     results = db.sql('''
-    select e.exptId, s.*,
+    select distinct e.exptId, s.*,
         s1.term as termStruct, s2.term as termSex, gs.strain
     from experiments e, GXD_HTSample s,
          voc_term s1, voc_term s2, gxd_genotype g, prb_strain gs
@@ -208,7 +206,7 @@ for e in eresults:
 
         # sample info of given experiment/marker
         results = db.sql('''
-            select rna._sample_key,
+            select distinct rna._sample_key,
                 rna.averagetpm, rna.quantilenormalizedtpm, 
                 rnaC._level_key, rnaC.numberofbiologicalreplicates, rnaC.averagequantilenormalizedtpm,
                 rnaS._rnaseqset_key,
