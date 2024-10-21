@@ -65,7 +65,6 @@ where exists (select 1 from GXD_HTSample_RNASeq rna where s._sample_key = rna._s
 and s._experiment_key = a._object_key
 and a._mgitype_key = 42
 and a._logicaldb_key in (189)
-and a.accid in ('E-MTAB-5772', 'E-MTAB-5986')
 order by a.accid
 ''', None)
 db.sql('create index eidx1 on experiments (_experiment_key);', None)
@@ -78,7 +77,6 @@ from GXD_HTSample s, GXD_HTSample_RNASeq rna, MRK_Marker m
 where s._experiment_key = 6078
 and s._sample_key = rna._sample_key
 and rna._marker_key = m._marker_key
-and m.symbol in ('Dppa3', 'Lmx1a')
 )
 select m.*, a1.accid as mgiId, array_to_string(array_agg(distinct a2.accid),',') as ensId
 into temp table markers
