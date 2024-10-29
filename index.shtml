@@ -418,7 +418,16 @@
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
-        <TR><TD><B>3. <A HREF="gxdrnaseq">Comprehensive RNA-Seq Data Folder</A></B></TD></TR>
+        <TR><TD><B>3. RNA-Seq assay results in GXD (tab-delimited file per experiment)</B></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR>
+        <TD>MGI Gene ID</TD> <TD>Ensembl ID</TD> <TD>Gene Symbol</TD> <TD>Gene Name</TD> <TD>Experiment ID</TD> <TD>Anatomical Structure</TD> <TD>Theiler Stage</TD> <TD>Age</TD> <TD>Sex</TD> <TD>Strain</TD> <TD>Mutant Allele Pair(s)</TD> <TD>Notes</TD> <TD>Sample ID</TD> <TD>Number of Biological Replicates</TD> <TD>Bioreplicate Set Label</TD> <TD>Detected</TD> <TD>AVG TPM</TD> <TD>QN TPM</TD> <TD>AVG QN TPM</TD>
+        </TR></TABLE>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <A HREF="https://mgitest.jax.org/downloads/reports/gxdrnaseq/">RNA-Seq Report Download</A></TR>
+        <TR><TD>Comprehensive reports for each RNA-Seq Experiment in GXD with expression data loaded from the Expression Atlas at EMBL's European Bioinformatics Institute (EBI).  Reports include GXD-curated sample metadata and GXD-computed TPM values per gene.</TD></TR>
+        <TR><TD></TD></TR>
+        <TR><TD>GXD imports selected sets of RNA-Seq data from EMBL-EBI's Expression Atlas for experiments that have been annotated to controlled biological source metadata by expert GXD curation. Leveraging curated source metadata, GXD processes the files further to effectively integrate RNA-Seq data with classical expression data in GXD.  TPM processing includes several steps.  First, we use TPM values in the files imported from the Expression Atlas to compute the average TPM value per gene per sample for technical replicates. Then, we group samples that have the same source information into biological replicate sets and quantile normalize (QN) the TPM values per gene across the samples in each biological replicate set.  Finally, to minimize biological sample variation, we average these QN TPM values to arrive at a single TPM value per gene per set of bioreplicate samples.  Average QN TPM values are used to assign TPM levels and expression detected/not detected status in the GXD interface.  Average QN TPM values are also exported for visualization in Morpheus-derived heat maps of GXD expression results.</TD</TR>
     </TABLE></TD></TR>
 
     <TR><TD><TABLE>
