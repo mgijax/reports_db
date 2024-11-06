@@ -39,7 +39,7 @@ echo `date`: tar and gzip reports | tee -a ${LOG}
 cd ${GXDRNASEQDIR}
 foreach i (*.rpt)
 rm -rf $i.gz
-cat $i | gzip -cf9 > $i.gz
+gzip $i
 end
 rm -rf gxdrnaseq.tar
 tar -cvf gxdrnaseq.tar *.gz | tee -a ${LOG}
