@@ -9,7 +9,7 @@
 #	see TR11046 for more details
 #
 # Used by:
-#	Jill Recla (jillrecla@jax.org), Carol Bult (carol.bult@jax.org)
+#	Carol Bult (carol.bult@jax.org)
 #
 # Output format:
 #
