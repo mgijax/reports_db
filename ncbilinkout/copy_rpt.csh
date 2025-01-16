@@ -45,7 +45,7 @@ if ( ${INSTALL_TYPE} == "prod" ) then
 
 echo `date`: Send data to NCBI LinkOut host | tee -a ${LOG}
 cd ${REPORTOUTPUTDIR}
-ftp -in ${NCBILINKOUT_HOST} <<END | tee -a ${LOG}
+/usr/bin/ftp -in ${NCBILINKOUT_HOST} <<END | tee -a ${LOG}
 user ${NCBILINKOUT_USER} ${NCBILINKOUT_PASSWORD}
 cd holdings
 mput protein-mgd.xml
@@ -58,7 +58,7 @@ END
 
 echo `date`: Send data to E_PMC LinkOut host | tee -a ${LOG}
 cd ${REPORTOUTPUTDIR}
-ftp -in ${E_PMC_HOST} <<END | tee -a ${LOG}
+/usr/bin/ftp -in ${E_PMC_HOST} <<END | tee -a ${LOG}
 user ${E_PMC_USER} ${E_PMC_PASSWORD}
 cd ol9dybmp
 mput pmc_providerinfo.xml
