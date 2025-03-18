@@ -8,25 +8,18 @@
 #       see: wiki/mediawiki/index.php/sw:GOload 
 #       contains link to GO/GPI format
 #
-# 1  DB:Object ID
-# 2  Object Symbol
-# 3  Object Name
-# 4  Object Synonyms 
-# 5  Object Type
-# 6  Object Taxon
+# 1  DB_Object_ID
+# 2  DB_Object_Symbol
+# 3  DB_Object_Name
+# 4  DB_Object_Synonyms 
+# 5  DB_Object_Type
+# 6  DB_Object_Taxon
+# 7  Encoded_By 
+# 8  Parent_Protein 
+# 9  Protein_Containing_Complex_Members 
+# 10 DB_Xrefs 
+# 11 Gene_Product_Properties 
 #
-# 7  Encoded by
-# 8  Canonical object ID
-# if column 5 (Object Type) in (PR:000000001, SO:0000234, SO:0000655)
-#   column 7, column 8 = MGI:xxx
-# else:
-#   column 8 = column 1
-# 
-# 9  Protein Complex Members
-# 10 Cross-reference(s) DB_Xrefs 
-# include the corresponding RNA_Central ID for each MGI feature
-#
-# 11 Gene Product Properties 
 #
 # 1. markers of type gene (1), pseudogene (7), complex (10) with feature types
 # 2. markers of type gene (1), pseudogene (7), complex (10) without feature types
@@ -276,7 +269,7 @@ for r in results:
 
         fp.write(SPECIES + TAB)
         fp.write(TAB)
-        fp.write('MGI:' + r['accID'] + TAB)
+        fp.write(TAB)
         fp.write(TAB)
 
         if marker in markerUniProtKB:
@@ -326,8 +319,8 @@ for r in results:
                 fp.write('col 5 bad no feature type/marker type =  ' + str(r['_Marker_Type_key']) + TAB)
 
 	fp.write(SPECIES + TAB)
-	fp.write(TAB) 
-	fp.write('MGI:' + r['accID'] + TAB) 
+	fp.write(TAB)
+	fp.write(TAB)
 	fp.write(TAB)
 
 	if marker in markerUniProtKB:
@@ -435,8 +428,8 @@ for r in results:
         # 7. Encoded_By                                 ::= [ID] ('|' ID)*
         fp.write('MGI:' + markerByIsoform[isoform][0] + TAB)
 
-        # 8  Canonical object ID
-        fp.write('MGI:' + markerByIsoform[isoform][0] + TAB)
+        # 8 Parent_Protein                             ::= [ID] ('|' ID)*
+        fp.write(TAB)
 
         # 9 Protein_Containing_Complex_Members         ::= [ID] ('|' ID)*
         fp.write(TAB)
@@ -506,7 +499,7 @@ for ldbsearch in (9, 27, 133):
 	    fp.write(DBTYPE_RNA + TAB)
 	    fp.write(SPECIES + TAB)
 	    fp.write('MGI:' + r['markerID'] + TAB)
-	    fp.write('MGI:' + r['markerID'] + TAB)
+	    fp.write(TAB)
 	    fp.write(TAB)
 	    fp.write(TAB)
 	    fp.write(CRT)
