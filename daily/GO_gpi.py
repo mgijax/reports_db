@@ -4,6 +4,12 @@
 #
 # cat mgi.gpi | grep -v '^!' | awk 'BEGIN {FS="\t"} {print NF}' | sort | uniq -c
 #
+# 4 marker sets:
+#   A: markers with feature types; contains col10 = RNAcentral
+#   B: markers without feature types; contains col10 = RNAcentral
+#   C: isoforms PR (183) : 1,7,10 only
+#   D: RNAs that are associated with at most 1 marker : 1,7,10 only; contains col10 = RNAcentral
+#
 # Report:
 #       see: wiki/mediawiki/index.php/sw:GOload 
 #       contains link to GO/GPI format
@@ -27,12 +33,6 @@
 # include the corresponding RNA_Central ID for each MGI feature
 #
 # 11 Gene Product Properties 
-#
-# 1. markers of type gene (1), pseudogene (7), complex (10) with feature types
-# 2. markers of type gene (1), pseudogene (7), complex (10) without feature types
-# 3. isoforms UniProtKB from PR (183) : 1,7,10 only
-# 4. isoforms PR (183) : 1,7,10 only
-# 5. RNAs that are associated with at most 1 marker : 1,7,10 only
 #
 # History:
 #
@@ -61,6 +61,47 @@ SPECIES = 'NCBITaxon:10090'
 
 TAB = reportlib.TAB
 CRT = reportlib.CRT
+
+rnaTag = 'RNAcentral:%s_10090'
+rnaCentralToMGI = {}
+mgiToRnaCentral = {}
+
+def rnaCentral():
+    global rnaCentralToMGI
+    global mgiToRnaCentral
+
+    rnaCentralToMGI = {}
+    mgiToRnaCentral = {}
+
+    inFile = open('/data/downloads/ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/id_mapping/database_mappings/mgi.tsv', 'r')
+    for line in inFile.readlines():
+        tokens = line[:-1].split('\t')
+        rnaId = tokens[0]
+        mgiId = tokens[2]
+        if rnaId not in rnaCentralToMGI:
+            rnaCentralToMGI[rnaId] = []
+        rnaCentralToMGI[rnaId].append(mgiId)
+
+    inFile.seek(0)
+    for line in inFile.readlines():
+        tokens = line[:-1].split('\t')
+        rnaId = tokens[0]
+        mgiId = tokens[2]
+
+        if len(rnaCentralToMGI[rnaId]) <= 1:
+            if mgiId not in mgiToRnaCentral:
+                mgiToRnaCentral[mgiId] = []
+            mgiToRnaCentral[mgiId].append(rnaId)
+    inFile.close()
+
+    #print(rnaCentralToMGI)
+    #print(mgiToRnaCentral)
+
+#
+# main
+#
+
+rnaCentral()
 
 fp = reportlib.init('mgi', fileExt = '.gpi', outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 
@@ -187,7 +228,7 @@ for r in results:
 
 #
 # markers:terms
-# marker with feature type
+# A: marker with feature type
 #
 
 results = db.sql('''
@@ -279,14 +320,19 @@ for r in results:
         fp.write('MGI:' + r['accID'] + TAB)
         fp.write(TAB)
 
+        addPipe = ""
         if marker in markerUniProtKB:
                 fp.write("|".join(markerUniProtKB[marker]))
+                addPipe = "|"
+        if marker in mgiToRnaCentral:
+                if len(mgiToRnaCentral[marker]) == 1:
+                    fp.write(addPipe + rnaTag % (mgiToRnaCentral[marker][0]))
         fp.write(TAB)
 
         fp.write(CRT)
 
 #
-# marker without feature type; use marker type
+# B: marker without feature type; use marker type
 #
 
 results = db.sql('''
@@ -330,8 +376,13 @@ for r in results:
 	fp.write('MGI:' + r['accID'] + TAB) 
 	fp.write(TAB)
 
+	addPipe = ""
 	if marker in markerUniProtKB:
 		fp.write("|".join(markerUniProtKB[marker]))
+		addPipe = "|"
+	if marker in mgiToRnaCentral:
+		if len(mgiToRnaCentral[marker]) == 1:
+		    fp.write(addPipe + rnaTag % (mgiToRnaCentral[marker][0]))
 	fp.write(TAB)
 
 	fp.write(CRT)
@@ -395,7 +446,7 @@ for r in results:
         isoformUniProt[key].append(value)
 
 #
-# isoforms:terms
+# C: isoforms:terms
 # 183 | Protein Isoform Ontology
 #
 
@@ -450,7 +501,7 @@ for r in results:
         fp.write(CRT)
 
 #
-# RNAs that are associated with at most 1 marker
+# D: RNAs that are associated with at most 1 marker
 #
 
 for ldbsearch in (9, 27, 133):
@@ -508,6 +559,11 @@ for ldbsearch in (9, 27, 133):
 	    fp.write('MGI:' + r['markerID'] + TAB)
 	    fp.write('MGI:' + r['markerID'] + TAB)
 	    fp.write(TAB)
+	    if ldb == 133:
+	        marker = r['markerID']
+	        if marker in mgiToRnaCentral:
+	            if len(mgiToRnaCentral[marker]) == 1:
+	                fp.write(rnaTag % (mgiToRnaCentral[marker][0]))
 	    fp.write(TAB)
 	    fp.write(CRT)
 
