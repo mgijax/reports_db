@@ -63,39 +63,56 @@ TAB = reportlib.TAB
 CRT = reportlib.CRT
 
 rnaTag = 'RNAcentral:%s_10090'
-rnaCentralToMGI = {}
-mgiToRnaCentral = {}
+singleMgiToRnaCentral = {}
+singleRnaCentralToMGI = {}
 
 def rnaCentral():
-    global rnaCentralToMGI
-    global mgiToRnaCentral
+    global singleMgiToRnaCentral
+    global singleRnaCentralToMGI
 
-    rnaCentralToMGI = {}
-    mgiToRnaCentral = {}
+    #
+    # create set of single MGI -> RNACentral associations
+    # create set of single RNACentral -> MGI associations
+    # The single RNACentral in the single MGI -> RNACentral set
+    # must also exist in the single RNACentral -> MGI set
+    #
+
+    allMgiToRnaCentral = {}
+    allRnaCentralToMGI = {}
 
     inFile = open('/data/downloads/ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/id_mapping/database_mappings/mgi.tsv', 'r')
     for line in inFile.readlines():
         tokens = line[:-1].split('\t')
         rnaId = tokens[0]
         mgiId = tokens[2]
-        if rnaId not in rnaCentralToMGI:
-            rnaCentralToMGI[rnaId] = []
-        rnaCentralToMGI[rnaId].append(mgiId)
 
-    inFile.seek(0)
-    for line in inFile.readlines():
-        tokens = line[:-1].split('\t')
-        rnaId = tokens[0]
-        mgiId = tokens[2]
+        if mgiId not in allMgiToRnaCentral:
+            allMgiToRnaCentral[mgiId] = []
+        allMgiToRnaCentral[mgiId].append(rnaId)
 
-        if len(rnaCentralToMGI[rnaId]) <= 1:
-            if mgiId not in mgiToRnaCentral:
-                mgiToRnaCentral[mgiId] = []
-            mgiToRnaCentral[mgiId].append(rnaId)
+        if rnaId not in allRnaCentralToMGI:
+            allRnaCentralToMGI[rnaId] = []
+        allRnaCentralToMGI[rnaId].append(mgiId)
     inFile.close()
 
-    #print(rnaCentralToMGI)
-    #print(mgiToRnaCentral)
+    # create set of single MGI -> RNACentral associations
+    for rnaId in allRnaCentralToMGI:
+        if len(allRnaCentralToMGI[rnaId]) == 1:
+            singleRnaCentralToMGI[rnaId] = allRnaCentralToMGI[rnaId]
+
+    # create set of single RNACentral -> MGI associations
+    # The single RNACentral in the single MGI -> RNACentral set
+    # must also exist in the single RNACentral -> MGI set
+    for mgiId in allMgiToRnaCentral:
+        if len(allMgiToRnaCentral[mgiId]) == 1:
+            rnaId = allMgiToRnaCentral[mgiId][0]
+            if rnaId in singleRnaCentralToMGI:
+                singleMgiToRnaCentral[mgiId] = allMgiToRnaCentral[mgiId]
+
+    #print(allRnaCentralToMGI)
+    #print(allMgiToRnaCentral)
+    #print(singleMgiToRnaCentral)
+    #print(singleRnaCentralToMGI)
 
 #
 # main
@@ -324,9 +341,8 @@ for r in results:
         if marker in markerUniProtKB:
                 fp.write("|".join(markerUniProtKB[marker]))
                 addPipe = "|"
-        if marker in mgiToRnaCentral:
-                if len(mgiToRnaCentral[marker]) == 1:
-                    fp.write(addPipe + rnaTag % (mgiToRnaCentral[marker][0]))
+        if marker in singleMgiToRnaCentral:
+                fp.write(addPipe + rnaTag % (singleMgiToRnaCentral[marker][0]))
         fp.write(TAB)
 
         fp.write(CRT)
@@ -380,9 +396,8 @@ for r in results:
 	if marker in markerUniProtKB:
 		fp.write("|".join(markerUniProtKB[marker]))
 		addPipe = "|"
-	if marker in mgiToRnaCentral:
-		if len(mgiToRnaCentral[marker]) == 1:
-		    fp.write(addPipe + rnaTag % (mgiToRnaCentral[marker][0]))
+	if marker in singleMgiToRnaCentral:
+		fp.write(addPipe + rnaTag % (singleMgiToRnaCentral[marker][0]))
 	fp.write(TAB)
 
 	fp.write(CRT)
@@ -561,9 +576,8 @@ for ldbsearch in (9, 27, 133):
 	    fp.write(TAB)
 	    if ldb == 133:
 	        marker = r['markerID']
-	        if marker in mgiToRnaCentral:
-	            if len(mgiToRnaCentral[marker]) == 1:
-	                fp.write(rnaTag % (mgiToRnaCentral[marker][0]))
+	        if marker in singleMgiToRnaCentral:
+	            fp.write(rnaTag % (singleMgiToRnaCentral[marker][0]))
 	    fp.write(TAB)
 	    fp.write(CRT)
 
