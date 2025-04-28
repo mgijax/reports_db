@@ -21,9 +21,10 @@
 # MGI_GTRNA.rpt
 #
 
+TAG: reports_db-6-0-25-5
 TAG: reports_db-6-0-25-4
 TAG: reports_db-6-0-25-3
-DATE: 04/04/2025
+DATE: 04/28/2025
 STAFF: lec
 wts2-562/e4g-207/mapping RNA central ids to MGI genes (TR13445)
 

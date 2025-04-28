@@ -574,10 +574,6 @@ for ldbsearch in (9, 27, 133):
 	    fp.write('MGI:' + r['markerID'] + TAB)
 	    fp.write('MGI:' + r['markerID'] + TAB)
 	    fp.write(TAB)
-	    if ldb == 133:
-	        marker = r['markerID']
-	        if marker in singleMgiToRnaCentral:
-	            fp.write(rnaTag % (singleMgiToRnaCentral[marker][0]))
 	    fp.write(TAB)
 	    fp.write(CRT)
 
