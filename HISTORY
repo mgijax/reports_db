@@ -21,6 +21,13 @@
 # MGI_GTRNA.rpt
 #
 
+TAG: reports_db-6-0-25-6
+DATE: 05/15/2025
+STAFF: lec
+        deleted:    weekly/MGI_MarkerNames.py
+Matt Hibbs (Matt.Hibbs@jax.org)
+Al Simons (Al.Simons@jax.org)
+
 TAG: reports_db-6-0-25-5
 TAG: reports_db-6-0-25-4
 TAG: reports_db-6-0-25-3
