@@ -34,7 +34,7 @@ TAB = reportlib.TAB
 
 fp = reportlib.init(sys.argv[0], outputdir = os.environ['REPORTOUTPUTDIR'], printHeading = None)
 fp.write('Marker Symbol\tMGI Marker Accession ID\tTotal number of IMSR Strains\tTotal number of Alleles\n')
-inFile = open('/data/downloads/www.findmice.org/report/kompCounts.txt', 'rU')
+inFile = open('/data/downloads/www.findmice.org/report/kompCounts.txt', 'r')
 
 #
 # field 1 : MGI id (allele or marker)
