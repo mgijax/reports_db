@@ -22,8 +22,17 @@
 #
 
 
+TAG: reports_db-6-0-25-8
+DATE: 06/10/2025
+STAFF: lec
+wts2-1677/e4g-282/NCBI Linkout Reports - update URLs
+        modified:   Configuration.default
+        modified:   ncbilinkout/copy_rpt.csh
+        modified:   ncbilinkout/ncbilinkout.csh
+        modified:   ncbilinkout/providerinfo.xml
+
 TAG: reports_db-6-0-25-7
-DATE: 96/02/2025
+DATE: 06/02/2025
 STAFF: lec
 wts2-1669/e4g-264/Python 3.12
 

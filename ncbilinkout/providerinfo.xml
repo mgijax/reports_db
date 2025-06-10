@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <!DOCTYPE Provider PUBLIC "-//NLM//DTD LinkOut 1.0//EN"
-"http://www.ncbi.nlm.nih.gov/entrez/linkout/doc/LinkOut.dtd">
+"https://www.ncbi.nlm.nih.gov/entrez/linkout/doc/LinkOut.dtd">
 <Provider>
 <!-- ProviderId is assigned by NCBI -->
  <ProviderId>2002</ProviderId>
  <Name>Mouse Genome Informatics (MGI)</Name>
  <NameAbbr>MGI</NameAbbr>
  <SubjectType>organism-specific</SubjectType>
- <Url>http://www.informatics.jax.org</Url>
+ <Url>https://www.informatics.jax.org</Url>
  <Brief>Mouse Genome Informatics</Brief></Provider>

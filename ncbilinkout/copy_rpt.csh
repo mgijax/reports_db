@@ -7,7 +7,7 @@
 #
 # Runs Monday morning with the public swap
 #
-# NCBI's LinkOut (http://www.ncbi.nlm.nih.gov/projects/linkout/)
+# NCBI's LinkOut (https://www.ncbi.nlm.nih.gov/projects/linkout/)
 # enables us to generate XML files that contain links from NCBI to MGI.
 #
 # NCBI uses their LinkOut software to take the XML files we provide
