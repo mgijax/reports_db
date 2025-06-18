@@ -80,7 +80,7 @@ def rnaCentral():
     allMgiToRnaCentral = {}
     allRnaCentralToMGI = {}
 
-    inFile = open('/data/downloads/ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/id_mapping/database_mappings/mgi.tsv', 'r')
+    inFile = open(os.environ['DATADOWNLOADS'] + '/ftp.ebi.ac.uk/pub/databases/RNAcentral/current_release/id_mapping/database_mappings/mgi.tsv', 'r')
     for line in inFile.readlines():
         tokens = line[:-1].split('\t')
         rnaId = tokens[0]
