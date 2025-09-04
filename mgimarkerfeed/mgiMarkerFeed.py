@@ -67,8 +67,10 @@
 #       45. strain_reference.bcp
 #       46. marker_reference.bcp
 #       47. marker_do.bcp
-#       48: mgi_relationship/mgi_relationship_category/mgi_relationship_property
-#       49: accession_do.bcp
+#       48: mgi_relationship
+#       49. mgi_relationship_category
+#       50. mgi_relationship_property
+#       51: accession_do.bcp
 #
 # Usage:
 #       mgiMarkerFeed.py
