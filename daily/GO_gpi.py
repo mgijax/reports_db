@@ -371,7 +371,7 @@ for r in results:
 	fp.write(TAB)
 
 	addPipe = ""
-    symbol = r['symbol']
+	symbol = r['symbol']
 	if symbol in uniprotGPI:
 		fp.write("|".join(uniprotGPI[symbol]))
 		addPipe = "|"
