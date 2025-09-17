@@ -199,49 +199,26 @@ for r in results:
         markerSynonyms[key].append(value)
 
 #
-# markerUniProtKB primary
-#
 # hard-coded (for now)...
 # read: ${DATADOWNLOADS}/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz
 # field 1 = UniProtKB 
 # field 2 = xxxxx
-# find marker _object_key where accID = 'xxxxx'
-#       and _logicaldb_key in (13, 14) and _mgitype_key = 2
+# field 3 = marker symbol
 # add UniProtDB:xxxx to gpi field 8
 #
 
-uniprotGPI = []
+uniprotGPI = {}
 gpiFile = gzip.open(os.environ['DATADOWNLOADS'] + '/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz', 'rt')
 for line in gpiFile.readlines():
         if line[0] == '!':
             continue
         tokens = line[:-1].split('\t')
-        uniprotGPI.append(tokens[1])
+        id = tokens[1]
+        symbol = tokens[2]
+        if symbol not in uniprotGPI:
+            uniprotGPI[symbol] = []
+        uniprotGPI[symbol].append('UniProtKB:' + id)
 gpiFile.close()
-
-markerUniProtKB = {}
-results = db.sql('''
-        select sm.accID as uniprotID, a.accID as markerID, sm._LogicalDB_key
-        from SEQ_Marker_Cache sm, ACC_Accession a
-        where sm._LogicalDB_key in (13,41)
-        and sm._Organism_key = 1 
-        and sm._Marker_key = a._Object_key
-        and a._MGIType_key = 2 
-        and a._LogicalDB_key = 1 
-        and a.preferred = 1 
-        and exists (select 1 from MRK_Marker m 
-                where a._Object_key = m._Marker_key
-                and m._Marker_Status_key = 1
-                )
-        order by sm._LogicalDB_key
-        ''', 'auto')
-for r in results:
-        key = r['markerID']
-        value = r['uniprotID']
-        if value in uniprotGPI:
-            if key not in markerUniProtKB:
-                    markerUniProtKB[key] = []
-            markerUniProtKB[key].append('UniProtKB:' + value)
 
 #
 # markers:terms
@@ -338,8 +315,9 @@ for r in results:
         fp.write(TAB)
 
         addPipe = ""
-        if marker in markerUniProtKB:
-                fp.write("|".join(markerUniProtKB[marker]))
+        symbol = r['symbol']
+        if symbol in uniprotGPI:
+                fp.write("|".join(uniprotGPI[symbol]))
                 addPipe = "|"
         if marker in singleMgiToRnaCentral:
                 fp.write(addPipe + rnaTag % (singleMgiToRnaCentral[marker][0]))
@@ -393,8 +371,9 @@ for r in results:
 	fp.write(TAB)
 
 	addPipe = ""
-	if marker in markerUniProtKB:
-		fp.write("|".join(markerUniProtKB[marker]))
+    symbol = r['symbol']
+	if symbol in uniprotGPI:
+		fp.write("|".join(uniprotGPI[symbol]))
 		addPipe = "|"
 	if marker in singleMgiToRnaCentral:
 		fp.write(addPipe + rnaTag % (singleMgiToRnaCentral[marker][0]))
