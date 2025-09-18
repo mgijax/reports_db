@@ -213,11 +213,11 @@ for line in gpiFile.readlines():
         if line[0] == '!':
             continue
         tokens = line[:-1].split('\t')
-        id = tokens[1]
+        id = tokens[0] + ':' + tokens[1]
         symbol = tokens[2]
         if symbol not in uniprotGPI:
             uniprotGPI[symbol] = []
-        uniprotGPI[symbol].append('UniProtKB:' + id)
+        uniprotGPI[symbol].append(id)
 gpiFile.close()
 
 #
