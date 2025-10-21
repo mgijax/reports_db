@@ -25,6 +25,7 @@ TAG: reports_db-6-0-26-3
 DATE: 10/21/2025
 STAFF: lec
 wts2-1710/sprt-100/NCBI reported having difficullty downloading the MGI logo icon from our Linkout file
+	modified:   Configuration.default
         modified:   ncbilinkout/nucleotide_linkout.py
         modified:   ncbilinkout/protein_linkout.py
         modified:   ncbilinkout/pubmed_linkout.py
