@@ -58,7 +58,6 @@ setenv GOANNOT_RELATIONSHIP	/mgi/all/wts_projects/11100/11112/annotation_relatio
 setenv GOANNOT_ERROR		/mgi/all/wts_projects/11100/11112/annotation_relationships.error
 
 # NCBI LinkOut stuff
-setenv NCBILINKOUT_ICON		"https://www.informatics.jax.org/mgihome/homepages/images/MGILinkout.jpg"
 setenv NCBILINKOUT_BASE_MARKER  "https://www.informatics.jax.org/marker/"
 setenv NCBILINKOUT_BASE_REF     "https://www.informatics.jax.org/reference/"
 setenv NCBILINKOUT_HOST		ftp-private.ncbi.nlm.nih.gov

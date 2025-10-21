@@ -21,6 +21,17 @@
 # MGI_GTRNA.rpt
 #
 
+TAG: reports_db-6-0-26-3
+DATE: 10/21/2025
+STAFF: lec
+wts2-1710/sprt-100/NCBI reported having difficullty downloading the MGI logo icon from our Linkout file
+        modified:   ncbilinkout/nucleotide_linkout.py
+        modified:   ncbilinkout/protein_linkout.py
+        modified:   ncbilinkout/pubmed_linkout.py
+remove:
+<!ENTITY icon https://www.informatics.jax.org/mgihome/homepages/images/MGILinkout.jpg>
+<IconUrl>&icon;</IconUrl>
+
 TAG: reports_db-6-0-26-2
 TAG: reports_db-6-0-26-1
 DATE: 09/17/2025
