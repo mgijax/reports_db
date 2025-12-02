@@ -21,6 +21,16 @@
 # MGI_GTRNA.rpt
 #
 
+TAG: reports_db-6-0-26-?
+DATE: 12/02/2025
+STAFF: lec
+wts2-1764/sprt-143/Update to MGI GPI File
+remove all lines that begin with the following identifiers in the first column of the MGI GPI file:
+EMBL:
+RefSeq:
+ENSEMBL:
+        modified:   GO_gpi.py
+
 TAG: reports_db-6-0-26-3
 DATE: 10/21/2025
 STAFF: lec
