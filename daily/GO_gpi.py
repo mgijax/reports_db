@@ -204,10 +204,12 @@ for r in results:
 # field 1 = UniProtKB 
 # field 2 = xxxxx
 # field 3 = marker symbol
+# field 5 = synonyms (|)
 # add UniProtDB:xxxx to gpi field 8
 #
 
 uniprotGPI = {}
+uniprotGPISyn = {}
 gpiFile = gzip.open(os.environ['DATADOWNLOADS'] + '/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz', 'rt')
 for line in gpiFile.readlines():
         if line[0] == '!':
@@ -218,6 +220,11 @@ for line in gpiFile.readlines():
         if symbol not in uniprotGPI:
             uniprotGPI[symbol] = []
         uniprotGPI[symbol].append(id)
+
+        for symbol in tokens[4].split('|'):
+            if symbol not in uniprotGPISyn:
+                uniprotGPISyn[symbol] = []
+            uniprotGPISyn[symbol].append(id)
 gpiFile.close()
 
 #
@@ -319,6 +326,10 @@ for r in results:
         if symbol in uniprotGPI:
                 fp.write("|".join(uniprotGPI[symbol]))
                 addPipe = "|"
+        elif symbol in uniprotGPISyn:
+                #print('Using Synonym: ', symbol, "|".join(uniprotGPISyn[symbol]))
+                fp.write("|".join(uniprotGPISyn[symbol]))
+                addPipe = "|"
         if marker in singleMgiToRnaCentral:
                 fp.write(addPipe + rnaTag % (singleMgiToRnaCentral[marker][0]))
         fp.write(TAB)
@@ -374,6 +385,10 @@ for r in results:
 	symbol = r['symbol']
 	if symbol in uniprotGPI:
 		fp.write("|".join(uniprotGPI[symbol]))
+		addPipe = "|"
+	elif symbol in uniprotGPISyn:
+		print('Using Synonym: ', symbol, "|".join(uniprotGPISyn[symbol]))
+		fp.write("|".join(uniprotGPISyn[symbol]))
 		addPipe = "|"
 	if marker in singleMgiToRnaCentral:
 		fp.write(addPipe + rnaTag % (singleMgiToRnaCentral[marker][0]))
