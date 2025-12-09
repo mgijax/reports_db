@@ -327,7 +327,7 @@ for r in results:
                 fp.write("|".join(uniprotGPI[symbol]))
                 addPipe = "|"
         elif symbol in uniprotGPISyn:
-                #print('Using Synonym: ', symbol, "|".join(uniprotGPISyn[symbol]))
+                print('Using Synonym: ', r['accID'], symbol, "|".join(uniprotGPISyn[symbol]))
                 fp.write("|".join(uniprotGPISyn[symbol]))
                 addPipe = "|"
         if marker in singleMgiToRnaCentral:
@@ -387,7 +387,7 @@ for r in results:
 		fp.write("|".join(uniprotGPI[symbol]))
 		addPipe = "|"
 	elif symbol in uniprotGPISyn:
-		print('Using Synonym: ', symbol, "|".join(uniprotGPISyn[symbol]))
+		print('Using Synonym: ', r['accID'], symbol, "|".join(uniprotGPISyn[symbol]))
 		fp.write("|".join(uniprotGPISyn[symbol]))
 		addPipe = "|"
 	if marker in singleMgiToRnaCentral:
