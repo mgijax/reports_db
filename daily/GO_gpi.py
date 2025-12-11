@@ -207,6 +207,7 @@ for line in gpiFile.readlines():
 
         tokens = line[:-1].split('\t')
         id = tokens[1]
+        fullid = tokens[0] + ':' + tokens[1]
 
         # search uniprot id -> marker relationships (uniprotload)
         results = db.sql('''
@@ -220,12 +221,22 @@ for line in gpiFile.readlines():
 
         # only interested in 1:1 uniprotload relationships
         if len(results) == 1:
-            id = tokens[0] + ':' + tokens[1]
             for r in results:
                 symbol = r['symbol']
                 if symbol not in uniprotGPI:
                     uniprotGPI[symbol] = []
-                uniprotGPI[symbol].append(id)
+                uniprotGPI[symbol].append(fullid)
+
+        # if 1:N, if db_subset=Swiss-Prot, then use gpiFile/symbol
+        elif len(results) > 1:
+            dbSubSet = tokens[9]
+            if dbSubSet == 'db_subset=Swiss-Prot':
+                symbol = tokens[2]
+                if symbol not in uniprotGPI:
+                    uniprotGPI[symbol] = []
+                uniprotGPI[symbol].append(fullid)
+            else:
+                print(id, results)
         else:
             print(id, results)
 
