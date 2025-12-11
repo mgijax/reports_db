@@ -36,15 +36,8 @@
 #
 # History:
 #
-# lec   04/01/2020 python 3 upgrade
-#       - TR13272/GPI 2.0
-#
-# lec   04/01/2020 python 3 upgrade
-#
-# sc    03/21/2020 python 3 upgrade
-#
-# 06/27/2016    lec
-#       - TR12349/12345/GPAD/GPI
+# lec   12/11/2025 python 3 upgrade
+#       - wts2-1771/sprt-153/MGI GPI missing GCRPs as cross reference
 #
 '''
 
@@ -221,7 +214,7 @@ for line in gpiFile.readlines():
             from acc_accession a1, mrk_marker m
             where a1.accid = '%s'
             and a1._mgitype_key = 2 
-            and a1._logicaldb_key = 234
+            and a1._logicaldb_key in (13,41)
             and a1._object_key = m._marker_key
             ''' % id, 'auto')
 
