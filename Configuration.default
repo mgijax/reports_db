@@ -45,18 +45,6 @@ setenv CVDCDIR			${PUBREPORTDIR}/output/cvdc
 # rna seq load report
 setenv GXDRNASEQDIR		${PUBREPORTDIR}/output/gxdrnaseq
 
-# GOA file
-setenv GOAGAFMGI		${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gaf
-setenv GOAGPADMGI               ${DATALOADSOUTPUT}/go/goamouse/output/goamouse.gpad
-setenv ECOFILE                  ${DATADOWNLOADS}/purl.obolibrary.org/obo/eco/eco.obo
-
-# ANY ERRORS WITH THE ANNOTATION RELATIONSHIP FILE:
-#       MAKE SURE THE MAC EXCEL SPREADSHEET IS SAVED AS "WINDOWS FORMATED TEXT"
-# GO ANNOTATION RELATIONSHIP-FILE
-setenv GOANNOT_RELATIONSHIP	/mgi/all/wts_projects/11100/11112/annotation_relationships.txt
-# GO ANNOTATION ERROR FILE
-setenv GOANNOT_ERROR		/mgi/all/wts_projects/11100/11112/annotation_relationships.error
-
 # NCBI LinkOut stuff
 setenv NCBILINKOUT_BASE_MARKER  "https://www.informatics.jax.org/marker/"
 setenv NCBILINKOUT_BASE_REF     "https://www.informatics.jax.org/reference/"

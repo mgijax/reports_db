@@ -55,7 +55,7 @@ import mgi_utils
 import reportlib
 import db
 
-db.setTrace()
+#db.setTrace()
 
 SPECIES = 'NCBITaxon:10090'
 
@@ -202,29 +202,40 @@ for r in results:
 # hard-coded (for now)...
 # read: ${DATADOWNLOADS}/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz
 # field 1 = UniProtKB 
-# field 2 = xxxxx
-# field 3 = marker symbol
-# field 5 = synonyms (|)
 # add UniProtDB:xxxx to gpi field 8
 #
 
 uniprotGPI = {}
-uniprotGPISyn = {}
 gpiFile = gzip.open(os.environ['DATADOWNLOADS'] + '/ftp.ebi.ac.uk/pub/databases/GO/goa/MOUSE/goa_mouse.gpi.gz', 'rt')
 for line in gpiFile.readlines():
+
         if line[0] == '!':
             continue
-        tokens = line[:-1].split('\t')
-        id = tokens[0] + ':' + tokens[1]
-        symbol = tokens[2]
-        if symbol not in uniprotGPI:
-            uniprotGPI[symbol] = []
-        uniprotGPI[symbol].append(id)
 
-        for symbol in tokens[4].split('|'):
-            if symbol not in uniprotGPISyn:
-                uniprotGPISyn[symbol] = []
-            uniprotGPISyn[symbol].append(id)
+        tokens = line[:-1].split('\t')
+        id = tokens[1]
+
+        # try to find uniprot id in MGI database
+        results = db.sql('''
+            select m.symbol
+            from acc_accession a1, mrk_marker m
+            where a1.accid = '%s'
+            and a1._mgitype_key = 2 
+            and a1._logicaldb_key = 234
+            and a1._object_key = m._marker_key
+            ''' % id, 'auto')
+
+        # if found associated with only 1 Marker, use MGI symbol -> UniProtKB relationship
+        if len(results) == 1:
+            id = tokens[0] + ':' + tokens[1]
+            for r in results:
+                symbol = r['symbol']
+                if symbol not in uniprotGPI:
+                    uniprotGPI[symbol] = []
+                uniprotGPI[symbol].append(id)
+        else:
+            print(id, results)
+
 gpiFile.close()
 
 #
@@ -326,10 +337,6 @@ for r in results:
         if symbol in uniprotGPI:
                 fp.write("|".join(uniprotGPI[symbol]))
                 addPipe = "|"
-        elif symbol in uniprotGPISyn:
-                print('Using Synonym: ', r['accID'], symbol, "|".join(uniprotGPISyn[symbol]))
-                fp.write("|".join(uniprotGPISyn[symbol]))
-                addPipe = "|"
         if marker in singleMgiToRnaCentral:
                 fp.write(addPipe + rnaTag % (singleMgiToRnaCentral[marker][0]))
         fp.write(TAB)
@@ -385,10 +392,6 @@ for r in results:
 	symbol = r['symbol']
 	if symbol in uniprotGPI:
 		fp.write("|".join(uniprotGPI[symbol]))
-		addPipe = "|"
-	elif symbol in uniprotGPISyn:
-		print('Using Synonym: ', r['accID'], symbol, "|".join(uniprotGPISyn[symbol]))
-		fp.write("|".join(uniprotGPISyn[symbol]))
 		addPipe = "|"
 	if marker in singleMgiToRnaCentral:
 		fp.write(addPipe + rnaTag % (singleMgiToRnaCentral[marker][0]))
