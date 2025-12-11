@@ -208,7 +208,7 @@ for line in gpiFile.readlines():
         tokens = line[:-1].split('\t')
         id = tokens[1]
 
-        # try to find uniprot id in MGI database
+        # search uniprot id -> marker relationships (uniprotload)
         results = db.sql('''
             select m.symbol
             from acc_accession a1, mrk_marker m
@@ -218,7 +218,7 @@ for line in gpiFile.readlines():
             and a1._object_key = m._marker_key
             ''' % id, 'auto')
 
-        # if found associated with only 1 Marker, use MGI symbol -> UniProtKB relationship
+        # only interested in 1:1 uniprotload relationships
         if len(results) == 1:
             id = tokens[0] + ':' + tokens[1]
             for r in results:
