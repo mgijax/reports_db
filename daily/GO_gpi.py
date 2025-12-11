@@ -120,6 +120,8 @@ fp.write('!namespace: MGI\n')
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 
+fp2 = reportlib.init(sys.argv[0], 'Missing GOA/GPI', outputdir = os.environ['QCREPORTDIR'] + '/output')
+
 #
 # markers
 #
@@ -236,9 +238,9 @@ for line in gpiFile.readlines():
                     uniprotGPI[symbol] = []
                 uniprotGPI[symbol].append(fullid)
             else:
-                print(id, results)
+                fp2.write(id + '\t' + str(results) + '\n')
         else:
-            print(id, results)
+            fp2.write(id + '\t' + str(results) + '\n')
 
 gpiFile.close()
 
@@ -517,3 +519,5 @@ for r in results:
         fp.write(CRT)
 
 reportlib.finish_nonps(fp)
+reportlib.finish_nonps(fp2)
+
