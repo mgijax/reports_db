@@ -235,25 +235,29 @@ for line in gpiFile.readlines():
 
             dbSubSet = tokens[9]
 
-            # skip is not Swiss-Prot
+            # if goa id is not db_subset=Swiss-Prot, then report in QC
             if dbSubSet != 'db_subset=Swiss-Prot':
                 fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
 
-            # if Swiss-Prot, use goaSymbol
+            # else if Swiss-Prot, try to use goaSymbol
             else:
-
-                # check that goaSymbol matches mgiSymbol
+                # goaSymbol must match at least one mgiSymbol
                 symbolMatch = 0
                 for r in results:
                     mgiSymbol = r['symbol']
                     if goaSymbol == mgiSymbol:
                         symbolMatch = 1
+
+                # if goaSymbol matches at least 1 MGI symbol, can be used
                 if symbolMatch == 1:
                     if goaSymbol not in uniprotGPI:
                         uniprotGPI[goaSymbol] = []
                     uniprotGPI[goaSymbol].append(fullid)
+                # else report in QC
                 else:
                     fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
+
+        # if goa id is not found in MGI, report in QC
         else:
             fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
 
