@@ -120,6 +120,7 @@ fp.write('!namespace: MGI\n')
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 
+# qc report is stored in QCREPORTDIR/output
 fp2 = reportlib.init(sys.argv[0], 'GOA GCRPs Not Cross-Referenced in the MGI GPI', outputdir = os.environ['QCREPORTDIR'] + '/output')
 
 #
@@ -222,7 +223,7 @@ for line in gpiFile.readlines():
             and a1._object_key = m._marker_key
             ''' % id, 'auto')
 
-        # only interested in 1:1 uniprotload relationships
+        # if 1:1, then use MGI symbol
         if len(results) == 1:
             for r in results:
                 mgiSymbol = r['symbol']
@@ -230,25 +231,25 @@ for line in gpiFile.readlines():
                     uniprotGPI[mgiSymbol] = []
                 uniprotGPI[mgiSymbol].append(fullid)
 
-        # if 1:N, if db_subset=Swiss-Prot, then use gpiFile/symbol
+        # if 1:N, then use GOA symbol
         elif len(results) > 1:
 
             dbSubSet = tokens[9]
 
-            # if goa id is not db_subset=Swiss-Prot, then report in QC
+            # if GOA id is not db_subset=Swiss-Prot, then report in QC
             if dbSubSet != 'db_subset=Swiss-Prot':
                 fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
 
-            # else if Swiss-Prot, try to use goaSymbol
+            # else if GOA/Swiss-Prot, try to use GOA symbol
             else:
-                # goaSymbol must match at least one mgiSymbol
+                # GOA Symbol must match at least one MGI symbol
                 symbolMatch = 0
                 for r in results:
                     mgiSymbol = r['symbol']
                     if goaSymbol == mgiSymbol:
                         symbolMatch = 1
 
-                # if goaSymbol matches at least 1 MGI symbol, can be used
+                # if GOA Symbol matches at least 1 MGI symbol, can be used
                 if symbolMatch == 1:
                     if goaSymbol not in uniprotGPI:
                         uniprotGPI[goaSymbol] = []
@@ -257,7 +258,7 @@ for line in gpiFile.readlines():
                 else:
                     fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
 
-        # if goa id is not found in MGI, report in QC
+        # if GOA id is not found in MGI, report in QC
         else:
             fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
 
