@@ -120,7 +120,7 @@ fp.write('!namespace: MGI\n')
 fp.write('!generated-by: MGI\n')
 fp.write('!date-generated: %s\n' % (mgi_utils.date("%Y-%m-%d")))
 
-fp2 = reportlib.init(sys.argv[0], 'Missing GOA/GPI', outputdir = os.environ['QCREPORTDIR'] + '/output')
+fp2 = reportlib.init(sys.argv[0], 'GOA GCRPs Not Cross-Referenced in the MGI GPI', outputdir = os.environ['QCREPORTDIR'] + '/output')
 
 #
 # markers
@@ -210,6 +210,7 @@ for line in gpiFile.readlines():
         tokens = line[:-1].split('\t')
         id = tokens[1]
         fullid = tokens[0] + ':' + tokens[1]
+        goaSymbol = tokens[2]
 
         # search uniprot id -> marker relationships (uniprotload)
         results = db.sql('''
@@ -224,23 +225,37 @@ for line in gpiFile.readlines():
         # only interested in 1:1 uniprotload relationships
         if len(results) == 1:
             for r in results:
-                symbol = r['symbol']
-                if symbol not in uniprotGPI:
-                    uniprotGPI[symbol] = []
-                uniprotGPI[symbol].append(fullid)
+                mgiSymbol = r['symbol']
+                if mgiSymbol not in uniprotGPI:
+                    uniprotGPI[mgiSymbol] = []
+                uniprotGPI[mgiSymbol].append(fullid)
 
         # if 1:N, if db_subset=Swiss-Prot, then use gpiFile/symbol
         elif len(results) > 1:
+
             dbSubSet = tokens[9]
-            if dbSubSet == 'db_subset=Swiss-Prot':
-                symbol = tokens[2]
-                if symbol not in uniprotGPI:
-                    uniprotGPI[symbol] = []
-                uniprotGPI[symbol].append(fullid)
+
+            # skip is not Swiss-Prot
+            if dbSubSet != 'db_subset=Swiss-Prot':
+                fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
+
+            # if Swiss-Prot, use goaSymbol
             else:
-                fp2.write(id + '\t' + str(results) + '\n')
+
+                # check that goaSymbol matches mgiSymbol
+                symbolMatch = 0
+                for r in results:
+                    mgiSymbol = r['symbol']
+                    if goaSymbol == mgiSymbol:
+                        symbolMatch = 1
+                if symbolMatch == 1:
+                    if goaSymbol not in uniprotGPI:
+                        uniprotGPI[goaSymbol] = []
+                    uniprotGPI[goaSymbol].append(fullid)
+                else:
+                    fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
         else:
-            fp2.write(id + '\t' + str(results) + '\n')
+            fp2.write(id + '\t' + goaSymbol + '\t' + str(results) + '\n')
 
 gpiFile.close()
 
