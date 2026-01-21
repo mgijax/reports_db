@@ -21,6 +21,12 @@
 # MGI_GTRNA.rpt
 #
 
+TAG: reports_db-6-0-27-1
+DATE: 01/21/2026
+STAFF: lec
+wts2-1790/sprt-201/genotypes missing from MGI_Geno_DiseaseDO.rpt public report 
+        modified:   MGI_GenePheno.py
+
 TAG: reports_db-6-0-26-6
 DATE: 12/16/2025
 STAFF: lec
