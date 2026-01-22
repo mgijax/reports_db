@@ -250,10 +250,10 @@ results = db.sql('''
            and va._AnnotType_key in (1020) 
            and va._Qualifier_key = 1614158
            and va._Term_key = a._Object_key
-           and a._LogicalDB_key = 191
+           and a._LogicalDB_key in (191)
            and a.preferred = 1
            and a._Object_key = doids._Object_key
-           and doids._LogicalDB_key  = 15
+           and doids._LogicalDB_key in (15,201)
            union
            select distinct m._Object_key, a.accID, null
            from mp m, VOC_Annot va, ACC_Accession a
@@ -261,11 +261,11 @@ results = db.sql('''
            and va._AnnotType_key in (1020) 
            and va._Qualifier_key = 1614158
            and va._Term_key = a._Object_key
-           and a._LogicalDB_key = 191
+           and a._LogicalDB_key in (191)
            and a.preferred = 1
            and not exists (select 1 from ACC_Accession doids
             where a._Object_key = doids._Object_key
-            and doids._LogicalDB_key  = 15
+            and doids._LogicalDB_key in (15,201)
            )
            ''', 'auto')
 mpDO1 = {}
@@ -295,10 +295,10 @@ results = db.sql('''
            and va._AnnotType_key in (1020) 
            and va._Qualifier_key = 1614157
            and va._Term_key = a._Object_key
-           and a._LogicalDB_key = 191
+           and a._LogicalDB_key in (191)
            and a.preferred = 1
            and a._Object_key = doids._Object_key
-           and doids._LogicalDB_key  = 15
+           and doids._LogicalDB_key in (15,201)
            union
            select distinct m._Object_key, a.accID, null
            from mp m, VOC_Annot va, ACC_Accession a
@@ -306,11 +306,11 @@ results = db.sql('''
            and va._AnnotType_key in (1020) 
            and va._Qualifier_key = 1614157
            and va._Term_key = a._Object_key
-           and a._LogicalDB_key = 191
+           and a._LogicalDB_key in (191)
            and a.preferred = 1
            and not exists (select 1 from ACC_Accession doids
             where a._Object_key = doids._Object_key
-            and doids._LogicalDB_key  = 15
+            and doids._LogicalDB_key in (15,201)
            )
            ''', 'auto')
 mpDO2 = {}
