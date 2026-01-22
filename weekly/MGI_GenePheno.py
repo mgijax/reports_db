@@ -247,10 +247,10 @@ results = db.sql('''
            select distinct m._Object_key, a.accID, doids.accid as doidsID
            from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession doids
            where m._Object_key = va._Object_key 
-           and va._AnnotType_key in (1020) 
+           and va._AnnotType_key = 1020
            and va._Qualifier_key = 1614158
            and va._Term_key = a._Object_key
-           and a._LogicalDB_key in (191)
+           and a._LogicalDB_key = 191
            and a.preferred = 1
            and a._Object_key = doids._Object_key
            and doids._LogicalDB_key in (15,201)
@@ -258,10 +258,10 @@ results = db.sql('''
            select distinct m._Object_key, a.accID, null
            from mp m, VOC_Annot va, ACC_Accession a
            where m._Object_key = va._Object_key 
-           and va._AnnotType_key in (1020) 
+           and va._AnnotType_key = 1020
            and va._Qualifier_key = 1614158
            and va._Term_key = a._Object_key
-           and a._LogicalDB_key in (191)
+           and a._LogicalDB_key = 191
            and a.preferred = 1
            and not exists (select 1 from ACC_Accession doids
             where a._Object_key = doids._Object_key
@@ -279,6 +279,7 @@ for r in results:
         mpDO1[key].append(value)
     value = r['doidsID']
     if value != None:
+        value = str.replace(value, 'MIM:', 'OMIM:')
         if key not in mpOMIM1:
             mpOMIM1[key] = []
         if value not in mpOMIM1[key]:
@@ -292,10 +293,10 @@ results = db.sql('''
            select distinct m._Object_key, a.accID, doids.accid as doidsID
            from mp m, VOC_Annot va, ACC_Accession a, ACC_Accession doids
            where m._Object_key = va._Object_key 
-           and va._AnnotType_key in (1020) 
+           and va._AnnotType_key = 1020
            and va._Qualifier_key = 1614157
            and va._Term_key = a._Object_key
-           and a._LogicalDB_key in (191)
+           and a._LogicalDB_key = 191
            and a.preferred = 1
            and a._Object_key = doids._Object_key
            and doids._LogicalDB_key in (15,201)
@@ -303,10 +304,10 @@ results = db.sql('''
            select distinct m._Object_key, a.accID, null
            from mp m, VOC_Annot va, ACC_Accession a
            where m._Object_key = va._Object_key 
-           and va._AnnotType_key in (1020) 
+           and va._AnnotType_key = 1020
            and va._Qualifier_key = 1614157
            and va._Term_key = a._Object_key
-           and a._LogicalDB_key in (191)
+           and a._LogicalDB_key = 191
            and a.preferred = 1
            and not exists (select 1 from ACC_Accession doids
             where a._Object_key = doids._Object_key
@@ -324,6 +325,7 @@ for r in results:
         mpDO2[key].append(value)
     value = r['doidsID']
     if value != None:
+        value = str.replace(value, 'MIM:', 'OMIM:')
         if key not in mpOMIM2:
             mpOMIM2[key] = []
         if value not in mpOMIM2:
