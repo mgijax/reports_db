@@ -480,7 +480,9 @@
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="HMD_HumanPhenotype.rpt">HMD_HumanPhenotype.rpt</A></TD></TR>
     </TABLE></TD></TR>
 
-    <TR><TD><TABLE>
+    <TR><TD>
+
+    <TABLE>
         <TR><TD><B>3. List of All Mouse Phenotypic Alleles (tab-delimited)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR>
@@ -499,7 +501,20 @@
 	<TD>Marker Name</TD></TABLE>
         </TD></TR>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="MGI_PhenotypicAllele.rpt">MGI_PhenotypicAllele.rpt</A></TD></TR>
-    </TABLE></TD></TR>
+        <TR><TD>
+        <TABLE BORDER CELLPADDING=2><TR>
+	<TD>MGI Allele Accession ID</TD>
+	<TD>Allele Symbol</TD>
+	<TD>Phenotypes (pipe-delimited)</TD>
+        </TD></TR>
+	</TABLE>
+        <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="ALL_Phenotype.rpt">ALL_Phenotype.rpt</A></TD></TR>
+    </TABLE>
+
+    <TABLE>
+    </TABLE>
+
+    </TD></TR>
 
     <TR><TD><TABLE>
         <TR><TD><B>4. List of All Mouse QTL Alleles (tab-delimited)</B></TD></TR>
