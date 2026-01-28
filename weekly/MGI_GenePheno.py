@@ -27,11 +27,13 @@
 #	MGI_Gene_DiseaseDO
 #	field 7: DO ID(s) (pipe-delimited)
 #	field 8: OMIM ID(s) (pipe-delimited)
+#	field 9: MGI Genotype Accession ID (pipe-delimited)
 #	where DO annotations do not include NOT
 #
 #	MGI_Gene_NotDiseaseDO
 #	field 7 DO ID(s) (pipe-delimited)
 #	field 8: OMIM ID(s) (pipe-delimited)
+#	field 9: MGI Genotype Accession ID (pipe-delimited)
 #	where DO annotations includes NOT
 #
 # Usage:
@@ -220,7 +222,7 @@ for r in results:
     mpMarker[key].append(value)
 
 #
-# resolve Genotype ID
+# resolve Genotype ID; should always be 1
 #
 results = db.sql('''select distinct m._Object_key, a.accID
         from mp m, GXD_AlleleGenotype g, ACC_Accession a
@@ -279,7 +281,7 @@ for r in results:
         mpDO1[key].append(value)
     value = r['doidsID']
     if value != None:
-        value = str.replace(value, 'MIM:', 'OMIM:')
+        #value = str.replace(value, 'MIM:', 'OMIM:')
         if key not in mpOMIM1:
             mpOMIM1[key] = []
         if value not in mpOMIM1[key]:
@@ -325,7 +327,7 @@ for r in results:
         mpDO2[key].append(value)
     value = r['doidsID']
     if value != None:
-        value = str.replace(value, 'MIM:', 'OMIM:')
+        #value = str.replace(value, 'MIM:', 'OMIM:')
         if key not in mpOMIM2:
             mpOMIM2[key] = []
         if value not in mpOMIM2:
@@ -387,8 +389,10 @@ for r in results:
         fp2.write(TAB + '|'.join(mpMarker[genotype]) + TAB)
         fp2.write('|'.join(mpDO1[genotype]) + TAB)
         if genotype in mpOMIM1:
-                fp2.write('|'.join(mpOMIM1[genotype]))
-        fp2.write(CRT)
+            fp2.write('|'.join(mpOMIM1[genotype]) + TAB)
+        else:
+            fp2.write(TAB)
+        fp2.write('|'.join(mpGenotype[genotype]) + CRT)
 
     #
     # DO report 2
@@ -408,8 +412,10 @@ for r in results:
         fp3.write(TAB + '|'.join(mpMarker[genotype]) + TAB)
         fp3.write('|'.join(mpDO2[genotype]) + TAB)
         if genotype in mpOMIM2:
-                fp3.write('|'.join(mpOMIM2[genotype]))
-        fp3.write(CRT)
+            fp3.write('|'.join(mpOMIM2[genotype]) + TAB)
+        else:
+            fp3.write(TAB)
+        fp3.write('|'.join(mpGenotype[genotype]) + CRT)
 
 reportlib.finish_nonps(fp1)	# non-postscript file
 reportlib.finish_nonps(fp2)	# non-postscript file

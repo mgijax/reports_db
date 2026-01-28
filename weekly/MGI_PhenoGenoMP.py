@@ -16,6 +16,7 @@
 #	field 4: Mammalian Phenotype ID
 #	field 5: PubMed ID
 #	field 6: MGI Marker Accession ID (comma-delimited)
+#   field 7: Genotype Accession ID
 #
 # Usage:
 #       MGI_PhenoGenoMP.py
@@ -106,8 +107,8 @@ for r in results:
 # resolve Genotype Strains
 #
 results = db.sql('''
-        select distinct m._Object_key, s.strain 
-        from mp m, GXD_Genotype g, PRB_Strain s 
+        select distinct m._Object_key, s.strain
+        from mp m, GXD_Genotype g, PRB_Strain s
         where m._Object_key = g._Genotype_key 
         and g._Strain_key = s._Strain_key
         ''', 'auto')
@@ -172,6 +173,26 @@ for r in results:
     mpMarker[key].append(value)
 
 #
+# resolve Genotype ID
+#
+results = db.sql('''select distinct m._Object_key, a.accID
+        from mp m, GXD_AlleleGenotype g, ACC_Accession a
+        where m._Object_key = g._Genotype_key
+        and g._Genotype_key = a._Object_key
+        and a._MGIType_key = 12
+        and a._LogicalDB_key = 1
+        and a.prefixPart = 'MGI:'
+        and a.preferred = 1
+        ''', 'auto')
+mpGenotype= {}
+for r in results:
+    key = r['_Object_key']
+    value = r['accID']
+    if key not in mpGenotype:
+        mpGenotype[key] = []
+    mpGenotype[key].append(value)
+
+#
 # process results
 #
 results = db.sql('''
@@ -199,8 +220,10 @@ for r in results:
             fp.write(TAB)
 
         if genotype in mpMarker:
-            fp.write('|'.join(mpMarker[genotype]) + CRT)
+            fp.write('|'.join(mpMarker[genotype]) + TAB)
         else:
-            fp.write(TAB + CRT)
+            fp.write(TAB)
+
+        fp.write('|'.join(mpGenotype[genotype]) + CRT)
 
 reportlib.finish_nonps(fp)	# non-postscript file
