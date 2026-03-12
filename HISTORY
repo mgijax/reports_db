@@ -21,6 +21,12 @@
 # MGI_GTRNA.rpt
 #
 
+TAG: reports_db-6-0-27-4
+DATE: 03/10/2026
+STAFF: pf
+wts2-1391/HP-MP Lexical Matches report
+        new:   weekly/MGI_HpMpLexical.py
+
 TAG: reports_db-6-0-27-3
 DATE: 01/28/2026
 STAFF: lec
