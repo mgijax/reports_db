@@ -421,7 +421,7 @@
         <TR><TD><B>3. RNA-Seq assay results in GXD (tab-delimited file per experiment)</B></TD></TR>
         <TR><TD>
         <TABLE BORDER CELLPADDING=2><TR>
-        <TD>MGI Gene ID</TD> <TD>Ensembl ID</TD> <TD>Gene Symbol</TD> <TD>Gene Name</TD> <TD>Experiment ID</TD> <TD>Anatomical Structure</TD> <TD>Theiler Stage</TD> <TD>Age</TD> <TD>Sex</TD> <TD>Strain</TD> <TD>Mutant Allele Pair(s)</TD> <TD>Notes</TD> <TD>Sample ID</TD> <TD>Number of Biological Replicates</TD> <TD>Bioreplicate Set Label</TD> <TD>Detected</TD> <TD>AVG TPM</TD> <TD>QN TPM</TD> <TD>AVG QN TPM</TD>
+        <TD>MGI Gene ID</TD> <TD>Ensembl ID</TD> <TD>Gene Symbol</TD> <TD>Gene Name</TD> <TD>Experiment ID</TD> <TD>Anatomical Structure</TD> <TD>Theiler Stage</TD> <TD>Age</TD> <TD>Sex</TD> <TD>Strain</TD> <TD>Mutant Allele Pair(s)</TD> <TD>Notes</TD> <TD>Sample ID</TD> <TD>Number of Biological Replicates</TD> <TD>Bioreplicate Set Label</TD> <TD>Detected</TD> <TD>AVG TPM</TD> <TD>QN TPM</TD> <TD>AVG QN TPM</TD> <TD>TPM Level</TD>
         </TR></TABLE>
         <TR><TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <A HREF="https://www.informatics.jax.org/downloads/reports/gxdrnaseq/">RNA-Seq Report Download</A></TR>
