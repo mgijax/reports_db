@@ -50,7 +50,7 @@ import os
 import reportlib
 import db
 
-#db.setTrace()
+db.setTrace()
 
 CRT = reportlib.CRT
 #TAB = reportlib.TAB
@@ -61,22 +61,59 @@ db.sql('''
 select distinct s._experiment_key, a.accid as exptId
 into temp table experiments
 from GXD_HTSample s, ACC_Accession a
-where exists (select 1 from GXD_HTSample_RNASeq rna where s._sample_key = rna._sample_key)
+where exists (select 1 from GXD_HTSample_RNASeqSetMember rna where s._sample_key = rna._sample_key)
 and s._experiment_key = a._object_key
 and a._mgitype_key = 42
 and a._logicaldb_key in (189)
+--and a.accid in ('E-MTAB-9192','E-MTAB-7279')
+and a.accid in ('E-GEOD-22131')
 order by a.accid
 ''', None)
 db.sql('create index eidx1 on experiments (_experiment_key);', None)
 
-# distinct marker ; only need 1 experiment to do this
+# sampleNotes by sample key
+sampleNotes = {}
+results = db.sql('''
+select distinct n._object_key, n.note
+from experiments e, GXD_HTSample s, MGI_Note n
+where e._experiment_key = s._experiment_key
+and s._sample_key = n._object_key
+and n._notetype_key = 1048
+and exists (select 1 from GXD_HTSample_RNASeqSetMember rna where s._sample_key = rna._sample_key)
+''', 'auto')
+for r in results:
+    key = r['_object_key']
+    value = r['note']
+    sampleNotes[key] = value
+#print(sampleNotes)
+
+# alleles by genotype
+alleles = {}
+results = db.sql('''
+select distinct s._genotype_key, n.note as alleles
+from experiments e, GXD_HTSample_RNASeqSet s, MGI_Note n
+where e._experiment_key = s._experiment_key
+and s._genotype_key = n._object_key
+and n._mgitype_key = 12
+and n._notetype_key = 1016
+and exists (select 1 from GXD_HTSample_RNASeqSetMember rna where s._rnaseqset_key = rna._rnaseqset_key)
+order by alleles
+''', 'auto')
+for r in results:
+    key = r['_genotype_key']
+    value = r['alleles'].replace('\n',',')
+    if value.endswith(","):
+        value = value[:-1]
+    alleles[key] = value
+#print(alleles)
+
+# distinct markers used in RNASeqCombined
+markers = {}
 db.sql('''
 WITH marker AS (
 select distinct m._marker_key, m.symbol, m.name
-from GXD_HTSample s, GXD_HTSample_RNASeq rna, MRK_Marker m
-where s._experiment_key = 6078
-and s._sample_key = rna._sample_key
-and rna._marker_key = m._marker_key
+from GXD_HTSample_RNASeqCombined rna, MRK_Marker m
+where rna._marker_key = m._marker_key
 )
 select m.*, a1.accid as mgiId, array_to_string(array_agg(distinct a2.accid),',') as ensId
 into temp table markers
@@ -92,18 +129,7 @@ and a2.preferred = 1
 group by 1,2,3,4
 ''', None)
 db.sql('create index midx1 on markers (_marker_key);', None)
-
-# exclude if marker is associated with > 1 ensId
-# exclude if ensId is associated with > 1 marker
-db.sql('select ensId into excludeEnsId from markers group by ensID having count(*) > 1', None)
-db.sql('create index ensidx on excludeEnsId (ensId);', None)
-results = db.sql('''
-select * from markers m
-where ensId not like '%,%' 
-and not exists (select 1 from excludeEnsId e where m.ensId = e.ensId)
-order by symbol 
-''', 'auto')
-markers = {}
+results = db.sql('select * from markers', 'auto')
 for r in results:
     # skip marker if > 1 ensId
     if "," in r['ensId']:
@@ -112,42 +138,6 @@ for r in results:
     value = r
     markers[key] = value
 #print(markers)
-
-# sampleNotes by sample key
-sampleNotes = {}
-results = db.sql('''
-select distinct n._object_key, n.note
-from experiments e, GXD_HTSample s, MGI_Note n
-where e._experiment_key = s._experiment_key
-and s._sample_key = n._object_key
-and n._notetype_key = 1048
-and exists (select 1 from GXD_HTSample_RNASeq rna where s._sample_key = rna._sample_key)
-''' % (r), 'auto')
-for r in results:
-    key = r['_object_key']
-    value = r['note']
-    sampleNotes[key] = value
-#print(sampleNotes)
-
-# alleles by genotype
-alleles = {}
-results = db.sql('''
-select distinct s._genotype_key, n.note as alleles
-from experiments e, GXD_HTSample s, MGI_Note n
-where e._experiment_key = s._experiment_key
-and s._genotype_key = n._object_key
-and n._mgitype_key = 12
-and n._notetype_key = 1016
-and exists (select 1 from GXD_HTSample_RNASeq rna where s._sample_key = rna._sample_key)
-order by alleles
-''', 'auto')
-for r in results:
-    key = r['_genotype_key']
-    value = r['alleles'].replace('\n',',')
-    if value.endswith(","):
-        value = value[:-1]
-    alleles[key] = value
-#print(alleles)
 
 # iterate thru one experimen at a time
 counter=1
@@ -185,15 +175,17 @@ for e in eresults:
     # sample info of given experiment
     sampleByExpt = {}
     results = db.sql('''
-    select distinct e.exptId, s.*,
+    select distinct e.exptId, s._sample_key, s.name, ss.*,
         s1.term as termStruct, s2.term as termSex, gs.strain
-    from experiments e, GXD_HTSample s,
+    from experiments e, GXD_HTSample s, GXD_HTSample_RNASeqSet ss, GXD_HTSample_RNASeqSetMember sm,
          voc_term s1, voc_term s2, gxd_genotype g, prb_strain gs
     where e._experiment_key = %s
     and e._experiment_key = s._experiment_key
-    and s._emapa_key = s1._term_key
-    and s._sex_key = s2._term_key
-    and s._genotype_key = g._genotype_key
+    and s._sample_key = sm._sample_key
+    and sm._rnaseqset_key = ss._rnaseqset_key
+    and ss._emapa_key = s1._term_key
+    and ss._sex_key = s2._term_key
+    and ss._genotype_key = g._genotype_key
     and g._strain_key = gs._strain_key
     order by exptId, termStruct, _stage_key, age, termSex, strain
     ''' % (eKey), 'auto')
@@ -203,31 +195,46 @@ for e in eresults:
         sampleByExpt[key] = value
     #print(sampleByExpt)
 
-    # iterate thru each marker per experiment
     for mKey in markers:
+
+        #print('mKey: ', mKey)
 
         # sample info of given experiment/marker
         results = db.sql('''
-            select distinct rna._sample_key,
-                rna.averagetpm, rna.quantilenormalizedtpm, 
+           select distinct rna._sample_key,
+                rna.averagetpm, rna.quantilenormalizedtpm,
                 rnaC._level_key, rnaC.numberofbiologicalreplicates, rnaC.averagequantilenormalizedtpm,
-                rnaS._rnaseqset_key,
+                rnaC._rnaseqset_key,
                 s1.term as tpmLevel
-            from experiments e, GXD_HTSample s, GXD_HTSample_RNASeq rna, GXD_HTSample_RNASeqCombined rnaC, GXD_HTSample_RNASeqSet_Cache rnaS,
-                voc_term s1
+            from experiments e, GXD_HTSample s, GXD_HTSample_RNASeq rna, GXD_HTSample_RNASeqCombined rnaC, voc_term s1
             where e._experiment_key = %s
             and e._experiment_key = s._experiment_key
             and s._sample_key = rna._sample_key
             and rna._marker_key = %s
             and rna._rnaseqcombined_key = rnaC._rnaseqcombined_key
-            and rnaC._rnaseqcombined_key = rnaS._rnaseqcombined_key
             and rnaC._level_key = s1._term_key
-        ''' % (e['_experiment_key'], mKey), 'auto')
+            and rnaC._createdby_key = 1613
+            union
+            select distinct rna._sample_key,
+                -1, -1,
+                rnaC._level_key, rnaC.numberofbiologicalreplicates, rnaC.averagequantilenormalizedtpm,
+                rnaC._rnaseqset_key,
+                s1.term as tpmLevel
+            from experiments e, GXD_HTSample s, GXD_HTSample_RNASeqSetMember rna, GXD_HTSample_RNASeqCombined rnaC, voc_term s1
+            where e._experiment_key = %s
+            and e._experiment_key = s._experiment_key
+            and s._sample_key = rna._sample_key
+            and rna._rnaseqset_key = rnaC._rnaseqset_key
+            and rnaC._level_key = s1._term_key
+            and rnaC._marker_key = %s
+            and rnaC._createdby_key = 1673
+        ''' % (e['_experiment_key'], mKey, e['_experiment_key'], mKey), 'auto')
 
         # iterate thru each experiment/sample result
         for r in results:
 
             sKey = r['_sample_key']
+            #print('sKey: ', sKey)
 
             # 1:  MGI Gene ID
             # 2:  Ensembl ID
@@ -282,8 +289,15 @@ for e in eresults:
             # 18: qnTPM
             # 19: avg_qnTPM
             # 20: TPM Level
-            fp.write(str(r['averagetpm']) + TAB)
-            fp.write(str(r['quantilenormalizedtpm']) + TAB)
+
+            if r['averagetpm'] >= 0:
+                fp.write(str(r['averagetpm']))
+            fp.write(TAB)
+
+            if r['quantilenormalizedtpm'] >= 0:
+                fp.write(str(r['quantilenormalizedtpm']))
+            fp.write(TAB)
+
             fp.write(str(r['averagequantilenormalizedtpm']) + TAB)
             fp.write(r['tpmLevel'] + CRT)
     
